@@ -80,4 +80,13 @@ describe("extract：真实镜像源码", () => {
   it("vm 求值不依赖 DOM（源码里的渲染函数不参与求值）", () => {
     expect(() => extractStructures(src)).not.toThrow();
   });
+
+  it("沙箱无 DOM：引用 document/window 求值抛 ReferenceError", () => {
+    /* plan 约束直证：vm 上下文 Object.create(null)，浏览器全局不存在（跨 realm 用 e.name 判定） */
+    const errName = (expr: string) => {
+      try { extractStructures(`const TOKENS = [${expr}];`); return ""; } catch (e) { return (e as Error).name; }
+    };
+    expect(errName("document.title")).toBe("ReferenceError");
+    expect(errName("window.location")).toBe("ReferenceError");
+  });
 });
