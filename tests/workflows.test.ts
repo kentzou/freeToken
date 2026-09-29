@@ -21,6 +21,17 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     expect(crawl.jobs.review.if).toContain("contains(github.event.issue.labels.*.name, 'review')");
     expect(crawl.jobs.review.if).not.toContain("startsWith");
     expect(crawl.jobs.review.if).not.toContain("/approve");
+    /* 评审 C1：触发面放宽后「无指令→空跑退 0」是新承诺，而 fresh checkout 里 pending/ 既未跟踪
+       也不存在（review-apply 早退时不写盘、run.mjs 只在有待审条目时才写），`git add data pending`
+       会 pathspec 128 把整个 job 染红。两个 job 的提交步骤都得钉住「data 恒加、pending 有才加」。 */
+    const reviewSteps = crawl.jobs.review.steps.map((s: { run?: string }) => s.run || "").join("\n");
+    /* 反向断言只查「会被执行的那行」：yml 注释里刻意引用了旧命令原文作说明，
+       不剔注释行会把自己写的注释判成回归。 */
+    const cmds = (steps: string) => steps.split("\n").filter((l) => !l.trim().startsWith("#")).join("\n");
+    expect(crawlSteps).toContain("if [ -d pending ]; then git add pending; fi");
+    expect(reviewSteps).toContain("if [ -d pending ]; then git add pending; fi");
+    expect(cmds(crawlSteps)).not.toContain("git add data pending");
+    expect(cmds(reviewSteps)).not.toContain("git add data pending");
     expect(crawl.permissions).toMatchObject({ "contents": "write", "issues": "write" });
   });
 

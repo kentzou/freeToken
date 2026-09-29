@@ -30,7 +30,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data pending
+          # pending/ 只在有待审条目时才被创建（run.mjs 按 pending.changes.length 决定写盘），
+          # 且它不是仓库里的跟踪路径——`git add data pending` 在目录不存在时直接 pathspec 128。
+          git add data
+          if [ -d pending ]; then git add pending; fi
           if git diff --cached --quiet; then
             echo "无实质数据变化，跳过提交"
           else
@@ -63,7 +66,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data pending
+          # (C) 放宽触发后，审核 Issue 下的每条评论都会起本 job；无指令时 review-apply 早退
+          # 且不写任何文件，pending/ 目录根本不存在 → `git add data pending` 会 pathspec 128，
+          # 「空跑退出 0」就成了谎话。与 crawl job 同一处置：data 恒加，pending 存在才加。
+          git add data
+          if [ -d pending ]; then git add pending; fi
           if git diff --cached --quiet; then
             echo "数据未变，跳过提交"
           else

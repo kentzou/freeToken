@@ -47,6 +47,23 @@ describe("review-apply：Issue 评论 → 合入（workflow review job 的入口
     expect(parseCommands("只是路过评论一句")).toEqual([]);
   });
 
+  it("(C) 空跑兜底：无指令评论 changed=false、零 GitHub 调用、files 为空（放宽触发面的安全前提）", async () => {
+    /* 放宽后审核 Issue 下每条评论都会起 review job，「不碰任何东西」必须有牙：
+       用记录型 fetchImpl 断言调用数为 0（比注入抛错更硬——抛错只能证明「没走到」，
+       记录数能证明早退发生在任何网络 I/O 之前）；files 为空对象，CLI 分支据此不落盘，
+       crawl.yml 的提交步骤也就不会遇到 pending/ 缺失（评审 C1 的根因）。 */
+    const { fn, calls } = mkFetch(res(201, {}));
+    const r = await runReview({
+      repo: "me/r", issueNumber: 5, pending, data,
+      comment: "核过了，但这条没下指令。\n下一版再议", token: "t", fetchImpl: fn,
+    });
+    expect(r.changed).toBe(false);
+    expect(r.files).toEqual({});
+    expect(r.applied).toEqual([]);
+    expect(r.missing).toEqual([]);
+    expect(calls).toEqual([]);
+  });
+
   it("approve all：干净的甲合入、脏的乙同批被 validate 拦下 → 整体抛错不落盘（宁可不合，不半合）", async () => {
     await expect(
       runReview({ repo: "me/r", issueNumber: 5, pending, data, comment: "/approve all", token: "t", fetchImpl: async () => res(201, {}) })

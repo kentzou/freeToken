@@ -25,7 +25,12 @@ Actions → crawl → Run workflow。健康空跑应显示「无实质数据变�
 
 ## 6. 审核闭环演练
 真实变更出现时：pending/changes.json 入库 + review Issue 自动开 → 评论 `/approve card:名称`、`/reject watch:名称` 或 `/approve all` → 观察合入提交、回执评论与 Issue 自动关闭；校验不过会整体失败并留痕（宁可不合不半合）。
-注（终审 (C) 运维口径）：审批评论须**小写** `/approve`、`/reject` 且**行首无空格**——workflow 触发条件 `crawl.yml:45` 用大小写敏感的 `startsWith`，比解析器 `parseCommands`（带 `/i`、容忍前导空白）更严；写成 `/APPROVE` 或 ` /approve` 不会启动审批 job（安全失败，不会误合入，但你的审批不生效需重发）。代码级放宽登记在计划 2.5。
+注（计划 2.5 终审 (C) 落地后的运维口径，以下形态本机逐条实测 `parseCommands`）：
+- **触发只看 label**：`crawl.yml` 的 review job 条件已放宽为 `issue_comment` + Issue 带 `review` 标签，不再对评论正文做大小写敏感的 `startsWith` 前缀判定。因此 `/APPROVE`、` /approve`（前导空格）、「说明文字 + 换行 + 指令」现在都会启动审批 job——旧注里「必须小写且行首无空格」的约束**已失效**。
+- **指令建议独占一行**，这样回执评论与本人预期一一对应，便于事后审计。
+- **不会被执行的写法**（安全失败，审批不生效需重发）：引用块 `> /approve all`、同行夹在正文后 `顺便 /approve card:甲`。
+- **反而会被执行的写法（意外执行面，注意）**：4 空格缩进 `    /approve card:甲`、围栏代码块里的 `/approve card:甲`——GitHub 把它们渲染成代码展示给后人看，但 job 拿到的是原始正文，指令照样生效。**不要在评论正文的示例/截图说明里贴完整指令**，需要举例时写成 `／approve`（全角斜杠）或加引用块前缀。
+- 无指令的普通评论会走「评论不含指令，跳过」空跑分支，零 GitHub 写操作、不写盘（`tests/review-apply.test.ts` 空跑兜底例钉住）。
 
 ## 7. Lighthouse 与 Pages
 deploy.yml 首次全绿即已发布（Settings → Pages 显示 live URL）。三门禁读数在 lighthouse job 摘要的 temporary-public-storage 链接；连续不达标先修码，不动门槛值。
