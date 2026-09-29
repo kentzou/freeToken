@@ -93,7 +93,8 @@ Task 6 推演记录 ①–④（原文照录，① 已带上述防递归注记�
 
 - **(C) 审批评论门大小写/前导空白口径**（真问题·非阻断）：`crawl.yml:45` job `if` 用 `startsWith(comment.body,'/approve')||startsWith(...,'/reject')`——GitHub 表达式大小写敏感且不容前导空白；而 `review-apply.mjs:14` `parseCommands` 带 `/i` 且 `^\s*`。门触发面是解析面的**子集**，故 `/APPROVE …`、` /approve …` 这类评论**不会启动 review job**（Nothing 发生），**不存在越权误合入**——方向安全。运维口径见 ONLINE-STEPS #6：审批评论须小写 `/approve`、`/reject` 且行首无空格。代码级放宽（job `if` 只按 `label=review` 触发、命令取舍全交已单测的 `parseCommands`）登记为计划 2.5 项。
 - **(D) `runReview` 内联 keyOf 同形串**（plan-mandated·非缺陷）：`review-apply.mjs:32` 用 `` `${e.kind}:${e.name}` `` 内联而非 `import { keyOf }`——语义与 `diff.mjs:5` 逐字一致，是同一格式串的复用非第二套逻辑；计划 2.5 统一改为 import。
-  > **2026-09-29 换代注（计划 2.5 Task 3 落地，内层 `5da38ed` + 修复波 `dcc8a30`；上两条为修复前状态记录，按「历史正文不删改」口径原样保留）**
+  > **2026-09-29 换代注（计划 2.5 Task 3 落地，内层 `5da38ed` + 修复波 `dcc8a30`；下块的「排除 PR」与 `noChangeNote`
+  > 两条属 2026-09-30 整枝终审必修波，内层 `a808921`；上两条为修复前状态记录，按「历史正文不删改」口径原样保留）**
   > (C) 已代码级放宽：review job 的 `if` 现在只看 `issue_comment`、**非 PR**（`github.event.issue.pull_request == null`）
   > 与 `label=review`（`crawl.yml:49-52`；排除 PR 由整枝终审必修 #1 补上——`issue_comment` 对 Issue 与 PR 评论一视同仁，
   > 带 `review` 标签的 PR 起本 job 时 checkout 取的是该 PR 合并态的 `pending/`，授权面会外扩到任意被打标 PR），
