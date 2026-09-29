@@ -69,7 +69,7 @@ describe("文案纯函数（对齐镜像行为）", () => {
   });
   it("stars 五颗、splitNumbers 把「数字+单位」整段切出（供荧光笔渲染）", () => {
     expect(stars(4)).toBe("★★★★☆");
-    /* 与镜像 app.js:579 的正则逐字符一致：单位（积分/次/Tokens…）随数字一起高亮 */
+    /* 与镜像 app.js:579 相比有两处有意归一化：一是删去冗余的 \s*token 分支（/i 下已被 Tokens? 分支覆盖，无行为差异）；二是 元 前补 \s*（本站让「数字+空格+元」整体高亮，镜像只高亮数字部分；实测 data/tokens.json 有 10 处「数字 元」文本受影响）。其余逐字符一致：单位（积分/次/Tokens…）随数字一起高亮 */
     expect(splitNumbers("送 2000 积分")).toEqual([
       { text: "送 ", num: false },
       { text: "2000 积分", num: true },
@@ -79,6 +79,12 @@ describe("文案纯函数（对齐镜像行为）", () => {
       { text: " + ", num: false },
       { text: "10 万", num: true },
       { text: "张生图", num: false },
+    ]);
+  });
+  it("splitNumbers：「数字+空格+元」整段高亮（有意偏离镜像，钉住本站行为）", () => {
+    expect(splitNumbers("送 5 元")).toEqual([
+      { text: "送 ", num: false },
+      { text: "5 元", num: true },
     ]);
   });
 });
