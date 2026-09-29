@@ -138,4 +138,10 @@ describe("无协议绕过封堵（终审遗留 #10）", () => {
     expect(linkRisk("")).toBeNull();
     expect(linkRisk("/docs/x")).toBeNull();
   });
+  it("stripPromoParams：裸 host:port+推广参数 → 剥参并补 https://（任务评审修订：伪协议残余绕过）", () => {
+    expect(stripPromoParams("example.com:8080/promo?userCode=ygtxup80")).toBe("https://example.com:8080/promo");
+  });
+  it("linkRisk：裸 host:port 判缺协议（new URL 把 example.com:8080 误解析为伪协议、hostname 为空，须走 bare 分支）", () => {
+    expect(linkRisk("example.com:8080/sign-up")).toContain("缺少协议前缀");
+  });
 });

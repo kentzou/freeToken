@@ -57,12 +57,16 @@ function parse(url) {
  *  排除 ':'（协议/邮件）、'#'、'/' 开头（站内相对）、空白。 */
 function parseLoose(url) {
   const p = parse(url);
-  if (p) return { p, bare: false };
+  // hostname 为空说明是「伪协议」误解析："example.com:8080/x" 会被 new URL 解析成
+  // protocol="example.com:"、hostname=""——裸 host:port 必须也走 bare 分支，否则
+  // 跳不出去又无协议的链接穿过终审（任务评审修订；javascript:/mailto: 等真畸形
+  // 走末尾兜底，维持原放行语义）。
+  if (p && p.hostname) return { p, bare: false };
   if (typeof url === "string" && /^[^:/?#\s]+\.[a-z]{2,}/i.test(url)) {
     const q = parse("https://" + url);
     if (q) return { p: q, bare: true };
   }
-  return null;
+  return p ? { p, bare: false } : null;
 }
 
 /** 剥掉推广/追踪参数（含 hash 内参数）；保留其余业务参数；解析失败返回原值 */
