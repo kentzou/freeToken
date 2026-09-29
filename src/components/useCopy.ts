@@ -10,15 +10,17 @@ export function useCopy() {
   const clear = useCallback(() => setMessage(null), []);
 
   const copy = useCallback(async (text: string) => {
+    let ok = true;
     try {
       await navigator.clipboard.writeText(text);
       setMessage("已复制");
     } catch {
+      ok = false;
       setMessage("复制失败，请手动选择文本");
     }
     if (timer.current) window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setMessage(null), 1600);
-    return true;
+    return ok;
   }, []);
 
   useEffect(() => () => { if (timer.current) window.clearTimeout(timer.current); }, []);
