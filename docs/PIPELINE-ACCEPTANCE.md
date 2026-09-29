@@ -153,7 +153,10 @@ Q4 下 donots 是本地资产、逐字节直通，所以这 5 条仍留在观望
 删除 2 个失效 link 覆盖：`GLM-5.3-Flash（Ox-Alpha）`、`秒哒（百度）`（覆盖对象已按 Q2 下架）。
 **保留** `豆包拉新项目`/`小米 MiMo（Xiaomi）` 两个 `hide`（Q8 明示的 sponsored 挡架之外第二道防线）。
 代价是每次 seed/爬取打印一行 `[site-config] 未找到卡片： 豆包拉新项目`——**属预期**，
-不得为消除告警而删键（`grep -c "未找到卡片"` 在 seed 输出里恒为 1）。prune 行为中立：
+不得为消除告警而删键（计数限定的实测口径：`npm run seed` 输出里 `grep -c "未找到卡片"` 恒为 **1**；
+`npm run seed:repro` 是 **3**，因为它在一次命令里把 `buildSeed` 调了三遍（确定性双跑 + 幂等回喂，见
+`scripts/seed-repro.mjs` 的 `a`/`b`/`c`），每遍各打印一行；行数随 `buildSeed` 调用次数线性增长，
+不属门禁阈值、只用于确认「没冒出第三种缺失卡」）。prune 行为中立：
 `seed:repro` 的 `cards=ba754253ebaa` 与 prune **之前**实测同值，两件事互为交叉验证。
 
 ### 10.5 观察项（留档不修，附理由）
