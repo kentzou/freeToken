@@ -69,7 +69,7 @@ describe("文案纯函数（对齐镜像行为）", () => {
   });
   it("stars 五颗、splitNumbers 把「数字+单位」整段切出（供荧光笔渲染）", () => {
     expect(stars(4)).toBe("★★★★☆");
-    /* 与镜像 app.js:579 相比有两处有意归一化：一是删去冗余的 \s*token 分支（/i 下已被 Tokens? 分支覆盖，无行为差异）；二是 元 前补 \s*（本站让「数字+空格+元」整体高亮，镜像只高亮数字部分；实测 data/tokens.json 有 10 处「数字 元」文本受影响）。其余逐字符一致：单位（积分/次/Tokens…）随数字一起高亮 */
+    /* 与镜像 app.js:579 相比只有两处有意归一化：① 删冗余 \s*token 分支（/i 下已被 Tokens? 覆盖，无行为差异）；② 元/积分/RPM/TPM 前补 \s*，仅影响「量词+空格+单位」形态（如 "2万 元"：镜像只高亮 "2万"，本站整段 "2万 元"）；普通「数字 空格 单位」（如 "5 元"、"100 RPM"）两版都整段高亮，因数字后的 \s* 已吸收空格。其余逐字符一致：单位（积分/次/Tokens…）随数字一起高亮 */
     expect(splitNumbers("送 2000 积分")).toEqual([
       { text: "送 ", num: false },
       { text: "2000 积分", num: true },
@@ -81,10 +81,16 @@ describe("文案纯函数（对齐镜像行为）", () => {
       { text: "张生图", num: false },
     ]);
   });
-  it("splitNumbers：「数字+空格+元」整段高亮（有意偏离镜像，钉住本站行为）", () => {
+  it("splitNumbers：普通「数字 元」整段高亮（与镜像一致，钉住行为）", () => {
     expect(splitNumbers("送 5 元")).toEqual([
       { text: "送 ", num: false },
       { text: "5 元", num: true },
+    ]);
+  });
+  it("splitNumbers：「量词+空格+元」整段高亮（与镜像行为差异的区分用例，镜像只切出「2万」）", () => {
+    expect(splitNumbers("领 2万 元")).toEqual([
+      { text: "领 ", num: false },
+      { text: "2万 元", num: true },
     ]);
   });
 });
