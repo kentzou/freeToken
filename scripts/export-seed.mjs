@@ -13,7 +13,7 @@ const OUT = path.resolve(process.cwd(), "data");
 const CFG = path.resolve(process.cwd(), "config", "site-config.json");
 
 /** 稳定序列化：键序固定 + 2 空格缩进，保证同输入同产物 */
-function dump(value) {
+export function dump(value) {
   return JSON.stringify(value, null, 2) + "\n";
 }
 
