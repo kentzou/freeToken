@@ -100,8 +100,8 @@ Task 6 推演记录 ①–④（原文照录，① 已带上述防递归注记�
   > 因此上文「运维口径见 ONLINE-STEPS #6：须小写且行首无空格」**已作废**，现行运维口径以 ONLINE-STEPS §6 为准
   > （含八形态实测名单与「缩进/围栏代码块内指令照样生效」的意外执行面警示）。
   > (D) 已统一为 `import { keyOf } from "../crawler/diff.mjs"`（`review-apply.mjs:34` 走 `.map(keyOf)`），
-  > 生产码里 `${e.kind}:${e.name}` 仅剩 `crawler/diff.mjs:5` 一处定义；另一处命中是
-  > `tests/approve.test.ts:59` 构造期望值的夹具写法，非第二套实现。
+  > 全部代码文件（`*.mjs`/`*.ts`/`*.tsx`）里 `${e.kind}:${e.name}` 只剩两处命中：`crawler/diff.mjs:5` 是唯一实现，
+  > 另一处是 `tests/approve.test.ts:59` 构造期望值的夹具写法，非第二套实现（文档正文里引用该串不算实现）。
 - 其余留档 Minor（各任务评审累积，经终审复核非阻断）：T1 裸 IPv4 走 bare 分支（内部地址风险由审批面承担，缺补测）、models 缺失降级路径可读性、validate.test 第 3 例断言宽度；T2 `JSON.stringify` 键序敏感（后果仅多余 modified 进 pending 更保守）、byName 重名 last-wins（上游名唯一）；T3 非 GET「重试 0 次」措辞、`e.message` 非 Error 退化（brief 逐字）；T4 rules 旧表入库后不复验（brief 原样）；T5 `after=null` 静默过校验、未知 action 按 reject 完结（保守终态）；T6 `crawl.yml` 无 concurrency、`deploy cancel-in-progress:true`（计划逐字）。驳回项：regionByName 数组绕过（`b1ef0f5` 已闭合）、fixture 隔离、notify「逐条 linkRisk」措辞（终审实证 validateCards 硬失败在前、checkLinks 属可达性另一维度）、T7 五组 Minor 观察（评审已实证非问题）。
 
 ## 10. 计划 2.5 迁移记录：上游 `app.js` → `data.json`（2026-09-29）
@@ -197,23 +197,26 @@ cd D:\Documents\code\freeTokenInfo\token-fbi-next ; grep -rlE "lmfh2022|ygtxup80
 ### 10.7 数据安全闸的两种力度：全量归零硬停 vs 部分掉卡出声（复审 I-A）
 
 `npm run seed` 绕过 `syncOnce` 直写 `seed.cards`，所以「上游类目字段半数漂移」（例如 16 条 `tool` 里有 14 条
-被改名成 `tools`）不会被删除审核队列接住——它会安静地把 32 张卡覆写成 **19** 张（内存实测 `buildSeed`，不写盘：
-改名 14/16 条 → 19 张、降幅 41%；改名 16/16 条 → 18 张、降幅 44%），而那 14 张卡上的手写内容
+被改名成 `tools`）不会被删除审核队列接住——它会安静地把 32 张卡覆写成 **19** 张。内存实测 `buildSeed`（不写盘）：
+改名 14/16 条 → 19 张（消失 13 张、降幅 41%）；改名 16/16 条 → 18 张（消失 14 张、降幅 44%），而消失那些卡上的手写内容
 （`rating`/`effect`/`signup`/`pin`/`badge`/`tone`/`extraAction`/`v2`）**不可由管线重建，误覆写只能 git 回溯**。
 据此定两种力度：
 
 - **全量归零 → 硬停**：`buildSeed` 的下限闸抛错（`上游 items 非空但适配层收取数为 0…（决策 Q1 基底保护）`），
   实测 `exit=1` 且 `data/tokens.json` 仍是 32 张——抛点在 `writeFileSync` 之前，不会留下半成品。
-  出处＝Task 2 复审波沙箱实证 `.superpowers/sdd/p25-verify-dropwarn.mjs`（`spawnSync` 三场景：正常 0 告警 /
-  半量＝把 fixture 里全部 16 条 `tool` 改成 `tools`（该类目占 items 近半，场景名由此而来），exit 0 且 stderr 出 44%
-  告警且写出 18 张 / 归零 exit 1 且 tokens 仍 32）。沙箱只动 `.superpowers/sdd/tmp-seedwarn/` 里的 data+config+fixture
-  隔离副本（`scripts/export-seed.mjs:15-19` 全部按 `process.cwd()` 解析路径），仓库 `data/*.json` 三哈希跑前后逐字节不变，
-  故这段可复现：`node .superpowers/sdd/p25-verify-dropwarn.mjs`（2026-09-29 主控复跑，三场景数字与上文一致；
-  脚本属 gitignored 主控留档，不在仓库内，仓库外的读者请按上文三场景自行构造 fixture）。
 - **超两成降幅 → 只出声**：CLI 落盘前调 `dropWarning(base, next, 0.2)`，`console.warn`
   `[seed] 卡片数 32→18（降幅 44%）：若非有意下架，请勿提交——观点字段不可由管线重建，误覆写只能 git 回溯`，
   实测 `exit=0` 且照常写出 18 张。**故意不做硬拦**：决策 Q2 的正常跟随下架必须能跑过去，拦下来反而挡住合法发布。
   阈值语义由 `seed.test.ts`「落盘前降幅告警」例钉住（44%/22% 出声，19%/持平/新增/空基底不出声）。
+
+三场景出证（**两条 bullet 共用**，不是单指「硬停」那条）＝沙箱 `.superpowers/sdd/p25-verify-dropwarn.mjs`（`spawnSync` 起子进程跑 CLI）：
+① 正常＝原样 fixture，`exit=0`、32 张、告警 0 行；② 半量漂移＝把 fixture 里全部 16 条 `tool` 改成 `tools`
+（该类目占 items 近半，场景名由此而来），`exit=0`、写出 18 张、stderr 出 44% 告警——证明「只出声、不硬拦」；
+③ 全量归零＝所有 items 的 `category` 都改成 `tools`，`exit=1`、`tokens.json` 仍是 32 张——证明抛点在落盘之前。
+沙箱只动 `.superpowers/sdd/tmp-seedwarn/` 里的 data+config+fixture 隔离副本（`scripts/export-seed.mjs:15-19` 三个路径
+全按 `process.cwd()` 解析），仓库 `data/*.json` 三哈希跑前后逐字节不变，所以这组数字**可现场复现**：
+`node .superpowers/sdd/p25-verify-dropwarn.mjs`（2026-09-30 01:00 主控复跑，三场景与 ①②③ 逐一对上；脚本属
+gitignored 主控留档、不在仓库内，仓库外的读者请按 ①②③ 自行构造 fixture 复现）。
 
 审查 `data/tokens.json` 变更时的判据：**先看 seed 输出里有没有这行告警**。有告警而提交仍下架了一批卡，
 必须在提交信息或 Issue 里写明是哪几张、为什么；没有告警的删除才可能是静默漂移。

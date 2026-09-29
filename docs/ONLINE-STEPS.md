@@ -21,8 +21,8 @@ GitHub 防递归成文行为：默认 GITHUB_TOKEN 的 push **不会**触发 dep
 
 ## 5. 首跑爬取
 Actions → crawl → Run workflow。健康空跑应显示「无实质数据变化，跳过提交」（上游镜像没动就该这样）。`meta.lastSyncedSha` 变真后重点复验：首页 stale 黄条（Task 7 已挂载化）与详情页「最后核验」文案。
-注（计划 2.5 已落地）：上游 `app.js` 已删除、改由根目录 `data.json` 承载，`UPSTREAM_RAW` 与提取层已同步切换（详见 PIPELINE-ACCEPTANCE §10）。本步现在可以执行：Actions → crawl → Run workflow，预期首跑结果取决于 `data/meta.json` 的 `lastSyncedSha`——本地种子阶段它是 `null`，所以首跑**必然**判为「有变化」并走完整链路（拉源 → 分层合并 → 三分类 → 写产出文件 → 提交）。
-其中「开 Issue」与「提交数据」两步是**有条件**的，别把首跑当成一定会开单：通知 Issue 只在 `diff.added` 非空时开（`crawler/run.mjs:161`）、
+注（计划 2.5 已落地）：上游 `app.js` 已删除、改由根目录 `data.json` 承载，`UPSTREAM_RAW` 与提取层已同步切换（详见 PIPELINE-ACCEPTANCE §10）。本步现在可以执行：Actions → crawl → Run workflow，预期首跑结果取决于 `data/meta.json` 的 `lastSyncedSha`——本地种子阶段它是 `null`，所以首跑**必然**判为「有变化」并走完整链路（拉源 → 分层合并 → 三分类 → 写产出文件）。
+但其后的「开 Issue」与「提交数据」两步是**有条件**的，别把首跑当成一定会开单：通知 Issue 只在 `diff.added` 非空时开（`crawler/run.mjs:161`）、
 审核 Issue 只在 `pending.changes` 非空且与仓库现有 pending 不同键集合时开（`crawler/run.mjs:171`），
 数据提交还要过 `git diff --cached --quiet` 守卫（`.github/workflows/crawl.yml:37`，无实质变更打印「跳过提交」）。
 健康信号：日志出现 `crawl 完成：新增 N · 修改 M · 删除 K · 规则 R · pending P · sha xxxxxxxxxx`，且 `data/donots.json`、`data/rules.json` 不在提交差异里（Q4/Q5：两表本地权威，上游不再承载）。若出现 `data.json 解析失败` 或 `items 缺失或为空`，是上游形态变了（fail-stop，未写坏任何数据），按 §10 口径重取快照。
