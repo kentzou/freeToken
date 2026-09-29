@@ -32,9 +32,12 @@ export default function SectionCatalog({
   const searching = Boolean(filter.query.trim()) || filter.type !== "all";
   const limit = open || searching ? list.length : 4;
   const shown = list.slice(0, limit);
+  /* 搜索无结果时空态必须可见（spec §5.4 附清除筛选）：仅大模型区块承载，
+   * 另一区块照常隐藏，保证全局恰好一处 EmptyState、不重复渲染 */
+  const hideSection = searching && list.length === 0 && id !== "models";
 
   return (
-    <section id={id} className="section" aria-labelledby={`${id}-title`} hidden={searching && list.length === 0}>
+    <section id={id} className="section" aria-labelledby={`${id}-title`} hidden={hideSection}>
       <h2 id={`${id}-title`} className="section-title">
         {title}
         <span className="section-count">{list.length} 个</span>
