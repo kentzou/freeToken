@@ -21,6 +21,16 @@
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
 }
+:root {
+  /* 3% 噪点：SVG feTurbulence 内联，避免额外请求 */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+  --h1-size: clamp(34px, 5vw, 52px);
+  --h2-size: 21px;
+  --card-title-size: 17px;
+  --meta-size: 12px;
+  --radius: 10px;
+  --tap: 44px;
+}
 [data-theme="dark"] {
   --bg: #101815;
   --surface: #151f1a;
@@ -44,7 +54,7 @@
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--bg) var(--grain);
   color: var(--ink-1);
   font-family: var(--font-sans);
   font-size: 16px;
