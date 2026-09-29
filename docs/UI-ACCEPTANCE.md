@@ -80,10 +80,10 @@
 1. 合作情报区块当前为空态：唯一「项目」类型卡（豆包拉新项目）是原作者推广位，被本站配置 `hide:true`，SSR 实测「合作情报 0 条 · 当前没有合作内容」——属正确行为，非缺陷。
 2. 海报能力有代码、无数据触发（种子 0 张 poster 卡），端到端未实测。
 3. `wechatId` 等变现字段为空占位，复制微信号链路端到端未实测（§4）。
-4. axe/Lighthouse 门禁属计划 2 CI。
-5. 未建远端仓库，`npm run dev` 仅本机可访问；GitHub Pages 部署属计划 2。
+4. axe/Lighthouse 门禁属计划 2 CI。（计划 2 闭环：deploy.yml 三门禁 LCP≤2500ms/CLS≤0.1/A11y≥0.95 配置与推演见 PIPELINE-ACCEPTANCE §5，线上首跑见 ONLINE-STEPS #7）
+5. 未建远端仓库，`npm run dev` 仅本机可访问；GitHub Pages 部署属计划 2。（计划 2 闭环：步骤清单见 docs/ONLINE-STEPS.md #1–#3、#7）
 6. pageHref 尾斜杠 301/308 语义差：dev 下无斜杠链接 308→带斜杠（本任务 curl 实测），GitHub Pages 为 301，功能无损但状态码不同（Task 10 遗留，未在此修）。
-7. stale 黄条判据含 `Date.now()`，存在 hydration 窗口期不一致的理论风险；当前种子 `lastSyncedSha=null` 黄条不渲染，计划 2 写入真实 SHA 后需复验。
+7. stale 黄条判据含 `Date.now()`，存在 hydration 窗口期不一致的理论风险。（计划 2 Task 7 闭环：改挂载后 useState+useEffect 计算，SSR 恒不渲染，风险消解；真实 SHA 上线后的展示复验列入 ONLINE-STEPS #5）
 8. 搜索无结果时 EmptyState 由 `#models` 区块承载（`#tools` 整体 hidden），e1f7fed 裁定的方案 A，行为有静态推演、浏览器逐场景复验未做。
 
 ## 7. 复现命令
