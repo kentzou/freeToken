@@ -21,6 +21,9 @@ describe("adapt：data.json item → 本站卡片（决策 Q1/Q2/Q6/Q7/Q9）", (
     expect(adaptItem({ name: "怪卡", category: "toString" })).toBeNull();
     expect(adaptItem({ name: "怪卡", category: "hasOwnProperty" })).toBeNull();
     expect(adaptItem({ name: "constructor", category: "tool" })?.name).toBe("constructor");
+    // 非字符串类目：键强制（["tool"] → "tool"）会撞表，同属上游形态未校验，一并挡在门外
+    expect(adaptItem({ name: "数组类目卡", category: ["tool"] } as any)).toBeNull();
+    expect(adaptItem({ name: "对象类目卡", category: { tool: 1 } } as any)).toBeNull();
   });
 
   it("② sponsored===true 一律挡架（决策 Q6：广告位不进报纸），真实 fixture 恰好 3 条", () => {

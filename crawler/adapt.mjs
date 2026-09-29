@@ -22,6 +22,7 @@ export const FACT_FIELDS = ["name", "type", "modality", "quota", "link", "limite
 export function adaptItem(item) {
   if (!item || typeof item.name !== "string" || !item.name.trim()) return null;
   if (item.sponsored === true) return null; // 决策 Q6：sponsored 与 ad_* 系广告位不进报纸
+  if (typeof item.category !== "string") return null; // 非字符串类目（数组/对象/null）键强制后可能撞表，一律不收
   const type = Object.hasOwn(CATEGORY_TO_TYPE, item.category) ? CATEGORY_TO_TYPE[item.category] : undefined;
   if (!type) return null; // 决策 Q7：只认 tool/model，event/未知类目丢弃
   return {
