@@ -21,6 +21,7 @@ GitHub 防递归成文行为：默认 GITHUB_TOKEN 的 push **不会**触发 dep
 
 ## 5. 首跑爬取
 Actions → crawl → Run workflow。健康空跑应显示「无实质数据变化，跳过提交」（上游镜像没动就该这样）。`meta.lastSyncedSha` 变真后重点复验：首页 stale 黄条（Task 7 已挂载化）与详情页「最后核验」文案。
+注（Task 8 评审修订回写）：上游已删除 app.js 改用 data.json（实证见 PIPELINE-ACCEPTANCE §3 形态③），计划 2.5 数据源适配落地前本步首次 Run 必然 404 fail-stop（`crawl 中止…HTTP 404` 非 0 退出，安全失败不写坏数据，非本地代码 bug）；适配合入后再执行本步。
 
 ## 6. 审核闭环演练
 真实变更出现时：pending/changes.json 入库 + review Issue 自动开 → 评论 `/approve card:名称`、`/reject watch:名称` 或 `/approve all` → 观察合入提交、回执评论与 Issue 自动关闭；校验不过会整体失败并留痕（宁可不合不半合）。

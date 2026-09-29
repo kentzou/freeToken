@@ -12,7 +12,7 @@
 | build | 28 页 | `✓ Generating static pages (28/28)`，EXIT=0 |
 | test:out | 5/5 | `tests 5 / pass 5 / fail 0`，EXIT=0 |
 | seed:repro | fixture 7f8c5cb80c9138c4 + 双跑三哈希一致 | `seed 复现 OK：cards=f9ce0bf225e3 donots=88f99a96da35 rules=7888f2ec168b`，EXIT=0（sha16 校验通过：脚本未打印「fixture 快照漂移」即命中 `7f8c5cb80c9138c4`，见 seed-repro.mjs 第 15–18 行守卫） |
-| 泄漏红线（扫描面 data/out 产物） | 零命中 EXIT=1 | 命令 `grep -rlE "lmfh2022\|ygtxup80\|CQLBPC\|AATGOEHF\|userCode=\|invite_code=\|poster-doubao" data out` → 无任何文件命中，EXIT=1（表内竖线为 markdown 表格转义，命令原文即普通 `\|` 分隔的正则交替） |
+| 泄漏红线（扫描面 data/out 产物） | 零命中 EXIT=1 | 命令 `grep -rlE "lmfh2022\|ygtxup80\|CQLBPC\|AATGOEHF\|userCode=\|invite_code=\|poster-doubao" data out` → 无任何文件命中，EXIT=1（评审修订：表内 `\|` 是 markdown 表格单元格对竖线的强制转义，命令原文为普通 `|` 分隔的正则交替——grep -E 中 `\|` 反而是字面竖线，照抄转义版会成恒零命中的假红线，复跑须用 plain `|`） |
 
 ## 2. 三分类与两队列分流（spec §7.6）
 
@@ -53,7 +53,7 @@ GET 重试 3 次指数退避 [1000,4000,10000]、POST/PATCH 不重试（github.t
 
 触发链：crawl.yml — schedule（`0 */6 * * *` UTC）/workflow_dispatch → crawl job（run.mjs → git 提交 data/pending）；issue_comment（label 含 review + 正文以 /approve|/reject 开头）→ review job（review-apply.mjs → applyDecisions → 提交）。deploy.yml — push paths 过滤 → vitest+tsc+seed:repro+build+test:out → Lighthouse 三门禁（LCP≤2500ms、CLS≤0.1、A11y≥0.95，preset desktop）→ NEXT_PUBLIC_BASE_PATH/SITE_URL 重建 → deploy-pages。
 **已知限制（GitHub 成文行为，本机不可实证）**：Actions 用默认 GITHUB_TOKEN 产生的 commit 不触发后续 workflow（防递归），故 crawl/review job 的 `git push` 默认点不着 deploy.yml——Task 6 推演 ① 以此为前提修正。解法二选一见 ONLINE-STEPS #4（推荐 PAT secret）。
-Task 6 推演记录 ①–④ 逐条复核（原文照录，① 已带上述防递归注记；四条均经 Task 6 评审 Approved，未执行）：
+Task 6 推演记录 ①–④（原文照录，① 已带上述防递归注记；四条均属 Task 6 那次整体评审 Approved 的交付物，未对每条单独立复核记录，GitHub 侧一律未执行）：
 ① crawl job push data → 触发 deploy.yml paths 过滤 → 发布，闭环成立——**前提是 push 带 PAT**；GitHub 成文防递归行为：默认 GITHUB_TOKEN 产生的 commit 不触发任何后续 workflow，届时 ① 降级为「人工 push / deploy 手动 dispatch 才发布」。解法与取舍在 Task 8 的 ONLINE-STEPS #4（推荐方案 A：TFN_PUSH_TOKEN）。
 ② review job 只在 label 含 review 的 Issue 上响应，`secrets.GITHUB_TOKEN` 在自己的 Issues/repo 有写权限（permissions 已声明）。
 ③ crawl job 自身的 commit push 带 `[bot]` author——deploy.yml 无作者过滤，会发布（预期行为）；crawl.yml 的 push 事件不会误触发 crawl（schedule/dispatch only，push 不在 on 列表）。
