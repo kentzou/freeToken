@@ -428,3 +428,26 @@ mark.hl { border-radius: 2px; }
 .grid-span { grid-column: 1 / -1; }
 .partner-list { display: grid; gap: 12px; }
 [data-theme="dark"] .chip.is-active { color: #101815; }
+
+.prose { max-width: 70ch; margin: 26px 0; }
+.prose h1 { font-family: var(--font-serif); font-size: var(--h1-size); margin: 0 0 14px; }
+.prose p { margin: 0 0 14px; color: var(--ink-2); }
+.prose code { font-family: var(--font-mono); font-size: 13px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+.model-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; }
+.model-list li { padding: 4px 12px; border: 1px solid var(--brand); border-radius: 999px; font-size: 14px; }
+.detail-title { font-family: var(--font-serif); font-size: var(--h2-size); margin: 26px 0 10px; }
+.fact-table { width: 100%; border-collapse: collapse; }
+.fact-table th,
+.fact-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 14px; }
+.fact-table th { width: 108px; color: var(--ink-3); font-weight: 600; }
+.fact-table td { font-family: var(--font-mono); color: var(--ink-1); }
+.detail-action { display: flex; gap: 10px; margin: 18px 0 8px; }
+.detail-note { font-size: 13px; color: var(--ink-3); }
+/* SiteHeaderLite（原型 shell-top 同构）与详情页 h1（2026-09-29 设计修订追加） */
+.shell-top { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 12px max(24px, calc((100% - 1040px) / 2)); border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(14px); }
+.shell-brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; font-weight: 800; font-size: 14px; color: var(--ink-1); }
+.shell-avatar { width: 26px; height: 26px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: var(--brand-soft); color: var(--brand-deep); font-weight: 900; font-size: 11px; }
+.shell-top nav { display: flex; gap: 18px; font-size: 12.5px; }
+.shell-top nav a { text-decoration: none; color: var(--ink-2); }
+.shell-top nav a:hover { color: var(--brand-deep); }
+.detail-name { font-family: var(--font-serif); font-size: clamp(24px, 4vw, 34px); margin: 18px 0 4px; color: var(--ink-1); }
