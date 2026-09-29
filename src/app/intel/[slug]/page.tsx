@@ -18,6 +18,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title: `${card.name} 免费额度详情 · Token 情报局`,
     description: card.quota ? card.quota.slice(0, 120) : `${card.name} 的免费额度与领取方式`,
+    alternates: { canonical: pageHref(`/intel/${params.slug}`) },
   };
 }
 
@@ -54,16 +55,17 @@ export default function IntelPage({ params }: { params: { slug: string } }) {
             ))}
           </tbody>
         </table>
-        <p className="detail-action">
+        <div className="detail-acts">
           <a className="btn-primary" href={ctaHref(card)} target="_blank" rel={ctaRel(card)}>
             前往平台领取
           </a>
           <a className="btn-ghost" href={pageHref("/")}>
             返回目录
           </a>
-        </p>
+        </div>
         <p className="detail-note">
-          本页内容摘自上游公开镜像并经清洗，最后核验于 {card.updated}；站点数据最近更新 {meta.lastSyncedAt.slice(0, 10)}。
+          本页内容摘自上游公开镜像并经推广参数清洗，最后核验于 {card.updated}；站点数据最近更新{" "}
+          {meta.lastSyncedAt.slice(0, 10)}。所有「前往平台领取」均直达平台官方页面，不附加任何推广参数。
         </p>
       </main>
       <SiteFooter />

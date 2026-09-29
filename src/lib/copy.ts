@@ -102,7 +102,9 @@ export function stars(rating: number = 0): string {
   return "★".repeat(n) + "☆".repeat(5 - n);
 }
 
-/** 把数字片段切出来，交给 <Highlight>/<b class="num"> 渲染，替代镜像的 innerHTML 注入 */
+/** 镜像 app.js:577 seg() 的同位移植，行为与镜像逐字符一致（copy.test 钉死）。
+ *  dormant：镜像自身无消费点、原型零引用（grep '"num"' 原型 = 0），本站不接 UI；
+ *  将来若给额度数字加高亮，唯一实现就是它 + 荧光笔令牌，禁止再写第二条数字正则。 */
 export function splitNumbers(text: string): { text: string; num: boolean }[] {
   const out: { text: string; num: boolean }[] = [];
   const re = /(\d[.\d]*\s*(?:万|亿|千万|百万)?(?:\s*Tokens?|\s*次|\s*元|\s*积分|\s*RPM|\s*TPM)?)/gi;

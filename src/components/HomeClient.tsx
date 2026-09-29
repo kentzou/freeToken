@@ -40,8 +40,13 @@ export default function HomeClient({
   /* 边界内还原 RegExp（与 loadCatalog 走同一纯函数，种子数据为唯一事实源） */
   const rules = useMemo(() => compiledRules(compiled), [compiled]);
 
-  /* 数据超过 24h 未同步：顶部琥珀黄条提示版本，内容照常展示（spec §5.4 绝不清空） */
-  const stale = Boolean(meta.lastSyncedSha) && Date.now() - Date.parse(meta.lastSyncedAt) > 24 * 3600 * 1000;
+  /* 数据超过 24h 未同步：顶部琥珀黄条，内容照常（spec §5.4）。Date.now() 只在挂载后算：
+     SSR 与客户端首帧同判 stale=false，杜绝 hydration 不一致（终审遗留 #9，
+     真实 lastSyncedSha 上线后本逻辑才真正参与渲染） */
+  const [stale, setStale] = useState(false);
+  useEffect(() => {
+    setStale(Boolean(meta.lastSyncedSha) && Date.now() - Date.parse(meta.lastSyncedAt) > 24 * 3600 * 1000);
+  }, [meta]);
 
   /* ⌘K 聚焦搜索框 */
   useEffect(() => {

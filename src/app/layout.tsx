@@ -6,9 +6,19 @@ import "@fontsource/jetbrains-mono/latin-400.css";
 import "@fontsource/jetbrains-mono/latin-700.css";
 import "./globals.css";
 
+/* 线上 Pages 地址由 NEXT_PUBLIC_SITE_URL 注入（deploy.yml 已接）；本地构建为空 → 不出 absolute URL */
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "";
+
 export const metadata: Metadata = {
+  metadataBase: SITE_URL ? new URL(SITE_URL) : undefined,
   title: "Token 情报局｜免费 AI 额度情报",
   description: "核验过的免费 AI 额度、模型与编程工具情报，每 6 小时同步一次。",
+  openGraph: {
+    type: "website",
+    siteName: "Token 情报局",
+    title: "Token 情报局｜免费 AI 额度情报",
+    description: "核验过的免费 AI 额度、模型与编程工具情报，每 6 小时同步一次。",
+  },
 };
 
 /* 主题内联脚本：首屏绘制前定 data-theme，避免明暗闪白 */
