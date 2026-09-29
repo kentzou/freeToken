@@ -119,3 +119,23 @@ describe("applySiteConfig（与镜像版语义一致）", () => {
     expect(out.cards).not.toBe(cards);
   });
 });
+
+describe("无协议绕过封堵（终审遗留 #10）", () => {
+  it("stripPromoParams：裸域名+推广参数 → 剥参并补 https:// 归一", () => {
+    expect(stripPromoParams("example.com/promo?userCode=ygtxup80&tab=1")).toBe("https://example.com/promo?tab=1");
+  });
+  it("stripPromoParams：裸域名无推广参数 → 原样返回（归一化零噪音纪律不变）", () => {
+    expect(stripPromoParams("example.com/x")).toBe("example.com/x");
+  });
+  it("linkRisk：裸域名推广短链按域名命中（先于缺协议判定，理由更强）", () => {
+    expect(linkRisk("s.mi.cn/NNI4kZp9")).toBe("推广短链域名 s.mi.cn");
+  });
+  it("linkRisk：裸域名一律判缺协议（宁可不收录也不保留跳不出去的相对链接）", () => {
+    expect(linkRisk("token.taiha.cn/sign-up")).toContain("缺少协议前缀");
+  });
+  it("linkRisk：'#' / 空串 / 站内相对路径仍非外链，放行不变", () => {
+    expect(linkRisk("#")).toBeNull();
+    expect(linkRisk("")).toBeNull();
+    expect(linkRisk("/docs/x")).toBeNull();
+  });
+});

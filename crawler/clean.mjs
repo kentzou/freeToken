@@ -52,13 +52,27 @@ function parse(url) {
   }
 }
 
+/** 无协议裸域名形态（如 "example.com/x?userCode=1"）：new URL 必失败，旧实现据此绕过全部检测
+ *  （终审遗留 #10）。补 https:// 再解析；bare=true 表示原串缺协议，终审单列风险。
+ *  排除 ':'（协议/邮件）、'#'、'/' 开头（站内相对）、空白。 */
+function parseLoose(url) {
+  const p = parse(url);
+  if (p) return { p, bare: false };
+  if (typeof url === "string" && /^[^:/?#\s]+\.[a-z]{2,}/i.test(url)) {
+    const q = parse("https://" + url);
+    if (q) return { p: q, bare: true };
+  }
+  return null;
+}
+
 /** 剥掉推广/追踪参数（含 hash 内参数）；保留其余业务参数；解析失败返回原值 */
 export function stripPromoParams(url) {
   if (typeof url !== "string" || !url) return url;
-  const parsed = parse(url);
-  if (!parsed) return url;
+  const loose = parseLoose(url);
+  if (!loose) return url;
+  const parsed = loose.p;
   const cut = parsed.hash.indexOf("?");
-  if (!parsed.search && cut < 0) return url; // 无可洗参数：原样返回，避免 URL 归一化凭空加尾斜杠
+  if (!parsed.search && cut < 0) return url; // 无可洗参数：原样返回，避免归一化凭空加尾斜杠/补协议
   const search = pruneQuery(parsed.search.replace(/^\?/, ""));
   parsed.search = search ? "?" + search : "";
   if (cut > -1) {
@@ -71,8 +85,9 @@ export function stripPromoParams(url) {
 /** 清洗后残余风险检测；返回 null 表示干净，否则返回可读原因（seed 与阶段 D 爬虫共用） */
 export function linkRisk(url) {
   if (typeof url !== "string" || !url) return null;
-  const parsed = parse(url);
-  if (!parsed) return null;
+  const loose = parseLoose(url);
+  if (!loose) return null; // "#"、相对路径：站内形态，放行
+  const parsed = loose.p;
   const hits = [];
   const collect = (qs) =>
     new URLSearchParams(qs).forEach((_v, key) => {
@@ -83,6 +98,7 @@ export function linkRisk(url) {
   if (cut > -1) collect(parsed.hash.slice(cut + 1));
   if (hits.length) return `残留引流参数 ${hits.join(", ")}`;
   if (SHORT_LINK_HOSTS.includes(parsed.hostname)) return `推广短链域名 ${parsed.hostname}`;
+  if (loose.bare) return "缺少协议前缀（裸域名），必须写成 https:// 开头的完整地址";
   return null;
 }
 
