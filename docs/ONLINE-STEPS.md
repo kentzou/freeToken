@@ -25,6 +25,7 @@ Actions → crawl → Run workflow。健康空跑应显示「无实质数据变�
 
 ## 6. 审核闭环演练
 真实变更出现时：pending/changes.json 入库 + review Issue 自动开 → 评论 `/approve card:名称`、`/reject watch:名称` 或 `/approve all` → 观察合入提交、回执评论与 Issue 自动关闭；校验不过会整体失败并留痕（宁可不合不半合）。
+注（终审 (C) 运维口径）：审批评论须**小写** `/approve`、`/reject` 且**行首无空格**——workflow 触发条件 `crawl.yml:45` 用大小写敏感的 `startsWith`，比解析器 `parseCommands`（带 `/i`、容忍前导空白）更严；写成 `/APPROVE` 或 ` /approve` 不会启动审批 job（安全失败，不会误合入，但你的审批不生效需重发）。代码级放宽登记在计划 2.5。
 
 ## 7. Lighthouse 与 Pages
 deploy.yml 首次全绿即已发布（Settings → Pages 显示 live URL）。三门禁读数在 lighthouse job 摘要的 temporary-public-storage 链接；连续不达标先修码，不动门槛值。

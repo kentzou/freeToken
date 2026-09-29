@@ -67,3 +67,30 @@ Task 6 推演记录 ①–④（原文照录，① 已带上述防递归注记�
 ## 7. 诚实缺口清单
 
 远端仓库、PAT、Pages、cron 首跑、真实 Issue 开/审/合、Lighthouse 首跑、真实 lastSyncedSha 下的 stale 与期号展示——均属线上步骤；代码与文档接缝已备好，无一遗漏地登记在 ONLINE-STEPS。
+
+## 8. 计划 1 终审 12 项遗留 → 落地实证回填（whole-branch 终审 2026-09-29）
+
+| # | 遗留 | 证据（文件:行 / 用例 / 提交） | 判定 |
+|---|---|---|---|
+| 1 | 详情页版式 `.intel-detail`/`.fact-table` 对齐原型 | `src/styles/app.css:446-453`（原型 L241-249 逐值）；`7ef8265` | ✅ |
+| 2 | 隐私页「界面偏好」措辞改单键事实 | `src/app/privacy/page.tsx:10`（仅 `tfb-theme` 一项）；`7ef8265` | ✅ |
+| 3 | seed 可复现 CI 双跑哈希（排除 `meta.lastSyncedAt`） | `scripts/seed-repro.mjs` + `deploy.yml` seed:repro 步；§1 记三哈希 `f9ce0bf225e3/88f99a96da35/7888f2ec168b`；`4ca5f5a` | ✅ |
+| 4 | `compiledRules` 可读键报错 + 写入侧校验 | `src/lib/rules.ts` `logo#i(slug)`；`crawler/validate.mjs:21`（`b1ef0f5` 追加 `Array.isArray(regionByName)` 守卫）；`08073b2`/`b1ef0f5` | ✅ |
+| 5 | OG/canonical env 留白 | `layout.tsx` `metadataBase`←`NEXT_PUBLIC_SITE_URL`；`intel/[slug]` `alternates.canonical`；`deploy.yml` environment 用官方 `page_url`（`85c73fc`） | ✅ |
+| 6 | build-output 红线接 CI | `deploy.yml` `test:out` 步 + `workflows.test` 例 2 断言；§1 记 5/5 EXIT=0；`4ca5f5a` | ✅ |
+| 7 | featured-grid 移动断点 + CTA 全宽 | `app.css:252-258`（899 featured-grid 单列 + 639 `.card-action` 全宽）；`7ef8265` | ✅ |
+| 8 | `splitNumbers` 文档化降级 dormant | `src/lib/copy.ts:105-107` 注记（不接 UI，唯一实现声明）；`7ef8265` | ✅ |
+| 9 | `stale` `Date.now()` 改挂载后计算 | `HomeClient.tsx:44-49` `useState(false)`+`useEffect`（SSR 恒 false，杜绝 hydration）；`7ef8265` | ✅ |
+| 10 | `linkRisk` 强制 https 封堵无协议绕过 | `crawler/clean.mjs` `parseLoose` bare 分支 + 伪协议封堵；`clean.test`「无协议绕过封堵」7 例；`08073b2`+`3befd11`（计划回写 `003bb72`，用例阶梯 85→122） | ✅ |
+| 11 | SectionNav/移动断点对齐原型 899 | `app.css:363-390` 899 折叠块 + 639 dateline 块；`7ef8265` | ✅ |
+| 12 | spec §6 `issueNo` 过期脚注 | 外层文档（`specs/2026-09-28-ui-redesign-crawler-design.md:166`，随外层 bundle 提交）；内层 `grep issueNo docs/PIPELINE-ACCEPTANCE.md`=0，未误归内层 | ⚠️ 外层 |
+
+小结：11 ✅ + 1 ⚠️（外层文档，非内层缺陷）+ 0 ❌。终审门禁亲验：`npm run test` 122/122 EXIT=0、`tsc --noEmit` 0、泄漏 grep（扫描面 data/out）EXIT=1、`git status` 全净、单一实现红线（linkRisk/dump/buildSeed/reviewIssueBody/validate/applyDecisions/keyOf 各一处定义、全仓复用）核过无第二套。
+
+## 9. whole-branch 终审遗留裁决（Ready to merge，必修零条）
+
+终审判定「可合入，必修清单为空」；下列遗留经主控复验后**全部记入本节**（符合完成判据 #4「修或记，无第三条归宿」），均为 fail-safe 或 plan-mandated：
+
+- **(C) 审批评论门大小写/前导空白口径**（真问题·非阻断）：`crawl.yml:45` job `if` 用 `startsWith(comment.body,'/approve')||startsWith(...,'/reject')`——GitHub 表达式大小写敏感且不容前导空白；而 `review-apply.mjs:14` `parseCommands` 带 `/i` 且 `^\s*`。门触发面是解析面的**子集**，故 `/APPROVE …`、` /approve …` 这类评论**不会启动 review job**（Nothing 发生），**不存在越权误合入**——方向安全。运维口径见 ONLINE-STEPS #6：审批评论须小写 `/approve`、`/reject` 且行首无空格。代码级放宽（job `if` 只按 `label=review` 触发、命令取舍全交已单测的 `parseCommands`）登记为计划 2.5 项。
+- **(D) `runReview` 内联 keyOf 同形串**（plan-mandated·非缺陷）：`review-apply.mjs:32` 用 `` `${e.kind}:${e.name}` `` 内联而非 `import { keyOf }`——语义与 `diff.mjs:5` 逐字一致，是同一格式串的复用非第二套逻辑；计划 2.5 统一改为 import。
+- 其余留档 Minor（各任务评审累积，经终审复核非阻断）：T1 裸 IPv4 走 bare 分支（内部地址风险由审批面承担，缺补测）、models 缺失降级路径可读性、validate.test 第 3 例断言宽度；T2 `JSON.stringify` 键序敏感（后果仅多余 modified 进 pending 更保守）、byName 重名 last-wins（上游名唯一）；T3 非 GET「重试 0 次」措辞、`e.message` 非 Error 退化（brief 逐字）；T4 rules 旧表入库后不复验（brief 原样）；T5 `after=null` 静默过校验、未知 action 按 reject 完结（保守终态）；T6 `crawl.yml` 无 concurrency、`deploy cancel-in-progress:true`（计划逐字）。驳回项：regionByName 数组绕过（`b1ef0f5` 已闭合）、fixture 隔离、notify「逐条 linkRisk」措辞（终审实证 validateCards 硬失败在前、checkLinks 属可达性另一维度）、T7 五组 Minor 观察（评审已实证非问题）。
