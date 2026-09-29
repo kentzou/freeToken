@@ -1,0 +1,71 @@
+name: crawl
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch: {}
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  crawl:
+    if: github.event_name != 'issue_comment'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: 跑管线（同一份 crawler/run.mjs；无 token 本地模式在 CI 有 GITHUB_TOKEN）
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: npm run crawl --silent
+      - name: 数据确有变化才提交（push 触发 deploy.yml 的 paths 过滤）
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data pending
+          if git diff --cached --quiet; then
+            echo "无实质数据变化，跳过提交"
+          else
+            git commit -m "chore(crawl): 上游同步（trigger ${{ github.sha }}）"
+            git push
+          fi
+
+  review:
+    if: >-
+      github.event_name == 'issue_comment'
+      && contains(github.event.issue.labels.*.name, 'review')
+      && (startsWith(github.event.comment.body, '/approve') || startsWith(github.event.comment.body, '/reject'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: 合入盖章结果（applyDecisions 与 /admin 同一语义；校验不过就整体失败）
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: node scripts/review-apply.mjs
+      - name: 提交合入后的数据
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data pending
+          if git diff --cached --quiet; then
+            echo "数据未变，跳过提交"
+          else
+            git commit -m "chore(review): 盖章合入 issue#${{ github.event.issue.number }}"
+            git push
+          fi

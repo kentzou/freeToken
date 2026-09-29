@@ -1,0 +1,17 @@
+{
+  "ci": {
+    "collect": {
+      "url": ["http://127.0.0.1:3000/", "http://127.0.0.1:3000/intel/workbuddy/"],
+      "numberOfRuns": 1,
+      "settings": { "preset": "desktop", "chromeFlags": "--no-sandbox --disable-dev-shm-usage" }
+    },
+    "assert": {
+      "assertions": {
+        "largest-contentful-paint": ["error", { "median": 2500 }],
+        "cumulative-layout-shift": ["error", { "median": 0.1 }],
+        "categories:accessibility": ["error", { "minScore": 0.95 }]
+      }
+    },
+    "upload": { "target": "temporary-public-storage" }
+  }
+}

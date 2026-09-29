@@ -10,7 +10,9 @@
     "assets": "node scripts/copy-assets.mjs",
     "test": "vitest run",
     "test:out": "node --test tests/build-output.test.mjs",
-    "crawl": "node crawler/run.mjs"
+    "crawl": "node crawler/run.mjs",
+    "review": "node scripts/review-apply.mjs",
+    "seed:repro": "node scripts/seed-repro.mjs"
   },
   "dependencies": {
     "next": "14.2.35",
@@ -20,9 +22,11 @@
   "devDependencies": {
     "@fontsource/jetbrains-mono": "5.3.0",
     "@fontsource/noto-serif-sc": "5.3.0",
+    "@types/js-yaml": "4.0.9",
     "@types/node": "20.14.15",
     "@types/react": "18.3.5",
     "@types/react-dom": "18.3.0",
+    "js-yaml": "4.1.0",
     "typescript": "5.5.4",
     "vitest": "2.1.9"
   }

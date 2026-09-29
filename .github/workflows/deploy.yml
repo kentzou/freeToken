@@ -1,0 +1,90 @@
+name: deploy
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "pending/**"
+      - "src/**"
+      - "config/**"
+      - "crawler/**"
+      - "scripts/**"
+      - "tests/**"
+      - "public/**"
+      - "package.json"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: 单测 + 类型
+        run: npm run test
+      - run: npx tsc --noEmit
+      - name: 种子可复现（fixture 快照钉死 + 双跑三产物哈希一致，meta 时间戳除外）
+        run: npm run seed:repro
+      - name: 构建（本地口径：无 BASE_PATH）
+        run: npm run build
+      - name: 产物红线（无引流参数/微信号占位/关键区块，node --test 5 条）
+        run: npm run test:out
+
+  lighthouse:
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: 本地起服（质量基准=本地产物，与 Pages 地址解耦）
+        run: npx --yes serve out --listen tcp://127.0.0.1:3000 &
+      - name: Lighthouse 门禁（LCP<2.5s / CLS<0.1 / A11y≥95，不带病上线）
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          configPath: .lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  deploy:
+    needs: lighthouse
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.page-information.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: 构建（Pages 项目页口径：注入 BASE_PATH 与站点 URL，终审 #5 的 env 在这里给值）
+        env:
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+          NEXT_PUBLIC_SITE_URL: https://${{ github.event.repository.owner.login }}.github.io/${{ github.event.repository.name }}
+        run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+      - id: page-information
+        uses: actions/deploy-pages@v4
