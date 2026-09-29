@@ -33,7 +33,8 @@ export function validateRulesJson(rules) {
   check(rules?.logo, "rules.logo");
   check(rules?.cardCopy, "rules.cardCopy");
   check(rules?.detailSlug, "rules.detailSlug");
-  if (!rules || typeof rules.regionByName !== "object" || rules.regionByName === null) {
+  // 数组的 typeof 也是 "object"：regionByName 是映射表（Record<string,string>），数组必须同样拒绝
+  if (!rules || typeof rules.regionByName !== "object" || rules.regionByName === null || Array.isArray(rules.regionByName)) {
     bad.push("rules.regionByName 缺失或不是对象");
   }
   if (bad.length) throw new Error(`规则校验失败（拒绝写盘）：\n  ${bad.join("\n  ")}`);
