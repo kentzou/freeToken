@@ -20,6 +20,15 @@ export function parseCommands(text) {
   return out;
 }
 
+/** CLI 收尾措辞（整枝终审 #2）：`changed:false` 有两种成因，日志必须区分——
+ *  「评论里压根没指令」（空跑）与「有指令但一条都没合入」（id 未命中或已全部处理完）。
+ *  两者都零写盘，但后者提示的是「评论送进来了、只是没生效」，混印会误导运维排查方向。 */
+export function noChangeNote(comment) {
+  return parseCommands(comment).length
+    ? "评论含指令但无可合入项（id 未命中或已全部处理），跳过"
+    : "评论不含指令，跳过";
+}
+
 /**
  * JSDoc 仅为通过 tsc 的类型闸（.mjs 本体不开 checkJs，运行时零改动）：
  * fetchImpl 是测试接缝，注入的桩不实现完整 Response，故放宽为 (url, init) => Promise<any>。
@@ -76,7 +85,7 @@ async function main() {
     },
   });
   if (!res.changed) {
-    console.log("评论不含指令，跳过");
+    console.log(noChangeNote(comment));
     return;
   }
   for (const [rel, text] of Object.entries(res.files)) {

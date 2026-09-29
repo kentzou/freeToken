@@ -94,14 +94,20 @@ Task 6 推演记录 ①–④（原文照录，① 已带上述防递归注记�
 - **(C) 审批评论门大小写/前导空白口径**（真问题·非阻断）：`crawl.yml:45` job `if` 用 `startsWith(comment.body,'/approve')||startsWith(...,'/reject')`——GitHub 表达式大小写敏感且不容前导空白；而 `review-apply.mjs:14` `parseCommands` 带 `/i` 且 `^\s*`。门触发面是解析面的**子集**，故 `/APPROVE …`、` /approve …` 这类评论**不会启动 review job**（Nothing 发生），**不存在越权误合入**——方向安全。运维口径见 ONLINE-STEPS #6：审批评论须小写 `/approve`、`/reject` 且行首无空格。代码级放宽（job `if` 只按 `label=review` 触发、命令取舍全交已单测的 `parseCommands`）登记为计划 2.5 项。
 - **(D) `runReview` 内联 keyOf 同形串**（plan-mandated·非缺陷）：`review-apply.mjs:32` 用 `` `${e.kind}:${e.name}` `` 内联而非 `import { keyOf }`——语义与 `diff.mjs:5` 逐字一致，是同一格式串的复用非第二套逻辑；计划 2.5 统一改为 import。
   > **2026-09-29 换代注（计划 2.5 Task 3 落地，内层 `5da38ed` + 修复波 `dcc8a30`；上两条为修复前状态记录，按「历史正文不删改」口径原样保留）**
-  > (C) 已代码级放宽：review job 的 `if` 现在只看 `issue_comment` 与 `label=review`（`crawl.yml:44-49`），
+  > (C) 已代码级放宽：review job 的 `if` 现在只看 `issue_comment`、**非 PR**（`github.event.issue.pull_request == null`）
+  > 与 `label=review`（`crawl.yml:49-52`；排除 PR 由整枝终审必修 #1 补上——`issue_comment` 对 Issue 与 PR 评论一视同仁，
+  > 带 `review` 标签的 PR 起本 job 时 checkout 取的是该 PR 合并态的 `pending/`，授权面会外扩到任意被打标 PR），
   > 前缀判定取消，`/APPROVE`、前导空白、说明行后换行均生效；命令面唯一实现是 `review-apply.mjs:12` 的 `parseCommands`，
-  > 无指令评论在 `:30-31` 早退（`changed:false`、零 GitHub 调用），由 `tests/review-apply.test.ts` 空跑兜底例钉住。
+  > 无指令评论在 `:39-40` 早退（`changed:false`、零 GitHub 调用），由 `tests/review-apply.test.ts` 空跑兜底例钉住。
   > 因此上文「运维口径见 ONLINE-STEPS #6：须小写且行首无空格」**已作废**，现行运维口径以 ONLINE-STEPS §6 为准
   > （含八形态实测名单与「缩进/围栏代码块内指令照样生效」的意外执行面警示）。
-  > (D) 已统一为 `import { keyOf } from "../crawler/diff.mjs"`（`review-apply.mjs:34` 走 `.map(keyOf)`），
+  > (D) 已统一为 `import { keyOf } from "../crawler/diff.mjs"`（`review-apply.mjs:43` 走 `.map(keyOf)`），
   > 全部代码文件（`*.mjs`/`*.ts`/`*.tsx`）里 `${e.kind}:${e.name}` 只剩两处命中：`crawler/diff.mjs:5` 是唯一实现，
   > 另一处是 `tests/approve.test.ts:59` 构造期望值的夹具写法，非第二套实现（文档正文里引用该串不算实现）。
+  > 整枝终审必修 #2（`changed:false` 的两种成因不再混印）：CLI 收尾措辞改由 `review-apply.mjs:26` 的 `noChangeNote`
+  > 按 `parseCommands(comment).length` 二择、在 `:88` 调用——「评论不含指令，跳过」只用于真·无指令的空跑（早退、零 GitHub 调用），
+  > 「评论含指令但无可合入项（id 未命中或已全部处理），跳过」用于指令进了 `applyDecisions` 却零合入（仍回执评论、不写盘）；
+  > 由 `tests/review-apply.test.ts` 的 `noChangeNote` 例钉住，两条路径的写盘/回执差别见 ONLINE-STEPS §6。
 - 其余留档 Minor（各任务评审累积，经终审复核非阻断）：T1 裸 IPv4 走 bare 分支（内部地址风险由审批面承担，缺补测）、models 缺失降级路径可读性、validate.test 第 3 例断言宽度；T2 `JSON.stringify` 键序敏感（后果仅多余 modified 进 pending 更保守）、byName 重名 last-wins（上游名唯一）；T3 非 GET「重试 0 次」措辞、`e.message` 非 Error 退化（brief 逐字）；T4 rules 旧表入库后不复验（brief 原样）；T5 `after=null` 静默过校验、未知 action 按 reject 完结（保守终态）；T6 `crawl.yml` 无 concurrency、`deploy cancel-in-progress:true`（计划逐字）。驳回项：regionByName 数组绕过（`b1ef0f5` 已闭合）、fixture 隔离、notify「逐条 linkRisk」措辞（终审实证 validateCards 硬失败在前、checkLinks 属可达性另一维度）、T7 五组 Minor 观察（评审已实证非问题）。
 
 ## 10. 计划 2.5 迁移记录：上游 `app.js` → `data.json`（2026-09-29）
@@ -187,7 +193,7 @@ Q4 下 donots 是本地资产、逐字节直通，所以这 5 条仍留在观望
 cd D:\Documents\code\freeTokenInfo\token-fbi-next ; npm run seed ; npm run seed:repro ; npm run test ; npm run build ; npm run test:out ; npx tsc --noEmit
 ```
 期望依次为：`seed 完成：tokens=32 donots=22`、`seed 复现 OK：cards=ba754253ebaa donots=88f99a96da35 rules=7888f2ec168b`、
-`Tests 133 passed (133)`、`✓ Generating static pages (26/26)`、`pass 5`、tsc 无输出。
+`Tests 134 passed (134)`、`✓ Generating static pages (26/26)`、`pass 5`、tsc 无输出。
 
 ```powershell
 cd D:\Documents\code\freeTokenInfo\token-fbi-next ; grep -rlE "lmfh2022|ygtxup80|CQLBPC|AATGOEHF|userCode=|invite_code=|poster-doubao" data out ; echo EXIT=$LASTEXITCODE

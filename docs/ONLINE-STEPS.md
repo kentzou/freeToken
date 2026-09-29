@@ -30,12 +30,17 @@ Actions → crawl → Run workflow。健康空跑应显示「无实质数据变�
 ## 6. 审核闭环演练
 真实变更出现时：pending/changes.json 入库 + review Issue 自动开 → 评论 `/approve card:名称`、`/reject watch:名称` 或 `/approve all` → 观察合入提交、回执评论与 Issue 自动关闭；校验不过会整体失败并留痕（宁可不合不半合）。
 注（计划 2.5 终审 (C) 落地后的运维口径，以下形态本机逐条实测 `parseCommands`）：
-- **触发只看 label**：`crawl.yml` 的 review job 条件已放宽为 `issue_comment` + Issue 带 `review` 标签，不再对评论正文做大小写敏感的 `startsWith` 前缀判定。因此 `/APPROVE`、` /approve`（前导空格）、「说明文字 + 换行 + 指令」现在都会启动审批 job——旧注里「必须小写且行首无空格」的约束**已失效**。
+- **触发只看 label，且排除 PR**：`crawl.yml` 的 review job 条件已放宽为 `issue_comment` + Issue 带 `review` 标签 + **不是 PR**（`github.event.issue.pull_request == null`，`crawl.yml:49-52`），不再对评论正文做大小写敏感的 `startsWith` 前缀判定。因此 `/APPROVE`、` /approve`（前导空格）、「说明文字 + 换行 + 指令」现在都会启动审批 job——旧注里「必须小写且行首无空格」的约束**已失效**。排除 PR 是整枝终审必修补上的：`issue_comment` 事件对 Issue 与 PR 的评论一视同仁，带 `review` 标签的 PR 一旦起本 job，checkout 拿到的是该 PR 合并态的 `pending/`，等于把审批授权面从「本仓 Issue」扩到「任意被打标的 PR」。
 - **代价知情项（计划 2.5 口径回填）**：触发面既然不看正文，`issue_comment` 的 `types: [created]` 就意味着**审核 Issue 下的任何一条评论都会启动一次 review job**（提问、说明、贴图说明同样起 job，每次消耗一个 runner 任务）；正文不含指令时 `parseCommands` 返回空数组，`runReview` 给出 `changed:false` 后空跑退出。
 - **指令建议独占一行**，这样回执评论与本人预期一一对应，便于事后审计。
 - **不会被执行的写法**（安全失败，审批不生效需重发）：引用块 `> /approve all`、同行夹在正文后 `顺便 /approve card:甲`。
 - **反而会被执行的写法（意外执行面，注意）**：4 空格缩进 `    /approve card:甲`、围栏代码块里的 `/approve card:甲`——GitHub 把它们渲染成代码展示给后人看，但 job 拿到的是原始正文，指令照样生效。**不要在评论正文的示例/截图说明里贴完整指令**，需要举例时写成 `／approve`（全角斜杠）或加引用块前缀。
-- 无指令的普通评论会走「评论不含指令，跳过」空跑分支，零 GitHub 写操作、不写盘（`tests/review-apply.test.ts` 空跑兜底例钉住）。
+- 不写盘的收尾有两种成因，日志分开发声（`review-apply.mjs` 的 `noChangeNote` 按 `parseCommands` 是否出词二择）：
+  ① 正文里压根没有指令 → 打印「评论不含指令，跳过」，此路径在 `runReview` 里早退，**零 GitHub 写操作**；
+  ② 有指令但一条都没合入（id 未命中或已全部处理完）→ 打印「评论含指令但无可合入项（id 未命中或已全部处理），跳过」，
+  此路径**仍会回执一条评论**（列出「未找到」的 id；pending 本已为空时还会尝试关闭 Issue），只是不写任何数据文件。
+  两者都零写盘，但②的含义是「评论送进来了、只是没生效」，排查方向与①完全不同，故整枝终审要求分开出声
+  （`tests/review-apply.test.ts` 的空跑兜底例钉①的 `changed:false` 早退，`noChangeNote` 例钉两条措辞）。
 
 ## 7. Lighthouse 与 Pages
 deploy.yml 首次全绿即已发布（Settings → Pages 显示 live URL）。三门禁读数在 lighthouse job 摘要的 temporary-public-storage 链接；连续不达标先修码，不动门槛值。

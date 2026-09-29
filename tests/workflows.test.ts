@@ -21,6 +21,11 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     expect(crawl.jobs.review.if).toContain("contains(github.event.issue.labels.*.name, 'review')");
     expect(crawl.jobs.review.if).not.toContain("startsWith");
     expect(crawl.jobs.review.if).not.toContain("/approve");
+    /* 整枝终审（M2 升为 Important）：(C) 放宽后触发面只剩 label，而 issue_comment 事件对 Issue 与
+       PR 评论一视同仁——带 `review` 标签的 PR 下任何评论也会起 job，且那时 checkout 取的是 PR 合并态
+       的 pending/changes.json，等于把「谁能改线上数据」的授权面从审核 Issue 扩到任意被打标 PR。
+       旧 yml 的 startsWith('/approve') 前缀判定是一道偶然防线，放宽后必须显式补 PR 排除。 */
+    expect(crawl.jobs.review.if).toContain("github.event.issue.pull_request == null");
     /* 评审 C1：触发面放宽后「无指令→空跑退 0」是新承诺，而 fresh checkout 里 pending/ 既未跟踪
        也不存在（review-apply 早退时不写盘、run.mjs 只在有待审条目时才写），`git add data pending`
        会 pathspec 128 把整个 job 染红。两个 job 的提交步骤都得钉住「data 恒加、pending 有才加」。 */

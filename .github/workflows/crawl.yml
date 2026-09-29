@@ -42,10 +42,13 @@ jobs:
           fi
 
   review:
-    # (C)：只按 label 触发。命令解析（大小写/前导空白/多行/逗号）唯一实现是 scripts/review-apply.mjs 的
+    # (C)：按 label 触发，且**排除 PR**——issue_comment 对 Issue 与 PR 评论一视同仁，
+    # 带 review 标签的 PR 下起本 job 时 checkout 取的是 PR 合并态的 pending/，等于把授权面扩到任意被打标 PR。
+    # 命令解析（大小写/前导空白/多行/逗号）唯一实现是 scripts/review-apply.mjs 的
     # parseCommands；无指令时 runReview 返回 changed:false，本 job 空跑退出，绝不落任何数据。
     if: >-
       github.event_name == 'issue_comment'
+      && github.event.issue.pull_request == null
       && contains(github.event.issue.labels.*.name, 'review')
     runs-on: ubuntu-latest
     steps:

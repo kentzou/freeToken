@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseCommands, runReview } from "../scripts/review-apply.mjs";
+import { noChangeNote, parseCommands, runReview } from "../scripts/review-apply.mjs";
 
 function res(status: number, body: unknown = {}) {
   return { ok: status >= 200 && status < 300, status, json: async () => body, text: async () => JSON.stringify(body) };
@@ -87,5 +87,16 @@ describe("review-apply：Issue 评论 → 合入（workflow review job 的入口
     const r = await runReview({ repo: "me/r", issueNumber: 5, pending: { ...pending, changes: [pending.changes[0]] }, data, comment: "/reject card:甲", token: "t", fetchImpl: fn });
     expect(JSON.parse(r.files["pending/changes.json"])).toMatchObject({ version: 1, changes: [] });
     expect(calls.some((c) => c.init.method === "PATCH" && c.url.endsWith("/issues/5"))).toBe(true);
+  });
+});
+
+/* 整枝终审 #2：CLI 收尾措辞。!res.changed 有两种成因——评论里压根没指令，与有指令但一条都没合入
+   （id 未命中 / 已全部处理完）。混印成「评论不含指令」会把后者误导成前者，运维据此以为评论没送进来。
+   措辞只影响日志，两种成因都零写盘，后者由上面的空跑兜底例与 applyDecisions 的 missing 语义保证。 */
+describe("noChangeNote（CLI 收尾措辞按有无指令二择）", () => {
+  it("无指令 → 「不含指令」；有指令但零合入 → 「无可合入项」", () => {
+    expect(noChangeNote("随手一句，没写指令")).toBe("评论不含指令，跳过");
+    expect(noChangeNote("")).toBe("评论不含指令，跳过");
+    expect(noChangeNote("/approve card:不存在")).toContain("无可合入项");
   });
 });
