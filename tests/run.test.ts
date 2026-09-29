@@ -2,11 +2,16 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { buildSeed } from "../scripts/export-seed.mjs";
 import { crawlOnce, mergePending, notifyIssueTitle, syncOnce } from "../crawler/run.mjs";
+import { injectUpstreamItem } from "./helpers/upstream";
 
-const FIXTURE = readFileSync("tests/fixtures/upstream-app.js", "utf8");
+const FIXTURE = readFileSync("tests/fixtures/upstream-data.json", "utf8");
 const CONFIG = JSON.parse(readFileSync("config/site-config.json", "utf8"));
 const BASE_META = JSON.parse(readFileSync("data/meta.json", "utf8"));
-const SEED = buildSeed(FIXTURE, CONFIG);
+const SEED = buildSeed(FIXTURE, CONFIG, {
+  cards: JSON.parse(readFileSync("data/tokens.json", "utf8")),
+  donots: JSON.parse(readFileSync("data/donots.json", "utf8")),
+  rules: JSON.parse(readFileSync("data/rules.json", "utf8")),
+});
 const PREV = { cards: SEED.cards, donots: SEED.donots, rules: SEED.rules };
 
 const noSleep = () => Promise.resolve();
@@ -110,10 +115,13 @@ describe("crawlOnce：端到端（假 transport + fixture 文本）", () => {
   });
 
   it("fixture 注入脏链接新卡 → 自动清洗入库，files 里无 userCode，pending 为空", async () => {
-    const injected = FIXTURE.replace(
-      "const TOKENS = [",
-      'const TOKENS = [ {name:"管线集成卡", type:"大模型", quota:"每日 100 次", updated:"2026-09-29", link:"https://b.example/promo?userCode=ygtxup80"}, '
-    );
+    const injected = injectUpstreamItem(FIXTURE, {
+      name: "管线集成卡",
+      category: "model",
+      quota: "每日 100 次",
+      last_verified: "2026-09-29",
+      entry_url: "https://b.example/promo?userCode=ygtxup80",
+    });
     const s = await crawlOnce({
       prev: PREV,
       meta: BASE_META,
@@ -131,10 +139,13 @@ describe("crawlOnce：端到端（假 transport + fixture 文本）", () => {
   });
 
   it("有新增且带 token → 只开 auto 标签的通知 Issue（标题含新增数）", async () => {
-    const injected = FIXTURE.replace(
-      "const TOKENS = [",
-      'const TOKENS = [ {name:"通知卡", type:"工具", quota:"每日 20 次", updated:"2026-09-29", link:"https://n.example/"}, '
-    );
+    const injected = injectUpstreamItem(FIXTURE, {
+      name: "通知卡",
+      category: "tool",
+      quota: "每日 20 次",
+      last_verified: "2026-09-29",
+      entry_url: "https://n.example/",
+    });
     const { fn, calls } = mkFetch(res(201, { number: 11, html_url: "https://gh/x/11" }));
     const s = await crawlOnce({
       prev: PREV, meta: BASE_META, config: CONFIG, latestSha: "newsha3", sourceText: injected,

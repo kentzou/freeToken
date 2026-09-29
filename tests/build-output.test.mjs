@@ -18,13 +18,14 @@ const htmlFiles = [];
 const dirsOf = (rel) =>
   readdirSync(path.join(OUT, rel)).filter((n) => statSync(path.join(OUT, rel, n)).isDirectory());
 
-test("产物数量合理（首页 + 20 详情页 + 4 内容页）", () => {
+test("产物数量合理（首页 + 18 详情页 + 4 内容页）", () => {
   assert.ok(existsSync(path.join(OUT, "index.html")), "缺 out/index.html");
-  assert.equal(dirsOf("intel").length, 20, "详情页数量应与 visibleCards 一致");
+  assert.equal(dirsOf("intel").length, 18, "详情页数量应与 visibleCards 一致");
   for (const p of ["about", "editorial-policy", "privacy", "contact"]) {
     assert.ok(existsSync(path.join(OUT, p, "index.html")), `缺内容页 /${p}/`);
   }
-  assert.ok(htmlFiles.length >= 25, `HTML 仅 ${htmlFiles.length} 个，疑似路由未生成`);
+  /* 实测 25 = 首页 1 + 详情页 18 + 内容页 4 + 404 两份；取下界 23 留一点余量 */
+  assert.ok(htmlFiles.length >= 23, `HTML 仅 ${htmlFiles.length} 个，疑似路由未生成`);
 });
 
 /** 与 brief 的唯一偏差：invite_code 补等号。editorial-policy 页按规范逐字公示清洗参数名

@@ -10,7 +10,8 @@ import { diffAll, keyOf } from "./diff.mjs";
 import { validateCards, validateRulesJson } from "./validate.mjs";
 import { UPSTREAM_REPO, createIssue, fetchRawText, headStatus, latestCommitSha } from "./github.mjs";
 
-export const UPSTREAM_RAW = `https://raw.githubusercontent.com/${UPSTREAM_REPO}/main/app.js`;
+/** 上游已从 app.js（源码里嵌结构体）迁到纯数据 data.json；旧地址 404 且不再含任何可提取结构 */
+export const UPSTREAM_RAW = `https://raw.githubusercontent.com/${UPSTREAM_REPO}/main/data.json`;
 
 /** 两队列分流：新增即发布；修改/删除持旧值待审（spec §7.6 互不阻塞） */
 export function syncOnce({ prev, next, existingPending, upstreamSha, detectedAt }) {
@@ -118,7 +119,8 @@ export async function crawlOnce(deps) {
   }
 
   const src = sourceText ?? (await fetchRawText(UPSTREAM_RAW, { token, fetchImpl, sleep }));
-  const seed = buildSeed(src, config);
+  /* Q1：prev 既是比对基线，也是观点字段基底——上游只刷事实，本地手写内容随上一轮产物继承 */
+  const seed = buildSeed(src, config, prev);
   validateRulesJson(seed.rules); // 写入侧校验：不合法规则/脏链接一律在动笔前抛
   validateCards(seed.cards);
 

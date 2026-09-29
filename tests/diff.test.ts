@@ -4,29 +4,39 @@ import { describe, expect, it } from "vitest";
 import { diffAll, hasChanges, keyOf } from "../crawler/diff.mjs";
 import { buildSeed } from "../scripts/export-seed.mjs";
 import { linkRisk } from "../crawler/clean.mjs";
+import { injectUpstreamItem } from "./helpers/upstream";
 
-const FIXTURE = readFileSync("tests/fixtures/upstream-app.js", "utf8");
+const FIXTURE = readFileSync("tests/fixtures/upstream-data.json", "utf8");
 const CONFIG = JSON.parse(readFileSync("config/site-config.json", "utf8"));
-const SEED = buildSeed(FIXTURE, CONFIG);
+/* Q1 基底 = 本地三件套：切换后管线吃的是「上游事实 × 本地观点」，只喂上游文本不再成立 */
+const LOCAL = {
+  cards: JSON.parse(readFileSync("data/tokens.json", "utf8")),
+  donots: JSON.parse(readFileSync("data/donots.json", "utf8")),
+  rules: JSON.parse(readFileSync("data/rules.json", "utf8")),
+};
+const SEED = buildSeed(FIXTURE, CONFIG, LOCAL);
 const PREV = { cards: SEED.cards, donots: SEED.donots, rules: SEED.rules };
 
 describe("三分类比对（spec §7.5）", () => {
   it("fixture 快照身份钉死：内容漂移必须显式改断言", () => {
-    expect(createHash("sha256").update(FIXTURE).digest("hex").slice(0, 16)).toBe("7f8c5cb80c9138c4");
+    expect(createHash("sha256").update(FIXTURE).digest("hex").slice(0, 16)).toBe("0276a024c4f6e10e");
   });
 
-  it("同输入零差异（基线：41→39 清洗后自比全空）", () => {
+  it("同输入零差异（基线：36→32 清洗后自比全空）", () => {
     const d = diffAll(PREV, PREV);
     expect([d.added.length, d.changed.length, d.removed.length]).toEqual([0, 0, 0]);
     expect(hasChanges(d)).toBe(false);
   });
 
   it("新增带 userCode= 的卡 → 走同一条管线自动清洗为干净链接（spec §11.1 必测）", () => {
-    const injected = FIXTURE.replace(
-      "const TOKENS = [",
-      'const TOKENS = [ {name:"集成测试新卡", type:"大模型", quota:"500 万 tokens", updated:"2026-09-29", link:"https://example.com/a?userCode=ygtxup80"}, '
-    );
-    const next = buildSeed(injected, CONFIG);
+    const injected = injectUpstreamItem(FIXTURE, {
+      name: "集成测试新卡",
+      category: "model",
+      quota: "500 万 tokens",
+      last_verified: "2026-09-29",
+      entry_url: "https://example.com/a?userCode=ygtxup80",
+    });
+    const next = buildSeed(injected, CONFIG, LOCAL);
     const d = diffAll(PREV, { cards: next.cards, donots: next.donots, rules: next.rules });
     expect(d.added.map((e) => e.name)).toEqual(["集成测试新卡"]);
     expect(d.added[0].after.link).toBe("https://example.com/a");

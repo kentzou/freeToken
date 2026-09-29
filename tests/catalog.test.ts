@@ -13,20 +13,21 @@ const cards = load("tokens.json") as TokenCard[];
 const donots = load("donots.json") as WatchItem[];
 const rules = compiledRules(load("rules.json"));
 
-/* 基准数字来自真实镜像统计（已实测，见 Task 5 的 seed 产物）：
-   上游 41 条 → 隐藏「豆包拉新项目」（原作者拉新广告）与「小米 MiMo」（链接是原作者邀请短链、
-   官方地址待补）后入库 39 → 再剔除观望名单与未达门槛卡，可见 editorial 20，大模型 8，工具 12，限时 4 */
+/* 基准数字来自真实上游 data.json（计划 2.5 切换后，实测见 .superpowers/sdd/p25-precompute.mjs 输出）：
+   上游 items 36 → sponsored 挡架 3（Q6）+ site-config hide 1（小米 MiMo，Q8）→ 入库 32
+   → 再剔除观望名单与未达门槛卡，可见 editorial 18（大模型 7 · 工具 11 · 限时 4）。
+   旧口径「41 → 39 → 20」随 app.js 源一起退役，不得再拿它核对任何数字。 */
 describe("目录逻辑（真实种子数据基准）", () => {
   it("visibleCards：剔除观望 + 精选门槛 + 隐藏推广卡", () => {
     const vis = visibleCards(cards, donots, rules);
-    expect(vis).toHaveLength(20);
+    expect(vis).toHaveLength(18);
     expect(vis.some((c) => c.name === "豆包拉新项目")).toBe(false);
     expect(vis.some((c) => c.name === "小米 MiMo（Xiaomi）")).toBe(false); // 邀请短链待补官方地址
     expect(vis.every((c) => !donots.some((d) => d.name === c.name))).toBe(true);
   });
-  it("pin 位次生效：蓝博第 4、阶跃第 5", () => {
+  it("pin 位次生效：阶跃仍钉第 5（蓝博 sponsored 出局后，第 4 由自然序 Cline 补位）", () => {
     const vis = visibleCards(cards, donots, rules);
-    expect(vis[3].name).toBe("蓝博科技（lanbuff）");
+    expect(vis[3].name).toBe("Cline");
     expect(vis[4].name).toBe("阶跃星辰 StepFun");
   });
   it("精选两张 = WorkBuddy + Qoder", () => {
@@ -35,7 +36,7 @@ describe("目录逻辑（真实种子数据基准）", () => {
   });
   it("splitByCategory：推广卡归 partners（当前为空）", () => {
     const { editorial, partners } = splitByCategory(visibleCards(cards, donots, rules));
-    expect(editorial).toHaveLength(20);
+    expect(editorial).toHaveLength(18);
     expect(partners).toHaveLength(0);
   });
   it("优先级排序：工具区 WorkBuddy→Qoder→kilo→cline→verdent 在前", () => {
@@ -57,9 +58,9 @@ describe("目录逻辑（真实种子数据基准）", () => {
   it("chipCounts 与区块计数一致", () => {
     const vis = visibleCards(cards, donots, rules);
     const counts = chipCounts(vis);
-    expect(counts.all).toBe(20);
-    expect(counts["大模型"]).toBe(8);
-    expect(counts["工具"]).toBe(12);
+    expect(counts.all).toBe(18);
+    expect(counts["大模型"]).toBe(7);
+    expect(counts["工具"]).toBe(11);
     expect(counts.limited).toBe(4);
   });
   it("期号与报头文案", () => {
@@ -71,9 +72,9 @@ describe("目录逻辑（真实种子数据基准）", () => {
     expect(isoWeek(new Date(Date.UTC(2021, 0, 1)))).toBe(53); // 跨年：属 2020 年第 53 周
     expect(dateLine(new Date(Date.UTC(2026, 8, 28)), 40)).toBe("2026-09-28 星期一 · Token 情报局 · 第 40 期");
     expect(shortDateLine(new Date(Date.UTC(2026, 8, 28)), 40)).toBe("09-28 · 第 40 期");
-    expect(headline(20)).toBe("免费 AI 额度，今日已核验 20 条");
-    /* 实测：默认 config.partners=null，不注入推广卡，可见集里最大 updated 就是 2026-09-23。
-       镜像 app.js:791 的 "2026-09-25" 只属于注入的 partners 卡，本站默认配置下不会出现。 */
-    expect(latestUpdated(splitByCategory(visibleCards(cards, donots, rules)).editorial)).toBe("2026-09-23");
+    expect(headline(18)).toBe("免费 AI 额度，今日已核验 18 条");
+    /* 实测：Q3 后 updated = 上游 last_verified，快照里最大值为 2026-09-28（total/last_updated 同日）。
+       partners 默认 null 不注入推广卡，所以报头「最近更新」就是这一天。 */
+    expect(latestUpdated(splitByCategory(visibleCards(cards, donots, rules)).editorial)).toBe("2026-09-28");
   });
 });

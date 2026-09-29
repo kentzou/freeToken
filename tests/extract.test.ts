@@ -1,92 +1,60 @@
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { extractStructures, stripMergeBlock } from "../crawler/extract.mjs";
+import { extractDataJson } from "../crawler/extract.mjs";
 
-const MIRROR = path.resolve(process.cwd(), "..", "token-fbi", "app.js");
+const src = readFileSync(path.resolve(process.cwd(), "tests/fixtures/upstream-data.json"), "utf8");
+/* 取不到条目就抛错：宁可红一条用例，也不要 `undefined.xxx` 的真因被埋进堆栈里 */
+const item = (name: string) => {
+  const found = extractDataJson(src).items.find((i) => i.name === name);
+  if (!found) throw new Error(`fixture 缺条目：${name}`);
+  return found;
+};
 
-describe("extract：真实镜像源码", () => {
-  const src = readFileSync(MIRROR, "utf8");
-
-  it("扣除合并块后不含 site-config 痕迹", () => {
-    const base = stripMergeBlock(src);
-    expect(base).not.toContain("SITE_CONFIG");
-    expect(base.length).toBeLessThan(src.length);
+describe("extract：上游 data.json 只解析、不改内容", () => {
+  it("快照身份钉死：26377 字节 / sha16 0276a024c4f6e10e（换代必须显式改断言）", () => {
+    expect(Buffer.byteLength(src)).toBe(26377);
+    expect(createHash("sha256").update(src).digest("hex").slice(0, 16)).toBe("0276a024c4f6e10e");
   });
 
-  it("提取到 41 张情报卡与 22 条观望名单", () => {
-    const out = extractStructures(src);
-    expect(out.TOKENS).toHaveLength(41);
-    expect(out.DONOTS).toHaveLength(22);
+  it("出参只有 items 一个键：上游 retired / site / total 一律不出这道门（决策 Q4 的结构保证）", () => {
+    const out = extractDataJson(src);
+    expect(Object.keys(out)).toEqual(["items"]);
+    expect(out.items).toHaveLength(36);
   });
 
-  it("卡片字段保真（以 WorkBuddy 为样本）", () => {
-    const t = extractStructures(src).TOKENS.find((x) => x.name === "WorkBuddy");
-    expect(t.rating).toBe(5);
-    expect(t.updated).toBe("2026-09-11");
-    expect(t.limited).toBe("2026-10-10");
-    expect(t.link).toBe("https://curl.qcloud.com/8dvDMEyi"); // 未清洗的原值
+  it("本层零过滤：sponsored 三条原样带出（挡架属 adapt 层，不在此处）", () => {
+    expect(
+      extractDataJson(src)
+        .items.filter((i) => i.sponsored === true)
+        .map((i) => i.name)
+        .sort()
+    ).toEqual(["腾讯云服务器", "蓝博科技（lanbuff）", "豆包拉新项目"]); // 码点升序，与 adapt.test 例② 同口径
   });
 
-  it("规则表以 source + flags 出参，可 JSON 序列化", () => {
-    const out = extractStructures(src);
-    expect(out.FEATURED_RULES.map((r) => r.label)).toEqual([
-      "DeepSeek V4",
-      "GLM 5.2",
-      "Kimi K3",
-      "千问 3.8 Max",
-      "Hy3",
-      "LongCat 2.0",
-    ]);
-    expect(out.FEATURED_RULES[0].source).toBe("deepseekv(?:[4-9]|1\\d)");
-    expect(() => JSON.stringify(out)).not.toThrow();
+  it("字段保真（WorkBuddy 样本：推广短链未清洗、日期为上游原值）", () => {
+    expect(item("WorkBuddy").category).toBe("tool");
+    expect(item("WorkBuddy").entry_url).toBe("https://curl.qcloud.com/8dvDMEyi"); // 未清洗的原值
+    expect(item("WorkBuddy").sponsored).toBe(false);
+    expect(item("WorkBuddy").last_verified).toBe("2026-09-28");
+    expect(item("WorkBuddy").validity).toBe("2026-10-10");
   });
 
-  it("flags 逐条保真（实测：三张 pair 表 72/72 带 i，FEATURED 6/6 为空）", () => {
-    /* 回归护栏：只存 source 会让 /i 规则还原成大小写敏感，logo 与 detailSlug 大面积失效 */
-    const out = extractStructures(src);
-    expect(out.LOGO_RULES.every((r) => r.flags === "i")).toBe(true);
-    expect(out.CARD_COPY_RULES.every((r) => r.flags === "i")).toBe(true);
-    expect(out.DETAIL_SLUG_RULES.every((r) => r.flags === "i")).toBe(true);
-    expect(out.FEATURED_RULES.every((r) => r.flags === "")).toBe(true);
-    expect(out.LOGO_RULES[0]).toEqual({
-      source: expect.any(String),
-      flags: "i",
-      slug: expect.any(String),
-    });
+  it("entry_url 与 intel_url 并存时两条都原样出参（取哪条由 adapt 定，实测 36 条里 35 条并存）", () => {
+    expect(item("ZCode").entry_url).toBe("https://zcode.z.ai/cn");
+    expect(item("ZCode").intel_url).toBe("https://bigmodel.cn/activity/trial-card/PU9MTWG0PM");
+    expect(extractDataJson(src).items.filter((i) => i.entry_url && i.intel_url)).toHaveLength(35);
   });
 
-  it("LOGO/CARD_COPY/DETAIL_SLUG/REGION 齐备", () => {
-    const out = extractStructures(src);
-    expect(out.LOGO_RULES.length).toBe(32);
-    expect(out.CARD_COPY_RULES.length).toBe(19);
-    expect(out.DETAIL_SLUG_RULES.length).toBe(21);
-    expect(out.REGION_BY_NAME["OpenRouter"]).toBe("美国");
+  it("非 JSON 文本 → 抛「data.json 解析失败」，绝不返回空结构", () => {
+    expect(() => extractDataJson("const TOKENS = [];")).toThrow(/data\.json 解析失败/);
   });
 
-  it("跨 realm：vm 求出的 RegExp 只能由 types.isRegExp 认出", () => {
-    /* 实测：`item.re instanceof RegExp` 对 vm 里求值出的正则恒为 false，
-       会把整套规则误判成「结构异常」。若实现被改回 instanceof，本用例直接抛错。 */
-    const out = extractStructures(src);
-    expect(out.FEATURED_RULES.every((r) => typeof r.source === "string" && r.source.length > 0)).toBe(true);
-    expect(out.DETAIL_SLUG_RULES.every((r) => typeof r.slug === "string" && r.slug.length > 0)).toBe(true);
-    expect(out.LOGO_RULES.every((r) => typeof r.slug === "string" && r.slug.length > 0)).toBe(true);
-  });
-
-  it("提取失败要抛错，不能返回空数组", () => {
-    expect(() => extractStructures("const NOTHING = [];")).toThrow(/TOKENS/);
-  });
-
-  it("vm 求值不依赖 DOM（源码里的渲染函数不参与求值）", () => {
-    expect(() => extractStructures(src)).not.toThrow();
-  });
-
-  it("沙箱无 DOM：引用 document/window 求值抛 ReferenceError", () => {
-    /* plan 约束直证：vm 上下文 Object.create(null)，浏览器全局不存在（跨 realm 用 e.name 判定） */
-    const errName = (expr: string) => {
-      try { extractStructures(`const TOKENS = [${expr}];`); return ""; } catch (e) { return (e as Error).name; }
-    };
-    expect(errName("document.title")).toBe("ReferenceError");
-    expect(errName("window.location")).toBe("ReferenceError");
+  it("形态异常全部 fail-stop：顶层非对象 / items 缺失或为空（防「上游清空」误判抹站）", () => {
+    expect(() => extractDataJson("[]")).toThrow(/顶层不是对象/);
+    expect(() => extractDataJson("null")).toThrow(/顶层不是对象/);
+    expect(() => extractDataJson('{"site":"x"}')).toThrow(/items 缺失或为空/);
+    expect(() => extractDataJson('{"items":[]}')).toThrow(/items 缺失或为空/);
   });
 });

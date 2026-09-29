@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { linkRisk } from "../crawler/clean.mjs";
+import { buildSeed, loadLocal } from "../scripts/export-seed.mjs";
 
 const read = (p: string) => readFileSync(path.resolve(process.cwd(), p), "utf8");
 const tokens = JSON.parse(read("data/tokens.json"));
@@ -10,11 +11,15 @@ const donots = JSON.parse(read("data/donots.json"));
 const rules = JSON.parse(read("data/rules.json"));
 const meta = JSON.parse(read("data/meta.json"));
 
+/* Q4/Q5 直通验证：管线输出必须等于磁盘快照。此处现算一次 buildSeed，
+   与 seed:repro 的 CLI 门禁互为备份（vitest 在 CI 里先跑，seed:repro 单独跑）。 */
+const PIPELINE = buildSeed(read("tests/fixtures/upstream-data.json"), JSON.parse(read("config/site-config.json")), loadLocal());
+
 describe("种子数据（由脚本从真实镜像生成）", () => {
   it("条数与上游一致", () => {
-    expect(tokens).toHaveLength(41 - 2); // 隐藏「豆包拉新项目」推广卡 + 「小米 MiMo」邀请短链
+    expect(tokens).toHaveLength(36 - 3 - 1); // 上游 36 − sponsored 3（Q6）− site-config hide 1（小米 MiMo，Q8）
     expect(donots).toHaveLength(22);
-    expect(meta.counts).toEqual({ tokens: 39, donots: 22 });
+    expect(meta.counts).toEqual({ tokens: 32, donots: 22 });
   });
 
   it("全量链接过 linkRisk（与 seed 脚本同一份判定，含 hash 参数与推广短链域）", () => {
@@ -66,6 +71,41 @@ describe("种子数据（由脚本从真实镜像生成）", () => {
     expect(meta.lastSyncedSha).toBeNull();
     expect(meta.lastSyncedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     expect(meta.issueNo).toBeUndefined();
+  });
+
+  it("Q1/Q3/Q9：事实随上游刷新、观点字段保留、改名走 alias", () => {
+    const by = (n: string) => tokens.find((t: any) => t.name === n);
+    const wb = by("WorkBuddy");
+    expect(wb.updated).toBe("2026-09-28"); // Q3：事实层 updated 取上游 last_verified
+    expect(wb.quota).toBe("HY3 限免至 2026-09-30；HY4 preview 新用户首开对话起 14 天内免费。"); // 上游逐字
+    expect(wb.rating).toBe(5); // 观点层：上游无载体，必须从本地继承
+    expect(typeof wb.effect).toBe("string");
+    expect(by("Qoder cn")).toBeUndefined(); // 上游名不得落库
+    const q = by("阿里云 Qoder（灵码）"); // Q9 alias 生效，观点字段才保得住
+    expect(q.modality).toBe("Qwen3.8-Flash · Qwen3.8-Max");
+    expect(q.limited).toBe("2026-09-30");
+    /* Q2：11 张仅本地存在的旧卡全部跟随下架，永不复活（名单逐字见计划 0.1） */
+    const gone = [
+      "GLM-5.3-Flash（Ox-Alpha）", "蓝博科技（lanbuff）", "2026 微信小程序开发大赛",
+      "HuggingFace Inference API", "月之暗面 Kimi 开放平台", "OpenStarry", "腾讯云 TokenHub",
+      "太行HUB（token.taiha.cn）", "B.AI（AI 模型聚合平台）", "GMI Cloud（gmi-serving）", "秒哒（百度）",
+    ];
+    expect(gone).toHaveLength(11);
+    expect(tokens.filter((t: any) => gone.includes(t.name))).toEqual([]);
+    /* Q8：4 张新卡全收 */
+    for (const n of ["ZCode", "字节 TRAE（AI IDE）", "阿里云百炼（DashScope）", "书生·端砚 墨点计划（上海AI实验室）"]) {
+      expect(by(n)).toBeTruthy();
+    }
+  });
+
+  it("Q4/Q5：观望名单与规则表由本地快照直通，上游 retired 一条也没进表", () => {
+    expect(JSON.stringify(PIPELINE.donots)).toBe(JSON.stringify(donots));
+    expect(JSON.stringify(PIPELINE.rules)).toBe(JSON.stringify(rules));
+    expect(PIPELINE.cards).toHaveLength(tokens.length);
+    /* retired 名单里的卡名绝不能凭空出现在 donots（donots 与切换前逐字一致即已证，这里再点一次） */
+    const retired = JSON.parse(read("tests/fixtures/upstream-data.json")).retired.map((r: any) => r.name);
+    expect(retired).toContain("阿里云 Qoder（灵码）"); // 上游确实把它挪进了 retired
+    expect(tokens.some((t: any) => t.name === "阿里云 Qoder（灵码）")).toBe(true); // alias 后仍在线
   });
 
   it("可复现：同输入两次导出得到同一 SHA256", () => {
