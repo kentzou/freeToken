@@ -21,12 +21,13 @@ GitHub 防递归成文行为：默认 GITHUB_TOKEN 的 push **不会**触发 dep
 
 ## 5. 首跑爬取
 Actions → crawl → Run workflow。健康空跑应显示「无实质数据变化，跳过提交」（上游镜像没动就该这样）。`meta.lastSyncedSha` 变真后重点复验：首页 stale 黄条（Task 7 已挂载化）与详情页「最后核验」文案。
-注（Task 8 评审修订回写）：上游已删除 app.js 改用 data.json（实证见 PIPELINE-ACCEPTANCE §3 形态③），计划 2.5 数据源适配落地前本步首次 Run 必然 404 fail-stop（`crawl 中止…HTTP 404` 非 0 退出，安全失败不写坏数据，非本地代码 bug）；适配合入后再执行本步。
+注（计划 2.5 已落地）：上游 `app.js` 已删除、改由根目录 `data.json` 承载，`UPSTREAM_RAW` 与提取层已同步切换（详见 PIPELINE-ACCEPTANCE §10）。本步现在可以执行：Actions → crawl → Run workflow，预期首跑结果取决于 `data/meta.json` 的 `lastSyncedSha`——本地种子阶段它是 `null`，所以首跑**必然**判为「有变化」并走完整链路（拉源 → 分层合并 → 三分类 → 开 Issue → 提交数据）。健康信号：日志出现 `crawl 完成：新增 N · 修改 M · 删除 K · 规则 R · pending P · sha xxxxxxxxxx`，且 `data/donots.json`、`data/rules.json` 不在提交差异里（Q4/Q5：两表本地权威，上游不再承载）。若出现 `data.json 解析失败` 或 `items 缺失或为空`，是上游形态变了（fail-stop，未写坏任何数据），按 §10 口径重取快照。
 
 ## 6. 审核闭环演练
 真实变更出现时：pending/changes.json 入库 + review Issue 自动开 → 评论 `/approve card:名称`、`/reject watch:名称` 或 `/approve all` → 观察合入提交、回执评论与 Issue 自动关闭；校验不过会整体失败并留痕（宁可不合不半合）。
 注（计划 2.5 终审 (C) 落地后的运维口径，以下形态本机逐条实测 `parseCommands`）：
 - **触发只看 label**：`crawl.yml` 的 review job 条件已放宽为 `issue_comment` + Issue 带 `review` 标签，不再对评论正文做大小写敏感的 `startsWith` 前缀判定。因此 `/APPROVE`、` /approve`（前导空格）、「说明文字 + 换行 + 指令」现在都会启动审批 job——旧注里「必须小写且行首无空格」的约束**已失效**。
+- **代价知情项（计划 2.5 口径回填）**：触发面既然不看正文，`issue_comment` 的 `types: [created]` 就意味着**审核 Issue 下的任何一条评论都会启动一次 review job**（提问、说明、贴图说明同样起 job，每次消耗一个 runner 任务）；正文不含指令时 `parseCommands` 返回空数组，`runReview` 给出 `changed:false` 后空跑退出。
 - **指令建议独占一行**，这样回执评论与本人预期一一对应，便于事后审计。
 - **不会被执行的写法**（安全失败，审批不生效需重发）：引用块 `> /approve all`、同行夹在正文后 `顺便 /approve card:甲`。
 - **反而会被执行的写法（意外执行面，注意）**：4 空格缩进 `    /approve card:甲`、围栏代码块里的 `/approve card:甲`——GitHub 把它们渲染成代码展示给后人看，但 job 拿到的是原始正文，指令照样生效。**不要在评论正文的示例/截图说明里贴完整指令**，需要举例时写成 `／approve`（全角斜杠）或加引用块前缀。

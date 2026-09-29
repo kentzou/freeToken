@@ -94,3 +94,105 @@ Task 6 推演记录 ①–④（原文照录，① 已带上述防递归注记�
 - **(C) 审批评论门大小写/前导空白口径**（真问题·非阻断）：`crawl.yml:45` job `if` 用 `startsWith(comment.body,'/approve')||startsWith(...,'/reject')`——GitHub 表达式大小写敏感且不容前导空白；而 `review-apply.mjs:14` `parseCommands` 带 `/i` 且 `^\s*`。门触发面是解析面的**子集**，故 `/APPROVE …`、` /approve …` 这类评论**不会启动 review job**（Nothing 发生），**不存在越权误合入**——方向安全。运维口径见 ONLINE-STEPS #6：审批评论须小写 `/approve`、`/reject` 且行首无空格。代码级放宽（job `if` 只按 `label=review` 触发、命令取舍全交已单测的 `parseCommands`）登记为计划 2.5 项。
 - **(D) `runReview` 内联 keyOf 同形串**（plan-mandated·非缺陷）：`review-apply.mjs:32` 用 `` `${e.kind}:${e.name}` `` 内联而非 `import { keyOf }`——语义与 `diff.mjs:5` 逐字一致，是同一格式串的复用非第二套逻辑；计划 2.5 统一改为 import。
 - 其余留档 Minor（各任务评审累积，经终审复核非阻断）：T1 裸 IPv4 走 bare 分支（内部地址风险由审批面承担，缺补测）、models 缺失降级路径可读性、validate.test 第 3 例断言宽度；T2 `JSON.stringify` 键序敏感（后果仅多余 modified 进 pending 更保守）、byName 重名 last-wins（上游名唯一）；T3 非 GET「重试 0 次」措辞、`e.message` 非 Error 退化（brief 逐字）；T4 rules 旧表入库后不复验（brief 原样）；T5 `after=null` 静默过校验、未知 action 按 reject 完结（保守终态）；T6 `crawl.yml` 无 concurrency、`deploy cancel-in-progress:true`（计划逐字）。驳回项：regionByName 数组绕过（`b1ef0f5` 已闭合）、fixture 隔离、notify「逐条 linkRisk」措辞（终审实证 validateCards 硬失败在前、checkLinks 属可达性另一维度）、T7 五组 Minor 观察（评审已实证非问题）。
+
+## 10. 计划 2.5 迁移记录：上游 `app.js` → `data.json`（2026-09-29）
+
+**动因（实证，非推测）**：上游 `hope0719/token-fbi@main` 已删除 `app.js`，结构体改由根目录
+`data.json` 承载，旧 `UPSTREAM_RAW` 现返回 404（PIPELINE-ACCEPTANCE §3 形态③ 的首跑观察即此事），
+`extractStructures` 的「括号扫描 + vm 求值」已无对象可扫。本机 `raw.githubusercontent.com` /
+`api.github.com` 不可达，快照经 git 协议只读克隆取得：26377 B、sha256 前 16 位 `0276a024c4f6e10e`，
+落为 `tests/fixtures/upstream-data.json`（另加 `.gitattributes` 的 `eol=lf`，防 Windows 检出转 CRLF 造成假红线）。
+
+### 10.1 切换后基线（本机实测；复现命令见 10.6）
+
+| 量 | 旧（app.js 口径） | 新（data.json 口径） |
+|---|---|---|
+| 上游条目 | 41 条 `TOKENS` | 36 条 `items`（`tool` 16 · `model` 19 · `event` 1） |
+| 入库卡数 | 39（hide 2） | **32**（sponsored 挡架 3 + site-config hide 1） |
+| 类型分布 | —— | 工具 14 · 大模型 18 |
+| 可见集 | 20 | **18**（大模型 7 · 工具 11 · 限时 4） |
+| chip 计数 | —— | all 18 · 生产力 9 · 图像 6 · 语音 1 · 数据 2 · 平台 10 |
+| 保留 / 下架 / 新增 | —— | kept 28 · gone 11 · added 4 |
+| `latestUpdated` | 2026-09-23 | **2026-09-28** |
+| `out/` HTML / build 路由 | 27 / 28 | **25 / 26** |
+| seed 三哈希（sha12） | cards `f9ce0bf225e3` · donots `88f99a96da35` · rules `7888f2ec168b` | cards **`ba754253ebaa`** · donots 与 rules **同值不变**（Q4/Q5 直通的哈希级证据） |
+| `linkRisk` 全量终审 | 命中 0 | 命中 **0** |
+| `[site-config] 未找到卡片` | 0 条 | prune 后 **1 条**（`豆包拉新项目`，见 10.4） |
+
+字段差异实测：`quota`/`modality` 28/28 全部随上游刷新；`link` 0 差异（`site-config` 逐卡覆盖全部命中，
+短链上游值被盖掉）。donots 与 rules 与切换前**逐字节一致**（`git diff --numstat -- data/` 只出现
+`tokens.json` 与 `meta.json` 两行）。
+
+### 10.2 Q1–Q9 九问裁决 → 落地位置与钉住它的测试
+
+| 裁决 | 落点（单一实现） | 钉住它的测试 |
+|---|---|---|
+| Q1 事实/观点分层合并（事实 7 键 `name,type,modality,quota,link,limited,updated`） | `crawler/adapt.mjs`：`FACT_FIELDS` + `factPatch` + `adaptItems` | `adapt.test.ts` ⑤⑥⑦；`seed.test.ts`「Q1/Q3/Q9」；`seed-repro.mjs` 幂等闸 b |
+| Q2 仅本地存在的 11 张旧卡全部跟随下架 | 结构性保证：`adaptItems` 只遍历上游 `items`，本地多出的卡自然出局 | `seed.test.ts`「Q1/Q3/Q9」内 gone 11 名单断言 `toEqual([])` |
+| Q3 `updated` 取上游 `last_verified` | `adapt.mjs` 的 `updated: item.last_verified \|\| ""` | `extract.test.ts` WorkBuddy 样本；`catalog.test.ts` `latestUpdated = 2026-09-28` |
+| Q4 donots 转本地维护、`retired` 绝不进观望名单 | `extract.mjs` 只出 `{ items }`（`retired` 不出这道门）；`buildSeed` 直通 `prevDonots` | `extract.test.ts`「出参只有 items 一个键」；`seed.test.ts`「Q4/Q5 直通」；`seed:repro` donots 哈希 |
+| Q5 rules 五表转本地固定资产 | `buildSeed` 返回 `rules: prevRules` | `seed.test.ts`「Q4/Q5 直通」；`seed:repro` rules 哈希；`seed.test.ts` 规则表还原例 |
+| Q6 `sponsored`/`ad_*` 不进报纸 | `adaptItem` 的 `item.sponsored === true → null` | `adapt.test.ts` ②（真实 fixture 恰好 3 条实名）；`extract.test.ts` 零过滤例 |
+| Q7 丢弃 `event`/未知类目 | `adapt.mjs` 的 `CATEGORY_TO_TYPE = { tool, model }` | `adapt.test.ts` ① |
+| Q8 4 张新卡全收；小米/豆包维持 hide | `config/site-config.json` 的 `hide` 键未动 | `seed.test.ts`「Q1/Q3/Q9」新增 4 名 + 条数 `36-3-1` |
+| Q9 首期带 `Qoder cn` alias | `adapt.mjs` 的 `NAME_ALIAS` | `adapt.test.ts` ④；`seed.test.ts`「上游名不得落库」 |
+
+### 10.3 下架 11 卡实名（Q2，**不得以任何形式复活**）
+
+GLM-5.3-Flash（Ox-Alpha）、蓝博科技（lanbuff）、2026 微信小程序开发大赛、HuggingFace Inference API、
+月之暗面 Kimi 开放平台、OpenStarry、腾讯云 TokenHub、太行HUB（token.taiha.cn）、B.AI（AI 模型聚合平台）、
+GMI Cloud（gmi-serving）、秒哒（百度）。
+
+其中 `HuggingFace Inference API`、`OpenStarry`、`腾讯云 TokenHub`、`太行HUB（token.taiha.cn）`、
+`B.AI（AI 模型聚合平台）` 5 条**同时**存在于 `data/donots.json`（镜像时代即「卡 + 观望项」并存）。
+Q4 下 donots 是本地资产、逐字节直通，所以这 5 条仍留在观望名单里——这是「本地资产不动」的结果，
+不是「复活被下架卡」：它们不再出现在 `data/tokens.json`（`seed.test.ts` 的 gone 断言只查 tokens）。
+
+### 10.4 site-config prune 范围与预期告警
+
+删除 2 个失效 link 覆盖：`GLM-5.3-Flash（Ox-Alpha）`、`秒哒（百度）`（覆盖对象已按 Q2 下架）。
+**保留** `豆包拉新项目`/`小米 MiMo（Xiaomi）` 两个 `hide`（Q8 明示的 sponsored 挡架之外第二道防线）。
+代价是每次 seed/爬取打印一行 `[site-config] 未找到卡片： 豆包拉新项目`——**属预期**，
+不得为消除告警而删键（`grep -c "未找到卡片"` 在 seed 输出里恒为 1）。prune 行为中立：
+`seed:repro` 的 `cards=ba754253ebaa` 与 prune **之前**实测同值，两件事互为交叉验证。
+
+### 10.5 观察项（留档不修，附理由）
+
+- `src/lib/catalog.ts` 的 `PRIORITY_MODELS` 里 `/glm-5\.3/i` 已成**死模式**（该卡按 Q2 下架，且 `rank()` 只测 `card.name`）。
+  不删：它编码的是「同名模型回归时排在前」的排序意图，将来数据回来即自动生效，删掉反而丢语义、并制造一次无谓的 pin 位次漂移。
+- `adaptItems` 对「上游改名但本地无 alias」的情形会表现为「旧卡消失 + 新卡出现」（本次 `Qoder cn` 已补 alias 规避）。
+  后续上游再改名时，正确处置是**先加 `NAME_ALIAS` 再同步**，否则该卡的评分/上手指南/pin 会整体丢失——`seed.test.ts` 的 alias 例是此事的回归钉。
+- `buildSeed` 的四条护栏（三条基底缺失 + 一条「适配层收取数为 0」下限）在真拉路径（`crawler/run.mjs`）里
+  几乎永不触发（`main()` 恒从 `data/` 读三件，爬虫侧另有 `holdCards`：`syncOnce` 把 removed 卡推回 `data.cards`
+  并只记进 pending 审核队列，删除不落地），它防的是「新库/误删文件/上游类目字段改名后仍强行发布空壳」，
+  属 fail-safe 而非日常分支；四条都有 `seed.test.ts` 的护栏例直接抛错验证（Task 2 Step 8d）。
+
+### 10.6 复验命令（全部本机可跑，零 GitHub 写操作）
+
+```powershell
+cd D:\Documents\code\freeTokenInfo\token-fbi-next ; npm run seed ; npm run seed:repro ; npm run test ; npm run build ; npm run test:out ; npx tsc --noEmit
+```
+期望依次为：`seed 完成：tokens=32 donots=22`、`seed 复现 OK：cards=ba754253ebaa donots=88f99a96da35 rules=7888f2ec168b`、
+`Tests 133 passed (133)`、`✓ Generating static pages (26/26)`、`pass 5`、tsc 无输出。
+
+```powershell
+cd D:\Documents\code\freeTokenInfo\token-fbi-next ; grep -rlE "lmfh2022|ygtxup80|CQLBPC|AATGOEHF|userCode=|invite_code=|poster-doubao" data out ; echo EXIT=$LASTEXITCODE
+```
+期望：零输出、`EXIT=1`。
+
+### 10.7 数据安全闸的两种力度：全量归零硬停 vs 部分掉卡出声（复审 I-A）
+
+`npm run seed` 绕过 `syncOnce` 直写 `seed.cards`，所以「上游类目字段半数漂移」（例如 16 条 `tool` 里有 14 条
+被改名成 `tools`）不会被删除审核队列接住——它会安静地把 32 张卡覆写成 18 张，而那 14 张卡上的手写内容
+（`rating`/`effect`/`signup`/`pin`/`badge`/`tone`/`extraAction`/`v2`）**不可由管线重建，误覆写只能 git 回溯**。
+据此定两种力度：
+
+- **全量归零 → 硬停**：`buildSeed` 的下限闸抛错（`上游 items 非空但适配层收取数为 0…（决策 Q1 基底保护）`），
+  实测 `exit=1` 且 `data/tokens.json` 仍是 32 张——抛点在 `writeFileSync` 之前，不会留下半成品。
+- **超两成降幅 → 只出声**：CLI 落盘前调 `dropWarning(base, next, 0.2)`，`console.warn`
+  `[seed] 卡片数 32→18（降幅 44%）：若非有意下架，请勿提交——观点字段不可由管线重建，误覆写只能 git 回溯`，
+  实测 `exit=0` 且照常写出 18 张。**故意不做硬拦**：决策 Q2 的正常跟随下架必须能跑过去，拦下来反而挡住合法发布。
+  阈值语义由 `seed.test.ts`「落盘前降幅告警」例钉住（44%/22% 出声，19%/持平/新增/空基底不出声）。
+
+审查 `data/tokens.json` 变更时的判据：**先看 seed 输出里有没有这行告警**。有告警而提交仍下架了一批卡，
+必须在提交信息或 Issue 里写明是哪几张、为什么；没有告警的删除才可能是静默漂移。
