@@ -57,6 +57,14 @@ jobs:
       - run: npm run build
       - name: 本地起服（质量基准=本地产物，与 Pages 地址解耦）
         run: npx --yes serve out --listen tcp://127.0.0.1:3000 &
+      - name: 等待本地服务就绪（任务评审修订：serve 冷启动期间 Lighthouse 连接拒绝会随机红灯）
+        run: |
+          for i in $(seq 1 10); do
+            curl -sf http://127.0.0.1:3000/ >/dev/null && exit 0
+            sleep 2
+          done
+          echo "本地服务 20s 内未就绪" >&2
+          exit 1
       - name: Lighthouse 门禁（LCP<2.5s / CLS<0.1 / A11y≥95，不带病上线）
         uses: treosh/lighthouse-ci-action@v11
         with:
@@ -69,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.page-information.outputs.url }}
+      url: ${{ steps.page-information.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
