@@ -55,6 +55,13 @@ export function buildSeed(sourceText, config, local) {
   }
 
   const cleaned = adaptItems(items, prevCards).map(cleanCard);
+  /* 收取下限：三条基底护栏只挡在 adapt 之前，挡不住「上游字段口径漂移」。
+     上游把 category 整体改名（tool→tools）时 items 非空、解析成功，但适配层会一条都不收，
+     没有这道闸就会把 28 张卡的评分/上手指南/pin 静默抹成空表落盘（seed:repro 的「管线=磁盘」
+     陈旧红线此时自洽通过，救不了）。只挡全量归零：部分掉卡属正常下架，走爬虫侧的删除审核队列。 */
+  if (!cleaned.length) {
+    throw new Error("上游 items 无一被收取：疑似 category / 字段口径漂移，拒绝导出空表（决策 Q1 基底保护）");
+  }
   const merged = applySiteConfig(cleaned, prevDonots, config);
 
   /* 校验必须排在 applySiteConfig 之后：清洗器先剥参数，逐卡覆盖兜住路径型短链，两层都跑完

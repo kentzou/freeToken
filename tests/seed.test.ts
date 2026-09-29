@@ -15,7 +15,7 @@ const meta = JSON.parse(read("data/meta.json"));
    与 seed:repro 的 CLI 门禁互为备份（vitest 在 CI 里先跑，seed:repro 单独跑）。 */
 const PIPELINE = buildSeed(read("tests/fixtures/upstream-data.json"), JSON.parse(read("config/site-config.json")), loadLocal());
 
-describe("种子数据（由脚本从真实镜像生成）", () => {
+describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed 导出）", () => {
   it("条数与上游一致", () => {
     expect(tokens).toHaveLength(36 - 3 - 1); // 上游 36 − sponsored 3（Q6）− site-config hide 1（小米 MiMo，Q8）
     expect(donots).toHaveLength(22);
@@ -108,9 +108,26 @@ describe("种子数据（由脚本从真实镜像生成）", () => {
     expect(tokens.some((t: any) => t.name === "阿里云 Qoder（灵码）")).toBe(true); // alias 后仍在线
   });
 
-  it("可复现：同输入两次导出得到同一 SHA256", () => {
+  it("可复现：管线导出与磁盘快照同 SHA256（pipeline↔disk 等价，幂等红线的单测层）", () => {
     const sha = (o: unknown) =>
       createHash("sha256").update(JSON.stringify(o)).digest("hex").slice(0, 12);
-    expect(sha(tokens)).toBe(sha(JSON.parse(read("data/tokens.json"))));
+    // 原来比的是 sha(tokens) vs sha(重读同一文件)＝同一表达式比自身，恒真；改比「管线产物」与「磁盘」
+    expect(sha(PIPELINE.cards)).toBe(sha(tokens));
+    expect(sha(PIPELINE.cards)).toBe("ba754253ebaa"); // 计划 §0.1 实测哈希：换卡必须显式改这里
+  });
+
+  it("四道 fail-stop 护栏：基底缺失或上游全被挡架都拒绝导出，绝不发布空壳", () => {
+    const CONFIG = JSON.parse(read("config/site-config.json"));
+    const src = read("tests/fixtures/upstream-data.json");
+    expect(() => buildSeed(src, CONFIG, { ...loadLocal(), cards: [] })).toThrow(/决策 Q1/);
+    expect(() => buildSeed(src, CONFIG, { ...loadLocal(), donots: null })).toThrow(/决策 Q4/);
+    expect(() => buildSeed(src, CONFIG, { ...loadLocal(), rules: null })).toThrow(/决策 Q5/);
+    /* 上游 category 整体改名：items 非空、解析通过，但适配层一条都不收 → 必须停在落盘之前 */
+    const json = JSON.parse(src);
+    const drifted = JSON.stringify({
+      ...json,
+      items: json.items.map((i: any) => ({ ...i, category: "tools" })),
+    });
+    expect(() => buildSeed(drifted, CONFIG, loadLocal())).toThrow(/无一被收取/);
   });
 });
