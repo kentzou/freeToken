@@ -1,0 +1,61 @@
+/* 设计令牌：浅色为默认，data-theme="dark" 覆盖同语义名 */
+:root {
+  --bg: #f6f4ee;
+  --surface: #fffef9;
+  --surface-2: #f0ede3;
+  --line: #dcd8cc;
+  --line-strong: #17201b;
+  --ink-1: #17201b;
+  --ink-2: #3c463f;
+  --ink-3: #6b766d;
+  --ink-4: #9a938a;
+  --brand: #0f966e;
+  --brand-deep: #0b7a59;
+  --brand-soft: #e2f6ee;
+  --warn-ink: #9a6a00;
+  --warn-bg: #fef3d8;
+  --hl-y: #ffe66b;
+  --hl-g: #b8f0c9;
+  --stamp: #0b7a59;
+  --font-serif: "Noto Serif SC", "Songti SC", SimSun, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+[data-theme="dark"] {
+  --bg: #101815;
+  --surface: #151f1a;
+  --surface-2: #1a2620;
+  --line: #26332c;
+  --line-strong: #e8ede9;
+  --ink-1: #e8ede9;
+  --ink-2: #b5c2ba;
+  --ink-3: #8fa39a;
+  --ink-4: #5f6f66;
+  --brand: #7fd8b0;
+  --brand-deep: #4fbf92;
+  --brand-soft: rgba(127, 216, 176, 0.14);
+  --warn-ink: #ffd58a;
+  --warn-bg: rgba(255, 196, 77, 0.12);
+  --stamp: #7fd8b0;
+}
+*,
+*::before,
+*::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink-1);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+}
+a { color: var(--brand-deep); }
+img { max-width: 100%; display: block; }
+button { font: inherit; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after { animation: none !important; transition: none !important; }
+}
