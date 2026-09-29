@@ -17,6 +17,10 @@ describe("adapt：data.json item → 本站卡片（决策 Q1/Q2/Q6/Q7/Q9）", (
     expect(adaptItem({ name: "活动卡", category: "event" })).toBeNull();
     expect(adaptItem({ name: "怪类目卡", category: "unknown" })).toBeNull();
     expect(adaptItem({ name: "无类目卡" })).toBeNull();
+    // 原型键不是类目：裸下标会把 function 当命中，JSON.stringify 时该键整个消失 → 落盘缺键卡
+    expect(adaptItem({ name: "怪卡", category: "toString" })).toBeNull();
+    expect(adaptItem({ name: "怪卡", category: "hasOwnProperty" })).toBeNull();
+    expect(adaptItem({ name: "constructor", category: "tool" })?.name).toBe("constructor");
   });
 
   it("② sponsored===true 一律挡架（决策 Q6：广告位不进报纸），真实 fixture 恰好 3 条", () => {
@@ -34,7 +38,9 @@ describe("adapt：data.json item → 本站卡片（决策 Q1/Q2/Q6/Q7/Q9）", (
     expect(f.updated).toBe("2026-09-28");
     expect(f.quota).toBe("HY3 限免至 2026-09-30；HY4 preview 新用户首开对话起 14 天内免费。");
     expect(f.modality).toBe("HY3 · HY4 preview · DeepSeek-V4.1-Flash");
-    expect(Object.keys(f)).toEqual(FACT_FIELDS);
+    // 字面量钉住 FACT_FIELDS 自身：只跟实现比数组会恒真，重排正是幂等红线的触发条件
+    expect(FACT_FIELDS).toEqual(["name", "type", "modality", "quota", "link", "limited", "updated"]);
+    expect(Object.keys(f)).toEqual(FACT_FIELDS); // 且事实补丁恰好 7 键、无多余键
   });
 
   it("④ 改名 alias：上游 Qoder cn → 本地「阿里云 Qoder（灵码）」，缺它则观点字段全丢", () => {
@@ -81,7 +87,8 @@ describe("adapt：data.json item → 本站卡片（决策 Q1/Q2/Q6/Q7/Q9）", (
     expect(names).toContain("WorkBuddy");
     expect(names).not.toContain("GLM-5.3-Flash（Ox-Alpha）");
     expect(names).not.toContain("2026 微信小程序开发大赛");
-    expect(out).toHaveLength(items.filter((i) => i.sponsored !== true && (i.category === "tool" || i.category === "model")).length); // 实测 33 = 36 − sponsored 3（含 event 豆包）；小米 MiMo 的 hide 发生在下游 applySiteConfig，故适配层出 33、落盘 32
+    expect(items).toHaveLength(36); // 实测上游条目数（换代必须显式改这两行）
+    expect(out).toHaveLength(33); // 实测 33 = 36 − sponsored 3（含 event 豆包）；小米 MiMo 的 hide 发生在下游 applySiteConfig，故适配层出 33、落盘 32
   });
 
   it("⑦ 本地无对应旧卡 → 纯事实 7 键新卡，键序恒等于 FACT_FIELDS（幂等地基）", () => {
@@ -94,6 +101,9 @@ describe("adapt：data.json item → 本站卡片（决策 Q1/Q2/Q6/Q7/Q9）", (
   it("⑧ 脏输入不抛错只跳过；输出顺序 = 上游 items 顺序；注入条目落在表头", () => {
     const dirty = [null, undefined, {}, { name: "   ", category: "tool" }, find("WorkBuddy")] as any[];
     expect(adaptItems(dirty, []).map((c) => c.name)).toEqual(["WorkBuddy"]);
+    // 容器级脏输入（上游形态变了）同样不抛裸 TypeError：非数组按空集处理
+    expect(adaptItems({} as any, [])).toEqual([]);
+    expect(adaptItems(items, {} as any)).toHaveLength(33);
     const injected = JSON.parse(
       injectUpstreamItem(readFileSync(path.resolve(process.cwd(), "tests/fixtures/upstream-data.json"), "utf8"), {
         name: "单元注入卡",
@@ -103,7 +113,8 @@ describe("adapt：data.json item → 本站卡片（决策 Q1/Q2/Q6/Q7/Q9）", (
         last_verified: "2026-09-29",
       })
     ).items as Record<string, unknown>[];
-    expect(adaptItems(injected, []).slice(0, 2).map((c) => c.name)).toEqual(["单元注入卡", "WorkBuddy"]);
-    expect(adaptItems(injected, [])[0].link).toBe("https://inj.example/?userCode=ygtxup80"); // 适配层不清洗
+    const out = adaptItems(injected, []);
+    expect(out.slice(0, 2).map((c) => c.name)).toEqual(["单元注入卡", "WorkBuddy"]);
+    expect(out[0].link).toBe("https://inj.example/?userCode=ygtxup80"); // 适配层不清洗
   });
 });
