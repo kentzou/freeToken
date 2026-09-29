@@ -1,0 +1,439 @@
+{
+  "featured": [
+    {
+      "label": "DeepSeek V4",
+      "source": "deepseekv(?:[4-9]|1\\d)",
+      "flags": ""
+    },
+    {
+      "label": "GLM 5.2",
+      "source": "glm5(?:[2-9]|1\\d)|glm[6-9]",
+      "flags": ""
+    },
+    {
+      "label": "Kimi K3",
+      "source": "kimik(?:[3-9]|1\\d)",
+      "flags": ""
+    },
+    {
+      "label": "千问 3.8 Max",
+      "source": "(?:千问|qwen)3(?:[8-9]|1\\d)|(?:千问|qwen)[4-9]",
+      "flags": ""
+    },
+    {
+      "label": "Hy3",
+      "source": "hy(?:[3-9]|1\\d)",
+      "flags": ""
+    },
+    {
+      "label": "LongCat 2.0",
+      "source": "longcat",
+      "flags": ""
+    }
+  ],
+  "logo": [
+    {
+      "source": "workbuddy",
+      "flags": "i",
+      "slug": "workbuddy"
+    },
+    {
+      "source": "qoder|灵码",
+      "flags": "i",
+      "slug": "qoder"
+    },
+    {
+      "source": "glm|智谱|z\\.ai",
+      "flags": "i",
+      "slug": "zhipu"
+    },
+    {
+      "source": "蓝博|lanbuff",
+      "flags": "i",
+      "slug": "lanbuff"
+    },
+    {
+      "source": "阶跃|stepfun",
+      "flags": "i",
+      "slug": "stepfun"
+    },
+    {
+      "source": "cline",
+      "flags": "i",
+      "slug": "cline"
+    },
+    {
+      "source": "kilo",
+      "flags": "i",
+      "slug": "kilo"
+    },
+    {
+      "source": "verdent",
+      "flags": "i",
+      "slug": "verdent"
+    },
+    {
+      "source": "marvis|马维斯",
+      "flags": "i",
+      "slug": "marvis"
+    },
+    {
+      "source": "catpaw",
+      "flags": "i",
+      "slug": "catpaw"
+    },
+    {
+      "source": "微信|小程序",
+      "flags": "i",
+      "slug": "wechat"
+    },
+    {
+      "source": "硅基|siliconflow",
+      "flags": "i",
+      "slug": "siliconflow"
+    },
+    {
+      "source": "longcat",
+      "flags": "i",
+      "slug": "meituan"
+    },
+    {
+      "source": "opencode",
+      "flags": "i",
+      "slug": "opencode"
+    },
+    {
+      "source": "cloudbase|腾讯云混元|tokenhub",
+      "flags": "i",
+      "slug": "tencent"
+    },
+    {
+      "source": "scnet|超算",
+      "flags": "i",
+      "slug": "scnet"
+    },
+    {
+      "source": "amd",
+      "flags": "i",
+      "slug": "amd"
+    },
+    {
+      "source": "秒哒|百度|千帆",
+      "flags": "i",
+      "slug": "baidu"
+    },
+    {
+      "source": "小米|mimo",
+      "flags": "i",
+      "slug": "xiaomi"
+    },
+    {
+      "source": "有道|lobster",
+      "flags": "i",
+      "slug": "youdao"
+    },
+    {
+      "source": "阿里|百炼|云工",
+      "flags": "i",
+      "slug": "aliyun"
+    },
+    {
+      "source": "nvidia",
+      "flags": "i",
+      "slug": "nvidia"
+    },
+    {
+      "source": "google|gemini",
+      "flags": "i",
+      "slug": "google"
+    },
+    {
+      "source": "github|copilot",
+      "flags": "i",
+      "slug": "github"
+    },
+    {
+      "source": "groq",
+      "flags": "i",
+      "slug": "groq"
+    },
+    {
+      "source": "cerebras",
+      "flags": "i",
+      "slug": "cerebras"
+    },
+    {
+      "source": "七牛",
+      "flags": "i",
+      "slug": "qiniu"
+    },
+    {
+      "source": "火山",
+      "flags": "i",
+      "slug": "volcengine"
+    },
+    {
+      "source": "huggingface",
+      "flags": "i",
+      "slug": "huggingface"
+    },
+    {
+      "source": "魔搭|modelscope",
+      "flags": "i",
+      "slug": "modelscope"
+    },
+    {
+      "source": "腾讯|混元|hy3|hy4",
+      "flags": "i",
+      "slug": "tencent"
+    },
+    {
+      "source": "美团",
+      "flags": "i",
+      "slug": "meituan"
+    }
+  ],
+  "cardCopy": [
+    {
+      "source": "workbuddy",
+      "flags": "i",
+      "models": "HY3 / HY4 / DeepSeek-V4.1",
+      "summary": "新用户可领多模型免费额度，开箱即用。"
+    },
+    {
+      "source": "qoder|灵码",
+      "flags": "i",
+      "models": "Qwen3.8-Flash / Qwen3.8-Max",
+      "summary": "限时模型免费，适合日常 AI 编程。"
+    },
+    {
+      "source": "glm-5\\.3|智谱",
+      "flags": "i",
+      "models": "GLM-5.3-Flash",
+      "summary": "注册可领体验卡，适合开发与日常使用。"
+    },
+    {
+      "source": "stepfun|阶跃",
+      "flags": "i",
+      "models": "Step-5 / Step-Audio",
+      "summary": "注册送免费体验期，支持多模态模型。"
+    },
+    {
+      "source": "siliconflow|硅基",
+      "flags": "i",
+      "models": "Qwen / Llama / DeepSeek 等",
+      "summary": "注册即得免费额度，支持多种开源模型。"
+    },
+    {
+      "source": "kilo",
+      "flags": "i",
+      "models": "Claude 4 / GPT-4.1 / 免费模型",
+      "summary": "多款模型长期免费，无需信用卡。"
+    },
+    {
+      "source": "cline",
+      "flags": "i",
+      "models": "DeepSeek-V4.1 / GLM-5.3",
+      "summary": "开源 AI 编程助手，免费模型直接使用。"
+    },
+    {
+      "source": "verdent",
+      "flags": "i",
+      "models": "GLM-5.3 / DeepSeek V4",
+      "summary": "双 Flash 模型免费，适合日常编码。"
+    },
+    {
+      "source": "lanbuff|蓝博",
+      "flags": "i",
+      "models": "DeepSeek V4 / GLM-5.3 / Qwen",
+      "summary": "多模型统一接入，适合 API 开发测试。"
+    },
+    {
+      "source": "catpaw",
+      "flags": "i",
+      "models": "GLM-5.3 / LongCat",
+      "summary": "登录即送积分，LongCat 免费使用。"
+    },
+    {
+      "source": "longcat",
+      "flags": "i",
+      "models": "LongCat 2.0",
+      "summary": "新用户可领大额 Token，适合高频使用。"
+    },
+    {
+      "source": "opencode",
+      "flags": "i",
+      "models": "DeepSeek / MiMo / LongCat",
+      "summary": "多款精选模型可免费用于编程任务。"
+    },
+    {
+      "source": "小米|mimo",
+      "flags": "i",
+      "models": "MiMo-X-Pro / MiMo-X-Flash",
+      "summary": "限时免费体验，覆盖多种创作任务。"
+    },
+    {
+      "source": "有道|lobster",
+      "flags": "i",
+      "models": "DeepSeek-V4.1",
+      "summary": "下载安装即可使用，适合对话与任务处理。"
+    },
+    {
+      "source": "云工开物",
+      "flags": "i",
+      "models": "Qwen / GLM / DeepSeek",
+      "summary": "学生认证可领取专业版权益。"
+    },
+    {
+      "source": "微信.*小程序|cloudbase",
+      "flags": "i",
+      "models": "HY3 / Hy Image 3.0",
+      "summary": "开发者计划提供 Token 与生图额度。"
+    },
+    {
+      "source": "nvidia",
+      "flags": "i",
+      "models": "Llama / Gemma / DeepSeek 等",
+      "summary": "免费推理接口，适合个人测试。"
+    },
+    {
+      "source": "七牛",
+      "flags": "i",
+      "models": "Qwen / DeepSeek / Kimi / GLM",
+      "summary": "新用户可领多模型调用额度。"
+    },
+    {
+      "source": "amd",
+      "flags": "i",
+      "models": "AMD 免费 API",
+      "summary": "提供免费接口与开发者云额度。"
+    }
+  ],
+  "detailSlug": [
+    {
+      "source": "workbuddy",
+      "flags": "i",
+      "slug": "workbuddy"
+    },
+    {
+      "source": "qoder|灵码",
+      "flags": "i",
+      "slug": "qoder"
+    },
+    {
+      "source": "glm-5\\.3|ox-alpha",
+      "flags": "i",
+      "slug": "glm-5-3-flash"
+    },
+    {
+      "source": "蓝博|lanbuff",
+      "flags": "i",
+      "slug": "lanbuff"
+    },
+    {
+      "source": "阶跃|stepfun",
+      "flags": "i",
+      "slug": "stepfun"
+    },
+    {
+      "source": "^cline$",
+      "flags": "i",
+      "slug": "cline"
+    },
+    {
+      "source": "kilo",
+      "flags": "i",
+      "slug": "kilo-code"
+    },
+    {
+      "source": "verdent",
+      "flags": "i",
+      "slug": "verdent"
+    },
+    {
+      "source": "marvis|马维斯",
+      "flags": "i",
+      "slug": "marvis"
+    },
+    {
+      "source": "catpaw",
+      "flags": "i",
+      "slug": "catpaw"
+    },
+    {
+      "source": "小程序开发大赛",
+      "flags": "i",
+      "slug": "wechat-miniprogram-contest"
+    },
+    {
+      "source": "硅基|siliconflow",
+      "flags": "i",
+      "slug": "siliconflow"
+    },
+    {
+      "source": "longcat",
+      "flags": "i",
+      "slug": "longcat"
+    },
+    {
+      "source": "opencode",
+      "flags": "i",
+      "slug": "opencode-zen"
+    },
+    {
+      "source": "成长计划|cloudbase",
+      "flags": "i",
+      "slug": "cloudbase-growth-plan"
+    },
+    {
+      "source": "scnet|超算",
+      "flags": "i",
+      "slug": "scnet"
+    },
+    {
+      "source": "amd",
+      "flags": "i",
+      "slug": "amd-developer-program"
+    },
+    {
+      "source": "秒哒",
+      "flags": "i",
+      "slug": "miaoda"
+    },
+    {
+      "source": "小米|mimo",
+      "flags": "i",
+      "slug": "xiaomi-mimo"
+    },
+    {
+      "source": "有道|lobster",
+      "flags": "i",
+      "slug": "lobsterai"
+    },
+    {
+      "source": "云工开物",
+      "flags": "i",
+      "slug": "aliyun-student"
+    }
+  ],
+  "regionByName": {
+    "Agnes AI": "新加坡",
+    "OpenRouter": "美国",
+    "GMI Cloud（gmi-serving）": "美国",
+    "B.AI（AI 模型聚合平台）": "国外",
+    "NVIDIA NIM 免费 API": "美国",
+    "HuggingFace Inference API": "美国",
+    "BazaarLink": "中国台湾",
+    "OpenCode Zen": "国外",
+    "基元律动": "国外",
+    "ZenMux": "国外",
+    "AMD 免费 API 与开发者计划": "美国",
+    "Cline": "国外",
+    "Kilo Code": "国外",
+    "Verdent AI": "国外",
+    "Google Gemini API": "美国",
+    "GitHub Copilot Free": "美国",
+    "Groq": "美国",
+    "Cerebras": "美国"
+  }
+}
