@@ -55,12 +55,15 @@ export function buildSeed(sourceText, config, local) {
   }
 
   const cleaned = adaptItems(items, prevCards).map(cleanCard);
-  /* 收取下限：三条基底护栏只挡在 adapt 之前，挡不住「上游字段口径漂移」。
-     上游把 category 整体改名（tool→tools）时 items 非空、解析成功，但适配层会一条都不收，
-     没有这道闸就会把 28 张卡的评分/上手指南/pin 静默抹成空表落盘（seed:repro 的「管线=磁盘」
-     陈旧红线此时自洽通过，救不了）。只挡全量归零：部分掉卡属正常下架，走爬虫侧的删除审核队列。 */
+  /* 收取下限：三条基底护栏只挡在 adapt 之前，挡不住「上游类目字段整体改名」。
+     触发条件就是字面意义上的收取数归零（items 非空、解析成功，但 adaptItems 一条不收），
+     没有这道闸就会把 32 张卡的评分/上手指南/pin 静默抹成空表落盘（seed:repro 的「管线=磁盘」
+     陈旧红线此时自洽通过，救不了）。只挡全量归零：部分掉卡属决策 Q2 的正常跟随下架，
+     交给 CLI 的降幅告警出声，硬拦反而会让合法下架跑不过去。 */
   if (!cleaned.length) {
-    throw new Error("上游 items 无一被收取：疑似 category / 字段口径漂移，拒绝导出空表（决策 Q1 基底保护）");
+    throw new Error(
+      "上游 items 非空但适配层收取数为 0（决策 Q7 只认 tool/model、Q6 挡 sponsored）：疑似上游类目字段改名或形态漂移，拒绝导出空表（决策 Q1 基底保护）"
+    );
   }
   const merged = applySiteConfig(cleaned, prevDonots, config);
 
@@ -94,6 +97,18 @@ export function buildSeed(sourceText, config, local) {
   };
 }
 
+/** 落盘前的非致命降幅告警文案（纯函数，用例直测；是否出声由 CLI 决定）。
+ *  下限闸只挡「收取数归零」；部分掉卡是决策 Q2 的正常跟随下架，不能硬拦。但事实是
+ *  观点字段（rating/effect/signup/pin/badge/tone/extraAction/v2）不可由管线重建，
+ *  一次误覆写只能靠 git 回溯，所以降幅超阈值时必须出声。
+ *  base 非正数时返回 null：基底为空的情况 buildSeed 已先抛，不该再叠一条噪音。 */
+export function dropWarning(baseCount, nextCount, threshold = 0.2) {
+  if (!Number.isFinite(baseCount) || baseCount <= 0) return null;
+  const drop = (baseCount - nextCount) / baseCount;
+  if (drop <= threshold) return null;
+  return `卡片数 ${baseCount}→${nextCount}（降幅 ${Math.round(drop * 100)}%）：若非有意下架，请勿提交——观点字段不可由管线重建，误覆写只能 git 回溯`;
+}
+
 /** CLI：仅在被 `node scripts/export-seed.mjs` 直接执行时运行。
  *  用 pathToFileURL(resolve(argv[1])) 比较，Windows 反斜杠路径同样命中（import.meta.url 恒为正斜杠 file URL）。 */
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
@@ -104,7 +119,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     console.warn("[seed] site-config 读取失败，按无覆盖处理：", e.message);
   }
 
-  const seed = buildSeed(readFileSync(SNAPSHOT, "utf8"), config, loadLocal());
+  const local = loadLocal();
+  const seed = buildSeed(readFileSync(SNAPSHOT, "utf8"), config, local);
+  const warn = dropWarning(local.cards && local.cards.length, seed.cards.length);
+  if (warn) console.warn(`[seed] ${warn}`);
 
   mkdirSync(OUT, { recursive: true });
   writeFileSync(path.join(OUT, "tokens.json"), dump(seed.cards));

@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { linkRisk } from "../crawler/clean.mjs";
-import { buildSeed, loadLocal } from "../scripts/export-seed.mjs";
+import { buildSeed, dropWarning, loadLocal } from "../scripts/export-seed.mjs";
 
 const read = (p: string) => readFileSync(path.resolve(process.cwd(), p), "utf8");
 const tokens = JSON.parse(read("data/tokens.json"));
@@ -119,15 +119,26 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
   it("四道 fail-stop 护栏：基底缺失或上游全被挡架都拒绝导出，绝不发布空壳", () => {
     const CONFIG = JSON.parse(read("config/site-config.json"));
     const src = read("tests/fixtures/upstream-data.json");
-    expect(() => buildSeed(src, CONFIG, { ...loadLocal(), cards: [] })).toThrow(/决策 Q1/);
-    expect(() => buildSeed(src, CONFIG, { ...loadLocal(), donots: null })).toThrow(/决策 Q4/);
-    expect(() => buildSeed(src, CONFIG, { ...loadLocal(), rules: null })).toThrow(/决策 Q5/);
+    /* 正则各自锚定本护栏独有的措辞：/决策 Q1/ 会同时命中基底缺失与下限闸两条消息，
+       届时「护栏被绕过」和「换了一道闸生效」在断言里长得一样。 */
+    expect(() => buildSeed(src, CONFIG, { ...loadLocal(), cards: [] })).toThrow(/tokens\.json 作观点字段基底/);
+    expect(() => buildSeed(src, CONFIG, { ...loadLocal(), donots: null })).toThrow(/观望名单已转本地维护/);
+    expect(() => buildSeed(src, CONFIG, { ...loadLocal(), rules: null })).toThrow(/规则表已转本地固定资产/);
     /* 上游 category 整体改名：items 非空、解析通过，但适配层一条都不收 → 必须停在落盘之前 */
     const json = JSON.parse(src);
     const drifted = JSON.stringify({
       ...json,
       items: json.items.map((i: any) => ({ ...i, category: "tools" })),
     });
-    expect(() => buildSeed(drifted, CONFIG, loadLocal())).toThrow(/无一被收取/);
+    expect(() => buildSeed(drifted, CONFIG, loadLocal())).toThrow(/收取数为 0/);
+  });
+
+  it("落盘前降幅告警：超阈值出声提醒，正常下架与新增不出声", () => {
+    expect(dropWarning(32, 18)).toContain("32→18（降幅 44%）");
+    expect(dropWarning(32, 25)).toContain("降幅 22%"); // 32 张基数下掉 7 张＝首个越界降幅
+    expect(dropWarning(32, 26)).toBeNull(); // 19% ≤ 阈值：决策 Q2 的正常跟随下架不该报警
+    expect(dropWarning(32, 32)).toBeNull();
+    expect(dropWarning(32, 35)).toBeNull(); // 上游新增卡不算降幅
+    expect(dropWarning(0, 5)).toBeNull(); // 基底为空时 buildSeed 已先抛，这里不叠第二条噪音
   });
 });
