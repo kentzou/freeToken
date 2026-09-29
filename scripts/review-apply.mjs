@@ -4,6 +4,7 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } fr
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { dump } from "./export-seed.mjs";
+import { keyOf } from "../crawler/diff.mjs";
 import { applyDecisions } from "../crawler/approve.mjs";
 import { closeIssue, commentIssue } from "../crawler/github.mjs";
 
@@ -29,7 +30,8 @@ export async function runReview({ repo, issueNumber, pending, data, comment, tok
   const cmds = parseCommands(comment);
   if (!cmds.length) return { changed: false, applied: [], missing: [], files: {}, pendingLeft: pending?.changes?.length || 0 };
 
-  const allIds = (pending?.changes || []).map((e) => `${e.kind}:${e.name}`);
+  /* 终审 (D)：id 格式串只允许有一处实现（diff.mjs 的 keyOf），此处复用而非同形复刻 */
+  const allIds = (pending?.changes || []).map(keyOf);
   const decisions = [];
   for (const c of cmds) {
     if (c.id.toLowerCase() === "all") decisions.push(...allIds.map((id) => ({ action: c.action, id })));

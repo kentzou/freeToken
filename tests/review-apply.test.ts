@@ -34,6 +34,19 @@ describe("review-apply：Issue 评论 → 合入（workflow review job 的入口
     expect(parseCommands("hello").length).toBe(0);
   });
 
+  it("(C) 放宽依据：命令解析面宽于 workflow 的 startsWith —— 大小写/前导空白/夹带说明都认", () => {
+    /* 这三条正是旧 job if 会挡掉、而 parseCommands 能吃的形态：触发条件必须退化成只按 label，
+       否则「谁都能看懂的审批指令」会在 workflow 层静默失效。 */
+    expect(parseCommands("/APPROVE card:甲")).toEqual([{ action: "approve", id: "card:甲" }]);
+    expect(parseCommands("   /reject card:乙")).toEqual([{ action: "reject", id: "card:乙" }]);
+    expect(parseCommands("核过了，官方地址我打开确认在。\n/approve all")).toEqual([{ action: "approve", id: "all" }]);
+    /* 实测裁决：parseCommands 逐行只产 1 条 {approve, all}——`all` 的展开发生在 runReview 层
+       （本文件「approve all」例已钉死）， brief 原写的 .toBe(2) 把两层的活记到了同一层账上。
+       改断言为「等值整形」而非长度，顺带把「说明行不吃指令」也钉住。 */
+    /* 反向：正文里没有指令 → 零命令，runReview 走 changed:false 空跑分支（不会误合任何一条） */
+    expect(parseCommands("只是路过评论一句")).toEqual([]);
+  });
+
   it("approve all：干净的甲合入、脏的乙同批被 validate 拦下 → 整体抛错不落盘（宁可不合，不半合）", async () => {
     await expect(
       runReview({ repo: "me/r", issueNumber: 5, pending, data, comment: "/approve all", token: "t", fetchImpl: async () => res(201, {}) })

@@ -14,8 +14,13 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     const crawlSteps = crawl.jobs.crawl.steps.map((s: { run?: string }) => s.run || "").join("\n");
     expect(crawlSteps).toContain("npm run crawl");
     expect(crawlSteps).toContain("git diff --cached --quiet"); // 无实质变更不产生空提交
-    expect(crawl.jobs.review.if).toContain("/approve");
-    expect(crawl.jobs.review.if).toContain("review"); // label 门禁：只处理审核 Issue
+    /* 终审遗留 (C)：命令前缀判定权归 parseCommands（/i + 容忍前导空白 + 逐行解析）。
+       workflow 里再写 startsWith('/approve') 就成了「门比锁严」：/APPROVE、" /approve"、
+       「说明文字 + 换行 + 指令」全部不会被触发。触发面只按 label，命令面只按解析器。 */
+    expect(crawl.jobs.review.if).toContain("issue_comment");
+    expect(crawl.jobs.review.if).toContain("contains(github.event.issue.labels.*.name, 'review')");
+    expect(crawl.jobs.review.if).not.toContain("startsWith");
+    expect(crawl.jobs.review.if).not.toContain("/approve");
     expect(crawl.permissions).toMatchObject({ "contents": "write", "issues": "write" });
   });
 
