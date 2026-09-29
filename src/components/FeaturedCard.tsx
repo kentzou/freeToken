@@ -20,9 +20,8 @@ export default function FeaturedCard({
       ? "集成多模型的生产力平台，注册即送可观免费额度。"
       : "支持多模型，免费额度助你更高效地完成项目。";
   const facts = ["免费额度", index === 0 ? "新用户领取" : "注册即送", `已核验 ${card.updated}`];
-  const variant = index === 0 ? "is-workbuddy" : "is-qoder";
   return (
-    <article className={`featured-card ${variant}`} data-testid="featured-card">
+    <article className="featured-card" data-testid="featured-card">
       <div className="featured-content">
         <p className="product-line">
           {/* eslint-disable-next-line @next/next/no-img-element */}

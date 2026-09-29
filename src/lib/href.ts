@@ -11,13 +11,16 @@ export function intelHref(card: TokenCard, rules: CompiledRules): string {
   return pageHref(`/intel/${detailSlug(card.name, rules)}/`);
 }
 
-/** 内部页面链接：/about/ → <BASE>/about/ */
+/** 内部页面链接：/about → <BASE>/about/（trailingSlash:true 的规范形态：补尾斜杠、去重复斜杠；
+ *  根路径例外保持 <BASE>/，资源路径见 assetPath——绝不带尾斜杠） */
 export function pageHref(path: string): string {
-  return `${BASE}/${path.replace(/^\/+/, "")}`;
+  const p = path.replace(/^\/+/, "").replace(/\/+$/, "");
+  return `${BASE}/${p}${p ? "/" : ""}`;
 }
 
-/** 静态资源：assets/logos/x.png → <BASE>/assets/logos/x.png（外链原样返回） */
+/** 静态资源：assets/logos/x.png → <BASE>/assets/logos/x.png（外链原样返回）。
+ *  独立拼 BASE，不经 pageHref——资源名可能以 / 结尾，绝不能被补成目录尾斜杠。 */
 export function assetPath(rel: string): string {
   if (/^https?:\/\//i.test(rel)) return rel;
-  return pageHref(rel.replace(/^\.?\/+/, ""));
+  return `${BASE}/${rel.replace(/^\.?\/+/, "")}`;
 }

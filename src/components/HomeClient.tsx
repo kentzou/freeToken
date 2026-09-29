@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FilterType, MetaJson, RulesJson, SiteConfig, TokenCard, WatchItem } from "@/lib/types";
 import { compiledRules } from "@/lib/rules";
-import { chipCounts, matchesFilter } from "@/lib/catalog";
+import { chipCounts, matchesFilter, splitByCategory } from "@/lib/catalog";
 import FilterChips from "./FilterChips";
 import FeaturedCard from "./FeaturedCard";
 import PartnerCard from "./PartnerCard";
@@ -58,8 +58,13 @@ export default function HomeClient({
   const filter = useMemo(() => ({ type, query }), [type, query]);
   const matched = useMemo(() => vis.filter((c) => matchesFilter(c, filter)), [vis, filter]);
   const counts = useMemo(() => chipCounts(vis), [vis]);
-  const featured = matched.slice(0, 2) as [TokenCard, TokenCard?];
-  const rest = matched.slice(2);
+  /* 精选区与筛选无关：镜像 app.js:1136 在 renderCatalog 之外只渲染一次
+     editorial.slice(0,2)（editorial = VISIBLE 剔除「项目」，app.js:1050），
+     搜索/切 chip 都不动它；区块列表用完整 matched（精选卡同现于区块，镜像无排除逻辑） */
+  const featured = useMemo(
+    () => splitByCategory(vis).editorial.slice(0, 2) as [TokenCard, TokenCard?],
+    [vis]
+  );
   const partners = useMemo(() => vis.filter((c) => c.type === "项目"), [vis]);
   const openPoster = useCallback((src: string, name: string) => setPoster({ src, name }), []);
 
@@ -92,7 +97,7 @@ export default function HomeClient({
         id="models"
         title="大模型"
         kind="大模型"
-        items={rest}
+        items={matched}
         filter={filter}
         rules={rules}
         onPoster={openPoster}
@@ -105,7 +110,7 @@ export default function HomeClient({
         id="tools"
         title="编程工具"
         kind="工具"
-        items={rest}
+        items={matched}
         filter={filter}
         rules={rules}
         onPoster={openPoster}
