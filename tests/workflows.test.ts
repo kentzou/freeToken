@@ -79,8 +79,11 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
   });
 
   it(".lighthouserc.json：三项门槛值 = spec §9 承诺值（LCP 2500ms / CLS 0.1 / A11y 0.95），URL 打本地根路径", () => {
-    expect(lhrc.ci.assert.assertions["largest-contentful-paint"]).toEqual(["error", { median: 2500 }]);
-    expect(lhrc.ci.assert.assertions["cumulative-layout-shift"]).toEqual(["error", { median: 0.1 }]);
+    /* LCP/CLS 用 maxNumericValue 钉数值门槛（LCP 2500ms / CLS 0.1，= spec §9 承诺）；
+       minScore:0 是为了压掉 LHCI 对未显式给出断言类型的指标自动补的 minScore 0.9 默认断言——
+       首轮 CI 实测它会把 LCP 1874ms（本已 < 2500ms）按分数 0.67 误杀。 */
+    expect(lhrc.ci.assert.assertions["largest-contentful-paint"]).toEqual(["error", { maxNumericValue: 2500, minScore: 0 }]);
+    expect(lhrc.ci.assert.assertions["cumulative-layout-shift"]).toEqual(["error", { maxNumericValue: 0.1, minScore: 0 }]);
     expect(lhrc.ci.assert.assertions["categories:accessibility"]).toEqual(["error", { minScore: 0.95 }]);
     expect(lhrc.ci.collect.url).toEqual(["http://127.0.0.1:3000/", "http://127.0.0.1:3000/intel/workbuddy/"]);
   });
