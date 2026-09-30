@@ -59,11 +59,18 @@ export function matchesFilter(card: TokenCard, filter: FilterState): boolean {
 const PRIORITY_MODELS = [/glm-5\.3/i, /stepfun|阶跃/i, /siliconflow|硅基/i];
 const PRIORITY_TOOLS = [/workbuddy/i, /qoder|灵码/i, /kilo/i, /cline/i, /verdent/i];
 
+/** 区块排序：先人工优先级表（未命中=999），同权重内按核验日期新→旧，再按名称升序。
+ *  补两级 tie-break 的依据是审查 L3 + H2′：镜像里 sort 按钮声称「最新优先」而实按优先级表排，
+ *  本站不做这个控件，但顺序必须可声明、可复现——只靠 Array.sort 稳定性等于把排序语义
+ *  外包给 tokens.json 的书写顺序，上游一次重排就悄悄改变版面。 */
 function rank(items: TokenCard[], patterns: RegExp[], kind: "大模型" | "工具", filter: FilterState): TokenCard[] {
-  const pick = (c: TokenCard) => patterns.findIndex((re) => re.test(c.name));
+  const pick = (c: TokenCard) => {
+    const i = patterns.findIndex((re) => re.test(c.name));
+    return i < 0 ? 999 : i;
+  };
   return items
     .filter((c) => catOf(c) === kind && matchesFilter(c, filter))
-    .sort((a, b) => (pick(a) < 0 ? 999 : pick(a)) - (pick(b) < 0 ? 999 : pick(b)));
+    .sort((a, b) => pick(a) - pick(b) || (b.updated || "").localeCompare(a.updated || "") || a.name.localeCompare(b.name, "zh-Hans-CN"));
 }
 
 export function modelsFor(items: TokenCard[], filter: FilterState): TokenCard[] {

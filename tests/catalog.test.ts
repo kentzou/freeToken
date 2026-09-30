@@ -44,6 +44,25 @@ describe("目录逻辑（真实种子数据基准）", () => {
     expect(tools.slice(0, 2).map((t) => catOf(t))).toEqual(["工具", "工具"]);
     expect(tools[0].name).toContain("WorkBuddy");
   });
+  it("rank 与数组顺序解耦：同优先级内先按核验日期降序，再按名称升序（审查 L3）", () => {
+    const editorial = splitByCategory(visibleCards(cards, donots, rules)).editorial;
+    const all = { type: "all", query: "" } as const;
+    const forward = modelsFor(editorial, all);
+    expect(forward).toHaveLength(7);                                   // 与 chipCounts["大模型"] 同源（实测 7）
+    expect(modelsFor([...editorial].reverse(), all).map((c) => c.name)) // 输入倒序不得改变输出顺序
+      .toEqual(forward.map((c) => c.name));
+    /* 逐对强校验尾段（rank=999 的卡）：日期必须严格降序，**同日则名称必须升序**。
+       写成 `byDate <= 0 || …` 会让同日条目被第一条款放过，等于没钉名称序，故这里用 < 0 并显式分派。
+       正则镜像 `catalog.ts` 的 `PRIORITY_MODELS`（该常量未导出），用于跳过钉在表头的卡。 */
+    const tail = forward.filter((c) => !/glm-5\.3|stepfun|阶跃|siliconflow|硅基/i.test(c.name));
+    expect(tail.length).toBeGreaterThan(1);   // 尾段不足 2 张时下面的循环空转=无牙，先钉住样本量
+    for (let i = 1; i < tail.length; i++) {
+      const a = tail[i - 1];
+      const b = tail[i];
+      const byDate = b.updated.localeCompare(a.updated);
+      expect(byDate < 0 || (byDate === 0 && a.name.localeCompare(b.name, "zh-Hans-CN") <= 0)).toBe(true);
+    }
+  });
   it("catOf 只分两类", () => {
     expect(catOf({ type: "工具" } as TokenCard)).toBe("工具");
     expect(catOf({ type: "大模型" } as TokenCard)).toBe("大模型");
