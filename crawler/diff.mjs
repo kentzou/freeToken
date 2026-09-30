@@ -4,6 +4,21 @@
 
 export const keyOf = (e) => `${e.kind}:${e.name}`;
 
+/** kind 的中文口径唯一实现：Issue 正文（crawler/run.mjs）与后台待审队列（src/lib/admin/pending.ts）共用，
+ *  禁止任何一侧再写三元——写了就会漂出「Issue 里叫情报卡、后台里叫卡片」这类同物异名。 */
+export function kindLabel(kind) {
+  return kind === "card" ? "情报卡" : kind === "watch" ? "观望项" : "规则表";
+}
+
+/** 「删除」判定唯一口径：diffKeyedList 产出 removed 时固定 after:null，故 null/undefined 即删除。
+ *  不写 `!after`——将来若出现 after:0 或 after:"" 会被误判成删除（删除是最重的动作，误判代价最高）。 */
+export function isRemoval(e) {
+  return e?.after === null || e?.after === undefined;
+}
+
+/** 差异字段展示上限：Issue 正文与后台表格同一个数，两边读到的条数差会被运维当成 bug 查 */
+export const FIELD_LIMIT = 20;
+
 function byName(list) {
   const m = new Map();
   (list || []).forEach((x) => {

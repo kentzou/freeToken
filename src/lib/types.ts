@@ -56,6 +56,9 @@ export interface SiteConfig {
   partners?: unknown[] | null;
   adminLogins?: string[];
   oauthClientId?: string;
+  /** 后台的 Contents 读写目标仓（形如 owner/repo）。空串＝未配置，此时后台只读不写。
+   *  注意它不会被 applySiteConfig 消费（该函数只看 cfg.cards），加这个键不影响管线。 */
+  githubRepo?: string;
   cards?: Record<string, CardOverrides>;
 }
 

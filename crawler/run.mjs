@@ -7,7 +7,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { buildSeed } from "../scripts/export-seed.mjs";
 import { dump } from "./serialize.mjs";
-import { diffAll, keyOf } from "./diff.mjs";
+import { FIELD_LIMIT, diffAll, isRemoval, keyOf, kindLabel } from "./diff.mjs";
 import { validateCards, validateRulesJson } from "./validate.mjs";
 import { UPSTREAM_REPO, createIssue, fetchRawText, headStatus, latestCommitSha } from "./github.mjs";
 
@@ -56,8 +56,8 @@ const short = (v) => {
 };
 
 export function reviewIssueTitle(pending) {
-  const m = pending.changes.filter((e) => e.after !== null).length;
-  const d = pending.changes.filter((e) => e.after === null).length;
+  const m = pending.changes.filter((e) => !isRemoval(e)).length;
+  const d = pending.changes.filter(isRemoval).length;
   return `审核：上游变更待核验（修改 ${m} / 删除 ${d}）`;
 }
 
@@ -70,10 +70,10 @@ export function reviewIssueBody(pending) {
     "",
   ];
   pending.changes.forEach((e, i) => {
-    const kindCn = e.kind === "card" ? "情报卡" : e.kind === "watch" ? "观望项" : "规则表";
+    const kindCn = kindLabel(e.kind);
     lines.push(`## ${i + 1}. [${kindCn}] ${e.name} — \`${keyOf(e)}\``);
-    for (const f of e.fields.slice(0, 20)) lines.push(`- \`${f.field}\`：\`${short(f.from)}\` → \`${short(f.to)}\``);
-    if (e.fields.length > 20) lines.push(`- …共 ${e.fields.length} 个字段差异`);
+    for (const f of e.fields.slice(0, FIELD_LIMIT)) lines.push(`- \`${f.field}\`：\`${short(f.from)}\` → \`${short(f.to)}\``);
+    if (e.fields.length > FIELD_LIMIT) lines.push(`- …共 ${e.fields.length} 个字段差异`);
     lines.push("");
   });
   lines.push("回复 `/approve <id>` 或 `/reject <id>`（每行一条，id 见标题行内反引号）；`/approve all` 全部通过。也可在 /admin 一键盖章。");

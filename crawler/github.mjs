@@ -121,7 +121,7 @@ export async function dispatchWorkflow(repo, workflowFile, ref = "main", opts = 
     method: "POST",
     body: { ref },
   });
-  if (!res.ok) throw new Error(`触发 workflow_dispatch 失败：HTTP ${res.status}（${workflowFile}）`);
+  if (!res.ok) throw await httpError(`触发 workflow_dispatch 失败（${workflowFile}）`, res);
 }
 
 /** Device Flow ①：申请一次性用户码。缺字段即抛——GitHub 改了应答形态必须人工核查，
