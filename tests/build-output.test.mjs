@@ -10,6 +10,10 @@ if (!existsSync(OUT)) throw new Error("缺 out/：先跑 npm run build 再执行
    本地口径=带 BASE 的相对路径或由 Next 默认 origin 补全。BASE 叠两次是 Step 10 实测踩过的坑。 */
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/+$/, "");
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
+/* React SSR 在相邻文本节点之间插注释分隔符：JSX 的 `复制微信号 {wechatId}` 落地为
+   `复制微信号 <!-- -->wxid…`。断言含变量插值的文案前先剥掉它，否则配置态必假红
+   （T6 评审 Important-3，评审人用 renderToString 直证）。 */
+const flat = (html) => html.replace(/<!--\s*-->/g, "");
 const htmlFiles = [];
 (function walk(dir) {
   for (const name of readdirSync(dir)) {
@@ -69,9 +73,9 @@ test("情报卡卡脚不使用绝对定位邮戳（spec §5.3 v2）", () => {
 
 /* —— 以下 3 条来自审查台账 T6：N-3 兑现步骤名承诺的微信号断言 + L1 的抓取/分享面 —— */
 
-test("微信号占位与配置一致（deploy.yml:44 步骤名的真断言）", () => {
+test("微信号占位与配置一致（deploy.yml 产物红线步骤名的真断言）", () => {
   const cfg = JSON.parse(readFileSync(path.resolve(process.cwd(), "config", "site-config.json"), "utf8"));
-  const home = readFileSync(path.join(OUT, "index.html"), "utf8");
+  const home = flat(readFileSync(path.join(OUT, "index.html"), "utf8"));
   if (cfg.wechatId) {
     assert.ok(home.includes(`复制微信号 ${cfg.wechatId}`), "配置了微信号却没渲染出复制按钮");
     assert.ok(!home.includes("微信号待配置"), "配置了微信号却仍显示占位文案");
