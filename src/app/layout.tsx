@@ -5,7 +5,7 @@ import "@fontsource/noto-serif-sc/latin-700.css";
 import "@fontsource/jetbrains-mono/latin-400.css";
 import "@fontsource/jetbrains-mono/latin-700.css";
 import "./globals.css";
-import { assetPath } from "@/lib/href";
+import { canonicalAsset } from "@/lib/href";
 
 /* 线上 Pages 地址由 NEXT_PUBLIC_SITE_URL 注入（deploy.yml 已接）；本地构建为空 → 不出 absolute URL */
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "";
@@ -19,11 +19,11 @@ export const metadata: Metadata = {
     siteName: "Token 情报局",
     title: "Token 情报局｜免费 AI 额度情报",
     description: "核验过的免费 AI 额度、模型与编程工具情报，每 6 小时同步一次。",
-    /* 本站自绘封面（非上游素材）。assetPath 自带 BASE 前缀，故线上口径为 /<repo>/assets/... ；
-       metadataBase 提供 origin，绝对路径解析后正好落回 https://<owner>.github.io/<repo>/assets/... */
+    /* 本站自绘封面（非上游素材）。走 canonicalAsset 而非 assetPath：线上口径下 metadataBase 的 pathname
+       已含 BASE，再交给 Next 一个带 BASE 的相对串会叠成双前缀（Task 6 Step 10 实测），故这里直接给绝对地址。 */
     images: [
       {
-        url: assetPath("assets/og-cover.png"),
+        url: canonicalAsset("assets/og-cover.png"),
         width: 1536,
         height: 1024,
         alt: "Token 情报局：核验过的免费 AI 额度情报",
