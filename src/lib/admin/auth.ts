@@ -91,6 +91,10 @@ export async function startLogin({ config, fetchImpl = globalThis.fetch }: { con
 
 const sleepDefault = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
+/** 连续传输抛错容忍上限（§3 决策 12 I-1）：设备码有效期长达 15 分钟，一次网络抖动不该终止整段等待；
+ *  但无界容忍会把「本层必须有出口」的约束换成死循环风险，故 3 次即收手并报 transport。 */
+const TRANSPORT_TOLERANCE = 3;
+
 export interface WaitDeps {
   clientId: string;
   deviceCode: string;
@@ -110,22 +114,30 @@ export type WaitResult =
   | { kind: "timeout"; polls: number };
 
 /** 轮询到终态为止。deadline＝起始时刻 + 设备码有效期：页面没关时这段循环就是死循环，必须有出口。
- *  只有 authorization_pending / slow_down 才继续等（slow_down 按文档 +5s）；
- *  其余 error（如 incorrect_client_credentials）再等也不会变，立刻 fatal 收手并带上原因。 */
+ *  只有 authorization_pending / slow_down / rate_limit 才继续等（后两者按文档 +5s）；
+ *  其余 error（如 incorrect_client_credentials）再等也不会变，立刻 fatal 收手并带上原因；
+ *  传输层抛错（fetch reject）按 §3 决策 12 有界容忍，连续 TRANSPORT_TOLERANCE 次才 fatal。 */
+type PollAnswer = { kind: string; token?: string; scope?: string; expiresIn?: number; message?: string };
+
 export async function waitLogin(p: WaitDeps): Promise<WaitResult> {
   const { clientId, deviceCode, storage, fetchImpl = globalThis.fetch, sleep = sleepDefault, now = () => Date.now() } = p;
   let interval = Math.max(1, Number(p.interval) || 5);
   const deadline = now() + Math.max(60, Number(p.expiresIn) || 900) * 1000;
   let polls = 0;
+  let transportErrors = 0;
   for (;;) {
     if (now() >= deadline) return { kind: "timeout", polls };
-    const r = (await pollDeviceToken({ clientId, deviceCode, fetchImpl })) as {
-      kind: string;
-      token?: string;
-      scope?: string;
-      expiresIn?: number;
-      message?: string;
-    };
+    let r: PollAnswer;
+    try {
+      r = (await pollDeviceToken({ clientId, deviceCode, fetchImpl })) as PollAnswer;
+      transportErrors = 0;
+    } catch (e) {
+      transportErrors += 1;
+      if (transportErrors >= TRANSPORT_TOLERANCE)
+        return { kind: "fatal", error: "transport", message: String((e as Error)?.message ?? e), polls };
+      await sleep(interval * 1000);
+      continue;
+    }
     polls += 1;
     if (r.kind === "token") {
       const session: AdminSession = {
@@ -140,7 +152,7 @@ export async function waitLogin(p: WaitDeps): Promise<WaitResult> {
     }
     if (r.kind === "access_denied") return { kind: "access_denied", polls };
     if (r.kind === "expired_token") return { kind: "expired", polls };
-    if (r.kind === "slow_down") interval += 5;
+    if (r.kind === "slow_down" || r.kind === "rate_limit") interval += 5;
     else if (r.kind !== "authorization_pending") return { kind: "fatal", error: r.kind, message: String(r.message ?? ""), polls };
     await sleep(interval * 1000);
   }

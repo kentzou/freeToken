@@ -119,12 +119,13 @@ describe("认证状态机：视图判定与 Device Flow 轮询（零真请求，
     expect(hdr(f.calls[0], "accept")).toBe("application/json");
   });
 
-  it("waitLogin：pending→slow_down→token 全链，节奏按 GitHub 口径，token 落会话", async () => {
+  it("waitLogin：pending→slow_down→rate_limit→token 全链，节奏按 GitHub 口径，token 落会话", async () => {
     const storage = memoryStorage();
     const slept: number[] = [];
     const f = mkFetch(
       res(200, { error: "authorization_pending" }),
       res(200, { error: "slow_down" }),
+      res(200, { error: "rate_limit" }),
       res(200, { access_token: "ghu_new", token_type: "bearer", scope: "repo", expires_in: 28800 }),
     );
     const out = await waitLogin({
@@ -140,8 +141,8 @@ describe("认证状态机：视图判定与 Device Flow 轮询（零真请求，
       },
       now: () => 0,
     });
-    expect(out).toEqual({ kind: "token", token: "ghu_new", scope: "repo", polls: 3 });
-    expect(slept).toEqual([5000, 10000]); // slow_down 后 interval 变 5+5 秒
+    expect(out).toEqual({ kind: "token", token: "ghu_new", scope: "repo", polls: 4 });
+    expect(slept).toEqual([5000, 10000, 15000]); // slow_down 与 rate_limit 各把 interval 抬 5 秒
     expect(readSession(storage)).toEqual({ token: "ghu_new", login: "", avatarUrl: "", scope: "repo", expiresAt: 28800000 });
   });
 
@@ -162,5 +163,57 @@ describe("认证状态机：视图判定与 Device Flow 轮询（零真请求，
     expect(await waitLogin({ ...base, expiresIn: 60, fetchImpl: f.fn, now: advancing })).toEqual({ kind: "timeout", polls: 0 });
     expect(f.calls.length).toBe(0); // 到点即止，连一次都不该发
     expect(readSession(storage)).toBeNull(); // 四种终止形态都没留下会话
+  });
+
+  it("waitLogin：传输层瞬时抛错不停表，容忍后仍等到 token", async () => {
+    const storage = memoryStorage();
+    const slept: number[] = [];
+    const f = mkFetch(
+      new Error("fetch failed"),
+      res(200, { error: "authorization_pending" }),
+      res(200, { access_token: "ghu_new", token_type: "bearer", scope: "repo", expires_in: 28800 }),
+    );
+    const out = await waitLogin({
+      clientId: "Iv1.abc",
+      deviceCode: "dc-1",
+      interval: 5,
+      expiresIn: 900,
+      storage,
+      fetchImpl: f.fn,
+      sleep: (ms: number) => {
+        slept.push(ms);
+        return Promise.resolve();
+      },
+      now: () => 0,
+    });
+    expect(out).toEqual({ kind: "token", token: "ghu_new", scope: "repo", polls: 2 });
+    expect(slept).toEqual([5000, 5000]); // 抛错轮不算一次轮询，也不放大节奏
+    expect(readSession(storage)).toEqual({ token: "ghu_new", login: "", avatarUrl: "", scope: "repo", expiresAt: 28800000 });
+  });
+
+  it("waitLogin：连续三次传输抛错即收手报 transport，绝不死循环也不留会话", async () => {
+    const storage = memoryStorage();
+    const slept: number[] = [];
+    const f = mkFetch(new Error("fetch failed"), new Error("fetch failed"), new Error("fetch failed"));
+    const out = await waitLogin({
+      clientId: "Iv1.abc",
+      deviceCode: "dc-1",
+      interval: 5,
+      expiresIn: 900,
+      storage,
+      fetchImpl: f.fn,
+      sleep: (ms: number) => {
+        slept.push(ms);
+        return Promise.resolve();
+      },
+      now: () => 0,
+    });
+    // 断言只钉「原始原因没有被吞掉」，不绑 gh() 的整条模板串——
+    // crawler/github.mjs:51 会把 fetch reject 重铸为「GitHub 请求失败（重试 0 次）：POST …/access_token → fetch failed」，
+    // 绑全文案等于把调用层的一条错误格式字符串钉进认证层用例，改文案会误伤。
+    expect(out).toEqual({ kind: "fatal", error: "transport", message: expect.stringContaining("fetch failed"), polls: 0 });
+    expect(f.calls.length).toBe(3); // 只发了三次就收手，不是无限重试
+    expect(slept).toEqual([5000, 5000]); // 第三次直接返回，不再多睡一轮
+    expect(readSession(storage)).toBeNull();
   });
 });
