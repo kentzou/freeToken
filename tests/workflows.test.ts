@@ -56,8 +56,9 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
   it("review job 的评论者闸门（裁决 ①）：if 加 bot 排除，login 进 env，名单判定不在 yml 里", () => {
     const review = crawl.jobs.review;
     /* 四个合取项必须在同一条表达式里（终审 C1 的教训：`if:` 被写成重复键时整道 job 门形同不存在）。
-       失效形态实测（§3 决策 17 M-3）：重复 `if:` 键下 js-yaml 直接抛 `duplicated mapping key (53:5)`，
-       整份 workflows.test.ts 变红——失败是**响亮**的，不是「静默丢后一段」，排查时别按被悄悄忽略的模型找。 */
+       失效形态实测（§3 决策 17 M-3）：重复 `if:` 键下 js-yaml 直接抛 `duplicated mapping key`（行列号随
+       插入点变化，不写死），整份 workflows.test.ts 变红——失败是**响亮**的，不是「静默丢后一段」，
+       排查时别按被悄悄忽略的模型找。 */
     expect(review.if).toContain("github.event_name == 'issue_comment'");
     expect(review.if).toContain("github.event.issue.pull_request == null");
     expect(review.if).toContain("contains(github.event.issue.labels.*.name, 'review')");
