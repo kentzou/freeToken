@@ -62,3 +62,49 @@ test("情报卡卡脚不使用绝对定位邮戳（spec §5.3 v2）", () => {
   assert.ok(intelCards >= 8, `情报卡只有 ${intelCards} 张，疑似未渲染`);
   assert.ok(!/<div class="stamp[^>]*top:/.test(s), "情报卡里混入了大邮戳");
 });
+
+/* —— 以下 3 条来自审查台账 T6：N-3 兑现步骤名承诺的微信号断言 + L1 的抓取/分享面 —— */
+
+test("微信号占位与配置一致（deploy.yml:44 步骤名的真断言）", () => {
+  const cfg = JSON.parse(readFileSync(path.resolve(process.cwd(), "config", "site-config.json"), "utf8"));
+  const home = readFileSync(path.join(OUT, "index.html"), "utf8");
+  if (cfg.wechatId) {
+    assert.ok(home.includes(`复制微信号 ${cfg.wechatId}`), "配置了微信号却没渲染出复制按钮");
+    assert.ok(!home.includes("微信号待配置"), "配置了微信号却仍显示占位文案");
+  } else {
+    assert.ok(home.includes("微信号待配置"), "空微信号必须显示「微信号待配置」");
+    assert.ok(!home.includes("复制微信号"), "空微信号不得出现可复制按钮");
+  }
+});
+
+test("首页含 og:image 与 twitter 大图卡，且声明尺寸等于图片真实尺寸", () => {
+  const home = readFileSync(path.join(OUT, "index.html"), "utf8");
+  assert.ok(/property="og:image" content="[^"]*assets\/og-cover\.png"/.test(home), "缺 og:image");
+  assert.ok(home.includes('name="twitter:card" content="summary_large_image"'), "twitter 卡未升级为大图");
+  const png = readFileSync(path.join(OUT, "assets", "og-cover.png"));
+  assert.equal(png.subarray(0, 8).toString("hex"), "89504e470d0a1a0a", "og-cover.png 不是合法 PNG");
+  assert.equal(png.readUInt32BE(16), 1536, "PNG 实际宽度 ≠ metadata 声明宽度");
+  assert.equal(png.readUInt32BE(20), 1024, "PNG 实际高度 ≠ metadata 声明高度");
+});
+
+test("robots.txt 随产物落地；有站点地址时 sitemap 与产物页集合一致", () => {
+  assert.ok(existsSync(path.join(OUT, "robots.txt")), "缺 out/robots.txt：npm run build 后要跑 npm run seo");
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/+$/, "");
+  if (!site) {
+    /* 本地口径：绝不允许把占位域名或相对 loc 写进产物 */
+    assert.ok(!existsSync(path.join(OUT, "sitemap.xml")), "本地口径不该出 sitemap");
+    assert.ok(!readFileSync(path.join(OUT, "robots.txt"), "utf8").includes("Sitemap:"), "无站点地址不得写 Sitemap 行");
+    return;
+  }
+  const locs = [...readFileSync(path.join(OUT, "sitemap.xml"), "utf8").matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  assert.equal(locs.length, dirsOf("intel").length + 5, "sitemap 条数 = 首页 1 + 内容页 4 + 详情页 N");
+  for (const l of locs) assert.ok(l.startsWith(`${site}/`), `loc 不是本站绝对地址：${l}`);
+  assert.ok(!locs.some((l) => /\/(404|admin)\//.test(l)), "sitemap 混入了 404/admin 地址");
+  /* canonical 是本页唯一的地道地址：两种可接受形态（Next 依 metadataBase 解析成绝对地址，
+     或原样输出带 BASE 的相对路径）都算对，但前缀绝不许重复，也绝不许缺。 */
+  const home = readFileSync(path.join(OUT, "index.html"), "utf8");
+  const canon = /rel="canonical" href="([^"]+)"/.exec(home)?.[1] || "";
+  const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  assert.ok(canon === `${site}/` || canon === `${base}/`, `首页 canonical 形态意外：${canon}`);
+  assert.ok(!canon.includes(`${base}${base}`), "canonical 前缀被叠了两次");
+});

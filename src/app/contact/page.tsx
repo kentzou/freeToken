@@ -1,6 +1,10 @@
 import PageShell from "@/components/PageShell";
+import { pageHref } from "@/lib/href";
 
-export const metadata = { title: "联系与投稿 · Token 情报局" };
+export const metadata = {
+  title: "联系与投稿 · Token 情报局",
+  alternates: { canonical: pageHref("/contact") },
+};
 
 export default function Contact() {
   return (

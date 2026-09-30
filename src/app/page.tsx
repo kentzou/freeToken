@@ -3,6 +3,10 @@ import HomeClient from "@/components/HomeClient";
 import SiteFooter from "@/components/SiteFooter";
 import { loadCatalog } from "@/lib/data.server";
 import { dateLine, headline, isoWeek, shortDateLine, visibleCards } from "@/lib/catalog";
+import type { Metadata } from "next";
+import { pageHref } from "@/lib/href";
+
+export const metadata: Metadata = { alternates: { canonical: pageHref("/") } };
 
 export default function Page() {
   const catalog = loadCatalog();

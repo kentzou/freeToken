@@ -1,6 +1,10 @@
 import PageShell from "@/components/PageShell";
+import { pageHref } from "@/lib/href";
 
-export const metadata = { title: "隐私与数据处理 · Token 情报局" };
+export const metadata = {
+  title: "隐私与数据处理 · Token 情报局",
+  alternates: { canonical: pageHref("/privacy") },
+};
 
 export default function Privacy() {
   return (
