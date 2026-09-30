@@ -5,7 +5,8 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { noChangeNote, runReview } from "../crawler/review.mjs";
+import { commentIssue } from "../crawler/github.mjs";
+import { noChangeNote, reviewGate, runReview } from "../crawler/review.mjs";
 
 async function main() {
   const root = process.cwd();
@@ -16,6 +17,17 @@ async function main() {
   if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPOSITORY || !issueNumber || !comment) {
     console.error("review-apply 缺少 env：GITHUB_TOKEN/GITHUB_REPOSITORY/ISSUE_NUMBER/COMMENT_BODY");
     process.exit(1);
+  }
+  /* 裁决 ①：审批授权面治理。名单从**工作树**里的 config/site-config.json 读——本 job 的 checkout
+   *  落在触发提交上，磁盘内容即权威值，不必再发一次 Contents 请求（§3 决策 4）。
+   *  skip/denied 都在此处终止：runReview 一次也不会被调用，故不写任何数据、不关任何 Issue；
+   *  后面的提交步骤因 `git diff --cached --quiet` 而打印「数据未变，跳过提交」。 */
+  const gate = reviewGate({ commenter: process.env.TFN_COMMENTER || "", config: read("config/site-config.json", {}) });
+  if (gate.verdict !== "ok") {
+    if (gate.verdict === "denied")
+      await commentIssue(process.env.GITHUB_REPOSITORY, issueNumber, `⛔ 无权限：${gate.note}`, { token: process.env.GITHUB_TOKEN });
+    console.log(gate.verdict === "skip" ? `review 跳过：${gate.login} 是 bot 回声，未合入任何数据` : `review 拒绝：${gate.login || "(无 login)"} 不在白名单，已回执未合入任何数据`);
+    return;
   }
   const res = await runReview({
     repo: process.env.GITHUB_REPOSITORY,

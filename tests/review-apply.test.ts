@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { commandText, noChangeNote, parseCommands, runReview } from "../crawler/review.mjs";
+import { allowlistCheck, denyNote } from "../crawler/allowlist.mjs";
+import { commandText, noChangeNote, parseCommands, reviewGate, runReview } from "../crawler/review.mjs";
 import { keyOf } from "../crawler/diff.mjs";
 import { realData } from "./helpers/pending";
 
@@ -195,6 +196,28 @@ describe("review：Issue 评论 → 合入（crawler/review.mjs 是唯一语义�
     expect(r2.pendingLeft).toBe(0);
     expect(f2.calls).toEqual([]); // 队列清空了也不 PATCH——关单守卫真在
     expect(committed2).not.toBeNull(); // 写面不受 issueNumber 影响
+  });
+
+  it("reviewGate：名单内 ok、bot 回声 skip、越权与缺 login 都是 denied（缺 login 按 fail-closed 拒）", () => {
+    const cfg = { adminLogins: ["hope0719"] };
+    expect(reviewGate({ commenter: "hope0719", config: cfg })).toEqual({ verdict: "ok", login: "hope0719", note: "" });
+    /* 大小写与首尾空白由 allowlistCheck 归一，此处不重复实现（红线 1）；login 原样回传给日志用 */
+    expect(reviewGate({ commenter: " Hope0719 ", config: cfg })).toMatchObject({ verdict: "ok", login: "Hope0719" });
+    expect(reviewGate({ commenter: "stranger", config: cfg }).verdict).toBe("denied");
+    expect(reviewGate({ commenter: "", config: cfg }).verdict).toBe("denied"); // env 没接到＝谁都不放行
+    expect(reviewGate({ commenter: "hope0719", config: { adminLogins: [] } }).verdict).toBe("denied"); // Day-1 未填名单
+    /* bot 必须是 skip 而不是 denied：拒绝回执本身是以评论回到同一个 Issue 下的，
+       若 bot 走 denied 分支，①失效时「回执→触发→再回执」会无限刷单。 */
+    expect(reviewGate({ commenter: "github-actions[bot]", config: cfg })).toEqual({ verdict: "skip", login: "github-actions[bot]", note: "" });
+    expect(reviewGate({ commenter: "GITHUB-ACTIONS[BOT]", config: cfg }).verdict).toBe("skip"); // 与 endsWith 同为大小写不敏感
+    expect(reviewGate({ commenter: "dependabot[bot]", config: { adminLogins: [] } }).verdict).toBe("skip"); // bot 判定优先于名单
+  });
+
+  it("reviewGate 的 denied note 逐字取自 denyNote（Issue 回执与后台 403 页共用一句措辞）", () => {
+    const g = reviewGate({ commenter: "stranger", config: { adminLogins: ["hope0719"] } });
+    expect(g.note).toBe(denyNote(allowlistCheck({ login: "stranger", logins: ["hope0719"] })));
+    expect(g.note).toContain("不在 config/site-config.json 的 adminLogins");
+    expect(g.verdict).toBe("denied");
   });
 });
 

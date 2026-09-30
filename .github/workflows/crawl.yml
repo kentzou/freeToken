@@ -44,12 +44,16 @@ jobs:
   review:
     # (C)：按 label 触发，且**排除 PR**——issue_comment 对 Issue 与 PR 评论一视同仁，
     # 带 review 标签的 PR 下起本 job 时 checkout 取的是 PR 合并态的 pending/，等于把授权面扩到任意被打标 PR。
-    # 命令解析（大小写/前导空白/多行/逗号）唯一实现是 scripts/review-apply.mjs 的
-    # parseCommands；无指令时 runReview 返回 changed:false，本 job 空跑退出，绝不落任何数据。
+    # 命令解析/生成与审批编排的唯一实现是 crawler/review.mjs（计划 3 从 scripts/ 下沉，CLI 只剩壳）；
+    # 无指令时 runReview 返回 changed:false，本 job 空跑退出，绝不落任何数据。
+    # 裁决 ①（计划 3 Task 6）：能起 job ≠ 能盖章。评论者 login 由 CLI 内的 reviewGate 比对
+    # config/site-config.json 的 adminLogins，非白名单则回执「⛔ 无权限」并退出，不合入任何数据。
+    # 这里的 [bot] 排除是回声防护：拒绝回执本身也是评论，会再触发一次 issue_comment。
     if: >-
       github.event_name == 'issue_comment'
       && github.event.issue.pull_request == null
       && contains(github.event.issue.labels.*.name, 'review')
+      && !endsWith(github.event.comment.user.login, '[bot]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -64,6 +68,7 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           COMMENT_BODY: ${{ github.event.comment.body }}
+          TFN_COMMENTER: ${{ github.event.comment.user.login }}
         run: node scripts/review-apply.mjs
       - name: 提交合入后的数据
         run: |

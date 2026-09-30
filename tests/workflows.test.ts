@@ -53,6 +53,25 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     expect(deploy.jobs.deploy.steps.some((s: { uses?: string }) => (s.uses || "").startsWith("actions/deploy-pages@"))).toBe(true);
   });
 
+  it("review job 的评论者闸门（裁决 ①）：if 加 bot 排除，login 进 env，名单判定不在 yml 里", () => {
+    const review = crawl.jobs.review;
+    /* 四个合取项必须在同一条表达式里（终审 C1 的教训：折叠标量被 YAML 拆成两个键时，
+       js-yaml 会静默丢掉后一段，job 门形同不存在）。 */
+    expect(review.if).toContain("github.event_name == 'issue_comment'");
+    expect(review.if).toContain("github.event.issue.pull_request == null");
+    expect(review.if).toContain("contains(github.event.issue.labels.*.name, 'review')");
+    expect(review.if).toContain("!endsWith(github.event.comment.user.login, '[bot]')");
+    /* 名单本体不许写进 yml：adminLogins 的唯一比对处是 crawler/allowlist.mjs（红线 1），
+       这里只钉「login 传到了 CLI」。 */
+    expect(review.if).not.toContain("adminLogins");
+    const gate = review.steps.find((s: { run?: string }) => (s.run || "").includes("node scripts/review-apply.mjs"));
+    expect(gate.env.TFN_COMMENTER).toBe("${{ github.event.comment.user.login }}");
+    expect(gate.env.ISSUE_NUMBER).toBe("${{ github.event.issue.number }}");
+    /* 反向：闸门失效也不能靠 yml 兜住数据写入——提交步骤仍只在真有变更时提交 */
+    const steps = review.steps.map((s: { run?: string }) => s.run || "").join("\n");
+    expect(steps).toContain("git diff --cached --quiet");
+  });
+
   it(".lighthouserc.json：三项门槛值 = spec §9 承诺值（LCP 2500ms / CLS 0.1 / A11y 0.95），URL 打本地根路径", () => {
     expect(lhrc.ci.assert.assertions["largest-contentful-paint"]).toEqual(["error", { median: 2500 }]);
     expect(lhrc.ci.assert.assertions["cumulative-layout-shift"]).toEqual(["error", { median: 0.1 }]);

@@ -7,6 +7,7 @@
  *  函数体自 scripts/review-apply.mjs 逐字搬入，未改行为——`tests/review-apply.test.ts` 的既有 7 例
  *  一字不改仍然要绿，这就是「等价」的机器证明。 */
 import { keyOf } from "./diff.mjs";
+import { allowlistCheck, denyNote } from "./allowlist.mjs";
 import { applyDecisions } from "./approve.mjs";
 import { closeIssue, commentIssue } from "./github.mjs";
 import { dump } from "./serialize.mjs";
@@ -62,6 +63,18 @@ export function commandText(decisions) {
     groups.get(action).push(quoteId(id));
   }
   return [...groups].map(([action, ids]) => `/${action} ${ids.join(" ")}`).join("\n");
+}
+
+/** 裁决 ①（workflow 侧）：评论者 → 三种结论。为什么不是简单的 true/false——
+ *  「bot 回声」与「人类越权」的处置动作完全相反：前者必须**静默**（回执会自触发，见本文件顶部
+ *  三重防线表），后者必须**公开留痕**（有人试着盖章，就得让他在 Issue 时间线上被拒一次）。
+ *  名单本体走 `allowlistCheck` 单一实现（`config/site-config.json` 的 `adminLogins` 由调用方读盘传入，
+ *  见 §3 决策 4）；措辞走 `denyNote`，此处不再写第二句。 */
+export function reviewGate({ commenter, config } = {}) {
+  const login = String(commenter || "").trim();
+  if (/\[bot\]$/i.test(login)) return { verdict: "skip", login, note: "" };
+  const gate = allowlistCheck({ login, logins: (config && config.adminLogins) || [] });
+  return { verdict: gate.ok ? "ok" : "denied", login, note: gate.ok ? "" : denyNote(gate) };
 }
 
 /**
