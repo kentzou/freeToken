@@ -109,6 +109,12 @@ Task 6 推演记录 ①–④（原文照录，① 已带上述防递归注记�
   > 按 `parseCommands(comment).length` 二择、在 `:88` 调用——「评论不含指令，跳过」只用于真·无指令的空跑（早退、零 GitHub 调用），
   > 「评论含指令但无可合入项（id 未命中或已全部处理），跳过」用于指令进了 `applyDecisions` 却零合入（仍回执评论、不写盘）；
   > 由 `tests/review-apply.test.ts` 的 `noChangeNote` 例钉住，两条路径的写盘/回执差别见 ONLINE-STEPS §6。
+  > **计划 3 换代注（2026-09-30，内层 `crawler/review.mjs` 落地）**：上面 (C)/(D) 两条所引用的
+  > `review-apply.mjs` 行号随计划 3 Task 5 的搬迁失效——`parseCommands`/`noChangeNote`/`runReview` 现居
+  > `crawler/review.mjs`（CLI `scripts/review-apply.mjs` 只剩接 env、落盘、写 output 三件事）。
+  > 触发面在 (C) 的「只按 label + 排除 PR」之上又加了一道 **bot 排除**（`!endsWith(..., '[bot]')`），
+  > 且「能起 job」不再等于「能盖章」：评论者 login 必须命中 `config/site-config.json.adminLogins`
+  > （裁决 ①，验收记录见 docs/ADMIN-ACCEPTANCE.md §6）。上面三条历史记录按原文保留，作为当时口径的证据。
 - 其余留档 Minor（各任务评审累积，经终审复核非阻断）：T1 裸 IPv4 走 bare 分支（内部地址风险由审批面承担，缺补测）、models 缺失降级路径可读性、validate.test 第 3 例断言宽度；T2 `JSON.stringify` 键序敏感（后果仅多余 modified 进 pending 更保守）、byName 重名 last-wins（上游名唯一）；T3 非 GET「重试 0 次」措辞、`e.message` 非 Error 退化（brief 逐字）；T4 rules 旧表入库后不复验（brief 原样）；T5 `after=null` 静默过校验、未知 action 按 reject 完结（保守终态）；T6 `crawl.yml` 无 concurrency、`deploy cancel-in-progress:true`（计划逐字）。驳回项：regionByName 数组绕过（`b1ef0f5` 已闭合）、fixture 隔离、notify「逐条 linkRisk」措辞（终审实证 validateCards 硬失败在前、checkLinks 属可达性另一维度）、T7 五组 Minor 观察（评审已实证非问题）。
 
 ## 10. 计划 2.5 迁移记录：上游 `app.js` → `data.json`（2026-09-29）

@@ -35,12 +35,16 @@ Actions → crawl → Run workflow。健康空跑应显示「无实质数据变�
 - **指令建议独占一行**，这样回执评论与本人预期一一对应，便于事后审计。
 - **不会被执行的写法**（安全失败，审批不生效需重发）：引用块 `> /approve all`、同行夹在正文后 `顺便 /approve card:甲`。
 - **反而会被执行的写法（意外执行面，注意）**：4 空格缩进 `    /approve card:甲`、围栏代码块里的 `/approve card:甲`——GitHub 把它们渲染成代码展示给后人看，但 job 拿到的是原始正文，指令照样生效。**不要在评论正文的示例/截图说明里贴完整指令**，需要举例时写成 `／approve`（全角斜杠）或加引用块前缀。
-- 不写盘的收尾有两种成因，日志分开发声（`review-apply.mjs` 的 `noChangeNote` 按 `parseCommands` 是否出词二择）：
+- 不写盘的收尾有两种成因，日志分开发声（`crawler/review.mjs` 的 `noChangeNote` 按 `parseCommands` 是否出词二择；`scripts/review-apply.mjs` 只是打印它、并在名单闸之前不动用它）：
   ① 正文里压根没有指令 → 打印「评论不含指令，跳过」，此路径在 `runReview` 里早退，**零 GitHub 写操作**；
   ② 有指令但一条都没合入（id 未命中或已全部处理完）→ 打印「评论含指令但无可合入项（id 未命中或已全部处理），跳过」，
   此路径**仍会回执一条评论**（列出「未找到」的 id；pending 本已为空时还会尝试关闭 Issue），只是不写任何数据文件。
   两者都零写盘，但②的含义是「评论送进来了、只是没生效」，排查方向与①完全不同，故整枝终审要求分开出声
   （`tests/review-apply.test.ts` 的空跑兜底例钉①的 `changed:false` 早退，`noChangeNote` 例钉两条措辞）。
+- **审批授权面治理（计划 3 裁决 ① 落地后的新形态）**：能起 job ≠ 能盖章。review job 会先比对评论者 login ∈ `config/site-config.json.adminLogins`，非白名单只回执一条 `⛔ 无权限：…` 然后退出，**一条数据都不合**；`[bot]` 结尾的评论（含本 job 自己发的回执、crawl job 的提交评论）不再起 job。因此：
+  ① `adminLogins` 为空时**所有** Issue 审批评论都会被拒——填名单是启用审批的前置动作，不是可选项；
+  ② 被拒的人会收到一条机器人评论，这是设计中的公开留痕，不是故障；
+  ③ 名单改动只对**之后**的评论生效（job 读的是触发提交工作树里的那份配置）。
 
 ## 7. Lighthouse 与 Pages
 deploy.yml 首次全绿即已发布（Settings → Pages 显示 live URL）。三门禁读数在 lighthouse job 摘要的 temporary-public-storage 链接；连续不达标先修码，不动门槛值。
@@ -50,3 +54,15 @@ deploy.yml 已按仓库注入 `NEXT_PUBLIC_BASE_PATH` 与 `NEXT_PUBLIC_SITE_URL`
 
 ## 9. 节奏与费用
 cron `0 */6 * * *` 为 UTC（北京时间 8/14/20/2 点）。公开仓库 Actions 免费；单跑≈构建 3–5 分钟 + Lighthouse 1–2 分钟。
+
+## 10. /admin 后台启用（Day-1 必做，计划 3）
+
+`/admin` 是纯静态客户端页面：浏览器直接带设备令牌打 `api.github.com`。代码与单测已本机实证（见 ADMIN-ACCEPTANCE.md），以下是只有仓库所有者能做的线上动作，按序执行。
+
+1. **填 `config/site-config.json` 的 `adminLogins`**（GitHub 登录名数组，大小写不敏感、不得含空格或 `/`）。空数组＝后台与 Issue 审批两条路全部 fail-closed 拒绝。
+2. **建 GitHub OAuth App**（Settings → Developer settings → OAuth Apps → New）：Homepage 填 Pages 站点 URL，**Authorization callback URL 留空或填站点 URL 均可**（Device Flow 不走回调），勾选前记下 `Client ID` → 填入 `config/site-config.json` 的 `oauthClientId`。缺它时 `/admin` 显示「未配置」引导态（`resolveView` 的 `unconfigured`）。
+3. **确认 `githubRepo`**：`config/site-config.json` 的 `githubRepo` 必须是 `owner/repo` 形态且与实际仓库名一致——后台所有读写都按它寻址，Pages 域名改了不会自动改它。
+4. **Actions 写权限**（§2 的既有动作之外，还需确认 review job 的 `GITHUB_TOKEN` 能发评论与关 Issue：`permissions: issues: write` 已在 yml 顶层声明）。
+5. **浏览器侧可达性首查**（ADMIN-ACCEPTANCE §7 的未取证项）：完成一次 Device Flow 登录，观察 ① 浏览器是否被 `api.github.com` 的 CORS 放行 ② `/user` 返回的 login 是否与名单一致 ③ Contents PUT 是否成功（403 且提示 scope 不足＝令牌 scope 问题；409＝同一文件被并发改动，后台按设计只重试该文件）。
+6. **发布闭环**（§4 的方案 A/B 决策）：`/admin` 走 Contents PUT 提交，其 commit 由令牌所属用户产生，**会**触发 `deploy.yml` 的 push paths 过滤——即后台发布天然上线，不依赖 `TFN_PUSH_TOKEN`；`crawl.yml` 的自动提交仍需该 PAT 才能触发下游（方案 A）。
+7. **计划 4 之后再回来**：`/admin` 路由、`robots.txt`/noindex、`.adm-*` 样式与九种状态实触发都在计划 4；本计划的收口态**没有任何 `/admin` 页面可访问**（`out` 仍是 25 个 HTML、build 26/26）。
