@@ -29,10 +29,8 @@ describe("四标签事实表", () => {
   });
 
   it("roving tabindex：焦点落在哪个标签，哪个才可聚焦（Tab 键因此只会离开整组一次）", () => {
-    /* 计划 5 Task 3 简报此例原写 tabIndex("review", t.key) 期望 [-1,-1,-1,0]，
-       这与简报自带的实现（tabIndex(key, focusKey) 相等取 0）以及下面 tabAria 的契约
-       （tabAria("review","review","review") ⇒ tabIndex:0）三者互斥：焦点在 review 时 0 必落首位。
-       故按实现口径改钉两个焦点位置——只钉一位的话，「写死首个标签为 0」的假实现也能全绿。 */
+    /* tabIndex(key, focusKey) 的契约是「相等取 0」：焦点在 review 时 0 必落首位，在 history 时必落末位。
+       钉两个焦点位置而不是一个——只钉一位时，「写死首个标签永远可聚焦」的假实现也能全绿。 */
     expect(TABS.map((t) => tabIndex(t.key, "review"))).toEqual([0, -1, -1, -1]);
     expect(TABS.map((t) => tabIndex(t.key, "history"))).toEqual([-1, -1, -1, 0]);
     expect(TABS.filter((t) => tabIndex(t.key, "config") === 0).length).toBe(1);
