@@ -58,7 +58,7 @@ describe("publishApprovals：白名单 → 指令 → runReview → 逐文件 Co
     expect(decodeBase64Utf8(jsonOf(f.calls[4]).content)).toContain("（核验续期）");
   });
 
-  it("approve all：四文件全 PUT + 回执 + 关单；写回的卡表是 31 张（真数据实算，非手搓）", async () => {
+  it("approve all：四文件全 PUT + 回执 + 关单；写回的卡表是 32 张（真数据实算，非手搓）", async () => {
     const f = mkFetch(
       fileRes("S-T", cur.cards), fileRes("S-D", cur.donots), fileRes("S-R", cur.rules),
       res(201, {}), res(200, {}), putOk("A"), putOk("B"), putOk("C"), fileRes("S-P", pend), putOk("D"),
@@ -70,7 +70,7 @@ describe("publishApprovals：白名单 → 指令 → runReview → 逐文件 Co
     expect(f.calls[4].url).toBe("https://api.github.com/repos/hope0719/token-fbi-next/issues/42");
     const puts = f.calls.filter((c) => c.init.method === "PUT");
     const written = JSON.parse(decodeBase64Utf8(jsonOf(puts[0]).content));
-    expect(written).toHaveLength(31);
+    expect(written).toHaveLength(32);
     expect(written.find((c: any) => c.name === "书生·端砚 墨点计划（上海AI实验室）")).toBeUndefined();
     expect(JSON.parse(decodeBase64Utf8(jsonOf(puts[3]).content))).toMatchObject({ version: 1, changes: [] });
   });

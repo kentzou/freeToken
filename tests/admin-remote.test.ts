@@ -58,10 +58,10 @@ describe("运行时读面：Contents 是唯一带凭据的读通道，错误必�
     expect(jsonOf(f.calls[1])).toEqual({ message: "chore: 更新", content: encodeBase64Utf8("新文本\n"), branch: "main", sha: "S1" });
   });
 
-  it("loadCurrentData：三表齐才返回，条数是仓库真值（32 / 22 / 五表）；缺任一条即抛，绝不给半截", async () => {
+  it("loadCurrentData：三表齐才返回，条数是仓库真值（33 / 22 / 五表）；缺任一条即抛，绝不给半截", async () => {
     const f = mkFetch(fileRes("S-T", tokensText), fileRes("S-D", donotsText), fileRes("S-R", rulesText));
     const cur = await loadCurrentData("o/r", { token: "ghu_x", fetchImpl: f.fn });
-    expect(cur.cards.length).toBe(32);
+    expect(cur.cards.length).toBe(33);
     expect(cur.donots.length).toBe(22);
     expect(Object.keys(cur.rules)).toEqual(["featured", "logo", "cardCopy", "detailSlug", "regionByName"]);
     expect(f.calls.map((c) => c.url.split("/contents/")[1])).toEqual(["data/tokens.json", "data/donots.json", "data/rules.json"]);

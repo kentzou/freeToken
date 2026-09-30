@@ -102,7 +102,7 @@ describe("review：Issue 评论 → 合入（crawler/review.mjs 是唯一语义�
     expect(parseCommands(commandText(ds))).toEqual(ds);
     expect(commandText([])).toBe("");
     /* §3 决策 16 C-1：含空白/逗号/引号的 id 必须原样往返。上面三条 fixture id（WorkBuddy / rules:featured /
-       甲）恰好全都无空白，所以既有断言对这个缺陷零鉴别力——现库 59 个 id 里 33 个含空白（探针实测）。 */
+       甲）恰好全都无空白，所以既有断言对这个缺陷零鉴别力——现库 60 个 id 里 34 个含空白（探针实测）。 */
     const spaced = [
       { action: "approve", id: "card:阿里云 Qoder（灵码）" },
       { action: "reject", id: "watch:火山引擎 Ark 协作计划（字节）" },
@@ -115,7 +115,7 @@ describe("review：Issue 评论 → 合入（crawler/review.mjs 是唯一语义�
     expect(parseCommands(commandText(quoted))).toEqual(quoted);
 
     /* 全量真实 id 往返：名字一律从 data/*.json 取、id 一律由 keyOf 造（§2 单一实现，测试不手搓形状）。
-       59 / 33 是数据快照计数，同类于 admin-publish.test.ts 里「写回的卡表是 31 张」——钉的是「这批真实数据
+       60 / 34 是数据快照计数，同类于 admin-publish.test.ts 里「写回的卡表是 32 张」——钉的是「这批真实数据
        确实含空白」这个前提；若将来改名令含空白数为 0，下面三条往返仍全跑，只是鉴别力自动降级，不会假绿。 */
     const { cards, donots, rules } = realData();
     const ids = [
@@ -123,8 +123,8 @@ describe("review：Issue 评论 → 合入（crawler/review.mjs 是唯一语义�
       ...donots.map((w: any) => keyOf({ kind: "watch", name: w.name })),
       ...Object.keys(rules).map((n: string) => keyOf({ kind: "rules", name: n })),
     ];
-    expect(ids).toHaveLength(59);
-    expect(ids.filter((s: string) => /\s/.test(s))).toHaveLength(33);
+    expect(ids).toHaveLength(60);
+    expect(ids.filter((s: string) => /\s/.test(s))).toHaveLength(34);
     const all = ids.map((id: string) => ({ action: "approve", id }));
     expect(parseCommands(commandText(all))).toEqual(all);
 

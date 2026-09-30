@@ -17,9 +17,9 @@ const PIPELINE = buildSeed(read("tests/fixtures/upstream-data.json"), JSON.parse
 
 describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed 导出）", () => {
   it("条数与上游一致", () => {
-    expect(tokens).toHaveLength(36 - 3 - 1); // 上游 36 − sponsored 3（Q6）− site-config hide 1（小米 MiMo，Q8）
+    expect(tokens).toHaveLength(36 - 3); // 上游 36 − sponsored 3（Q6）；小米 MiMo 已由 hide 改为配 link（解禁），不再从卡表剔除
     expect(donots).toHaveLength(22);
-    expect(meta.counts).toEqual({ tokens: 32, donots: 22 });
+    expect(meta.counts).toEqual({ tokens: 33, donots: 22 });
   });
 
   it("全量链接过 linkRisk（与 seed 脚本同一份判定，含 hash 参数与推广短链域）", () => {
@@ -113,7 +113,7 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
       createHash("sha256").update(JSON.stringify(o)).digest("hex").slice(0, 12);
     // 原来比的是 sha(tokens) vs sha(重读同一文件)＝同一表达式比自身，恒真；改比「管线产物」与「磁盘」
     expect(sha(PIPELINE.cards)).toBe(sha(tokens));
-    expect(sha(PIPELINE.cards)).toBe("ba754253ebaa"); // 计划 §0.1 实测哈希：换卡必须显式改这里
+    expect(sha(PIPELINE.cards)).toBe("64e26640c52d"); // 计划 §0.1 实测哈希：换卡必须显式改这里
   });
 
   it("四道 fail-stop 护栏：基底缺失或上游全被挡架都拒绝导出，绝不发布空壳", () => {

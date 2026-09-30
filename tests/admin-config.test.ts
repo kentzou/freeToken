@@ -36,7 +36,7 @@ describe("变现配置读写：写入侧比读取侧更严（未知键直接拒�
 
   it("逐卡覆盖：hide 可开可关，清空后整条覆盖删除（不留 {} 空壳）", () => {
     const hidden = patchSiteConfig(base, { cards: { "小米 MiMo（Xiaomi）": { hide: false } } });
-    expect(hidden.cards!["小米 MiMo（Xiaomi）"]).toEqual({ hide: false });
+    expect(hidden.cards!["小米 MiMo（Xiaomi）"]).toEqual({ hide: false, link: "https://mimo.xiaomi.com/" });
     const added = patchSiteConfig(base, { cards: { WorkBuddy: { link: "https://example.com/go", inviteCodes: ["c1", "c2"] } } });
     expect(added.cards!.WorkBuddy).toEqual({ link: "https://example.com/go", inviteCodes: ["c1", "c2"] });
     const emptied = patchSiteConfig(added, { cards: { WorkBuddy: { link: "", inviteCodes: [] } } });
@@ -80,9 +80,9 @@ describe("变现配置读写：写入侧比读取侧更严（未知键直接拒�
     expect(written).toBe(dump(patchSiteConfig(base, patch)));
     // spec §3 的「commit payload 预览」与真 PUT 的内容必须逐字相同（同一个 dump(patchSiteConfig(...))），否则预览是第二套格式化、会自证清白
     expect(configPayloadPreview(base, patch)).toBe(written);
-    // 写回去的配置必须被真 applySiteConfig 吃下：32 → 31，WorkBuddy 真的从卡表消失
+    // 写回去的配置必须被真 applySiteConfig 吃下：33 → 32，WorkBuddy 真的从卡表消失
     const applied = applySiteConfig(cards, donots, JSON.parse(written));
-    expect(applied.cards).toHaveLength(31);
+    expect(applied.cards).toHaveLength(32);
     expect(applied.cards.find((c: any) => c.name === "WorkBuddy")).toBeUndefined();
     /** 清池口径钉（crawler/clean.mjs 的「配 link 未配码池则清池」）：只存 inviteBase 不存 inviteCodes，
      *  管线会把 inviteBase 删掉。Tab2 若允许单独保存前缀，保存成功等于没生效——这条就是那口铃。 */
@@ -97,7 +97,7 @@ describe("变现配置读写：写入侧比读取侧更严（未知键直接拒�
   it("configRows：11 行、2 行隐藏、逐卡邀请码以逗号串回显（Tab2 的渲染事实）", () => {
     const rows = configRows(base);
     expect(rows.length).toBe(11);
-    expect(rows.filter((r) => r.hidden).map((r) => r.name)).toEqual(["豆包拉新项目", "小米 MiMo（Xiaomi）"]);
+    expect(rows.filter((r) => r.hidden).map((r) => r.name)).toEqual(["豆包拉新项目"]);
     expect(rows.find((r) => r.name === "WorkBuddy")!.link).toBe("https://hunyuan.tencent.com/");
     expect(rows.find((r) => r.name === "豆包拉新项目")!.overridden).toBe(false);
   });
