@@ -209,7 +209,7 @@ describe("认证状态机：视图判定与 Device Flow 轮询（零真请求，
       now: () => 0,
     });
     // 断言只钉「原始原因没有被吞掉」，不绑 gh() 的整条模板串——
-    // crawler/github.mjs:51 会把 fetch reject 重铸为「GitHub 请求失败（重试 0 次）：POST …/access_token → fetch failed」，
+    // crawler/github.mjs:51 会把 fetch reject 重铸为「GitHub 请求失败（重试 0 次）：POST … → fetch failed」，
     // 绑全文案等于把调用层的一条错误格式字符串钉进认证层用例，改文案会误伤。
     expect(out).toEqual({ kind: "fatal", error: "transport", message: expect.stringContaining("fetch failed"), polls: 0 });
     expect(f.calls.length).toBe(3); // 只发了三次就收手，不是无限重试
