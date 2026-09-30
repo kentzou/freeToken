@@ -17,6 +17,13 @@ describe("文案纯函数（对齐镜像行为）", () => {
     expect(cleanText("A — B – C")).toBe("A - B - C");
     expect(fmtMd("2026-10-05")).toBe("10/5");
   });
+  it("fmtMd 对畸形/空输入原样退回，绝不产出 NaN/NaN（审查 L4）", () => {
+    expect(fmtMd("—")).toBe("—");                       // latestUpdated 空集哨兵
+    expect(fmtMd("")).toBe("");                           // 空串
+    expect(fmtMd("2026-10")).toBe("2026-10");             // 缺日：不猜
+    expect(fmtMd("长期有效")).toBe("长期有效");                 // 上游把说明文字塞进日期字段的形态
+    expect(fmtMd("2026-10-07（活动截止）")).toBe("10/7");   // 实测数据里唯一的畸形值，必须仍可显示
+  });
   it("shortText 超长截断并去掉结尾标点", () => {
     expect(shortText("一二三，", 2)).toBe("一二…");
     expect(shortText("短")).toBe("短");

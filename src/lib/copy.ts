@@ -6,10 +6,15 @@ export function cleanText(value: string): string {
   return String(value).replace(/[—–]/g, "-");
 }
 
-/** "2026-10-05" → "10/5"（镜像 fmtMd） */
+/** "2026-10-05" → "10/5"（镜像 fmtMd）。
+ *  与镜像的差别只在容错：上游日期字段会混进说明文字（实测 ZCode 的 limited=「2026-10-07（活动截止）」）
+ *  或整体缺失（latestUpdated 的 "—" 哨兵）。镜像按 split("-") 取下标会算出 "NaN/NaN" 直接上屏，
+ *  这里改为「抽到 YYYY-M-D 才格式化，抽不到原样退回」——宁可多显示一句人话，也不给读者看 NaN。 */
 export function fmtMd(date: string): string {
-  const p = date.split("-");
-  return `${Number.parseInt(p[1], 10)}/${Number.parseInt(p[2], 10)}`;
+  const raw = String(date ?? "");
+  const m = /(\d{4})-(\d{1,2})-(\d{1,2})/.exec(raw);
+  if (!m) return raw;
+  return `${Number.parseInt(m[2], 10)}/${Number.parseInt(m[3], 10)}`;
 }
 
 export function shortText(value: string | undefined, max = 92): string {
