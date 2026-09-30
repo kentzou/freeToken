@@ -11,14 +11,30 @@ import { applyDecisions } from "./approve.mjs";
 import { closeIssue, commentIssue } from "./github.mjs";
 import { dump } from "./serialize.mjs";
 
-/** 每行一条：/approve card:WorkBuddy 或 /approve all；分隔符吃半角/全角逗号与空格 */
+/** 指令行的分词（§3 决策 16 C-1）：默认按空白 / 半角逗号 / 全角逗号切，但**双引号段整体成一个 token**，
+ *  引号内的 `\` 与 `"` 按反斜杠转义还原。为什么必须有引号形态：id 是 `${kind}:${name}`，`name` 直接来自
+ *  卡片名/观望项名，而现库 59 个 id 里 33 个含空白——没有约定时 `commandText` 拼出的指令会被旧的
+ *  `split(/[\s,，]+/)` 切成碎片，碎片 id 在 pending 里必然未命中 ⇒ 审批静默空转、却仍回「已发布」。
+ *  未加引号的输入与 `split(/[\s,，]+/)` 逐字同结果（人手写的旧格式不受影响）。两个分支各吃 ≥1 字符，
+ *  不存在零宽匹配，故 `lastIndex` 必推进、循环必终止。 */
+function splitTokens(raw) {
+  const out = [];
+  const re = /"((?:[^"\\]|\\.)*)"|([^\s,，]+)/g;
+  for (let m = re.exec(raw); m !== null; m = re.exec(raw)) {
+    out.push(m[1] === undefined ? m[2] : m[1].replace(/\\(["\\])/g, "$1"));
+  }
+  return out;
+}
+
+/** 每行一条：/approve card:WorkBuddy 或 /approve all；分隔符吃半角/全角逗号与空格；
+ *  id 里含空白或逗号时必须整体用双引号括起（`commandText` 就是这么生成的，两者互逆）。 */
 export function parseCommands(text) {
   const out = [];
   for (const line of String(text || "").split(/\r?\n/)) {
     const m = /^\s*\/(approve|reject)\s+(.+?)\s*$/i.exec(line);
     if (!m) continue;
     const action = m[1].toLowerCase();
-    for (const tok of m[2].split(/[\s,，]+/)) if (tok) out.push({ action, id: tok });
+    for (const tok of splitTokens(m[2])) out.push({ action, id: tok });
   }
   return out;
 }
@@ -32,13 +48,18 @@ export function noChangeNote(comment) {
     : "评论不含指令，跳过";
 }
 
+/** id 里出现切分符就得加引号——与 `splitTokens` 是互逆的一对（§1 红线 5 的另一半：解析只有一处，
+ *  生成也只有一处）。判据只测这三个字符类：`\s` 与 `,`/`，` 是切分符，`"` 会提前终结引号段。 */
+const needsQuote = (id) => /[\s,，"]/.test(id);
+const quoteId = (id) => (needsQuote(id) ? `"${id.replace(/([\\"])/g, "\\$1")}"` : id);
+
 /** decisions → 评论正文：与 parseCommands 互逆的一对（§1 红线 5 的另一半——解析只有一处，生成也只能有一处）。
  *  同类动作并成一行：Issue 时间线上「一条指令 = 一次可审计的盖章」，逐条一行会把一次操作摊成 N 条评论。 */
 export function commandText(decisions) {
   const groups = new Map();
   for (const { action, id } of decisions || []) {
     if (!groups.has(action)) groups.set(action, []);
-    groups.get(action).push(id);
+    groups.get(action).push(quoteId(id));
   }
   return [...groups].map(([action, ids]) => `/${action} ${ids.join(" ")}`).join("\n");
 }

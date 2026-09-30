@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { commandText, noChangeNote, parseCommands, runReview } from "../crawler/review.mjs";
+import { keyOf } from "../crawler/diff.mjs";
+import { realData } from "./helpers/pending";
 
 function res(status: number, body: unknown = {}) {
   return { ok: status >= 200 && status < 300, status, json: async () => body, text: async () => JSON.stringify(body) };
@@ -98,6 +100,42 @@ describe("review：Issue 评论 → 合入（crawler/review.mjs 是唯一语义�
     expect(commandText(ds)).toBe("/approve card:WorkBuddy rules:featured\n/reject card:甲");
     expect(parseCommands(commandText(ds))).toEqual(ds);
     expect(commandText([])).toBe("");
+    /* §3 决策 16 C-1：含空白/逗号/引号的 id 必须原样往返。上面三条 fixture id（WorkBuddy / rules:featured /
+       甲）恰好全都无空白，所以既有断言对这个缺陷零鉴别力——现库 59 个 id 里 33 个含空白（探针实测）。 */
+    const spaced = [
+      { action: "approve", id: "card:阿里云 Qoder（灵码）" },
+      { action: "reject", id: "watch:火山引擎 Ark 协作计划（字节）" },
+    ];
+    expect(commandText(spaced)).toBe('/approve "card:阿里云 Qoder（灵码）"\n/reject "watch:火山引擎 Ark 协作计划（字节）"');
+    expect(parseCommands(commandText(spaced))).toEqual(spaced);
+
+    /* 现库双引号数为 0，故用合成 id 钉「转义」这条机制本身，而不是等某天真出现带引号的名字 */
+    const quoted = [{ action: "approve", id: 'card:他说"好" 的卡片' }];
+    expect(parseCommands(commandText(quoted))).toEqual(quoted);
+
+    /* 全量真实 id 往返：名字一律从 data/*.json 取、id 一律由 keyOf 造（§2 单一实现，测试不手搓形状）。
+       59 / 33 是数据快照计数，同类于 admin-publish.test.ts 里「写回的卡表是 31 张」——钉的是「这批真实数据
+       确实含空白」这个前提；若将来改名令含空白数为 0，下面三条往返仍全跑，只是鉴别力自动降级，不会假绿。 */
+    const { cards, donots, rules } = realData();
+    const ids = [
+      ...cards.map((c: any) => keyOf({ kind: "card", name: c.name })),
+      ...donots.map((w: any) => keyOf({ kind: "watch", name: w.name })),
+      ...Object.keys(rules).map((n: string) => keyOf({ kind: "rules", name: n })),
+    ];
+    expect(ids).toHaveLength(59);
+    expect(ids.filter((s: string) => /\s/.test(s))).toHaveLength(33);
+    const all = ids.map((id: string) => ({ action: "approve", id }));
+    expect(parseCommands(commandText(all))).toEqual(all);
+
+    /* 人手在 Issue 里写的旧格式（无引号 + 半角/全角逗号混排）必须继续生效——修 C-1 不能把
+       docs/ONLINE-STEPS.md §6 已公开的写法读成碎片。 */
+    expect(parseCommands("/approve card:A card:B\n/reject card:C，card:D，card:E")).toEqual([
+      { action: "approve", id: "card:A" },
+      { action: "approve", id: "card:B" },
+      { action: "reject", id: "card:C" },
+      { action: "reject", id: "card:D" },
+      { action: "reject", id: "card:E" },
+    ]);
   });
 
   it("commit 钩子：只在真合入时调用、拿到的就是 res.files 同一份、且发生在回执之后", async () => {
@@ -143,6 +181,20 @@ describe("review：Issue 评论 → 合入（crawler/review.mjs 是唯一语义�
     expect(calls).toEqual([]);
     expect(r.changed).toBe(true);
     expect((committed as unknown as Record<string, string>)["data/tokens.json"]).toContain("https://a2/"); // 只在类型层（§3 决策 15）
+    /* §3 决策 16 M-2：上面只钉了「回执被跳过」，closeIssue 半边从没被触达——第一轮的 pending 里还剩「乙」，
+       走的仍是「未清空不关单」。这一轮把队列改成只剩干净的甲，批完即清空，才第一次执行
+       `if (!res.pending.changes.length) await closeIssue(…)` 那一句；反向证据是既有例「reject 最后一条 →
+       自动关闭 Issue」（那里 PATCH 真发生），两条合起来才把「issueNumber 为 0 ⇒ 零 GitHub 写」钉死。 */
+    const f2 = mkFetch(res(201, {}));
+    let committed2: Record<string, string> | null = null;
+    const r2 = await runReview({
+      repo: "me/r", issueNumber: 0, pending: { ...pending, changes: [pending.changes[0]] }, data,
+      comment: "/approve card:甲", token: "t", fetchImpl: f2.fn,
+      commit: async (f: Record<string, string>) => { committed2 = f; },
+    });
+    expect(r2.pendingLeft).toBe(0);
+    expect(f2.calls).toEqual([]); // 队列清空了也不 PATCH——关单守卫真在
+    expect(committed2).not.toBeNull(); // 写面不受 issueNumber 影响
   });
 });
 
