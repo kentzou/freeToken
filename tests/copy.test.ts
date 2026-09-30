@@ -29,10 +29,15 @@ describe("文案纯函数（对齐镜像行为）", () => {
     expect(brandName({ name: "GLM-5.3-Flash（Ox-Alpha）" } as TokenCard)).toBe("智谱清言");
     expect(brandName({ name: "WorkBuddy" } as TokenCard)).toBe("WorkBuddy");
   });
-  it("logoFor 特例优先，其余按规则表，最后兜底 tencent.png", () => {
+  it("logoFor：特例优先 → 规则表 → 未收录品牌走中性兜底（绝不冒用他人品牌）", () => {
     expect(logoFor({ name: "WorkBuddy" } as TokenCard, rules)).toBe("assets/logos/workbuddy-official.png");
-    expect(logoFor({ name: "OpenRouter" } as TokenCard, rules)).toContain("tencent.png");
     expect(logoFor({ name: "Kilo Code" } as TokenCard, rules)).toBe("assets/logos/kilo.png");
+    /* 腾讯系命中规则表仍用 tencent.png：那是合法归属，不是兜底。判据是「这张卡确实提到腾讯」 */
+    expect(logoFor({ name: "腾讯云混元" } as TokenCard, rules)).toContain("tencent.png");
+    /* 实测 4 张入库卡今天走兜底：让它们逐一钉死，下一次爬取新增品牌时不会偷偷显示腾讯标 */
+    for (const name of ["商汤 Token Plan（sensenova）", "BazaarLink", "TeleAgent（星辰超级智能体）", "字节 TRAE（AI IDE）"]) {
+      expect(logoFor({ name } as TokenCard, rules)).toBe("assets/logos/generic.svg");
+    }
   });
   it("freeLabel：limited > 长期 > 默认", () => {
     expect(freeLabel({ limited: "2026-09-30" } as TokenCard)).toBe("限时 9/30");

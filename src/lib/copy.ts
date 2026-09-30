@@ -34,7 +34,9 @@ export function brandName(item: Pick<TokenCard, "name">): string {
   return displayName(item);
 }
 
-/** logo：4 个官方特例优先，其次上游规则表，兜底 tencent.png（镜像 logoFor） */
+/** logo：4 个官方特例优先，其次上游规则表；未收录品牌走中性 generic.svg。
+ *  兜底绝不冒用他人品牌——2026-09-30 审查裁决（REVIEW_REPORT M2）：
+ *  旧实现兜底 tencent.png 会让「字节 TRAE」显示腾讯标，属虚假信息。 */
 export function logoFor(item: TokenCard, rules: CompiledRules): string {
   const name = item.name || "";
   if (/workbuddy/i.test(name)) return "assets/logos/workbuddy-official.png";
@@ -43,7 +45,9 @@ export function logoFor(item: TokenCard, rules: CompiledRules): string {
   if (/stepfun|阶跃/i.test(name)) return "assets/logos/stepfun-ui.svg";
   const details = `${item.modality || ""} ${item.effect || ""}`;
   const hit = rules.logo.find(([re]) => re.test(name)) || rules.logo.find(([re]) => re.test(details));
-  return `assets/logos/${hit ? hit[1] : "tencent"}.png`;
+  /* 注意 hit[1] 是**无扩展名的 slug**（实测 data/rules.json：`"slug": "kilo"`、`"slug": "tencent"`），
+     所以命中分支必须自己补 `.png`；只有兜底分支换成带扩展名的 generic.svg。 */
+  return hit ? `assets/logos/${hit[1]}.png` : "assets/logos/generic.svg";
 }
 
 export function freeLabel(card: TokenCard): string {

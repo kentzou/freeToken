@@ -15,5 +15,6 @@ for (const name of readdirSync(SRC)) {
   copyFileSync(from, path.join(DEST, name));
   n++;
 }
-if (!existsSync(path.join(DEST, "tencent.png"))) throw new Error("缺少兜底 logo tencent.png");
+if (!existsSync(path.join(DEST, "generic.svg"))) throw new Error("缺中性兜底 logo generic.svg（logoFor 未收录品牌依赖它，勿用品牌标兜底）");
+if (!existsSync(path.join(DEST, "tencent.png"))) throw new Error("缺 tencent.png（腾讯系卡由规则表命中，非兜底）");
 console.log(`assets 完成：${n} 个 logo`);
