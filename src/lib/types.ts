@@ -43,6 +43,8 @@ export interface RulesJson {
 }
 
 export interface CardOverrides {
+  /** 分类覆盖（计划 5 D2）：只认 大模型/工具/项目，首页「合作情报」由它派生 */
+  type?: string;
   link?: string;
   inviteBase?: string;
   inviteCodes?: string[];

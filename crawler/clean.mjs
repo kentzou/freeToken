@@ -147,7 +147,9 @@ export function applySiteConfig(cards, donots, cfg) {
       continue;
     }
     for (const t of hits) {
-      for (const k of ["link", ...POOL_KEYS]) {
+      // type 是计划 5 D2 放开的分类覆盖：首页「合作情报」由 catOf(card.type) 派生，
+      // 覆盖不落这里就会「后台显示已保存、前台毫无变化」。三档取值由 src/lib/admin/config.ts 校验。
+      for (const k of ["link", "type", ...POOL_KEYS]) {
         if (patch[k] !== undefined) t[k] = patch[k];
       }
       if (patch.link !== undefined && patch.inviteCodes === undefined) {

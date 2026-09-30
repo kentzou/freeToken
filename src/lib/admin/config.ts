@@ -8,8 +8,11 @@ import { commitText, readTextFile } from "./remote";
 
 export const CONFIG_PATH = "config/site-config.json";
 
-/** applySiteConfig 实际消费的逐卡 patch 白名单（link + POOL_KEYS + hide） */
-export const PATCH_KEYS = ["link", "inviteBase", "inviteCodes", "inviteParam", "traeLinks", "hide"] as const;
+/** applySiteConfig 实际消费的逐卡 patch 白名单（type + link + POOL_KEYS + hide） */
+export const PATCH_KEYS = ["type", "link", "inviteBase", "inviteCodes", "inviteParam", "traeLinks", "hide"] as const;
+
+/** 分类三档的唯一口径：与 src/lib/catalog.ts 的 catOf 返回值域一致 */
+export const TYPE_VALUES = ["大模型", "工具", "项目"] as const;
 
 export interface ConfigPatch {
   wechatId?: string;
@@ -56,6 +59,8 @@ export function validateConfigShape(config: SiteConfig): string[] {
   for (const [name, o] of Object.entries(config.cards ?? {})) {
     for (const k of Object.keys(o)) if (!(PATCH_KEYS as readonly string[]).includes(k)) errs.push(`卡「${name}」有未知键 ${k}`);
     if (o.hide !== undefined && typeof o.hide !== "boolean") errs.push(`卡「${name}」的 hide 必须是布尔`);
+    if (o.type !== undefined && !(TYPE_VALUES as readonly string[]).includes(o.type))
+      errs.push(`卡「${name}」的 type 必须是 ${TYPE_VALUES.join("/")}，当前「${o.type}」`);
     if (o.inviteCodes !== undefined && !Array.isArray(o.inviteCodes)) errs.push(`卡「${name}」的 inviteCodes 必须是数组`);
   }
   return errs;
@@ -63,6 +68,10 @@ export function validateConfigShape(config: SiteConfig): string[] {
 
 export interface ConfigRow {
   name: string;
+  /** 该卡当前的分类现值，来自调用方传入的受版 `type`；空串＝本行没有现值依据（UI 显示「—」，绝不猜） */
+  category: string;
+  /** 后台填的分类覆盖；未覆盖为空串 */
+  type: string;
   link: string;
   inviteBase: string;
   inviteCodes: string;
@@ -72,10 +81,16 @@ export interface ConfigRow {
   overridden: boolean;
 }
 
-/** Tab2 的逐卡行（顺序＝配置文件键序，不做二次排序：站长认的是仓库里那份文件的顺序） */
-export function configRows(config: SiteConfig): ConfigRow[] {
+/** Tab2 的逐卡行（顺序＝配置文件键序，不做二次排序：站长认的是仓库里那份文件的顺序）。
+ *  typesByName＝受版数据里每张卡的现值 type，由调用方（AdminApp 经 Contents 读 data/tokens.json）传入。
+ *  为什么不在这里自己读盘：① 本文件会被客户端组件 import，node:fs 在浏览器不可达；
+ *  ② 构建产物 out/ 里没有 data/ 目录（实测：out 只有各页 HTML + assets + _next），客户端也 fetch 不到自家数据。
+ *  默认参数 = HEAD 既有调用点 `configRows(base)` 保持单参可编译。 */
+export function configRows(config: SiteConfig, typesByName: Record<string, string> = {}): ConfigRow[] {
   return Object.entries(config.cards ?? {}).map(([name, o]) => ({
     name,
+    category: typesByName[name] ?? "",
+    type: o.type ?? "",
     link: o.link ?? "",
     inviteBase: o.inviteBase ?? "",
     inviteCodes: (o.inviteCodes ?? []).join(", "),
