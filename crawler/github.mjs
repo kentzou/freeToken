@@ -182,9 +182,10 @@ export async function fetchUserLogin({ token = "", fetchImpl = globalThis.fetch 
 
 /** Contents 读：三态返回。走 api.github.com 而非 raw.githubusercontent.com——
  *  后者带 token 会被 GitHub 拒（404 "Not Found"），前者是唯一能带凭据的读通道，
- *  且 404 一定带 JSON 体，可稳定区分「文件不存在（档案已清）」与「读不了」。 */
-export async function readRepoFile(repo, path, { token = "", fetchImpl = globalThis.fetch } = {}) {
-  const res = await gh(`${API}/repos/${repo}/contents/${path}`, { token, fetchImpl });
+ *  且 404 一定带 JSON 体，可稳定区分「文件不存在（档案已清）」与「读不了」。
+ *  sleep 是透给 gh() 的退避接缝（单测不真等 1s/4s/10s），缺省仍是真计时器。 */
+export async function readRepoFile(repo, path, { token = "", fetchImpl = globalThis.fetch, sleep = sleepDefault } = {}) {
+  const res = await gh(`${API}/repos/${repo}/contents/${path}`, { token, fetchImpl, sleep });
   if (res.status === 404) return { kind: "missing" };
   if (!res.ok) return { kind: "error", status: res.status, message: await errorNote(res) };
   const j = await res.json();

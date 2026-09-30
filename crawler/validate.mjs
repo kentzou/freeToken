@@ -5,7 +5,14 @@ import { linkRisk } from "./clean.mjs";
 
 export function validateCards(cards) {
   const bad = [];
-  for (const card of cards || []) {
+  (cards || []).forEach((card, i) => {
+    // 非对象条目以前会静默穿透（`"abc".link` → undefined → linkRisk 不报警），而计划 3 起
+    // 审批写面（publishApprovals → Contents PUT）已把这张表直连生产 data/tokens.json，
+    // 所以必须按索引点名拒绝；数组的 typeof 也是 "object"，同样排除（regionByName 同款教训）。
+    if (!card || typeof card !== "object" || Array.isArray(card)) {
+      bad.push(`卡片#${i}：不是对象（${card === null ? "null" : Array.isArray(card) ? "数组" : typeof card}），拒绝写盘`);
+      return;
+    }
     for (const [field, url] of [
       ["link", card.link],
       ["extraAction.link", card.extraAction && card.extraAction.link],
@@ -13,7 +20,7 @@ export function validateCards(cards) {
       const risk = linkRisk(url);
       if (risk) bad.push(`${card.name}·${field}：${risk}`);
     }
-  }
+  });
   if (bad.length) throw new Error(`卡片校验失败（拒绝写盘）：\n  ${bad.join("\n  ")}`);
   return cards;
 }

@@ -47,11 +47,25 @@ export function parsePending(text: string): PendingJson {
 
 export type PendingResult = { kind: "empty" } | { kind: "loaded"; pending: PendingJson } | { kind: "error"; status: number; message: string; hint: string };
 
-export async function loadPending({ repo, token = "", fetchImpl = globalThis.fetch }: { repo: string; token?: string; fetchImpl?: Fetch }): Promise<PendingResult> {
-  const r = (await readRepoFile(repo, PENDING_PATH, { token, fetchImpl })) as
-    | { kind: "file"; text: string }
-    | { kind: "missing" }
-    | { kind: "error"; status: number; message: string };
+export async function loadPending({
+  repo,
+  token = "",
+  fetchImpl = globalThis.fetch,
+  sleep,
+}: {
+  repo: string;
+  token?: string;
+  fetchImpl?: Fetch;
+  sleep?: (ms: number) => Promise<void>;
+}): Promise<PendingResult> {
+  let r: { kind: "file"; text: string } | { kind: "missing" } | { kind: "error"; status: number; message: string };
+  try {
+    // sleep 只用于把 GET 的三次退避（1s/4s/10s）变成可注入接缝；缺省时 gh() 用真计时器（生产口径不变）
+    r = (await readRepoFile(repo, PENDING_PATH, { token, fetchImpl, sleep })) as typeof r;
+  } catch (e) {
+    const c = classifyError(e); // 传输层抛错（断网/CORS/退避用尽）落第三态：少了这里，UI 会崩在未捕获 rejection 上
+    return { kind: "error", status: c.status, message: c.message, hint: c.hint };
+  }
   if (r.kind === "missing") return { kind: "empty" };
   if (r.kind === "error") {
     const c = classifyError({ status: r.status, note: r.message });

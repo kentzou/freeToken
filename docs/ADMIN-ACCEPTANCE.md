@@ -18,6 +18,26 @@ HEAD 换代说明：并行窗口在 15:52:24 提交了 `b0a1cb0`（logo 兜底�
 
 预期告警基线不变：`[site-config] 未找到卡片： 豆包拉新项目`（`npm run seed` 1 行 / `seed:repro` 3 行）。为消警删 `config/site-config.json` 的键属越界。
 
+### 1b. 整枝终审修复波（2026-09-30 16:36 复跑，与上表**同栈**）
+
+上表记录的是计划 3 七个任务的收口态（`a77144b`，`Tests 221`）。整枝终审在该态上另查出两处「进计划 4 前必修」，本小节的复跑与这次提交**是同一棵树**（父提交 `a77144b` + 上列五处代码/测试改动 + 本文件这段纯 docs），所以两处读数的差异只有阶梯，其余五槽逐字不变。
+
+| 门禁 | 修复波期望 | 修复波实测（16:36） |
+|---|---|---|
+| vitest | `Tests 221 → 223`（+1 校验守卫例、+1 传输态例） | `Test Files 27 passed (27)` / `Tests 223 passed (223)` |
+| tsc | `EXIT=0` | `tsc=0` |
+| seed:repro | 三哈希不得漂移 | `cards=ba754253ebaa donots=88f99a96da35 rules=7888f2ec168b`（逐字同收口态） |
+| build | `26/26`（仍不新增路由） | `✓ Generating static pages (26/26)` |
+| test:out + 页数 | `pass 5 / fail 0`、`25` / `18` | `ℹ pass 5`、`ℹ fail 0`；HTML `25`、intel `18` |
+| 泄漏红线（扫描面仅 data 与 out） | 零命中 EXIT=1 | 零命中，`leak=1` |
+
+两个修复与它们的 RED→GREEN 证据（复跑地点同上：`a77144b` 的隔离检出）：
+
+1. **`crawler/validate.mjs::validateCards` 补「条目必须是对象」守卫**。收口态下非对象条目静默穿透（`"abc".link` → `undefined` → `linkRisk` 不报警 → 校验通过），而计划 3 恰好把审批写面（`publishApprovals` → Contents PUT）直连了生产 `data/tokens.json`，风险面从「Issue 里难看一点」变成「坏形状覆盖生产数据」。新例三条（字符串 / `null` / 数组）在旧实现上报 `expected [Function] to throw an error`，新实现按索引点名（`卡片#1`、`卡片#0：不是对象`）。
+2. **`src/lib/admin/pending.ts::loadPending` 补第三态的兜 catch**。头注释承诺 `empty|loaded|error` 三态，但 `await readRepoFile(...)` 在 try 之外，传输层抛错会变成 rejected Promise 上抛——计划 4 的 UI 按三态分流时会整页崩。新例在旧实现上 `Test timed out in 5000ms`（`sleep` 接缝尚不存在 ⇒ 真退避 1s+4s+10s 跑满），补接缝后该例 5ms 完成，断言 `kind:"error"`、`status:0`、原文含 `fetch failed`、hint 含 `api.github.com`、`calls.length===4`（GET 三次退避＝共 4 次请求）。接缝是 `readRepoFile` 透传 `sleep` 给 `gh()`，缺省仍为真计时器＝生产口径不变（与 `auth.ts` 的 `sleep?` 注入同款）。
+
+未随本波改动的终审结论（分诊为「留档不修」或「转计划 4 可验」）逐条见外层计划 §3 决策 19 与 §7 第 21 条。
+
 ## 2. 单一实现红线复验（grep 判据）
 
 - 序列化与 UTF-8 base64：`grep -rln "JSON.stringify(value, null, 2)" crawler src scripts` → 仅 `crawler/serialize.mjs`。

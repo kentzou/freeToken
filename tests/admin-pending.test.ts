@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { diffAll } from "../crawler/diff.mjs";
 import { dump, encodeBase64Utf8 } from "../crawler/serialize.mjs";
 import { loadPending, parsePending, pendingIds, toRows } from "@/lib/admin/pending";
-import { mkFetch, res } from "./helpers/fake-fetch";
+import { mkFetch, noSleep, res } from "./helpers/fake-fetch";
 import { DROPPED, WATCHED, realData, realPending } from "./helpers/pending";
 
 const pend = realPending();
@@ -42,6 +42,17 @@ describe("待审队列的运行时读：404 / 读不了 / 形态错 三态绝不
     expect((out as any).hint).toContain("停机");
     expect(() => parsePending("不是 JSON")).toThrow("不是合法 JSON");
     expect(() => parsePending('{"changes":[{"kind":"card"}]}')).toThrow("条目缺 kind/name");
+  });
+
+  it("传输层抛错＝error 态，绝不上抛 rejected Promise（UI 按三态分流，未捕获 rejection 会让整页崩）", async () => {
+    const f = mkFetch(new Error("fetch failed"));
+    const out = await loadPending({ repo: "o/r", fetchImpl: f.fn, sleep: noSleep() });
+    expect(out.kind).toBe("error");
+    expect((out as any).status).toBe(0); // 无 HTTP 状态＝classifyError 的 network 分支
+    expect((out as any).message).toContain("fetch failed"); // 原始原因不许被吞，否则黄条只能说「读取失败」
+    expect((out as any).hint).toContain("api.github.com");
+    expect((out as any).pending).toBeUndefined(); // 故障态不得携带队列内容
+    expect(f.calls.length).toBe(4); // GET 三次退避＝共 4 次请求（sleep 已注入，不真等）
   });
 
   it("toRows：四种真实形态的行事实、删除判定、规则表整表口径与字段截断", () => {

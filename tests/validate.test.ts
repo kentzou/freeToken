@@ -25,4 +25,9 @@ describe("写入侧校验（终审遗留 #4 爬虫侧）", () => {
       /rules\.logo#0/
     );
   });
+  it("非对象条目必须被拒（计划 3 起审批写面已通生产，穿透一次就覆盖 data/tokens.json）", () => {
+    expect(() => validateCards([{ name: "好卡", link: "https://ok.example/" }, "混进来的字符串"])).toThrowError(/卡片#1/);
+    expect(() => validateCards([null])).toThrowError(/卡片#0：不是对象/);
+    expect(() => validateCards([[]])).toThrowError(/卡片#0：不是对象/);
+  });
 });
