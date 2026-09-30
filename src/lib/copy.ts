@@ -7,9 +7,11 @@ export function cleanText(value: string): string {
 }
 
 /** "2026-10-05" → "10/5"（镜像 fmtMd）。
- *  与镜像的差别只在容错：上游日期字段会混进说明文字（实测 ZCode 的 limited=「2026-10-07（活动截止）」）
- *  或整体缺失（latestUpdated 的 "—" 哨兵）。镜像按 split("-") 取下标会算出 "NaN/NaN" 直接上屏，
- *  这里改为「抽到 YYYY-M-D 才格式化，抽不到原样退回」——宁可多显示一句人话，也不给读者看 NaN。 */
+ *  与镜像的差别只在容错：旧写法 split("-") 取下标，遇缺日或整体缺失（"2026-10"、"长期有效"、
+ *  latestUpdated 的 "—" 哨兵）会算出 "NaN/NaN"；而混进说明文字的实测值 limited=「2026-10-07（活动截止）」
+ *  反而靠 parseInt 的前缀解析侥幸算对（→ 10/7）。当前三个调用点都只在 card.limited 非空时取值，
+ *  入库 33 张卡的 limited 全为可解析形态，所以这条路径今天不可达（REVIEW_REPORT L4 原文「故未爆」）；
+ *  本函数按 L4 的建议抽出安全 formatter 作防御——抽到 YYYY-M-D 才格式化，抽不到原样退回，绝不产出 NaN。 */
 export function fmtMd(date: string): string {
   const raw = String(date ?? "");
   const m = /(\d{4})-(\d{1,2})-(\d{1,2})/.exec(raw);
