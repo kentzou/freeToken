@@ -2,24 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   API, UPSTREAM_REPO, closeIssue, commentIssue, createIssue, dispatchWorkflow, fetchRawText, gh, headStatus, latestCommitSha,
 } from "../crawler/github.mjs";
-
-/** 假应答：plain object 即够——调用层只依赖 ok/status/json/text */
-function res(status: number, body: unknown = {}) {
-  return { ok: status >= 200 && status < 300, status, json: async () => body, text: async () => JSON.stringify(body) };
-}
-
-function mkFetch(...responses: unknown[]) {
-  const calls: { url: string; init: Record<string, unknown> }[] = [];
-  let i = 0;
-  const fn = async (url: unknown, init: unknown) => {
-    calls.push({ url: String(url), init: init as Record<string, unknown> });
-    const r = responses[Math.min(i++, responses.length - 1)];
-    if (r instanceof Error) throw r;
-    return r;
-  };
-  return { fn, calls };
-}
-const noSleep = () => async () => {};
+import { mkFetch, noSleep, res } from "./helpers/fake-fetch";
 
 describe("GitHub 单一调用层", () => {
   it("GET 500 重试后成功：三次退避 [1000,4000,10000] 用注入 sleep 记录", async () => {
