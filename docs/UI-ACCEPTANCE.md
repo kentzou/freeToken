@@ -5,11 +5,13 @@
 
 ## 1. 门禁命令与输出摘要（本任务实测）
 
+> §1~§2 的门禁行是**阶段 C 验收时点快照**（tokens=39 / 可见 20 / out 27），终态口径见 §10 漂移对照表与文末「修复计划增量证据」；本计划只把 `:12` 单测行更新为执行终态，其余快照值保留不改。
+
 | 门禁 | 命令 | 结果 | exit |
 |---|---|---|---|
 | 全新构建 | `npm run build` | `seed 完成：tokens=39 donots=22`；`assets 完成：34 个 logo`；`✓ Generating static pages (28/28)`；首页 7.65 kB / First Load 95.1 kB | 0 |
 | 产物红线 | `node --test tests/build-output.test.mjs` | `# pass 5 / # fail 0`（5 项全过，见 §2 偏差注记） | 0 |
-| 单测全量 | `npx vitest run` | `Test Files 7 passed (7)`，`Tests 71 passed (71)`（theme 5 + seed 8 + clean 23 + catalog 9 + copy 13 + extract 10 + href 3） | 0 |
+| 单测全量 | `npx vitest run` | `Test Files 30 passed (30)`，`Tests 241 passed (241)`（2026-09-30 修复计划 Task 9 终态当场复跑；其中 1 文件 6 例属并行会话 openrouter 采集面、未计入本计划。原阶段 C 快照 7/71，随计划 2.5/3/修复计划换代） | 0 |
 | 类型 | `npx tsc --noEmit` | 无输出 | 0 |
 
 以上四命令均直跑，未经 head/tail 管道（避免吞退出码）。构建产生的 `data/meta.json` 时间戳 churn 在暂存前 `git checkout --` 还原，未混入提交。
@@ -19,7 +21,7 @@
 - 来源：镜像 `../token-fbi/app.js` → `extractStructures` → `cleanCard`/`applySiteConfig` → `linkRisk` 校验入库；`meta.json` 实测 `counts = { tokens: 39, donots: 22 }`，`lastSyncedSha: null`（本地种子），`sourceFingerprint: 7f8c5cb80c9138c4`，`lastSyncedAt` 为 2026-09-29。
 - 可见集：**20**（`catalog.test.ts` 断言 + 首页 SSR 实测「找到 20 条情报」）。
 - 区块计数（本次 `out/index.html` SSR chip 实测，与 Task 9 dev 浏览器实测一致）：全部 20 · 大模型 **8** · 编程工具 **12** · 限时 **4**（生产力 10 / 图像 7 / 语音 1 / 数据 3 / 平台 11 为标签维度，可与类型交叉）。
-- 产物数量（本次实测）：`out/` HTML 共 **27** 个 = 首页 + **20** 个详情页目录（`ls out/intel | wc -l` = 20）+ 4 内容页 + `404.html` + `404/index.html`；构建路由表另列 `/_not-found`（复用 404 产物）。
+- 产物数量（2026-09-30 修复计划 Task 9 当场复跑 `npm run build` 后实测）：`out/` HTML 共 **25** 个 = 首页 + **18** 个详情页目录（`ls out/intel | wc -l` = 18）+ 4 内容页 + `404.html` + `404/index.html`；构建路由表另列 `/_not-found`（复用 404 产物）。（原阶段 C 快照为 27/20，计划 2.5 换代成因见 §8。）
 - **红线脚本与 brief 的唯一偏差（已在代码注释固化）**：引流检查正则 `invite_code` 补为 `invite_code=`。原因：`editorial-policy` 页按规范逐字公示五个清洗参数名（`<code>invite_code</code>`，Task 10 brief 明令保留），无等号的裸词造成误报；真实引流痕迹恒为 `?invite_code=<码>` 查询串形态，补等号后全量产物仍扫描、检出能力不降。已验证：`grep -rlE "userCode=|invite_code=" out --include='*.html'` = **0** 个文件；裸词 `invite_code` 仅出现在 editorial-policy 一处（即公示页）。
 
 ## 3. 清洗证据
@@ -63,7 +65,7 @@
 | 海报弹窗 | **未实测（端到端）**——种子无任何含 poster 卡（§3.2 普查 0），能力处于休眠态 | 装配链路（IntelCard→openPoster→PosterDialog）Task 9 已核对；PosterDialog 组件单测/构建在位 |
 | ⌘K 聚焦搜索 | **已实测**（Task 9，合成 `meta+k` 事件） | dispatch 后 `document.activeElement.id === "q"`；物理键盘组合未测 |
 | 明暗主题切换 | **已实测**（Task 9）+ 红线断言 | light→dark + `localStorage tfb-theme=dark` + reload 保持；红线测试 4 验证 `#f6f4ee/#0f966e/#101815/#7fd8b0` 四令牌随产物 CSS 落地 |
-| 详情页（20 个） | **已实测**（本任务浏览器抽验 workbuddy 页）+ 产物断言 | 20/20 目录生成（红线测试 1）；实测六行事实表（额度/模型/实际权益/有效期/核验日期/归属地）、CTA=`https://hunyuan.tencent.com/`（清洗后链接）且 `rel="noopener noreferrer"`、核验说明在位；其余 19 页未逐页开浏览器，以构建路由 + 红线断言覆盖 |
+| 详情页（18 个） | **已实测**（本任务浏览器抽验 workbuddy 页）+ 产物断言 | 18/18 目录生成（红线测试 1）；实测六行事实表（额度/模型/实际权益/有效期/核验日期/归属地）、CTA=`https://hunyuan.tencent.com/`（清洗后链接）且 `rel="noopener noreferrer"`、核验说明在位；其余 17 页未逐页开浏览器，以构建路由 + 红线断言覆盖 |
 | 内容页 ×4 + 404 | **已实测**（本任务 dev 路由探测 + editorial-policy 内容实测） | `/about/ /editorial-policy/ /privacy/ /contact/` 均 200；未知路由 404；editorial-policy 页实测含清洗五键与 6 项门槛清单、无引流码；产物侧 `out/404.html`、`out/404/index.html` 存在 |
 | 控制台健康度 | **已实测** | 首页/详情页/内容页浏览期间 console 仅 React DevTools info 一条，无错误、无 hydration 警告 |
 
@@ -119,3 +121,30 @@ npx tsc --noEmit                          # 期望 exit 0
 （`商汤 Token Plan（sensenova）`），但它同时是观望条目、不进情报卡可见集，所以页脚不显示它——
 详情页对应文案是「最后核验 {card.updated}」与「站点数据最近更新」。§4 表格里「输入 `glm` → 命中 8 条」
 随 GLM-5.3-Flash 下架而失效，重跑实测时的实际命中数取决于当前可见集（搜索语义与实现未变）。
+
+## 9. 修复计划（2026-09-30）增量证据
+
+计划 4「代码审查发现项修复」Task 2~9 的逐条落档（哈希为内层仓提交短哈希；台账状态列见主仓 `docs/superpowers/notes/2026-09-30-review-disposition.md` §D）：
+
+- **T3 logo 兜底去误导（审查 M2/N-2）** — `b0a1cb0`：`logoFor` 未收录品牌由冒用腾讯标改中性 `assets/logos/generic.svg`；`copy-assets.mjs` 加存在性守卫。4 张潜伏命中卡（入库走兜底、当前不在首页可见集）：`商汤 Token Plan（sensenova）`、`BazaarLink`、`TeleAgent（星辰超级智能体）`、`字节 TRAE（AI IDE）`；18 张可见卡 0 张走兜底，`out/index.html` 中 `logos/tencent.png` 计数 0。
+- **T4 `fmtMd` 容错（审查 L4）** — `2a23bc6`（纯注释事实更正 `16b95d2`）：畸形/空日期原样退回，杜绝 `NaN/NaN` 上屏；潜伏项定性依据（入库全卡 `limited` 可解析、旧实现 0 条产 NaN）见计划勾账块。
+- **T5 `rank` 顺序确定性（审查 L3/H2′）** — `c842e9b`：区块排序补两级 tie-break，`modelsFor`/`toolsFor` 返回顺序与 `tokens.json` 书写顺序解耦。Step 顺序无关实测布尔值：输入数组 `.reverse()` 扰动下，未修版大模型/工具两区输出均不相等（FAIL），三级比较修复后两区均**顺序无关 = true**（评审者真模块直跑取证，另含同日对/异日对定向扰动）。
+- **T6 抓取与分享面（审查 L1/N-3）** — `c8f23fc`、`95e6948`、`61958c9`、`bd5d9a8`、`06be156`、`54ba344`：`robots.txt`/`sitemap.xml` 由真实产物生成（`npm run seo`，无 `NEXT_PUBLIC_SITE_URL` 时按本地口径跳过 sitemap）；全站 canonical 经 `canonicalAsset`（`href.ts:20` 剥尾斜杠，SITE_URL 口径统一）；og:image 真实封面 + 尺寸声明一致；微信号占位补**真断言**（`test:out` 由 5 项增至 8 项，本计划实测 `ℹ pass 8 / ℹ fail 0`）。
+- **T7 lint 基座（审查 L11/H1′）** — `ab1913f`、`6b36ff2`：接入 `next/core-web-vitals` 围栏、删 3 处空转 eslint-disable、`no-img-element` 按三处自托管 logo 实测裁定关闭；`lint` 脚本补 `--max-warnings=0`（评审 Important-1）。deploy.yml quality 步骤含 `npm run lint`，其测试钉随 T9 落地（见下）。
+- **T8 海报弹窗键盘契约与图片钳制（审查 L5/L6）** — `20518e6`（注释按实测纠偏 `e4571e5`）：Tab 圈定、Esc/Enter 关闭后焦点归还触发按钮、海报图容器内尺寸钳制。八行键盘契约真实浏览器实测（Chrome 126 headless CDP 真实输入栈，dev :3001，修复态 `20518e6`）：
+
+  | # | 操作 | 实测 activeElement / DOM 事实 | 判定 |
+  |---|---|---|---|
+  | 0 | 未打开 | `BODY`，`.overlay` 不存在 | 基线 |
+  | 1 | 真实鼠标点「打开海报」 | `poster-dialog`（容器获焦） | 中 |
+  | 2 | Tab | `btn-ghost poster-close`，焦点仍在覆层内 | 中 |
+  | 3 | 再 Tab | `btn-ghost poster-close`（未逃逸到背景） | 中（该行判据无牙，真证据见 #4 与边缘分支对照，登记于 Task 8 报告） |
+  | 4 | Shift+Tab | `btn-ghost poster-close`，焦点仍在覆层内 | 中 |
+  | 5 | Enter（关闭） | 焦点归还「打开海报」按钮，`overlayPresent:false` | 中 |
+  | 6 | 重开 → Escape | 焦点归还「打开海报」按钮，`overlayPresent:false` | 中 |
+  | 7 | 宽图钳制 | 1536px 真实资产渲染为 **387px** ≤ 简报判据 388；撤销钳制对照渲染 1536px 且溢出 420px 容器边界（可逆） | 中 |
+  | 8 | 重开 → Tab 到关闭按钮 → 静置 2.2s（父组件约 4 次重渲染、`onClose` 每次换身份） | 焦点保持 `btn-ghost poster-close`，未被重渲染抢走 | 中（依赖数组 `[src]` 承重：注入 `[src, onClose]` 即 FAIL） |
+
+  **诚实标注（休眠路径）**：海报触发接线段 `src/components/IntelCard.tsx:47-54` 是休眠路径——`data/tokens.json` 当前 poster=0（实测 `grep -o poster` 计数 0），且 `crawler/clean.mjs:119` 会删除非 http 开头的 poster；该段仅由代码走查 + `tsc` 类型覆盖，未做浏览器实测（上表的运行时实测经临时挂载页完成，未改动任何数据文件）。
+- **T9 注入面扫描钉（审查 H1′ 防回归）** — 落在本节所属的收尾提交（短哈希见主仓台账状态列 / Task 9 报告）：新增 `tests/hygiene.test.ts` 源码级围栏——`src/` 禁 `innerHTML=`/`document.write(`/`eval(`/`new Function(`，`dangerouslySetInnerHTML` 全站仅 `layout.tsx` themeScript 一处（三重豁免：文件 + 命中数 1 + `const themeScript =` 标记串）；双向有牙已验证（一次性探针注入两处违例 → 两例实名转红 → 删探针回绿，探针未入库）。同提交在 `tests/workflows.test.ts` 追加 deploy quality 的 lint 闸钉（`npm run lint` 执行 + `--max-warnings=0` 脚本钉）。终态七闸门全绿：lint ✔ / vitest 30 files 241 tests（含并行会话 1 文件 6 例）/ seed:repro 复现 OK / tsc 无输出 / build 26 路由 / seo robots 出 / test:out 8 pass 0 fail / 旧站 BARE 0。
+

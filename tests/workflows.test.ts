@@ -85,3 +85,12 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     expect(lhrc.ci.collect.url).toEqual(["http://127.0.0.1:3000/", "http://127.0.0.1:3000/intel/workbuddy/"]);
   });
 });
+
+describe("quality job 的 lint 闸（Task 7 基座钉）", () => {
+  it("deploy.yml 执行 npm run lint，且 lint 脚本带 --max-warnings=0", () => {
+    const lintSteps = deploy.jobs.quality.steps.map((s: { run?: string }) => s.run || "").join("\n");
+    expect(lintSteps).toContain("npm run lint");
+    const pkg = JSON.parse(readFileSync("package.json", "utf8")) as { scripts: Record<string, string> };
+    expect(pkg.scripts.lint).toContain("--max-warnings=0");
+  });
+});
