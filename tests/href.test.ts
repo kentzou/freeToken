@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { assetPath, intelHref, pageHref } from "@/lib/href";
+import { describe, expect, it, vi } from "vitest";
+import { assetPath, canonicalAsset, canonicalHref, intelHref, pageHref } from "@/lib/href";
 import { compiledRules } from "@/lib/rules";
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -25,5 +25,28 @@ describe("路径出口", () => {
     );
     const card = { name: "WorkBuddy", type: "大模型", updated: "2026-09-23" };
     expect(intelHref(card as never, rules)).toBe("/intel/workbuddy/");
+  });
+
+  it("本地口径（无 SITE_URL）canonical 保持带 BASE 的相对形态，不出绝对地址", () => {
+    expect(canonicalHref("/about")).toBe("/about/");
+    expect(canonicalAsset("assets/og-cover.png")).toBe("/assets/og-cover.png");
+  });
+
+  /* 线上口径要换一份模块实例：BASE / SITE_URL 是构建期常量，模块加载时读一次就定终身。
+     这条钉的是 Task 6 Step 10 实测到的缺陷本身——metadataBase 的 pathname 已含 BASE，
+     canonical 若再把带 BASE 的相对串交给 Next，产物就落成 …/token-fbi-next/token-fbi-next/。 */
+  it("线上口径（BASE 与 SITE_URL 同含子路径）canonical 不得叠出双前缀", async () => {
+    vi.resetModules();
+    process.env.NEXT_PUBLIC_BASE_PATH = "/token-fbi-next";
+    process.env.NEXT_PUBLIC_SITE_URL = "https://owner.github.io/token-fbi-next";
+    const m = await import("@/lib/href");
+    expect(m.pageHref("/about")).toBe("/token-fbi-next/about/"); // 站内链接照旧带 BASE
+    expect(m.canonicalHref("/about")).toBe("https://owner.github.io/token-fbi-next/about/");
+    expect(m.canonicalHref("/")).toBe("https://owner.github.io/token-fbi-next/");
+    expect(m.canonicalAsset("assets/og-cover.png")).toBe("https://owner.github.io/token-fbi-next/assets/og-cover.png");
+    expect(m.canonicalAsset("https://example.com/x.png")).toBe("https://example.com/x.png");
+    delete process.env.NEXT_PUBLIC_BASE_PATH;
+    delete process.env.NEXT_PUBLIC_SITE_URL;
+    vi.resetModules();
   });
 });

@@ -1,9 +1,9 @@
 import PageShell from "@/components/PageShell";
-import { pageHref } from "@/lib/href";
+import { canonicalHref } from "@/lib/href";
 
 export const metadata = {
   title: "关于 · Token 情报局",
-  alternates: { canonical: pageHref("/about") },
+  alternates: { canonical: canonicalHref("/about") },
 };
 
 export default function About() {

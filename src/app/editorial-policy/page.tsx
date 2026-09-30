@@ -1,10 +1,10 @@
 import PageShell from "@/components/PageShell";
 import { loadCatalog } from "@/lib/data.server";
-import { pageHref } from "@/lib/href";
+import { canonicalHref } from "@/lib/href";
 
 export const metadata = {
   title: "精选门槛与收录标准 · Token 情报局",
-  alternates: { canonical: pageHref("/editorial-policy") },
+  alternates: { canonical: canonicalHref("/editorial-policy") },
 };
 
 export default function EditorialPolicy() {

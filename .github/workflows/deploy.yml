@@ -41,7 +41,9 @@ jobs:
         run: npm run seed:repro
       - name: 构建（本地口径：无 BASE_PATH）
         run: npm run build
-      - name: 产物红线（无引流参数/微信号占位/关键区块，node --test 5 条）
+      - name: 抓取面生成（robots.txt + sitemap，本地口径只出 robots）
+        run: npm run seo
+      - name: 产物红线（零引流 / 微信号占位 / 版面区块 / 暗色令牌 / 抓取与分享面，node --test 8 条）
         run: npm run test:out
 
   lighthouse:
@@ -90,6 +92,11 @@ jobs:
           NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
           NEXT_PUBLIC_SITE_URL: https://${{ github.event.repository.owner.login }}.github.io/${{ github.event.repository.name }}
         run: npm run build
+      - name: 抓取面生成（与构建同一组 env：线上口径才出 sitemap，缺 env 等于产物无抓取面）
+        env:
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+          NEXT_PUBLIC_SITE_URL: https://${{ github.event.repository.owner.login }}.github.io/${{ github.event.repository.name }}
+        run: npm run seo
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

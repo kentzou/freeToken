@@ -24,3 +24,26 @@ export function assetPath(rel: string): string {
   if (/^https?:\/\//i.test(rel)) return rel;
   return `${BASE}/${rel.replace(/^\.?\/+/, "")}`;
 }
+
+/* 线上 Pages 地址由 deploy.yml 注入，且**已含仓库子路径**（https://<owner>.github.io/<repo>）；
+   本地构建为空串。与 layout.tsx 的 metadataBase 同源，所以相对形态绝不能再交给 Next 拼接。 */
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "";
+
+/** 把「已去掉 BASE 的站内路径」拼成绝对地址；本地口径（无 SITE_URL）退回带 BASE 的相对形态。 */
+function abs(pathWithoutBase: string): string {
+  return SITE_URL ? `${SITE_URL}${pathWithoutBase}` : `${BASE}${pathWithoutBase}`;
+}
+
+/** canonical 专用：/about → https://<site>/about/。
+ *  为什么不用 pageHref 的返回值直接上：Task 6 Step 10 线上口径实测，metadataBase 的 pathname
+ *  本身就带 BASE，Next 会把带 BASE 的相对串再补一次 BASE，产物里落成
+ *  https://owner.github.io/token-fbi-next/token-fbi-next/ —— 双前缀的 canonical 会把收录指向不存在的地址。 */
+export function canonicalHref(path: string): string {
+  return abs(pageHref(path).slice(BASE.length));
+}
+
+/** og:image 等资源专用：assets/og-cover.png → https://<site>/assets/og-cover.png（外链原样返回）。 */
+export function canonicalAsset(rel: string): string {
+  if (/^https?:\/\//i.test(rel)) return rel;
+  return abs(assetPath(rel).slice(BASE.length));
+}

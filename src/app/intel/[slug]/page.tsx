@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import SiteHeaderLite from "@/components/SiteHeaderLite";
 import SiteFooter from "@/components/SiteFooter";
 import { ctaHref, ctaRel, detailSlug, fmtMd } from "@/lib/copy";
-import { pageHref } from "@/lib/href";
+import { canonicalHref, pageHref } from "@/lib/href";
 import { visibleCards } from "@/lib/catalog";
 import { loadCatalog } from "@/lib/data.server";
 
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title: `${card.name} 免费额度详情 · Token 情报局`,
     description: card.quota ? card.quota.slice(0, 120) : `${card.name} 的免费额度与领取方式`,
-    alternates: { canonical: pageHref(`/intel/${params.slug}`) },
+    alternates: { canonical: canonicalHref(`/intel/${params.slug}`) },
   };
 }
 
