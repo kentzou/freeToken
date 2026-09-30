@@ -4,16 +4,38 @@
   "oauthClientId": "",
   "partners": null,
   "cards": {
-    "阶跃星辰 StepFun": { "link": "https://platform.stepfun.com/" },
-    "阿里云 Qoder（灵码）": { "link": "https://www.aliyun.com/product/lingma" },
-    "WorkBuddy": { "link": "https://hunyuan.tencent.com/" },
-    "B.AI（AI 模型聚合平台）": { "link": "https://chat.b.ai/chat" },
-    "LobsterAI 有道龙虾": { "link": "https://lobsterai.youdao.com/#/index" },
-    "云工开物学生专区": { "link": "https://university.aliyun.com/" },
-    "豆包拉新项目": { "hide": true },
-    "太行HUB（token.taiha.cn）": { "link": "https://token.taiha.cn/sign-up" },
-    "七牛云 AI 推理": { "link": "https://portal.qiniu.com/ai-inference/api-key" },
-    "硅基流动 SiliconFlow": { "link": "https://cloud.siliconflow.cn/" },
-    "小米 MiMo（Xiaomi）": { "hide": true }
+    "阶跃星辰 StepFun": {
+      "link": "https://platform.stepfun.com/"
+    },
+    "阿里云 Qoder（灵码）": {
+      "link": "https://www.aliyun.com/product/lingma"
+    },
+    "WorkBuddy": {
+      "link": "https://hunyuan.tencent.com/"
+    },
+    "B.AI（AI 模型聚合平台）": {
+      "link": "https://chat.b.ai/chat"
+    },
+    "LobsterAI 有道龙虾": {
+      "link": "https://lobsterai.youdao.com/#/index"
+    },
+    "云工开物学生专区": {
+      "link": "https://university.aliyun.com/"
+    },
+    "豆包拉新项目": {
+      "hide": true
+    },
+    "太行HUB（token.taiha.cn）": {
+      "link": "https://token.taiha.cn/sign-up"
+    },
+    "七牛云 AI 推理": {
+      "link": "https://portal.qiniu.com/ai-inference/api-key"
+    },
+    "硅基流动 SiliconFlow": {
+      "link": "https://cloud.siliconflow.cn/"
+    },
+    "小米 MiMo（Xiaomi）": {
+      "hide": true
+    }
   }
 }

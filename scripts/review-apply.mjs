@@ -3,7 +3,7 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { dump } from "./export-seed.mjs";
+import { dump } from "../crawler/serialize.mjs";
 import { keyOf } from "../crawler/diff.mjs";
 import { applyDecisions } from "../crawler/approve.mjs";
 import { closeIssue, commentIssue } from "../crawler/github.mjs";

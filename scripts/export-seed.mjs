@@ -11,17 +11,13 @@ import { pathToFileURL } from "node:url";
 import { extractDataJson } from "../crawler/extract.mjs";
 import { adaptItems } from "../crawler/adapt.mjs";
 import { applySiteConfig, cleanCard, linkRisk } from "../crawler/clean.mjs";
+import { dump } from "../crawler/serialize.mjs";
 
 const OUT = path.resolve(process.cwd(), "data");
 const CFG = path.resolve(process.cwd(), "config", "site-config.json");
 /** CLI 与 seed:repro 的输入源：上游 data.json 的真实快照。
  *  CI 里既不联网，也不依赖 ../token-fbi 镜像（镜像已过期，上游 app.js 更已下线）。 */
 const SNAPSHOT = path.resolve(process.cwd(), "tests", "fixtures", "upstream-data.json");
-
-/** 稳定序列化：键序固定 + 2 空格缩进，保证同输入同产物 */
-export function dump(value) {
-  return JSON.stringify(value, null, 2) + "\n";
-}
 
 /** 读本地三件套（观点基底 + 两张透传表）。缺文件返回 null，由 buildSeed 决定如何报错。 */
 export function loadLocal() {
