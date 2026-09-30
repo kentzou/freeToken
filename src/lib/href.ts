@@ -26,8 +26,10 @@ export function assetPath(rel: string): string {
 }
 
 /* 线上 Pages 地址由 deploy.yml 注入，且**已含仓库子路径**（https://<owner>.github.io/<repo>）；
-   本地构建为空串。与 layout.tsx 的 metadataBase 同源，所以相对形态绝不能再交给 Next 拼接。 */
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "";
+   本地构建为空串。这里是它在本仓 TS 侧的唯一读取点——layout.tsx 的 metadataBase 也用它，
+   两处各自读 env 就是第二个漂移点。与 gen-seo.mjs 对同一个 env 的处理保持一致（剥尾斜杠），
+   否则 canonical 会出 …/token-fbi-next//about/ 的双斜杠形态（计划 4 Task 6 评审 Minor-4）。 */
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/+$/, "");
 
 /** 把「已去掉 BASE 的站内路径」拼成绝对地址；本地口径（无 SITE_URL）退回带 BASE 的相对形态。 */
 function abs(pathWithoutBase: string): string {

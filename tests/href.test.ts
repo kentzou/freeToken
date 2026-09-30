@@ -49,4 +49,19 @@ describe("路径出口", () => {
     delete process.env.NEXT_PUBLIC_SITE_URL;
     vi.resetModules();
   });
+
+  /* deploy.yml 注入的地址若带尾斜杠，而 gen-seo.mjs 对同一个 env 是剥尾斜杠的——
+     href.ts 不剥就会产出 …/token-fbi-next//about/ 这种双斜杠 canonical，与 sitemap 的
+     loc 两个口径不一致（计划 4 Task 6 评审 Minor-4，评审人直跑复现）。 */
+  it("SITE_URL 带尾斜杠时按 gen-seo 同口径剥掉，不叠双斜杠", async () => {
+    vi.resetModules();
+    process.env.NEXT_PUBLIC_BASE_PATH = "/token-fbi-next";
+    process.env.NEXT_PUBLIC_SITE_URL = "https://owner.github.io/token-fbi-next/";
+    const m = await import("@/lib/href");
+    expect(m.canonicalHref("/about")).toBe("https://owner.github.io/token-fbi-next/about/");
+    expect(m.canonicalAsset("assets/og-cover.png")).toBe("https://owner.github.io/token-fbi-next/assets/og-cover.png");
+    delete process.env.NEXT_PUBLIC_BASE_PATH;
+    delete process.env.NEXT_PUBLIC_SITE_URL;
+    vi.resetModules();
+  });
 });

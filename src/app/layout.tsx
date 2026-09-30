@@ -5,10 +5,10 @@ import "@fontsource/noto-serif-sc/latin-700.css";
 import "@fontsource/jetbrains-mono/latin-400.css";
 import "@fontsource/jetbrains-mono/latin-700.css";
 import "./globals.css";
-import { canonicalAsset } from "@/lib/href";
+import { canonicalAsset, SITE_URL } from "@/lib/href";
 
-/* 线上 Pages 地址由 NEXT_PUBLIC_SITE_URL 注入（deploy.yml 已接）；本地构建为空 → 不出 absolute URL */
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "";
+/* metadataBase 用 href.ts 的 SITE_URL（线上 Pages 地址由 NEXT_PUBLIC_SITE_URL 注入，deploy.yml 已接；
+   本地构建为空串 → 不出 absolute URL）。不在这里重读 env：同一个地址读两次就是两个口径。 */
 
 export const metadata: Metadata = {
   metadataBase: SITE_URL ? new URL(SITE_URL) : undefined,
