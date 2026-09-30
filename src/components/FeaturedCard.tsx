@@ -24,7 +24,6 @@ export default function FeaturedCard({
     <article className="featured-card" data-testid="featured-card">
       <div className="featured-content">
         <p className="product-line">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={assetPath(logoFor(card, rules))} alt="" width={26} height={26} className="product-logo" />
           <a href={intelHref(card, rules)}>
             <strong>{cleanText(card.name)}</strong>

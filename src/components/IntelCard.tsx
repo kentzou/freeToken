@@ -25,7 +25,6 @@ export default function IntelCard({
     <article className="intel-card" data-kind={catOf(card)} data-search={search}>
       <header className="card-visual">
         <span className={limited ? "tag tag-limited" : "tag tag-free"}>{freeLabel(card)}</span>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="card-logo" src={assetPath(logoFor(card, rules))} alt="" width={40} height={40} />
         <span className="visual-brand">{brandName(card)}</span>
       </header>

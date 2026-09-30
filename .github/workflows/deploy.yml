@@ -34,6 +34,8 @@ jobs:
           node-version: "22"
           cache: npm
       - run: npm ci
+      - name: Lint（next/core-web-vitals；no-img-element 已全局关闭，理由见提交说明）
+        run: npm run lint
       - name: 单测 + 类型
         run: npm run test
       - run: npx tsc --noEmit

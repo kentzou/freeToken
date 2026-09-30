@@ -6,7 +6,6 @@ import type { TokenCard } from "@/lib/types";
 export default function PartnerCard({ card, rules }: { card: TokenCard; rules: CompiledRules }) {
   return (
     <article className="partner-card">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={assetPath(logoFor(card, rules))} alt="" width={36} height={36} />
       <div>
         <p className="product-line">

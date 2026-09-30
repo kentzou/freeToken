@@ -1,0 +1,8 @@
+{
+  "root": true,
+  "extends": ["next/core-web-vitals"],
+  "ignorePatterns": [".next/", "out/", "node_modules/", "scripts/", "crawler/", "data/"],
+  "rules": {
+    "@next/next/no-img-element": "off"
+  }
+}
