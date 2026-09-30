@@ -207,7 +207,8 @@ mark.hl { border-radius: 2px; }
   border-radius: 12px;
 }
 /* 上游海报宽高不可预知（见 PosterDialog 注释）：以容器为界等比缩放。
-   grid item 的替换元素默认 min-width:auto，不钳 max-width 时一张宽海报会撑破弹窗。 */
+   grid item 的替换元素默认 min-width:auto，不钳 max-width 时宽海报会溢出弹窗的 420px 边界
+   （实测 1536px 宽的图不钳即渲染成 1536px、盖到遮罩外；容器外框因自身 max-width 反而不变宽）。 */
 .poster-dialog img {
   display: block;
   max-width: 100%;
