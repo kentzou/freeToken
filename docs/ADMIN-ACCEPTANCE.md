@@ -18,20 +18,20 @@ HEAD 换代说明：并行窗口在 15:52:24 提交了 `b0a1cb0`（logo 兜底�
 
 预期告警基线不变：`[site-config] 未找到卡片： 豆包拉新项目`（`npm run seed` 1 行 / `seed:repro` 3 行）。为消警删 `config/site-config.json` 的键属越界。
 
-### 1b. 整枝终审修复波（2026-09-30 16:36 复跑，与上表**同栈**）
+### 1b. 整枝终审修复波（2026-09-30 16:42 复跑于**本波提交自身** `bb36790`）
 
-上表记录的是计划 3 七个任务的收口态（`a77144b`，`Tests 221`）。整枝终审在该态上另查出两处「进计划 4 前必修」，本小节的复跑与这次提交**是同一棵树**（父提交 `a77144b` + 上列五处代码/测试改动 + 本文件这段纯 docs），所以两处读数的差异只有阶梯，其余五槽逐字不变。
+上表记录的是计划 3 七个任务的收口态（`a77144b`，`Tests 221`）。整枝终审在该态上另查出两处「进计划 4 前必修」，本小节记的就是这两处的修复。**测量点写死在 `bb36790` 而不是它的父提交**，原因值得留一句：修复波最初测于「`a77144b` + 五处改动」的未提交态（16:36，`Tests 223`），而并行窗口在那半小时内把分支推进了三格（`2a23bc6` fmtMd 退回、`c842e9b` 区块排序 tie-break、`16b95d2` 注释更正，其中 `tests/{catalog,copy}.test.ts` 各 +1 例）⇒ 我的提交实际落在 `16b95d2` 之上，真实树是 `223 + 2 = 225`。教训：**「与本次提交同一棵树」只能在提交完成后、按实际 SHA 的干净检出上证明**，测在父提交上不算。其余五槽不受并行三提交影响，逐字与收口态相同。
 
-| 门禁 | 修复波期望 | 修复波实测（16:36） |
+| 门禁 | 修复波期望 | 修复波实测（16:42，`bb36790` 隔离检出） |
 |---|---|---|
-| vitest | `Tests 221 → 223`（+1 校验守卫例、+1 传输态例） | `Test Files 27 passed (27)` / `Tests 223 passed (223)` |
+| vitest | 计划 3 口径净增 `221 → 223`（+1 校验守卫例、+1 传输态例）；实际树再叠并行 +2 ⇒ **225** | `Test Files 27 passed (27)` / `Tests 225 passed (225)`（16:36 于未提交态实测 223，与增量口径吻合） |
 | tsc | `EXIT=0` | `tsc=0` |
 | seed:repro | 三哈希不得漂移 | `cards=ba754253ebaa donots=88f99a96da35 rules=7888f2ec168b`（逐字同收口态） |
 | build | `26/26`（仍不新增路由） | `✓ Generating static pages (26/26)` |
 | test:out + 页数 | `pass 5 / fail 0`、`25` / `18` | `ℹ pass 5`、`ℹ fail 0`；HTML `25`、intel `18` |
 | 泄漏红线（扫描面仅 data 与 out） | 零命中 EXIT=1 | 零命中，`leak=1` |
 
-两个修复与它们的 RED→GREEN 证据（复跑地点同上：`a77144b` 的隔离检出）：
+两个修复与它们的 RED→GREEN 证据（RED 跑在「`a77144b` + 仅测试」的隔离态，GREEN 复跑地点＝上表的 `bb36790`）：
 
 1. **`crawler/validate.mjs::validateCards` 补「条目必须是对象」守卫**。收口态下非对象条目静默穿透（`"abc".link` → `undefined` → `linkRisk` 不报警 → 校验通过），而计划 3 恰好把审批写面（`publishApprovals` → Contents PUT）直连了生产 `data/tokens.json`，风险面从「Issue 里难看一点」变成「坏形状覆盖生产数据」。新例三条（字符串 / `null` / 数组）在旧实现上报 `expected [Function] to throw an error`，新实现按索引点名（`卡片#1`、`卡片#0：不是对象`）。
 2. **`src/lib/admin/pending.ts::loadPending` 补第三态的兜 catch**。头注释承诺 `empty|loaded|error` 三态，但 `await readRepoFile(...)` 在 try 之外，传输层抛错会变成 rejected Promise 上抛——计划 4 的 UI 按三态分流时会整页崩。新例在旧实现上 `Test timed out in 5000ms`（`sleep` 接缝尚不存在 ⇒ 真退避 1s+4s+10s 跑满），补接缝后该例 5ms 完成，断言 `kind:"error"`、`status:0`、原文含 `fetch failed`、hint 含 `api.github.com`、`calls.length===4`（GET 三次退避＝共 4 次请求）。接缝是 `readRepoFile` 透传 `sleep` 给 `gh()`，缺省仍为真计时器＝生产口径不变（与 `auth.ts` 的 `sleep?` 注入同款）。
