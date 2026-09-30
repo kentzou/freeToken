@@ -206,7 +206,15 @@ mark.hl { border-radius: 2px; }
   border: 1px solid var(--line);
   border-radius: 12px;
 }
-.poster-dialog img { border-radius: 8px; }
+/* 上游海报宽高不可预知（见 PosterDialog 注释）：以容器为界等比缩放。
+   grid item 的替换元素默认 min-width:auto，不钳 max-width 时一张宽海报会撑破弹窗。 */
+.poster-dialog img {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+  height: auto;
+  border-radius: 8px;
+}
 .poster-close { justify-self: end; }
 
 .featured-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
