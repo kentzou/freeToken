@@ -5,7 +5,7 @@
 
 ## 1. 门禁命令与输出摘要（本任务实测）
 
-> §1~§2 的门禁行是**阶段 C 验收时点快照**（tokens=39 / 可见 20 / out 27），终态口径见 §10 漂移对照表与文末「修复计划增量证据」；本计划只把 `:12` 单测行更新为执行终态，其余快照值保留不改。
+> §1~§2 的门禁行是**阶段 C 验收时点快照**（tokens=39 / 可见 20 / out 27），终态口径见 §8 漂移对照表与文末「修复计划增量证据」；本计划只把 `:12` 单测行更新为执行终态，其余快照值保留不改。
 
 | 门禁 | 命令 | 结果 | exit |
 |---|---|---|---|
@@ -146,5 +146,5 @@ npx tsc --noEmit                          # 期望 exit 0
   | 8 | 重开 → Tab 到关闭按钮 → 静置 2.2s（父组件约 4 次重渲染、`onClose` 每次换身份） | 焦点保持 `btn-ghost poster-close`，未被重渲染抢走 | 中（依赖数组 `[src]` 承重：注入 `[src, onClose]` 即 FAIL） |
 
   **诚实标注（休眠路径）**：海报触发接线段 `src/components/IntelCard.tsx:47-54` 是休眠路径——`data/tokens.json` 当前 poster=0（实测 `grep -o poster` 计数 0），且 `crawler/clean.mjs:119` 会删除非 http 开头的 poster；该段仅由代码走查 + `tsc` 类型覆盖，未做浏览器实测（上表的运行时实测经临时挂载页完成，未改动任何数据文件）。
-- **T9 注入面扫描钉（审查 H1′ 防回归）** — 落在本节所属的收尾提交（短哈希见主仓台账状态列 / Task 9 报告）：新增 `tests/hygiene.test.ts` 源码级围栏——`src/` 禁 `innerHTML=`/`document.write(`/`eval(`/`new Function(`，`dangerouslySetInnerHTML` 全站仅 `layout.tsx` themeScript 一处（三重豁免：文件 + 命中数 1 + `const themeScript =` 标记串）；双向有牙已验证（一次性探针注入两处违例 → 两例实名转红 → 删探针回绿，探针未入库）。同提交在 `tests/workflows.test.ts` 追加 deploy quality 的 lint 闸钉（`npm run lint` 执行 + `--max-warnings=0` 脚本钉）。终态七闸门全绿：lint ✔ / vitest 30 files 241 tests（含并行会话 1 文件 6 例）/ seed:repro 复现 OK / tsc 无输出 / build 26 路由 / seo robots 出 / test:out 8 pass 0 fail / 旧站 BARE 0。
+- **T9 注入面扫描钉（审查 H1′ 防回归）** — `b28cfd5`（Task 9 评审后的判据精修随其收口提交，哈希见主仓台账状态列与 Task 9 报告）：新增 `tests/hygiene.test.ts` 源码级围栏——`src/` 禁 `innerHTML`/`outerHTML` 的全部写入形态（`= `、`+=`、`setAttribute("innerHTML", …)`、`insertAdjacentHTML(`）与 `document.write(`、`eval(`、`new Function(`，`dangerouslySetInnerHTML` 全站仅 `layout.tsx` themeScript 一处（三重豁免：文件 + 命中数 1 + `const themeScript =` 标记串）；双向有牙已验证（一次性探针注入两处违例 → 两例实名转红 → 删探针回绿，探针未入库）。同提交在 `tests/workflows.test.ts` 追加 deploy quality 的 lint 闸钉（`npm run lint` 执行 + `--max-warnings=0` 脚本钉）。终态七闸门全绿：lint ✔ / vitest 30 files 241 tests（含并行会话 1 文件 6 例）/ seed:repro 复现 OK / tsc 无输出 / build 26 路由 / seo robots 出 / test:out 8 pass 0 fail / 旧站 BARE 0。
 

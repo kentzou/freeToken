@@ -14,14 +14,24 @@ const files: string[] = [];
   }
 })(SRC);
 
-const FORBIDDEN = [/\binnerHTML\s*=/, /document\.write\s*\(/, /\beval\s*\(/, /\bnew Function\s*\(/];
+/* 判据覆盖innerHTML 的全部写入形态：直接赋值、`+=` 追加、setAttribute 属性名形态、
+   outerHTML 与 insertAdjacentHTML；`(?!=)` 排除 `innerHTML == x` 这类比较，避免误报。 */
+const FORBIDDEN = [
+  /\binnerHTML\b\s*\+?=(?!=)/,
+  /\bouterHTML\b\s*\+?=(?!=)/,
+  /setAttribute\(\s*["']innerHTML/,
+  /insertAdjacentHTML\s*\(/,
+  /document\.write\s*\(/,
+  /\beval\s*\(/,
+  /\bnew Function\s*\(/,
+];
 
 /* 唯一豁免：layout.tsx 的 themeScript —— 首屏绘制前定 data-theme，值是本仓写死的字面量、零插值。
    豁免条件是「文件 + 命中数 1 + 标记串存在」三重，不给整文件放行。 */
 const LAYOUT = path.join(SRC, "app", "layout.tsx");
 
 describe("注入面围栏", () => {
-  it("src/ 无 innerHTML 赋值 / document.write / eval / new Function", () => {
+  it("src/ 无 innerHTML/outerHTML 写入（含 +=、setAttribute、insertAdjacentHTML）/ document.write / eval / new Function", () => {
     const hits: string[] = [];
     for (const f of files) {
       const s = readFileSync(f, "utf8");

@@ -88,8 +88,10 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
 
 describe("quality job 的 lint 闸（Task 7 基座钉）", () => {
   it("deploy.yml 执行 npm run lint，且 lint 脚本带 --max-warnings=0", () => {
-    const lintSteps = deploy.jobs.quality.steps.map((s: { run?: string }) => s.run || "").join("\n");
-    expect(lintSteps).toContain("npm run lint");
+    /* 逐步 trim 后精确等值：整串 toContain("npm run lint") 会被 `npm run lint:fix` 这类
+       改写误绿——钉的是「跑的是这条会因 warning 变红的命令」，不是「有这么个前缀」。 */
+    const lintRuns = deploy.jobs.quality.steps.map((s: { run?: string }) => (s.run || "").trim()).filter(Boolean);
+    expect(lintRuns).toContain("npm run lint");
     const pkg = JSON.parse(readFileSync("package.json", "utf8")) as { scripts: Record<string, string> };
     expect(pkg.scripts.lint).toContain("--max-warnings=0");
   });
