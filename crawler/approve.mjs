@@ -1,6 +1,6 @@
 /** /approve //reject 合入（spec §7.6 + 无 JS 降级冗余的设计主干）：纯函数。
  *  workflow 的 review job 与计划 3 /admin 都调它——「批准并发布」全站只有一种语义。 */
-import { keyOf } from "./diff.mjs";
+import { isRemoval, keyOf } from "./diff.mjs";
 import { validateCards, validateRulesJson } from "./validate.mjs";
 
 export function applyDecisions({ pending, cards, donots, rules }, decisions) {
@@ -19,7 +19,7 @@ export function applyDecisions({ pending, cards, donots, rules }, decisions) {
     }
     if (action === "approve") {
       if (e.kind === "card") {
-        if (e.after) {
+        if (!isRemoval(e)) {
           const i = nextCards.findIndex((c) => c.name === e.name);
           if (i > -1) nextCards[i] = e.after;
           else nextCards.push(e.after);
@@ -27,7 +27,7 @@ export function applyDecisions({ pending, cards, donots, rules }, decisions) {
           nextCards = nextCards.filter((c) => c.name !== e.name);
         }
       } else if (e.kind === "watch") {
-        if (e.after) {
+        if (!isRemoval(e)) {
           const i = nextDonots.findIndex((w) => w.name === e.name);
           if (i > -1) nextDonots[i] = e.after;
           else nextDonots.push(e.after);

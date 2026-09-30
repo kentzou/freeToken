@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { noChangeNote, parseCommands, runReview } from "../scripts/review-apply.mjs";
+import { commandText, noChangeNote, parseCommands, runReview } from "../crawler/review.mjs";
 
 function res(status: number, body: unknown = {}) {
   return { ok: status >= 200 && status < 300, status, json: async () => body, text: async () => JSON.stringify(body) };
@@ -23,7 +23,7 @@ const pending = {
 };
 const data = { cards: [{ name: "甲", link: "https://a1/" }, { name: "乙", link: "https://b1/" }], donots: [], rules: { featured: [], logo: [], cardCopy: [], detailSlug: [], regionByName: {} } };
 
-describe("review-apply：Issue 评论 → 合入（workflow review job 的入口）", () => {
+describe("review：Issue 评论 → 合入（crawler/review.mjs 是唯一语义，CI 与 /admin 共用）", () => {
   it("parseCommands：多行 / 逗号 / 全角逗号混排 + all 展开", () => {
     const cmds = parseCommands("/approve card:甲\n/reject card:乙，card:丙");
     expect(cmds).toEqual([
@@ -87,6 +87,62 @@ describe("review-apply：Issue 评论 → 合入（workflow review job 的入口
     const r = await runReview({ repo: "me/r", issueNumber: 5, pending: { ...pending, changes: [pending.changes[0]] }, data, comment: "/reject card:甲", token: "t", fetchImpl: fn });
     expect(JSON.parse(r.files["pending/changes.json"])).toMatchObject({ version: 1, changes: [] });
     expect(calls.some((c) => c.init.method === "PATCH" && c.url.endsWith("/issues/5"))).toBe(true);
+  });
+
+  it("commandText：同类动作并成一行，且与 parseCommands 互逆（后台生成的指令必须能被自己的解析器读回）", () => {
+    const ds = [
+      { action: "approve", id: "card:WorkBuddy" },
+      { action: "approve", id: "rules:featured" },
+      { action: "reject", id: "card:甲" },
+    ];
+    expect(commandText(ds)).toBe("/approve card:WorkBuddy rules:featured\n/reject card:甲");
+    expect(parseCommands(commandText(ds))).toEqual(ds);
+    expect(commandText([])).toBe("");
+  });
+
+  it("commit 钩子：只在真合入时调用、拿到的就是 res.files 同一份、且发生在回执之后", async () => {
+    const calls: Record<string, any>[] = [];
+    const seen: Record<string, any>[] = [];
+    const fn = async (url: unknown, init: unknown) => {
+      calls.push({ url: String(url), init: init as Record<string, any> });
+      return res(201, {});
+    };
+    let files: Record<string, string> | null = null;
+    const r = await runReview({
+      repo: "me/r", issueNumber: 5, pending, data, comment: "/approve card:甲", token: "t", fetchImpl: fn,
+      commit: async (f: Record<string, string>) => {
+        seen.push({ keys: Object.keys(f), atCalls: calls.length });
+        files = f;
+      },
+    });
+    expect(seen).toEqual([{ keys: ["data/tokens.json", "data/donots.json", "data/rules.json", "pending/changes.json"], atCalls: 1 }]);
+    expect(files).toBe(r.files); // 同一引用：不存在「提交 A、落盘 B」
+    expect(calls.length).toBe(1); // 只有回执 POST；pending 还剩「乙」，不该关单
+  });
+
+  it("校验不过时 commit 一次也不被调用（validateCards 在任何 I/O 之前抛＝宁可不合不半合）", async () => {
+    let commits = 0;
+    const { fn, calls } = mkFetch(res(201, {}));
+    await expect(
+      runReview({
+        repo: "me/r", issueNumber: 5, pending, data, comment: "/approve all", token: "t", fetchImpl: fn,
+        commit: async () => { commits += 1; },
+      }),
+    ).rejects.toThrowError(/推广短链域名|拒绝写盘/);
+    expect(commits).toBe(0);
+    expect(calls).toEqual([]); // 脏卡「乙」在 applyDecisions 里就把整批拦下，连回执都不该发
+  });
+
+  it("issueNumber 为 0：跳过回执与关单，但 files 与 commit 照常（无审核 Issue 时后台仍可盖章）", async () => {
+    const { fn, calls } = mkFetch(res(201, {}));
+    let committed: Record<string, string> | null = null;
+    const r = await runReview({
+      repo: "me/r", issueNumber: 0, pending, data, comment: "/approve card:甲", token: "t", fetchImpl: fn,
+      commit: async (f: Record<string, string>) => { committed = f; },
+    });
+    expect(calls).toEqual([]);
+    expect(r.changed).toBe(true);
+    expect((committed as unknown as Record<string, string>)["data/tokens.json"]).toContain("https://a2/"); // 只在类型层（§3 决策 15）
   });
 });
 
