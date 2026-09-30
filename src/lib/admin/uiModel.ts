@@ -10,7 +10,11 @@ import type { PublishResult } from "./publish";
 import type { TriggerResult } from "./trigger";
 
 /** 12 态验收矩阵（D7）：id 与计划 3 §7-2/§7-6 的口径一一对应，Task 14 的文档表格由此导出，
- *  避免「文档一套态、代码一套态」。trigger=怎么真实触达，exit=渲染出口，copy=措辞出处。 */
+ *  避免「文档一套态、代码一套态」。trigger=怎么真实触达，exit=渲染出口，copy=措辞出处。
+ *  邮戳只有两族，与计划 3 §7-5 的四态对应关系如下（D8 的硬要求，后来者不许新造第三套）：
+ *  ok→行内小邮戳「已归档 / 已退稿」（`stampMini`）；missing→整页大邮戳两枚——Tab1 队列清空的「档案已清」
+ *  与 Tab4 链路没跑过的「无记录」（`EMPTY_HISTORY`，Task 11 追加），二者措辞分家见 V15；
+ *  error→拒绝页的「未授权」与各 pane 的错误条（`deniedText` / `errorBar`）；stale→凭证过期黄条（`expiredBarText`）。 */
 export const STATES: { id: string; name: string; trigger: string; exit: string; copy: string }[] = [
   { id: "login", name: "未登录", trigger: "清 sessionStorage 后刷新", exit: "LoginPanel", copy: "loginCopy(login)" },
   { id: "denied", name: "白名单拒绝", trigger: "非白名单身份完成 Device Flow（线上首查，本机以 resolveView 真序列证）", exit: "DeniedPanel", copy: "deniedText + state.hint" },
