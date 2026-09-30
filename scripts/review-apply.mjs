@@ -1,7 +1,7 @@
 /** Issue 评论 /approve //reject 的 workflow 入口（crawl.yml 的 review job）。
  *  审批语义本体在 crawler/review.mjs（全站唯一，与 /admin 后台共用）——本文件只剩三件事：
  *  接 env/fs、把 res.files 落盘、把 data-changed 写进 GITHUB_OUTPUT。
- *  Task 6 会在此处接上评论者白名单闸（裁决 ①）。 */
+ *  评论者白名单闸（裁决 ①）已接在下方 env 校验之后：非白名单只回执即退出，连数据都不读进进程。 */
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -26,7 +26,7 @@ async function main() {
   if (gate.verdict !== "ok") {
     if (gate.verdict === "denied")
       await commentIssue(process.env.GITHUB_REPOSITORY, issueNumber, `⛔ 无权限：${gate.note}`, { token: process.env.GITHUB_TOKEN });
-    console.log(gate.verdict === "skip" ? `review 跳过：${gate.login} 是 bot 回声，未合入任何数据` : `review 拒绝：${gate.login || "(无 login)"} 不在白名单，已回执未合入任何数据`);
+    console.log(gate.verdict === "skip" ? `review 跳过：${gate.login} 是 bot 回声，未合入任何数据` : `review 拒绝：${gate.login || "(无 login)"} —— ${gate.note}（未合入任何数据）`);
     return;
   }
   const res = await runReview({

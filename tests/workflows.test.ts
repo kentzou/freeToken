@@ -55,8 +55,9 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
 
   it("review job 的评论者闸门（裁决 ①）：if 加 bot 排除，login 进 env，名单判定不在 yml 里", () => {
     const review = crawl.jobs.review;
-    /* 四个合取项必须在同一条表达式里（终审 C1 的教训：折叠标量被 YAML 拆成两个键时，
-       js-yaml 会静默丢掉后一段，job 门形同不存在）。 */
+    /* 四个合取项必须在同一条表达式里（终审 C1 的教训：`if:` 被写成重复键时整道 job 门形同不存在）。
+       失效形态实测（§3 决策 17 M-3）：重复 `if:` 键下 js-yaml 直接抛 `duplicated mapping key (53:5)`，
+       整份 workflows.test.ts 变红——失败是**响亮**的，不是「静默丢后一段」，排查时别按被悄悄忽略的模型找。 */
     expect(review.if).toContain("github.event_name == 'issue_comment'");
     expect(review.if).toContain("github.event.issue.pull_request == null");
     expect(review.if).toContain("contains(github.event.issue.labels.*.name, 'review')");
@@ -64,6 +65,10 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     /* 名单本体不许写进 yml：adminLogins 的唯一比对处是 crawler/allowlist.mjs（红线 1），
        这里只钉「login 传到了 CLI」。 */
     expect(review.if).not.toContain("adminLogins");
+    /* §3 决策 17 I-1：只钉 `if` 会漏「名单塞进步骤 env」——变异实测（把 `TFN_ADMIN_LOGINS: ${{ toJSON(vars.adminLogins) }}`
+       塞进 env）现有全部断言仍绿。steps 级补一条即可抓到（基线实测为 PASS，不会假红：js-yaml 丢注释，
+       所以 yml 注释里那处 `adminLogins` 文字引用不在此扫描面内，与本钉不冲突）。 */
+    expect(JSON.stringify(review.steps)).not.toContain("adminLogins");
     const gate = review.steps.find((s: { run?: string }) => (s.run || "").includes("node scripts/review-apply.mjs"));
     expect(gate.env.TFN_COMMENTER).toBe("${{ github.event.comment.user.login }}");
     expect(gate.env.ISSUE_NUMBER).toBe("${{ github.event.issue.number }}");

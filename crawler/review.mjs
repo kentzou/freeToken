@@ -66,7 +66,7 @@ export function commandText(decisions) {
 }
 
 /** 裁决 ①（workflow 侧）：评论者 → 三种结论。为什么不是简单的 true/false——
- *  「bot 回声」与「人类越权」的处置动作完全相反：前者必须**静默**（回执会自触发，见本文件顶部
+ *  「bot 回声」与「人类越权」的处置动作完全相反：前者必须**静默**（回执会自触发，见计划 3 Task 6 的三重防线表
  *  三重防线表），后者必须**公开留痕**（有人试着盖章，就得让他在 Issue 时间线上被拒一次）。
  *  名单本体走 `allowlistCheck` 单一实现（`config/site-config.json` 的 `adminLogins` 由调用方读盘传入，
  *  见 §3 决策 4）；措辞走 `denyNote`，此处不再写第二句。 */
