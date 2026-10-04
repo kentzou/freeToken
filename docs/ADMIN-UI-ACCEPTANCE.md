@@ -2,11 +2,11 @@
 
 原则与计划 2/3 同口径：凡本机亲测才写「已实测」；一切 GitHub 写操作只交付请求序列与 payload 断言，真实执行见 `ONLINE-STEPS.md` §10。本文是 `ADMIN-ACCEPTANCE.md`（计划 3＝认证与数据面）的下游：**数据面已验，本文验的是它铺成界面后的形态与措辞**。编号说明见 §4。
 
-## 1. 门禁总览（2026-10-05 00:38 实测于 1929b85）
+## 1. 门禁总览（2026-10-05 实测于终审修复提交；其前一步为 `ab36c53`，随本次修复 +1 的槽位见 vitest 行的锚定注）
 
 | 槽 | 读数 | 取数命令 |
 | --- | --- | --- |
-| vitest | `Test Files  41 passed (41)` / `Tests  347 passed (347)` | `npx vitest run` |
+| vitest | `Test Files  41 passed (41)` / `Tests  349 passed (349)`。锚定序列：`347` 钉 `1929b85`（Task 14 Step 0 复跑）；`348` 钉 `2a0dbde`（+1 是 workflows 串行闸例）；`349` 钉本次终审修复（+1 是 ConfigPane 容器首帧例，见 V34/V35 相邻的 I-1 条）。文件数 41 不变 | `npx vitest run` |
 | 类型 | `tsc=0` | `npx tsc --noEmit` |
 | lint | `lint_rc=0` ＋ 日志尾行原文（`✔ No ESLint warnings or errors`） | `npm run lint > 日志 2>&1; echo "lint_rc=$?"`（**退出码必须由 `$?` 取，管道 `tail` 会吞掉它**；修复前后各一次，见 §5 的 V33 同族条） |
 | build 静态页 | `✓ Compiled successfully` ＋ `✓ Generating static pages (27/27)`，`build_rc=0` | `npm run build > 日志 2>&1; echo "build_rc=${PIPESTATUS[0]}"; grep -aE "✓ Generating static pages\|Compiled" 日志` |
@@ -15,7 +15,7 @@
 | 产物红线 | `ℹ pass 9` | `npm run build; npm run seo; npm run test:out` |
 | 种子三哈希 | `seed 复现 OK：cards=64e26640c52d donots=88f99a96da35 rules=7888f2ec168b`（**单行**原文） | `npm run seed:repro` |
 
-与计划 3 §1 的旧读数（`Tests 221`、`out` 25、build 26/26）**不回改**：那些值钉的是计划 3 收口态那份数据（§7-20 原话「不是永恒常数」）。本表钉的是 1929b85 这一棵树。lint 槽有前值可记：修复前（`5dcfae7`）实测 `lint_rc=1` ＋四条 `react-hooks/exhaustive-deps` Warning，修复后 `lint_rc=0`，前后两次取证分别是 `.superpowers/p5-task-14-lint-before.log` / `-after.log`——这条不是「凑绿」，是被 CI 的 quality job 钉住的真回归（见 §5 的 V33 同族条）。
+与计划 3 §1 的旧读数（`Tests 221`、`out` 25、build 26/26）**不回改**：那些值钉的是计划 3 收口态那份数据（§7-20 原话「不是永恒常数」）。本表钉的是终审修复这一棵树。lint 槽有前值可记：修复前（`5dcfae7`）实测 `lint_rc=1` ＋四条 `react-hooks/exhaustive-deps` Warning，修复后 `lint_rc=0`，前后两次取证分别是 `.superpowers/p5-task-14-lint-before.log` / `-after.log`——这条不是「凑绿」，是被 CI 的 quality job 钉住的真回归（见 §5 的 V33 同族条）。
 
 ## 2. 十二态矩阵（§7-6「九种逐一真触发」的展开）
 
@@ -53,7 +53,7 @@
 
 本计划旧称「计划 4」，2026-09-30 17:05 用户裁决改称**计划 5**（逐字：「改叫计划 5，避开并行窗口的计划 4」），落盘文件 `docs/superpowers/plans/2026-09-30-admin-four-tab-ui-and-states.md`。撞车原因与后果由 §7-23 原文记录，此处只解决一个实际问题：**仓内还有 10 处代码/测试注释与 9 行旧文档正文写着「计划 4」，它们不改写，怎么读？**
 
-普查口径（`grep -rn "计划 4" src tests crawler docs`，共 19 行）：代码与测试 10 行里，**7 行指本计划**（`src/lib/admin/{auth.ts:35, pending.ts:114, session.ts:21, trigger.ts:8}`、`crawler/allowlist.mjs:25`、`tests/{admin-trigger.test.ts:3, helpers/pending.ts:7}`）、**2 行指并行整改计划**（`src/lib/href.ts:31`、`tests/href.test.ts:55`）、**1 行是本计划自己写的换代注**（`src/lib/admin/trigger.ts:9`，Task 6 落地时加的「2026-09-30 换代注」，它指本计划且已自带解释）。**执行期 K4 校正两处**：① `pending.ts` 的行号撰写期记 `:98`，Task 8/9 在那条通路加代码后已漂到 `:114`；② 原文把第 10 行算作「1 行指代不明（`crawler/openrouter.mjs:1`）」——**该文件不在本分支的树里**（`git ls-files` 无此项；它在主检出是未跟踪文件，见规则 3 的更正），所以 10 行的实际构成是「7 指本计划＋2 指整改＋1 是本计划自己的换代注」，「指代不明」那一支在本任务的取证范围内**无对象**。旧文档 9 行里，**8 行指本计划**（`ADMIN-ACCEPTANCE.md` 的 §1 标题下/§1b/§4/§7 第 8、9 条共 7 行 + `ONLINE-STEPS.md:68`）、**1 行指整改计划**（`UI-ACCEPTANCE.md:127`，它写作「计划 4『代码审查发现项修复』」，带计划全名）——这 9 行 2026-10-05 实测逐条仍在，行号未漂。
+普查口径（**终审 I-3 订正，2026-10-05 复测**）：能逐条复算的只有代码/测试那 **10 行**——`grep -rn "计划 4" src tests crawler`，宾语收窄到 `src tests crawler`（不含 `docs`，理由见下）。10 行里，**7 行指本计划**（`src/lib/admin/{auth.ts:35, pending.ts:114, session.ts:21, trigger.ts:8}`、`crawler/allowlist.mjs:25`、`tests/{admin-trigger.test.ts:3, helpers/pending.ts:7}`）、**2 行指并行整改计划**（`src/lib/href.ts:31`、`tests/href.test.ts:55`）、**1 行是本计划自己写的换代注**（`src/lib/admin/trigger.ts:9`，Task 6 落地时加的「2026-09-30 换代注」，它指本计划且已自带解释）。**执行期 K4 校正两处**：① `pending.ts` 的行号撰写期记 `:98`，Task 8/9 在那条通路加代码后已漂到 `:114`；② 原文把第 10 行算作「1 行指代不明（`crawler/openrouter.mjs:1`）」——**该文件不在本分支的树里**（`git ls-files` 无此项；它在主检出是未跟踪文件，见规则 3 的更正），所以 10 行的实际构成是「7 指本计划＋2 指整改＋1 是本计划自己的换代注」，「指代不明」那一支在本任务的取证范围内**无对象**。docs 侧**不作绝对数**（原句「共 19 行」「旧文档 9 行」即错在这里），三条锚定表述各自可复算：① 旧文档正文在撰写期是 9 行（其中 8 行指本计划——`ADMIN-ACCEPTANCE.md` 的 §1 标题下/§1b/§4/§7 第 8、9 条共 7 行 + `ONLINE-STEPS.md:68`；1 行指整改计划——`UI-ACCEPTANCE.md:127`，它写作「计划 4『代码审查发现项修复』」，带计划全名）；② Task 14 Step 7（提交 `2a0dbde`）给 `ADMIN-ACCEPTANCE.md:108` 与 `ONLINE-STEPS.md:70` 追加的两条换代注**自身含字面「计划 4」**，故旧文档入账后为 11 行；③ 若把 `docs` 放进宾语还会命中本文 §4 正文自身 5 行（`:54/:56/:60/:61/:62`），`grep -rn "计划 4" src tests crawler docs` 实测 **26 行**（`grep -rn "计划 4" docs` 实测 16 行，分布＝`ADMIN-ACCEPTANCE.md` 8＋本文 5＋`ONLINE-STEPS.md` 2＋`UI-ACCEPTANCE.md` 1）。⇒ 结论句：**docs 侧随换代注与本文正文自增，不作绝对数；能逐条复算的只有代码/测试那 10 行**。禁令：**不许为凑回 19 去删改代码注释，也不许删本文正文那 5 处引用**——它们是判读规则本身，不是被解释对象。
 
 判读规则（三条，按位置区分，不要按字样统一替换）：
 
@@ -98,10 +98,12 @@
 | V29 | 计划 5 | **Tab2 的两条失败来路必须有两个措辞主体**（执行期 D6）：`ERROR_SUBJECT` 原本只有 `config: "保存失败"`，首屏 `loadSiteConfig` 失败也借它，界面就对没点过保存的人说「保存失败：网络不可达」 | 新增 `configLoad: "配置读取失败"`，读取支用它、写支仍 `config`。取证＝读 uiModel.ts:72 的常量值 ＋ `errorBar` 的第一参类型（:82 `keyof typeof ERROR_SUBJECT`，加键零调用点改动）；`grep -rn ERROR_SUBJECT tests/` 零命中，确认增键不反咬 Task 4 的措辞钉。这与 V25（unconfigured 把「读不到」说成「缺 oauthClientId」）是同一条红线（§0-7）在两处的落点 | Task 9 |
 | V30 | 计划 5 | **一条已成功的动作，不能因为它后面的重读失败而被报成失败**（执行期 D14，Task 9 首轮评审 Important）：正文把 `await reload()` 放在 `save()` 的 `try` 内、由同一个 `catch` 报 `errorBar("config", …)`，PUT 已成功却显「保存失败」 | 重读失败一律由 `reload` 自己按读面主体（`configLoad`）上报，写面的 `catch` 只接写面本身；`await reload()` 仍留在 `try` 内以保住 `busy`。**普查面＝Task 10/11**：`CrawlPane`/`HistoryPane` 若也做「动作成功后重读」，同一形态必须成立；评审时对每个 pane 问一句「它的 catch 里有几条来路」。测不到（effect/回调路径），交阶段 F | Task 9/10/11 |
 | V31 | 计划 5 | **会 reject 的 `reload` 配裸 `onReload={() => void reload()}` ＝ 静默失败**（执行期 D15，Task 9 修复一轮引入、复审抓出）：`setError(null)` 在起手、`.catch` 只挂在 effect（`booted` 闸保证它不重跑），重试再次失败时清空＋不报错＋列表仍为 null，界面死在加载态——比修复前更坏 | 失败上报收进 `reload` 内部（`try/catch` 自带），三个调用点（effect / `save` / 重读按钮）一律只调不兜；先例＝`ReviewPane.tsx:183-200`（那里的 `reload` 从不 reject）。**写给 Task 10/11 的口径：pane 的 `reload` 要么自己永不 reject（内部 catch 折成态），要么自己负责上报，二者必居其一；裸 `void reload()` 只允许出现在这两者之一成立的地方** | Task 9/10/11 |
-| V32 | 计划 5 | **块注释体内抄写字面 cron（或任何「星号紧跟斜杠」的串）会提前闭合注释，其后的文字变成源码正文**——Task 5 的 C1 在 CSS 顶部注释撞过一次并立了 `tests/admin-style.test.ts` 那颗闭合钉，Task 10 实现期在同一族的 TS 块注释里**再次**撞到（在注释体内照抄 `CRAWL_READER_NOTE` 描述的那段 cron 以核对措辞，`*/` 提前闭合 ⇒ `npx tsc --noEmit` 直接语法红）。TS/TSX 面**没有**对应的自动钉（那颗钉只扫 `admin.css`），所以它只靠人守 | 注释体内**不许**出现字面 cron 或任何 `星号+斜杠` 序列；要指涉某个串就引常量名（`CRAWL_READER_NOTE`）或加空格断开（`* ／ *`）。取证＝实现者自曝「一度 tsc 红」；主控复跑 `tsc=0` 且 `grep -c "aria-busy" src/app/admin/CrawlPane.tsx` = 2。**写给 Task 11/12/13/14：任何 TSX/TS/CSS 块注释里引用「每 30 分钟 / 每 6 小时」这类调度描述，一律写中文或引常量，不抄 cron 字面量** | Task 10/11/12/13/14 |
+| V32 | 计划 5 | **块注释体内抄写字面 cron（或任何「星号紧跟斜杠」的串）会提前闭合注释，其后的文字变成源码正文**——Task 5 的 C1 在 CSS 顶部注释撞过一次并立了 `tests/admin-style.test.ts` 那颗闭合钉，Task 10 实现期在同一族的 TS 块注释里**再次**撞到（在注释体内照抄 `CRAWL_READER_NOTE` 描述的那段 cron 以核对措辞，`*/` 提前闭合 ⇒ `npx tsc --noEmit` 直接语法红）。TS/TSX 面**没有**对应的自动钉（那颗钉只扫 `admin.css`），所以它只靠人守 | 注释体内**不许**出现字面 cron 或任何 `星号+斜杠` 序列；要指涉某个串就引常量名（`CRAWL_READER_NOTE`）或加空格断开（`* ／ *`）。取证＝实现者自曝「一度 tsc 红」；主控复跑 `tsc=0` 且 `grep -c "aria-busy" src/app/admin/CrawlPane.tsx` = 2。**写给 Task 11/12/13/14：任何 TSX/TS/CSS 块注释里引用「每 30 分钟 / 每 6 小时」这类调度描述，一律写中文或引常量，不抄 cron 字面量**。**终审 Q3 裁决补句（把口径写死，免下一轮重复裁决）**：TS/TSX 面**无需专钉**——`next lint` 与 `next build` 都会在 CI 解析 `.ts/.tsx`，块注释被 `*/` 提前闭合后残文成源码 ⇒ 解析或语法错，两步之一必红；CSS 面因为没有解析器才需要 `tests/admin-style.test.ts` 那颗闭合钉 | Task 10/11/12/13/14 |
+| V34 | 计划 5 | **四 pane 的「重读」反馈并非同源，属登记的刻意不对称**（终审 I-2，逐 pane 静态可判）：只有 `HistoryPane.tsx:88-99` 的 `read()` 置 `busy`；`CrawlPane.tsx:71`、`ConfigPane.tsx:113`、`ReviewPane.tsx:183` 的 `reload` 都不置；四个 pane 都没有再入/in-flight 守卫，并发 GET 后到者胜，且 History 的 `finally` 会由先返回者提前撤掉反馈 | 裁决＝**本枝不改四 pane 代码**，理由两条：① `busy` 在 Config/Crawl/Review 三面同时禁用别的控件（保存键、开关、盖章键），统一置 busy 会引入没人要求的行为变化；② effect／事件回调路径本机 `renderToStaticMarkup` 够不到，改也无法取证。一致的维度：reject 安全（V31）与读失败措辞（V30）四 pane 齐平。真实点击与连点交阶段 F（见新增 F9），**不得在文档里写成已验证** | Task 9/10/11 |
+| V35 | 计划 5 | `TYPE_UNSET`（`（不覆盖）`，下拉 affordance）与 `TYPE_UNSET_META`（`无`，行内 meta 值报告）是**同概念两措辞、单出口**（终审 I-1：两串字面值一字不改，出口收回 `uiModel`，渲染输出逐字不变） | 依据＝本次 I-1 裁决：`TYPE_UNSET` 说的是「选中这一项会发生什么」，行内 meta 说的是「当前覆盖值是什么」，语义角色不同，合并会让紧凑的 meta 行读出括号动作；§1 红线 1 约束的是**出口唯一**，不是**条数唯一**。判读口径沿用 Task 11 已确立的那条——「同常量 ≥2 引用」不算重复实现，「同字面量 ≥2 处各写一遍」才算 | Task 9 |
 | V33 | 计划 5 | **任务门禁块漏写数据链后半段**（命令块里有 `build` 却没接 `seo`⇒`test:out`，或没写产物 HTML 页数的 `find out` 取数；Expected 里留「页数 = 基线 + 1」这类简写不展开）——同族漏法到这里已第四次出现：Task 8 的 C19、Task 9 的 D7＋D13、Task 10 的 E3、Task 11 的 F2。成因是撰写期把「跑测试」当门禁、把「产物链」当成 Task 12/14 的事，可 §5 明令每个任务的门禁都要复述三哈希／泄漏／退出码，而 `next build` 会清空 `out/`：漏跑 `seo` 时 `test:out` 必红在「缺 `out/robots.txt`」（Task 1 基线采集实测过一次 `ℹ pass 7 / ℹ fail 1`） | 派发前普查固定加一项：该任务的门禁命令块是否含 `npm run seo`、`npm run test:out`（行首取数用 `^ℹ`，见 D13）与 `find out -name '*.html' \\| wc -l`；缺则补，并把 Expected 的页数简写展开成绝对数（26）。**唯一合法豁免**＝该任务确实不碰产物且写明理由（Task 13 的「`test:out` 不需要重跑，本任务不碰产物」即此形态）。普查面＝Task 12/13/14。**同族第五次漏法（执行期 K10 补进本条，不另开行）**：补了 `build`/`seo`/`test:out`/`find out` 却**没补 `npm run lint`**——Task 9/10/11 落进四个 pane 的 4 条 `react-hooks/exhaustive-deps` Warning 因此一路无人拦（vitest 不跑 lint；`tests/workflows.test.ts` 只钉「`deploy.yml` 执行 `npm run lint`」这条**形态**、并不执行它），而 `--max-warnings=0` 使 quality job 必红。`5dcfae7` 实测 `lint_rc=1`，四条分别 `ConfigPane.tsx:139`、`CrawlPane.tsx:81`、`HistoryPane.tsx:107`、`ReviewPane.tsx:201`。⇒ 计划自 Task 6 起每个门禁块本应含 `npm run lint` 且用 `$?` 取退出码（靠管道尾 `tail` 会把 rc 吞成 0）；已落地部分不回改，缺陷本体由 Task 14 Step 0 修，本文 §1 记修复前后两读数。 | Task 11/12/13/14 |
 
-**同类普查**：V01–V33 是逐条比对原型 HTML、计划 3 §7 原文与本计划正文得出的（**执行期 K1：原写 V01–V20，那是撰写期的表长；V21–V33 全部由执行期入账，表体实测 `grep -c "^| V"` = 33**）。为防止「登记漏一条」，另做一次普查——把计划正文里所有「更正」「改为」「不采」「明确不做」字样打出来，与上表条数互校。**路径注记（评审回写）**：下面这条命令的宾语在**外层文档仓**，本仓（`token-fbi-next`）内没有 `docs/superpowers/` 这一层；从本树执行会打到「文件不存在」，`| wc -l` 于是输出 0，会被本段自己的话术误读成「表里有凭记忆的条目」。所以要**在外层仓根**执行，绝对路径 `D:/Documents/code/freeTokenInfo/docs/superpowers/plans/2026-09-30-admin-four-tab-ui-and-states.md`：
+**同类普查**：V01–V33 是逐条比对原型 HTML、计划 3 §7 原文与本计划正文得出的（**执行期 K1：原写 V01–V20，那是撰写期的表长；V21–V33 全部由执行期入账。表长取锚定表述（终审 I-4 同族订正）：`ab36c53` 树上＝33（`grep -c "^| V"` 当时的读数，有 committed 佐证），本次终审修复入账 V34/V35 后＝35；判据仍取下限 ≥33，绝对值随入账自涨、不作对账常数（与 §5 末段 48/60/62 同口径）**）。为防止「登记漏一条」，另做一次普查——把计划正文里所有「更正」「改为」「不采」「明确不做」字样打出来，与上表条数互校。**路径注记（评审回写）**：下面这条命令的宾语在**外层文档仓**，本仓（`token-fbi-next`）内没有 `docs/superpowers/` 这一层；从本树执行会打到「文件不存在」，`| wc -l` 于是输出 0，会被本段自己的话术误读成「表里有凭记忆的条目」。所以要**在外层仓根**执行，绝对路径 `D:/Documents/code/freeTokenInfo/docs/superpowers/plans/2026-09-30-admin-four-tab-ui-and-states.md`：
 
 ```bash
 grep -n "更正\|不采\|明确不做\|改为" docs/superpowers/plans/2026-09-30-admin-four-tab-ui-and-states.md | wc -l
@@ -111,7 +113,7 @@ grep -n "更正\|不采\|明确不做\|改为" docs/superpowers/plans/2026-09-30
 
 ## 6. 交阶段 F（本机证不了的事，逐条给验法）
 
-本文所有组件结论都出自 `renderToStaticMarkup` 的**渲染事实**断言——vitest 跑在 node 环境，没有事件循环，所以「点了会怎样」一类交互语义被沉成了纯函数（`tabs.ts` 的键盘 reducer、`uiModel` 的状态映射）。这是本计划的既定取舍（§3 D1/D2），代价是**真浏览器里的行为没有证据**。F 用裸 CDP（Chrome `--headless=new` + websocket-client 连 9333，工具口径见 §7-13）补下面八项（F1–F8）：
+本文所有组件结论都出自 `renderToStaticMarkup` 的**渲染事实**断言——vitest 跑在 node 环境，没有事件循环，所以「点了会怎样」一类交互语义被沉成了纯函数（`tabs.ts` 的键盘 reducer、`uiModel` 的状态映射）。这是本计划的既定取舍（§3 D1/D2），代价是**真浏览器里的行为没有证据**。F 用裸 CDP（Chrome `--headless=new` + websocket-client 连 9333，工具口径见 §7-13）补下面九项（F1–F9）：
 
 | # | 待验事实 | 为什么本机证不了 | 验法与判据 |
 | --- | --- | --- | --- |
@@ -123,5 +125,6 @@ grep -n "更正\|不采\|明确不做\|改为" docs/superpowers/plans/2026-09-30
 | F6 | 一次后台发布的多起 review job 与噪声评论（§7-19 / V20） | 本机无任何 GitHub 写操作（红线） | 发布后看 Actions：review job 应为**串行**（第二个排队而非并行），噪声评论作者仍是人类 login（不许为消噪改 bot 身份） |
 | F7 | axe 无障碍扫描 | vitest 无 DOM，`tests/admin-style.test.ts` 只扫类名 | axe-core 跑 `/admin/` 零 severe 违规，另用键盘-only 复核焦点可见性（`outline` 未被 `admin.css` 重置掉） |
 | F8 | 构建期注入的 `NEXT_PUBLIC_SITE_URL` 是否真进了 /admin 的客户端 chunk（V24 的产物级牙） | 本机与 CI 默认都不注入该变量，内联结果恒为空串，测不出「字面 vs 动态」的差异 | 用 `NEXT_PUBLIC_SITE_URL=https://…/token-fbi-next/ npm run build` 构建一次，判据＝`out/_next/static/chunks/app/admin/page-*.js` 内该仓名字面量命中 ≥ 1 **且** `.env[` 零命中（前者证内联发生、后者证没有残留动态下标）；跑完按常规顺序重建 `out/`（`npm run build` ⇒ `npm run seo` ⇒ `npm run test:out`），别把带私有仓名的产物留作发布物 |
+| F9 | 四个面板的「重读」按钮在真浏览器里的反馈与并发行为（V34 登记的不对称） | `renderToStaticMarkup` 无事件循环，`reload` 由 effect/`onClick` 触发，本机够不到 | 裸 CDP 下分别对 Tab1–Tab4 连点两次重读，判据＝①重读期间 `aria-busy="true"` 或按钮 `disabled` 至少其一成立；②两份并发 GET 的响应不得让后到者覆盖先到者之后再由 `finally` 提前撤掉反馈（观察点：`busy` 翻转次数与最终渲染数据来自哪一次响应）；③读失败仍走 `ErrorNotice` 分支而不是空态。结论回写本文档，不在代码里补断言 |
 
 线上侧动作不在本表重复：`ONLINE-STEPS.md` §10 第 1–8 条是 F 的执行清单，`ADMIN-ACCEPTANCE.md` §7 是数据面的诚实缺口。三份文档的分工＝**数据面（计划 3）／界面与措辞（本文）／线上动作（ONLINE-STEPS）**，同一条缺口只在其归属文档里写一次。
