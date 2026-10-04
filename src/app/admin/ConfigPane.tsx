@@ -111,7 +111,7 @@ export default function ConfigPane({ ctx }: { ctx: PaneCtx }) {
   }, []);
 
   const reload = useCallback(async () => {
-    // 每次读取起步先清空上一次的错误条：重试成功后若仍挂着「配置读取失败」即为撒谎（评审修复2）。
+    // 每次读取起步先清空上一次的错误条：重试成功后若仍挂着「配置读取失败」即为撒谎（D15）。
     // 不在这里清 receipt——那是 save 自己的信号，save() 已在顶部置空。
     setError(null);
     try {
@@ -157,9 +157,8 @@ export default function ConfigPane({ ctx }: { ctx: PaneCtx }) {
     try {
       const res = await saveSiteConfig({ repo, config: snap.config, patch, message: "chore(admin): 更新变现配置", remote: { text: snap.text, sha: snap.sha }, token, fetchImpl: FETCH });
       setReceipt(configSaved(res as { kind: string }));
-      // 保存后重读单独兜为 configLoad：PUT 已成功却因重读失败而显「保存失败」是措辞撒谎（红线 7 / D6）。
-      // 不必再包内层 catch：reload 现在自己就用 configLoad 上报读面失败，重读失败落不进外层 catch 的「保存失败」（"config"）。
-      // 重读仍留在 try 内，令 busy 期间控件保持禁用，避免用户对着旧值再点一次保存。
+      // 保存后以远端为准重算现值：否则「已保存」和行里的旧值同时挂在屏幕上。重读留在 try 内，busy 期间控件保持禁用。
+      // 重读失败由 reload 自己按 configLoad 上报（PUT 已成功却显「保存失败」正是 D6/§1 红线 7 禁的措辞撒谎），这里的 catch 只接 saveSiteConfig 本身的失败。
       await reload();
     } catch (e) {
       const c = classifyError(e);
