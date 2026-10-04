@@ -31,7 +31,7 @@ const CTX = (over: Partial<ReviewContext>): ReviewContext => ({
   authFailed: false,
   ...over,
 });
-const loadedCtx = CTX({ pending: { kind: "loaded", pending: pend }, issueNumber: 42, issueUrl: "https://github.com/o/r/issues/42" });
+const loadedCtx = CTX({ pending: { kind: "loaded", pending: pend, sha: "S-P", text: dump(pend) }, issueNumber: 42, issueUrl: "https://github.com/o/r/issues/42" });
 const badCtx = CTX({ pending: { kind: "error", status: 403, message: "Forbidden", hint: "权限不足" } });
 
 const list = (over: Partial<ReviewListProps> = {}) =>
@@ -67,14 +67,14 @@ describe("reviewView：四支分流只此一处", () => {
     expect(v.source).toContain(`上游指纹 ${pend.upstreamSha}`); // 实测 data/meta.json 的 sourceFingerprint＝0276a024c4f6e10e（非 null），缺指纹的分支由 sourceLine 自己的用例覆盖
     expect(v.note).toBe(approveNote(42));
     expect(v.note).toContain("/approve");
-    const n = reviewView(CTX({ pending: { kind: "loaded", pending: pend } }), rows);
+    const n = reviewView(CTX({ pending: { kind: "loaded", pending: pend, sha: "S-P", text: dump(pend) } }), rows);
     if (n.kind !== "list") throw new Error("期望 list");
     expect(n.source).not.toContain("Issue"); // 无 Issue 时写「Issue #0」是谎报一个不存在的编号
     expect(n.note).toContain("没有回执可留");
     /** C8（评审 Important-1 回写，登记见 V26）：issueNumber 为 0 有两种来路——确实没有开放 Issue，
      *  与「读 Issue 失败」（403 缺 Issues:write，此时 authFailed 仍是 false，只有 issueNote 能分辨）。
      *  把后者渲成前者那句「当前没有开放的审核 Issue」，就是替数据面下了一个它没下过的结论。 */
-    const f = reviewView(CTX({ pending: { kind: "loaded", pending: pend }, issueNumber: 0, issueNote: "Forbidden（权限不足）" }), rows);
+    const f = reviewView(CTX({ pending: { kind: "loaded", pending: pend, sha: "S-P", text: dump(pend) }, issueNumber: 0, issueNote: "Forbidden（权限不足）" }), rows);
     if (f.kind !== "list") throw new Error("期望 list");
     expect(f.note).toBe(approveNote(null, "Forbidden（权限不足）")); // 措辞仍只出自 uiModel 这一处
     expect(f.note).toContain("读取审核 Issue 失败");

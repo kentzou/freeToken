@@ -206,13 +206,17 @@ export default function ReviewPane({ ctx, onCount }: { ctx: PaneCtx; onCount: (n
       setBusy(true);
       setReceipt(null);
       try {
-        const pending: PendingJson | null = context && context.pending.kind === "loaded" ? context.pending.pending : null;
+        /** 队列与快照要么都有、要么都没有：kind 不是 loaded 时没有队列可盖（同一次读的产物，不许只传一半） */
+        const loaded = context && context.pending.kind === "loaded" ? context.pending : null;
+        const pending: PendingJson | null = loaded ? loaded.pending : null;
+        const pendingCurrent = loaded ? { text: loaded.text, sha: loaded.sha } : null;
         const res = await publishApprovals({
           repo,
           token,
           login: ctx.login,
           adminLogins: ctx.config?.adminLogins ?? [],
           pending,
+          pendingCurrent,
           issueNumber: context?.issueNumber ?? 0,
           decisions,
           fetchImpl: FETCH,

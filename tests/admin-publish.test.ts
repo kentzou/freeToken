@@ -13,7 +13,7 @@ const pend = realPending();
  *  这条断言才与线上一致；喂磁盘原文会因 CRLF 把每个文件都判成有差异。 */
 const fileRes = (sha: string, value: unknown) => res(200, { sha, encoding: "base64", content: encodeBase64Utf8(dump(value)), updated_at: "" });
 const putOk = (sha: string) => res(200, { commit: { sha: `c-${sha}` }, content: { sha } });
-const baseDeps = { repo: "hope0719/token-fbi-next", token: "ghu_x", login: "hope0719", adminLogins: ["hope0719"], pending: pend, issueNumber: 42 };
+const baseDeps = { repo: "hope0719/token-fbi-next", token: "ghu_x", login: "hope0719", adminLogins: ["hope0719"], pending: pend, pendingCurrent: null, issueNumber: 42 };
 const methods = (calls: { init: Record<string, any> }[]) => calls.map((c) => String(c.init.method)).join(",");
 
 describe("publishApprovals：白名单 → 指令 → runReview → 逐文件 Contents 提交", () => {
@@ -109,5 +109,38 @@ describe("publishApprovals：白名单 → 指令 → runReview → 逐文件 Co
     expect(out.failed).toEqual([{ path: "data/donots.json", hint: "远端文件已被别人改动（sha 过期）：重新读取后再保存，别硬覆盖。（HTTP 409）" }]);
     expect(out.kind).toBe("published"); // 不再有第六个 kind：failed.length>0 就是「部分失败」，UI 分支少一条
     expect(out.pendingLeft).toBe(0);
+  });
+
+  it("pendingCurrent  supplied 时：队列那次 PUT 的 sha 来自它，且全程不再多读一次队列文件", async () => {
+    const snap = { text: dump(pend), sha: "S-PEND" };
+    const f = mkFetch(
+      fileRes("S-C", cur.cards), fileRes("S-D", cur.donots), fileRes("S-R", cur.rules),
+      res(201, {}), putOk("c1"), putOk("cP"),
+    );
+    const out = (await publishApprovals({ repo: "o/r", token: "ghu_x", login: "hope0719", adminLogins: ["hope0719"], pending: pend, issueNumber: 42, decisions: [{ action: "approve", id: "card:WorkBuddy" }], pendingCurrent: snap, fetchImpl: f.fn })) as any;
+    /** 序位钉：`mkFetch` 按调用次序取应答且末尾钳制（fake-fetch.ts:26），所以替身个数必须等于真实请求数——
+     *  多塞一个不会报错，只会让「第 4 次是回执 POST」这条前提悄悄挪位（执行期 C14）。
+     *  本例的真实序列：读三表 → 回执 → 写 cards → 写 pending（队列不再被二次 GET）。 */
+    expect(methods(f.calls)).toBe("GET,GET,GET,POST,PUT,PUT");
+    expect(out.committed).toEqual(["data/tokens.json", "pending/changes.json"]);
+    expect(out.unchanged).toEqual(["data/donots.json", "data/rules.json"]);
+    const put = f.calls.find((c) => c.url.endsWith("/contents/pending/changes.json") && c.init.method === "PUT");
+    expect(jsonOf(put!).sha).toBe("S-PEND"); // 来自读队列的那一次 GET，不是 loadCurrentData 的任何一个 sha
+    expect(["S-C", "S-D", "S-R"]).not.toContain(jsonOf(put!).sha);
+    expect(f.calls.filter((c) => c.url.endsWith("/contents/pending/changes.json") && c.init.method !== "PUT").length).toBe(0);
+  });
+
+  it("队列 PUT 带的是快照 sha：并发下别人先改过队列就是 409，而不是被事后重读悄悄覆盖", async () => {
+    const snap = { text: dump(pend), sha: "S-PEND" };
+    const f = mkFetch(
+      fileRes("S-C", cur.cards), fileRes("S-D", cur.donots), fileRes("S-R", cur.rules),
+      res(201, {}), putOk("c1"), res(409, { message: "sha has changed" }),
+    );
+    const out = (await publishApprovals({ repo: "o/r", token: "t", login: "hope0719", adminLogins: ["hope0719"], pending: pend, issueNumber: 42, decisions: [{ action: "approve", id: "card:WorkBuddy" }], pendingCurrent: snap, fetchImpl: f.fn })) as any;
+    expect(methods(f.calls)).toBe("GET,GET,GET,POST,PUT,PUT");
+    expect(out.committed).toEqual(["data/tokens.json"]);
+    expect(out.unchanged).toEqual(["data/donots.json", "data/rules.json"]);
+    expect(out.failed).toEqual([{ path: "pending/changes.json", hint: "远端文件已被别人改动（sha 过期）：重新读取后再保存，别硬覆盖。（HTTP 409）" }]);
+    expect(jsonOf(f.calls[5]).sha).toBe("S-PEND"); // 撞 409 用的正是那一次读的 sha：本任务要防的就是「写前再读一遍」把冲突读没
   });
 });

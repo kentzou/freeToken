@@ -26,6 +26,12 @@ describe("待审队列的运行时读：404 / 读不了 / 形态错 三态绝不
     expect(parsePending(dump(pend))).toEqual(pend);
   });
 
+  it("loaded 带 sha 与原文：盖章写面要用「同一次读」的快照，不能事后再读一遍（§7-17）", async () => {
+    const out = await loadPending({ repo: "o/r", fetchImpl: mkFetch(pendRes()).fn });
+    expect(out).toMatchObject({ kind: "loaded", sha: "S-P" });
+    expect((out as any).text).toBe(dump(pend)); // 原文一并带出：commitText 的「比对再写」靠它判 unchanged
+  });
+
   it("403＝读不了：status 与可诊断 hint 都要带出来，且绝不退化成「空」", async () => {
     const out = await loadPending({ repo: "o/r", fetchImpl: mkFetch(res(403, { message: "API rate limit exceeded for 45.149.92.7." })).fn });
     expect(out).toMatchObject({ kind: "error", status: 403 });

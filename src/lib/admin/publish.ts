@@ -9,6 +9,7 @@ import { commandText, runReview } from "../../../crawler/review.mjs";
 import { dump } from "../../../crawler/serialize.mjs";
 import { classifyError } from "./errors";
 import { commitText, DATA_PATHS, loadCurrentData } from "./remote";
+import { PENDING_PATH } from "./pending";
 import type { PendingJson } from "./pending";
 
 type Fetch = (url: any, init?: any) => Promise<any>;
@@ -38,6 +39,9 @@ export interface PublishDeps {
   login: string;
   adminLogins: string[];
   pending: PendingJson | null;
+  /** 队列文件的远端快照＝loadPending 那一次 GET 的原文与 sha（同一份、同一次）。
+   *  必填是为了让「不传就退化成两个快照」这条路在类型层就不存在；null 只表示调用方确实没有快照（CLI 与既有用例）。 */
+  pendingCurrent: { text: string; sha: string } | null;
   /** 0＝当前没有开放的审核 Issue：runReview 会跳过回执与关单，写面照常 */
   issueNumber: number;
   decisions: Decision[];
@@ -51,6 +55,7 @@ export async function publishApprovals({
   login,
   adminLogins,
   pending,
+  pendingCurrent,
   issueNumber,
   decisions,
   message = "chore(admin): 审批合入",
@@ -68,6 +73,7 @@ export async function publishApprovals({
     const table = (cur as unknown as Record<string, unknown>)[key];
     byPath[path] = { text: dump(table), sha: cur.shas[path] };
   }
+  if (pendingCurrent) byPath[PENDING_PATH] = pendingCurrent; // 与上面同源口径：谁读的，谁写
   const committed: string[] = [];
   const unchanged: string[] = [];
   const failed: { path: string; hint: string }[] = [];

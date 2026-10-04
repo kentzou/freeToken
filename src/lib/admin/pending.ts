@@ -46,7 +46,13 @@ export function parsePending(text: string): PendingJson {
   };
 }
 
-export type PendingResult = { kind: "empty" } | { kind: "loaded"; pending: PendingJson } | { kind: "error"; status: number; message: string; hint: string };
+export type PendingResult =
+  | { kind: "empty" }
+  /** sha/text 与 pending 平级而不是塞进 PendingJson：PendingJson 是「文件内容」的形状，sha 是 Contents API 的元数据。
+   *  runReview 会把剩余队列 dump 回这个文件（crawler/review.mjs:103），内容里多一个 sha 就会让每次审批都改写一遍字节，
+   *  并让 commitText 的「比对再写」永远失配——那是把防呆改成自证。 */
+  | { kind: "loaded"; pending: PendingJson; sha: string; text: string }
+  | { kind: "error"; status: number; message: string; hint: string };
 
 export async function loadPending({
   repo,
@@ -59,7 +65,7 @@ export async function loadPending({
   fetchImpl?: Fetch;
   sleep?: (ms: number) => Promise<void>;
 }): Promise<PendingResult> {
-  let r: { kind: "file"; text: string } | { kind: "missing" } | { kind: "error"; status: number; message: string };
+  let r: { kind: "file"; text: string; sha: string } | { kind: "missing" } | { kind: "error"; status: number; message: string };
   try {
     // sleep 只用于把 GET 的三次退避（1s/4s/10s）变成可注入接缝；缺省时 gh() 用真计时器（生产口径不变）
     r = (await readRepoFile(repo, PENDING_PATH, { token, fetchImpl, sleep })) as typeof r;
@@ -73,7 +79,7 @@ export async function loadPending({
     return { kind: "error", status: r.status, message: r.message, hint: c.hint };
   }
   try {
-    return { kind: "loaded", pending: parsePending(r.text) };
+    return { kind: "loaded", pending: parsePending(r.text), sha: r.sha, text: r.text };
   } catch (e) {
     return { kind: "error", status: 200, message: (e as Error).message, hint: "解析失败按停机处理：队列内容不可信，绝不能当成空。" };
   }
