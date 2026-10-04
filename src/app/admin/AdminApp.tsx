@@ -16,6 +16,7 @@ import DeniedPanel from "./DeniedPanel";
 import LoginPanel from "./LoginPanel";
 import ConfigPane from "./ConfigPane";
 import ReviewPane from "./ReviewPane";
+import CrawlPane from "./CrawlPane";
 import Workbench from "./Workbench";
 
 /** 设备码六件套：clientId/deviceCode 用来换 token，userCode/verificationUri 给人看，interval/expiresIn 定节奏。
@@ -201,6 +202,9 @@ export default function AdminApp() {
     </p>
   ) : null;
 
+  /** `!ctx` 的兜底句在四个槽位里只该有一份：抄四遍就会只有第一格是新的。 */
+  const notReady = <p className="adm-why">登录态尚未就绪：会话里没有可用的凭证，等一次重新登录或刷新。</p>;
+
   if (state.view === "denied") return <DeniedPanel state={state} />;
   if (!inWorkbench)
     return (
@@ -228,16 +232,14 @@ export default function AdminApp() {
           ctx ? (
             <ReviewPane ctx={ctx} onCount={setPendingCount} />
           ) : (
-            <p className="adm-why">登录态尚未就绪：会话里没有可用的凭证，等一次重新登录或刷新。</p>
+            notReady
           )
         ) : active === "config" ? (
-          ctx ? (
-            <ConfigPane ctx={ctx} />
-          ) : (
-            <p className="adm-why">登录态尚未就绪：会话里没有可用的凭证，等一次重新登录或刷新。</p>
-          )
+          ctx ? <ConfigPane ctx={ctx} /> : notReady
+        ) : active === "crawl" ? (
+          ctx ? <CrawlPane ctx={ctx} /> : notReady
         ) : (
-          <p className="adm-why">面板内容在 Task 10（触发爬取）、Task 11（发布历史）逐格接入。</p>
+          <p className="adm-why">面板内容在 Task 11（发布历史）接入。</p>
         )}
       </Workbench>
     </>

@@ -5,7 +5,10 @@
  *  ② 后置核对失败只降级成「已受理但未确认」（ok 态 + note），绝不折叠成 error——那会把已经发生的事
  *  说成没发生，逼人连点三次发三个爬取。
  *  效率事实（实测）：后置读撞 5xx 时 gh() 的 GET 退避是 1s/4s/10s，整条链路要占住 15005ms，
- *  所以计划 4 的触发按钮必须全程 aria-busy 禁用，不能让人以为卡死。 */
+ *  所以计划 4 的触发按钮必须全程 aria-busy 禁用，不能让人以为卡死。
+ *  （2026-09-30 换代注：本文件的「计划 4」指的是 /admin 四标签 UI 计划，因编号与并行窗口的整改计划撞车，
+ *   自外层计划 3 §7-23 起统一改称「计划 5」；这里落地的按钮是 src/app/admin/CrawlPane.tsx，
+ *   disabled + aria-busy 由它的 CrawlPanel 承担，用例见 tests/admin-crawl-ui.test.tsx。历史正文按原文保留。） */
 import { dispatchWorkflow, listWorkflowRuns } from "../../../crawler/github.mjs";
 import { classifyError } from "./errors";
 import { RUN_WORKFLOW } from "./runs"; // workflow 名与「发布历史」同源，常量只有一处

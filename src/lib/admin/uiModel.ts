@@ -7,6 +7,7 @@
 import type { AdminView, WaitResult } from "./auth";
 import type { ChangeRow, PendingJson, ReviewContext } from "./pending";
 import type { PublishResult } from "./publish";
+import type { RunsResult } from "./runs";
 import type { TriggerResult } from "./trigger";
 
 /** 12 态验收矩阵（D7）：id 与计划 3 §7-2/§7-6 的口径一一对应，Task 14 的文档表格由此导出，
@@ -290,4 +291,24 @@ export const ADD_CARD_NOTE =
 export function configSaved(res: { kind: string }): Receipt {
   if (res.kind === "unchanged") return { tone: "info", text: `ℹ ${NO_CHANGE_NOTE}：远端内容与提交结果逐字相同，本次没有产生 commit`, lines: [] };
   return { tone: "ok", text: "✓ 已提交 config/site-config.json，deploy.yml 看到 config/ 变化后自动重建线上站点", lines: [`提交号 ${String(res.kind === "committed" ? (res as { commitSha?: string }).commitSha ?? "未返回" : "")}`.trim()] };
+}
+
+/* ── Tab3「触发爬取」──────────────────────────────────────────── */
+
+/** 按钮文本取自原型 1041 逐字。为什么没有「爬取中…」这一档：GitHub 的 workflow_dispatch 只回 202 空应答，
+ *  在途期间我们能知道的只有「请求还没返回」；说「爬取中」等于把「已提交触发请求」说成「runner 正在跑」——
+ *  而 runner 可能还在排队（§1 红线 7）。 */
+export const TRIGGER_BUTTON = "立即爬取一次";
+
+/** 「上次运行」小徽标：RunsResult 的三种可能（没读到 / 读失败 / 读到）都要有话。
+ *  为什么不给一个空串了事：徽标消失会被读成「这个 workflow 从没跑过」，那是把「我们没读到」说成「它没有」——
+ *  runs.ts 顶部立这一层就是为了不让组件把两种东西混成一格。
+ *  读失败也照此办理：它不构成禁用触发按钮的理由（dispatch 不需要先读到 runs）。 */
+export function lastRunNote(res: RunsResult | null): { className: string; text: string } {
+  if (res === null) return { className: "adm-badge run", text: "正在核对上次运行…" };
+  if (res.kind === "error")
+    return { className: "adm-badge bad", text: `没读到上次运行（${res.message}）：不影响这里触发，触发后请去「发布历史」核对。` };
+  if (!res.runs.length) return { className: "adm-badge run", text: "还没有 crawl.yml 的运行记录" };
+  const row = historyRow(res.runs[0]); // 取第一条＝最新：GitHub 的 runs 按倒序返回，trigger.ts 的 before/after 对照用的是同一个前提
+  return { className: `adm-badge ${row.badgeTone}`, text: `上次运行 ${row.badgeText} · ${row.clock}` }; // 色档与文字都搬 historyRow，这里不重算 conclusion
 }
