@@ -12,6 +12,9 @@ on:
       - "tests/**"
       - "public/**"
       - "package.json"
+      - "package-lock.json"
+      - "next.config.mjs"
+      - ".lighthouserc.json"
       - ".github/workflows/deploy.yml"
   workflow_dispatch: {}
 
