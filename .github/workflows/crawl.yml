@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
   issues: write
+  # dispatch deploy.yml 要用：GitHub 防循环规则下，crawl 用 GITHUB_TOKEN 推的 commit
+  # 不会触发 deploy.yml（见下方 dispatch 步骤的注释）。改用 workflow_dispatch 绕开，
+  # 而 workflow_dispatch 的 REST 端点要求 actions: write —— 缺这一行会直接 403。
+  actions: write
 
 jobs:
   crawl:
@@ -26,7 +30,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: npm run crawl --silent
-      - name: 数据确有变化才提交（push 触发 deploy.yml 的 paths 过滤）
+      - name: 数据确有变化才提交 + 显式触发部署（push 事件不会自动触发 deploy）
+        env:
+          # dispatch 用 GITHUB_TOKEN 即可：workflow_dispatch 是防循环规则明列的无条件例外。
+          # 前提是 permissions 里有 actions: write（本文件顶部已加），否则这里 403。
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -55,7 +64,41 @@ jobs:
               git rebase --abort 2>/dev/null || true
               exit 1
             fi
-            git push
+            # push 必须显式判成败：后面要 dispatch deploy，若 push 静默失败还去 dispatch，
+            # 就会部署一份「没有新数据」的产物，白跑 3-4 分钟门禁并掩盖真正的推送故障。
+            # 不依赖 shell 的 -e（GitHub Actions 默认 bash -e，但那是隐式行为，显式更稳）。
+            git push || {
+              echo "::error::推送数据到 main 失败：本次不触发部署，避免部署无新数据的产物。"
+              exit 1
+            }
+            # 数据推上去了，但站点不会自动更新——必须显式 dispatch 一次 deploy。
+            # 原因：GitHub 防循环规则「由 GITHUB_TOKEN 触发的事件不会创建新的 workflow run」，
+            # 例外只有 workflow_dispatch 与 repository_dispatch。deploy.yml 靠 on: push + data/**
+            # 过滤触发，而本次 push 用的正是 secrets.GITHUB_TOKEN，所以它永远不会被触发。
+            # 实证：bot 提交 156a82d 真实改了 data/tokens.json（直接命中 paths），但 deploy
+            # 全部 7 次 run 的 head_sha 无一例外是人工提交——抓取通了，上线这一环是断的。
+            # workflow_dispatch 是文档明列的无条件例外，用 GITHUB_TOKEN 触发也会创建 run，
+            # 所以不需要 PAT、不需要 GitHub App。
+            #
+            # 放在 else 分支内：走「无实质数据变化」那条路时产物不会变，白跑一次
+            # quality+lighthouse 约 3-4 分钟没有意义。
+            # --fail-with-body：dispatch 失败（如 403 权限不足）必须让本步变红，
+            # 否则会出现「数据提交了、但没部署、且没人知道」——这正是本轮要修的病。
+            echo "::group::触发 deploy（数据已推 main，push 事件不会自动触发它）"
+            code=$(curl --fail-with-body -sS -o /tmp/dispatch.out -w '%{http_code}' \
+              -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/vnd.github+json" \
+              --data-binary '{"ref":"main"}' \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/deploy.yml/dispatches") || {
+                echo "::error::触发 deploy 失败（HTTP ${code:-未知}）：数据已提交但不会上线。$(cat /tmp/dispatch.out 2>/dev/null)"
+                echo "::endgroup::"
+                exit 1
+              }
+            echo "dispatch 返回 HTTP ${code}（204 为受理成功）"
+            [ -s /tmp/dispatch.out ] && cat /tmp/dispatch.out
+            echo "::endgroup::"
           fi
 
   review:
