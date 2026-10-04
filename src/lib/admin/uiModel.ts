@@ -312,3 +312,49 @@ export function lastRunNote(res: RunsResult | null): { className: string; text: 
   const row = historyRow(res.runs[0]); // 取第一条＝最新：GitHub 的 runs 按倒序返回，trigger.ts 的 before/after 对照用的是同一个前提
   return { className: `adm-badge ${row.badgeTone}`, text: `上次运行 ${row.badgeText} · ${row.clock}` }; // 色档与文字都搬 historyRow，这里不重算 conclusion
 }
+
+/* ── Tab4「发布历史」的分流与措辞（Task 11）────────────────────────────── */
+
+/** 列序是契约，不是排版选择：Task 5 的 639 档隐藏 `.adm-hist` 的第 4 列（耗时），
+ *  这里一改序，手机上隐掉的就是「状态」。要改这一行必须同时改那条 @media。 */
+export const HISTORY_HEAD = ["运行", "触发源", "状态", "耗时", "时间（UTC）"] as const;
+
+/** 等待句与 Tab1 的「正在读取待审队列…」分开写：两格读的不是同一个东西，
+ *  共用一句会让「正在读取…」在两个面板里含义漂移。 */
+export const HISTORY_LOADING_TEXT = "正在读取 crawl.yml 的运行记录…";
+
+/** caption 报的是实际读到的条数，不是 perPage：GitHub 在限流时会回少于请求数的 run，
+ *  写死「最近 5 次」等于把「只读到 2 条」说成「总共只跑过 2 次」。 */
+export const historyCaption = (n: number) => `Workflow runs（本次读到 ${n} 次）`;
+
+/** 邮戳两格分开：Tab1 的「档案已清」说的是队列被清空，这一枚「无记录」说的是这条链路还没跑过。
+ *  note 里引用 TRIGGER_BUTTON，是为了让「那个按钮叫什么」在四个 pane 之间只有一份真值。 */
+export const EMPTY_HISTORY = {
+  stamp: "无记录",
+  heading: "还没有发布记录",
+  note: `点「${TRIGGER_BUTTON}」排一次队，或等 crawl.yml 的自动运行跑完，这里就会出现记录。`,
+};
+
+/** 三个阈值照抄 .lighthouserc.json（median 2500 / median 0.1 / minScore 0.95）；
+ *  「不带病上线」出自 deploy.yml 门禁步骤的注释，「保持上一次成功发布的版本」出自 deploy job 的
+ *  `needs: lighthouse`——门禁红，发布 job 根本不跑，Pages 上还是上次的产物。
+ *  用例⑧直接读这两个文件对账，配置改口而措辞没跟上就会红。 */
+export const HISTORY_GATE_NOTE =
+  "Lighthouse 门禁（LCP < 2500ms · CLS < 0.1 · 无障碍得分 ≥ 0.95）不达标即判失败，不带病上线；任一步失败时线上保持上一次成功发布的版本。";
+
+export type HistoryViewState =
+  | { kind: "loading"; text: string }
+  | { kind: "error"; bar: ErrorBar }
+  | { kind: "empty" }
+  | { kind: "list"; rows: HistoryRowView[]; caption: string };
+
+/** 四支分流只此一处（§1 红线 1）。res === null 是「还没回」＝loading；
+ *  ok 且 runs 为空数组才是「回来了、确实没有」＝empty。两者并成一支，就把「读不到」渲成了
+ *  「上游还没跑过」——runs.ts 顶部立那一层要挡的正是它，分流也必须留在同一层。 */
+export function historyView(res: RunsResult | null): HistoryViewState {
+  if (res === null) return { kind: "loading", text: HISTORY_LOADING_TEXT };
+  if (res.kind === "error") return { kind: "error", bar: errorBar("history", res.message, res.status, res.hint) };
+  const rows = res.runs.map(historyRow);
+  if (!rows.length) return { kind: "empty" };
+  return { kind: "list", rows, caption: historyCaption(rows.length) };
+}

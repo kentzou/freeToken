@@ -17,6 +17,7 @@ import LoginPanel from "./LoginPanel";
 import ConfigPane from "./ConfigPane";
 import ReviewPane from "./ReviewPane";
 import CrawlPane from "./CrawlPane";
+import HistoryPane from "./HistoryPane";
 import Workbench from "./Workbench";
 
 /** 设备码六件套：clientId/deviceCode 用来换 token，userCode/verificationUri 给人看，interval/expiresIn 定节奏。
@@ -239,7 +240,7 @@ export default function AdminApp() {
         ) : active === "crawl" ? (
           ctx ? <CrawlPane ctx={ctx} /> : notReady
         ) : (
-          <p className="adm-why">面板内容在 Task 11（发布历史）接入。</p>
+          ctx ? <HistoryPane ctx={ctx} /> : notReady
         )}
       </Workbench>
     </>
