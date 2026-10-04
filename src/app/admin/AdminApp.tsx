@@ -167,8 +167,11 @@ export default function AdminApp() {
         <LoginPanel
           view={state}
           repo={repo}
-          /** config 还没读回来时不能报「缺 client_id」——那时只是「还没读」，谎报会把 checking 抢掉 */
-          clientIdMissing={config ? missingClientId(config) : false}
+          /** 「缺 client_id」只有两种情况下才该说：config 读回来了且真的缺（missingClientId），
+           *  或外壳压根没读到 config 而落进 unconfigured（Step 5 的 catch 归口，C7）——后者由 blocked 分支
+           *  渲出 classifyError 的真实 hint 并把按钮禁掉。checking 期间两个都不成立：
+           *  那时只是「还没读」，谎报会把 checking 抢掉。 */
+          clientIdMissing={config ? missingClientId(config) : state.view === "unconfigured"}
           flow={device}
           polling={polling}
           onStart={onStart}

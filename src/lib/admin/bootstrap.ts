@@ -2,10 +2,10 @@
  *  三级取值：NEXT_PUBLIC_REPO（显式覆盖，留给自定义域）→ NEXT_PUBLIC_SITE_URL 反推 → 空串（不可用）。
  *  `process.env.NEXT_PUBLIC_*` 是编译期内联，读取 NEXT_PUBLIC_* 不违反 §1 红线 2（那是给 window/Date.now 立的规矩）。 */
 
-/** 惰性读取环境变量（计划 5 D4 实施细节）：NEXT_PUBLIC_* 在 vitest 是运行时读取、在客户端 bundle 由 Next 内联字面属性访问。
- *  放在模块顶层常量会在首次 import 时固化，「先设后删」的寻址用例就再也读不到改动；
- *  推迟到调用点读取，两种环境语义都成立。 */
-const env = (k: string) => String(process.env[k] ?? "").trim();
+/** 惰性 × 字面量：两个约束必须同时满足（执行期 C6 定稿形态）。
+ *  键写成字面成员表达式 ⇒ Next 客户端构建才会内联；读取放进函数 ⇒ vitest 才会每次重读。 */
+const envRepo = () => String(process.env.NEXT_PUBLIC_REPO ?? "").trim();
+const envSiteUrl = () => String(process.env.NEXT_PUBLIC_SITE_URL ?? "").trim();
 
 /** Pages 标准地址形如 https://<owner>.github.io/<repo>/；其余形态（自定义域、根域）一律认不出。 */
 export function deriveRepo(siteUrl: string): string {
@@ -19,9 +19,9 @@ export function deriveRepo(siteUrl: string): string {
 }
 
 export function bootstrapRepo(): string {
-  const override = env("NEXT_PUBLIC_REPO");
+  const override = envRepo();
   if (override.includes("/")) return override;
-  return deriveRepo(env("NEXT_PUBLIC_SITE_URL"));
+  return deriveRepo(envSiteUrl());
 }
 
 /** config 里也允许写 githubRepo（计划 3 的字段）。两者都有值却不一致时，写面会落到「以哪个为准」猜错的地方，
@@ -32,6 +32,3 @@ export function repoMismatch(fromBuild: string, fromConfig: string): string {
   if (!a || !b || a === b) return "";
   return `仓库地址冲突：config/site-config.json 写的是 ${b}，构建期为 ${a}。写操作只会落到其一，请核对后统一。`;
 }
-
-/** SITE_URL 的反推需要暴露给测试的第二个入口（deriveRepo 收参数，这里给当前构建期值） */
-export const siteRepo = () => deriveRepo(env("NEXT_PUBLIC_SITE_URL"));

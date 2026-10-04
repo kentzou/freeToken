@@ -25,14 +25,14 @@ export const STATES: { id: string; name: string; trigger: string; exit: string; 
   { id: "crawlError", name: "触发失败", trigger: "dispatch 返回 401", exit: "CrawlPane 错误条", copy: "triggerReceipt(error)" },
   { id: "historyEmpty", name: "历史清空", trigger: "runs 应答为空数组", exit: "HistoryPane 空态", copy: "EMPTY_HISTORY（邮戳「无记录」；与 Tab1 的「档案已清」分开——两格说的不是一件事）" },
   { id: "configError", name: "配置保存失败", trigger: "Contents PUT 返回 422", exit: "ConfigPane 错误条", copy: "errorBar(config)" },
-  { id: "unconfigured", name: "未配置 OAuth", trigger: "oauthClientId 为空的 config", exit: "LoginPanel 引导条", copy: "loginCopy(unconfigured)" },
+  { id: "unconfigured", name: "未配置 OAuth", trigger: "oauthClientId 为空的 config；或外壳压根没读到 config（Task 6 catch 归口，执行期 C7）", exit: "LoginPanel 引导条（blocked 分支：禁按钮 + 搬运 state.hint）", copy: "loginCopy(unconfigured)" },
   { id: "noRepo", name: "后台寻址失败", trigger: "NEXT_PUBLIC_REPO 与 SITE_URL 都取不到仓", exit: "LoginPanel 引导条", copy: "loginCopy(noRepo)" },
   { id: "publishPartial", name: "发布部分失败", trigger: "第二个文件 PUT 抛 409", exit: "ReviewPane 回执", copy: "publishReceipt(failed)" },
 ];
 
 export const loginCopy = (view: AdminView | "noRepo"): { heading: string; note: string } => {
   if (view === "checking") return { heading: "正在核对登录状态…", note: "读取本地会话并向 GitHub 确认身份，无需操作。" };
-  if (view === "unconfigured") return { heading: "后台尚未配置", note: "缺 oauthClientId：任何登录请求都不该发出。" };
+  if (view === "unconfigured") return { heading: "后台尚未配置", note: "没读到 config/site-config.json，或其中的 oauthClientId 为空——两种情况下任何登录请求都不该发出。" };
   if (view === "noRepo") return { heading: "后台尚未配置仓库地址", note: "构建期未注入 NEXT_PUBLIC_SITE_URL，也没设 NEXT_PUBLIC_REPO。" };
   if (view === "expired") return { heading: "登录已过期", note: "请重新完成 Device Flow 登录。" };
   return { heading: "管理后台登录", note: "GitHub Device Flow —— 仅需 OAuth App 的 client_id（公开值），无 client secret，纯静态可实现。" };
