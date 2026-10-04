@@ -1,4 +1,4 @@
-/** 样式层的三条硬事实，值得用测试钉住：
+/** 样式层的四条硬事实，值得用测试钉住：
  *  ① admin.css 必须被 globals.css 引入——否则 Task 6 起所有 .adm-* 都是无样式裸 HTML；
  *  ② 本站 CSS 基座是 @media，@container 一次都不许出现（§1 红线 5，原型用的是容器查询）；
  *  ③ 组件里写到的每个 adm- 类名必须在 admin.css 里有定义——缺一条就是「有元素没样式」的静默缺陷。
@@ -27,10 +27,22 @@ describe("后台样式基座", () => {
     for (const tone of ["ok", "warn", "bad", "info"]) expect(css).toContain(`.adm-statebar.${tone}`);
   });
 
-  it("复用前台既有实现，不新造邮戳与按钮：文件里不得出现 .stamp 的第二次定义", () => {
+  it("不给全局层叠添堵：不复写 .stamp/.btn-primary，且顶层类名一律 adm- 前缀", () => {
     expect(css).not.toMatch(/^\.stamp\s*\{/m);
     expect(css).not.toMatch(/^\.btn-primary\s*\{/m);
     expect(css).toContain(".adm-stampbox .stamp");
+    // 本文件经 globals.css 全站引入，裸工具类（原型里的 .sw 那类名字）会直接改变前台既有页面的层叠结果。
+    // 允许 .adm-tab .n 这种被 adm- 容器圈住的后代选择器，只禁「整条选择器里一个 adm- 都没有」的裸类定义。
+    // 按行取规则头判定（本文件规则一律单行书写，@media 块内的规则同样独占一行）。
+    const bare: string[] = [];
+    for (const line of css.replace(/\/\*[\s\S]*?\*\//g, "").split("\n")) {
+      if (!line.includes("{")) continue;
+      const sel = line.split("{")[0].trim();
+      for (const cls of sel.match(/\.[a-z][a-z0-9-]*/g) ?? []) {
+        if (!cls.startsWith(".adm-") && !sel.includes(".adm-")) bare.push(`${sel} 里的 ${cls}`);
+      }
+    }
+    expect(bare).toEqual([]);
   });
 
   it("组件里出现的每个 adm- 类名都在 admin.css 有定义（缺一个就报缺哪个）", () => {
