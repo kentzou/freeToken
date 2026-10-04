@@ -6,6 +6,15 @@ const crawl = load(readFileSync(".github/workflows/crawl.yml", "utf8")) as Recor
 const deploy = load(readFileSync(".github/workflows/deploy.yml", "utf8")) as Record<string, any>;
 const lhrc = JSON.parse(readFileSync(".lighthouserc.json", "utf8"));
 
+/* 两条提取器提到模块级。此前 crawlSteps / reviewSteps 是每个用例内联一份
+   `.map((s) => s.run || "").join("\n")`，而 `cmds` 只定义在第一个 it() 的作用域内——
+   别的 describe 块根本拿不到它。本组红线（crawl → deploy 上线链）需要在模块级取这两条，
+   故一并提上来共用，避免同一个过滤/拼接逻辑在文件里散落多份。
+   注：第一个 it() 内部仍留有一份同名 `cmds`，它会遮蔽本处（实现逐字相同，行为无差异），
+   属过渡态；等那处内联定义被清理时一并删除即可，不影响任何断言。 */
+const cmds = (steps: string) => steps.split("\n").filter((l) => !l.trim().startsWith("#")).join("\n");
+const runs = (job: { steps: { run?: string }[] }) => job.steps.map((s: { run?: string }) => s.run || "").join("\n");
+
 describe("workflow 结构红线（真实执行列入线上步骤，这里锁死形态）", () => {
   it("crawl.yml：6 小时 cron + dispatch + issue_comment 三入口；数据 commit 只在真变更时发生", () => {
     expect(crawl.on.schedule).toEqual([{ cron: "0 */6 * * *" }]);
