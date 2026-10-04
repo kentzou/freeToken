@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "d58ee253bb2f8f51fad20aabbf1b6d4a878de427",
-  "detectedAt": "2026-10-01T22:27:24.906Z",
+  "upstreamSha": "a5eab3d1e6d4892918992168380970f3a9fb7695",
+  "detectedAt": "2026-10-04T16:42:32.682Z",
   "changes": [
     {
       "kind": "card",
