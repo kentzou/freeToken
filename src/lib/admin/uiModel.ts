@@ -69,7 +69,7 @@ export const deniedText = (login: string, hint: string) => ({
   note: hint,
 });
 
-export const ERROR_SUBJECT = { pending: "待审列表读取失败", config: "保存失败", crawl: "触发失败", history: "发布历史读取失败" } as const;
+export const ERROR_SUBJECT = { pending: "待审列表读取失败", config: "保存失败", configLoad: "配置读取失败", crawl: "触发失败", history: "发布历史读取失败" } as const;
 
 export interface ErrorBar {
   className: string;
@@ -270,4 +270,24 @@ export function reviewView(ctx: ReviewContext | null, rows: ChangeRow[]): Review
   if (p.kind === "empty") return { kind: "empty" };
   // C8：批注必须读 ctx.issueNote——issueNumber 为 0 有两种来路（确实没有 / 没读到），分流不能替它挑一个
   return { kind: "list", rows, source: sourceLine(p.pending, ctx.issueNumber || null), note: approveNote(ctx.issueNumber || null, ctx.issueNote) };
+}
+
+/* ── Tab2「变现配置」──────────────────────────────────────────── */
+
+export const SAVE_BUTTON = "保存并 commit"; // 原型 1027 逐字（执行期 D9：原写 1029 差两行）：commit 这个词要留着，它说的是真的会提交一个 commit
+export const NO_CHANGE_NOTE = "没有待保存的改动";
+export const TYPE_UNSET = "（不覆盖）";
+export const inviteAriaLabel = (name: string) => `${name} 邀请码`;
+export const hideAriaLabel = (name: string) => `hide ${name} 卡（开为隐藏）`;
+
+/** 原型 1028 那颗「+ 新增合作卡」按钮不在这里做，且必须说清为什么（执行期 D9：原写 1030 差两行）：
+ *  crawler/clean.mjs:127 的 applySiteConfig 遍历的是 cfg.cards 的键、把它们打到**同名的受版卡**上；
+ *  一个只存在于 config 里的新卡名没有任何渲染出口——点了保存会真的 commit，页面上却什么都不会出现。
+ *  「新增卡」的正路是数据面（上游爬取或手工改 data/tokens.json 走审核）。 */
+export const ADD_CARD_NOTE =
+  "新增卡片不在这里做：这份配置只能覆盖已有卡片的展示字段，写一个库里没有的卡名会保存成功但页面上不出现（卡片本体属于 data/ 数据面，走上游爬取或审核合入）。";
+
+export function configSaved(res: { kind: string }): Receipt {
+  if (res.kind === "unchanged") return { tone: "info", text: `ℹ ${NO_CHANGE_NOTE}：远端内容与提交结果逐字相同，本次没有产生 commit`, lines: [] };
+  return { tone: "ok", text: "✓ 已提交 config/site-config.json，deploy.yml 看到 config/ 变化后自动重建线上站点", lines: [`提交号 ${String(res.kind === "committed" ? (res as { commitSha?: string }).commitSha ?? "未返回" : "")}`.trim()] };
 }

@@ -14,6 +14,7 @@ import { loginOutcome } from "@/lib/admin/uiModel";
 import type { SiteConfig } from "@/lib/types";
 import DeniedPanel from "./DeniedPanel";
 import LoginPanel from "./LoginPanel";
+import ConfigPane from "./ConfigPane";
 import ReviewPane from "./ReviewPane";
 import Workbench from "./Workbench";
 
@@ -229,8 +230,14 @@ export default function AdminApp() {
           ) : (
             <p className="adm-why">登录态尚未就绪：会话里没有可用的凭证，等一次重新登录或刷新。</p>
           )
+        ) : active === "config" ? (
+          ctx ? (
+            <ConfigPane ctx={ctx} />
+          ) : (
+            <p className="adm-why">登录态尚未就绪：会话里没有可用的凭证，等一次重新登录或刷新。</p>
+          )
         ) : (
-          <p className="adm-why">面板内容在 Task 9（变现配置）、Task 10（触发爬取）、Task 11（发布历史）逐格接入。</p>
+          <p className="adm-why">面板内容在 Task 10（触发爬取）、Task 11（发布历史）逐格接入。</p>
         )}
       </Workbench>
     </>
