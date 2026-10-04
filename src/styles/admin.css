@@ -1,0 +1,113 @@
+/* /admin 值班室（计划 5）：类名一律 adm- 前缀，随组件作用域走（见计划 §5 Task 5 的类名口径）。
+   邮戳、按钮、空态、顶栏复用 app.css 的 .stamp、.btn-* 族、.empty-state、.shell-top，本文件只补后台特有的
+   定位与配色——同一视觉语言绝不出现第二份定义（红线 1 的样式版）。 */
+
+.adm-note { padding: 7px 16px; background: var(--surface-2); border-bottom: 1px dashed var(--line); color: var(--ink-3); font-size: 11.5px; text-align: center; }
+.adm-top { flex-wrap: wrap; border-bottom: 2px solid var(--line-strong); z-index: 60; }
+.adm-top .adm-who { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--ink-2); }
+.adm-top .adm-statebar { flex: 1 1 100%; margin: 0 0 8px; }
+.adm-body { max-width: 1040px; margin: 0 auto; padding: 0 24px 46px; }
+
+.adm-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 16px 0 0; border-bottom: 1px solid var(--line); scrollbar-width: thin; }
+.adm-tab { min-height: 40px; padding: 6px 16px; border: 1px solid transparent; border-bottom: none; border-radius: 10px 10px 0 0; background: transparent; color: var(--ink-2); font-size: 13.5px; font-weight: 700; cursor: pointer; white-space: nowrap; position: relative; }
+.adm-tab:hover { color: var(--brand-deep); background: var(--brand-soft); }
+.adm-tab.on { background: var(--surface); border-color: var(--line); color: var(--ink-1); }
+.adm-tab.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2.5px; background: var(--brand); }
+.adm-tab .n, .adm-count .n { display: inline-flex; min-width: 18px; height: 18px; padding: 0 5px; margin-left: 5px; align-items: center; justify-content: center; border-radius: 999px; background: var(--warn-bg); color: var(--warn-ink); font-size: 11px; font-weight: 800; }
+.adm-count { margin: 0; font-size: 12px; color: var(--ink-3); }
+
+.adm-pane { display: none; padding: 22px 0 46px; }
+.adm-pane.on { display: block; }
+/* hidden 属性必须能压过 .on 的 display:block：面板可见性由 tabAria/paneAria 同时给 class 与 hidden，
+   只靠 class 的话，一次态漏刷就会让两个面板并排显示。 */
+.adm-pane[hidden] { display: none !important; }
+
+.adm-card { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: 0 8px 24px rgba(16, 24, 20, 0.1); padding: 18px 20px; }
+.adm-card + .adm-card { margin-top: 14px; }
+.adm-card h3 { margin: 0 0 4px; font-size: 15.5px; font-family: var(--font-serif); }
+.adm-meta { margin: 0; font-size: var(--meta-size); color: var(--ink-4); line-height: 1.6; }
+.adm-mono { font-family: var(--font-mono); }
+.adm-why { font-size: 12px; color: var(--ink-4); line-height: 1.6; }
+
+.adm-kind { display: inline-block; margin-right: 8px; padding: 1px 9px; border-radius: 6px; font-size: 11.5px; font-weight: 800; vertical-align: 2px; }
+.adm-kind.mod { background: var(--warn-bg); color: var(--warn-ink); }
+/* Task 7 改口：真实队列的第二种形态是「删除」而不是「新增」（run.mjs 的 syncOnce 把 added 直接自动发布），
+   原型那支 `.adm-kind.add` 在这里是永远不会挂上的死类名——换成删除那支，红色沿用 .del 的同族值。 */
+.adm-kind.del { background: rgba(161, 65, 65, 0.1); color: #a14141; }
+
+.adm-diff { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 12px 0 2px; }
+.adm-diff th, .adm-diff td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+.adm-diff th { width: 88px; background: var(--surface-2); font-weight: 700; white-space: nowrap; }
+.adm-diff .del { color: #a14141; background: rgba(161, 65, 65, 0.08); text-decoration: line-through; word-break: break-all; }
+.adm-diff .add { color: var(--brand-deep); background: var(--brand-soft); word-break: break-all; }
+/* 规则表的整表全文（Task 7 的 whole 行两块 <pre>）：整表 JSON 带换行与缩进，
+   不 pre-wrap 会横着捅穿卡片，不换行读不到「哪一条被删了」。 */
+.adm-card pre { margin: 8px 0 0; padding: 10px 12px; overflow-x: auto; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
+
+.adm-acts { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+.adm-field { display: grid; gap: 5px; margin-bottom: 16px; }
+.adm-field > label { font-size: 12.5px; font-weight: 700; color: var(--ink-2); }
+.adm-hint { font-size: 11.5px; color: var(--ink-4); line-height: 1.6; }
+.adm-field input[type="text"], .adm-field select, .adm-invite, .adm-select { min-height: 40px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink-1); font: inherit; }
+.adm-field input[type="text"]:focus, .adm-invite:focus, .adm-select:focus { border-color: var(--brand); outline: none; box-shadow: 0 0 0 3px var(--brand-soft); }
+
+.adm-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px dashed var(--line); font-size: 13px; }
+.adm-row:last-child { border-bottom: none; }
+.adm-row .adm-mono { font-size: 11.5px; color: var(--ink-3); word-break: break-all; }
+.adm-sub { margin: 20px 0 10px; font-size: 13.5px; font-weight: 800; color: var(--ink-1); }
+
+/* 开关：真实标记是 role="switch" 的按钮，无可见文字，靠 aria-label（原型 1013 口径） */
+.sw { position: relative; width: 40px; height: 22px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; transition: 0.15s; flex: none; padding: 0; }
+.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--ink-3); transition: 0.15s; }
+.sw[aria-checked="true"] { background: var(--brand); border-color: var(--brand); }
+.sw[aria-checked="true"]::after { left: 20px; background: #fff; }
+.adm-invite { flex: 0 1 150px; min-height: 36px; padding: 4px 10px; font-size: 12px; }
+
+.adm-receipt { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 4px; font-size: 12px; color: var(--ink-3); }
+.adm-hist { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 12px; }
+.adm-hist th, .adm-hist td { border-bottom: 1px solid var(--line); padding: 9px 10px; text-align: left; }
+.adm-hist th { color: var(--ink-3); font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+.adm-badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 800; white-space: nowrap; }
+.adm-badge.ok { background: var(--brand-soft); color: var(--brand-deep); }
+.adm-badge.bad { background: rgba(161, 65, 65, 0.1); color: #a14141; }
+.adm-badge.run { background: var(--warn-bg); color: var(--warn-ink); }
+
+/* 邮戳两族（D8）：行内小戳自成一类，整页大戳复用 app.css 的 .stamp 只做定位 */
+.adm-stamp-mini { display: inline-block; transform: rotate(-6deg); border: 2px solid var(--stamp); border-radius: 8px; padding: 2px 10px; color: var(--stamp); font-weight: 900; font-size: 13px; letter-spacing: 0.1em; }
+.adm-stampbox { position: relative; width: 92px; height: 92px; margin: 0 auto 14px; }
+.adm-stampbox .stamp { top: 0; left: 0; right: auto; opacity: 0.9; }
+.adm-nf { display: grid; justify-items: center; gap: 10px; text-align: center; padding: 60px 24px; }
+.adm-nf h1 { font-family: var(--font-serif); font-size: 24px; margin: 0; }
+.adm-nf p { margin: 0; color: var(--ink-3); max-width: 52ch; }
+
+.adm-login { max-width: 480px; margin: 34px auto 46px; }
+.adm-flow { display: grid; gap: 14px; margin: 14px 0 6px; padding: 0; list-style: none; }
+.adm-flow li { display: flex; gap: 12px; align-items: flex-start; }
+.adm-flow li::before { content: attr(data-n); flex: none; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid var(--stamp); color: var(--stamp); font-weight: 900; font-size: 12px; }
+.adm-code { display: inline-block; font-size: 21px; letter-spacing: 0.18em; font-weight: 700; padding: 3px 14px; border: 1.5px dashed var(--line-strong); border-radius: 9px; background: var(--bg); margin-top: 4px; }
+
+.adm-statebar { padding: 9px 16px; border-radius: 10px; font-size: 13px; margin: 16px 0 0; }
+/* ok 档不可省：publishReceipt/triggerReceipt 的成功回执都回 tone:"ok"（Task 4 已定），
+   而基座没有背景与边框——少这一档，「✓ 已提交」会渲成一行无底色的裸字，
+   最该被看见的确认反而最不像确认。绿族沿用 tokens.css 的 --brand-soft/--brand-deep（深浅两套主题都有值）。 */
+.adm-statebar.ok { background: var(--brand-soft); color: var(--brand-deep); border: 1px solid rgba(15, 150, 110, 0.28); }
+.adm-statebar.warn { background: var(--warn-bg); color: var(--warn-ink); border: 1px solid rgba(154, 106, 0, 0.3); }
+.adm-statebar.bad { background: rgba(161, 65, 65, 0.1); color: #a14141; border: 1px solid rgba(161, 65, 65, 0.3); }
+.adm-statebar.info { background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--line); }
+
+.adm-crawl { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 20px; border: 1px dashed var(--line-strong); border-radius: 14px; background: var(--surface); }
+.adm-crawl .adm-why { flex: 1 1 260px; }
+.adm-skeleton { height: 14px; border-radius: 6px; background: var(--surface-2); }
+
+@media (max-width: 899px) {
+  .adm-body { padding: 0 18px 40px; }
+  .adm-diff th { width: 72px; }
+}
+/* 639 档收自原型 343–349：标签与卡片缩紧内边距、历史表隐去「耗时」列、触发区纵向堆叠 */
+@media (max-width: 639px) {
+  .adm-tab { padding: 6px 12px; font-size: 12.5px; min-height: 38px; }
+  .adm-card { padding: 14px; }
+  .adm-hist th:nth-child(4), .adm-hist td:nth-child(4) { display: none; }
+  .adm-top { padding: 10px 16px; }
+  .adm-crawl { flex-direction: column; align-items: stretch; text-align: center; }
+}
