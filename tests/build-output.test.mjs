@@ -125,7 +125,7 @@ test("robots.txt 随产物落地；有站点地址时 sitemap 与产物页集合
 });
 
 /* —— 计划 5 Task 12（§7-7/§7-8）：/admin 的产物存在性 + 「不进取索引面」的产物级证据。
-   刻意不并进第 32 行那个四内容页循环：/admin 不是内容页，它进的是「路由已生成且不被索引」这一组独立红线。 */
+   刻意不并进上方遍历 about/editorial-policy/privacy/contact 的那个内容页循环：/admin 不是内容页，它进的是「路由已生成且不被索引」这一组独立红线。 */
 test("/admin 已进产物且带 noindex（§7-8）", () => {
   const adminPath = path.join(OUT, "admin", "index.html");
   assert.ok(existsSync(adminPath), "缺 out/admin/index.html：/admin 路由没进产物");
@@ -136,5 +136,5 @@ test("/admin 已进产物且带 noindex（§7-8）", () => {
      真正的承诺是「noindex 在、且和 follow 一起出现」：只写 noindex 不给 follow，爬虫就不跟站内链接，前台的更新会被拖慢。 */
   assert.match(admin, /<meta name="robots" content="noindex, follow"/);
   /* 反向牙：前台首页不许出现 noindex。首页一旦被误挂，整站自然搜索归零，而这在 /admin 那一行同样改一行 metadata 就能发生。 */
-  assert.ok(!readFileSync(path.join(OUT, "index.html"), "utf8").includes('content="noindex, follow"'), "首页被挂上了 noindex");
+  assert.ok(!readFileSync(path.join(OUT, "index.html"), "utf8").includes("noindex"), "首页被挂上了 noindex");
 });

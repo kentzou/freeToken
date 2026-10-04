@@ -6,7 +6,6 @@ import { describe, expect, it } from "vitest";
 import { configRows, patchSiteConfig, validateConfigShape } from "@/lib/admin/config";
 import { buildPatch, draftFrom, hasPatch } from "@/lib/admin/configDraft";
 import type { DraftItem } from "@/lib/admin/configDraft";
-import type { ConfigRow } from "@/lib/admin/config";
 import type { SiteConfig } from "@/lib/types";
 
 const cfg = JSON.parse(readFileSync("config/site-config.json", "utf8")) as SiteConfig;

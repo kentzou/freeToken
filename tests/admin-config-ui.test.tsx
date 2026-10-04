@@ -4,8 +4,10 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { configRows } from "@/lib/admin/config";
 import { draftFrom } from "@/lib/admin/configDraft";
-import { ConfigForm } from "@/app/admin/ConfigPane";
-import { ADD_CARD_NOTE, NO_CHANGE_NOTE, SAVE_BUTTON, TYPE_UNSET } from "@/lib/admin/uiModel";
+import ConfigPane, { ConfigForm } from "@/app/admin/ConfigPane";
+import type { PaneCtx } from "@/app/admin/AdminApp";
+import { memoryStorage } from "@/lib/admin/session";
+import { ADD_CARD_NOTE, CONFIG_LOADING_TEXT, NO_CHANGE_NOTE, SAVE_BUTTON, TYPE_UNSET } from "@/lib/admin/uiModel";
 import type { SiteConfig } from "@/lib/types";
 
 const cfg = JSON.parse(readFileSync("config/site-config.json", "utf8")) as SiteConfig;
@@ -70,5 +72,22 @@ describe("ConfigForm", () => {
   });
   it("「新增卡不在这里做」那句话在页面上，不是只写在计划里", () => {
     expect(form()).toContain(ADD_CARD_NOTE);
+  });
+  it("容器首帧＝读取中而不是空态：措辞出自 uiModel，此时零按钮、零「保存失败」", () => {
+    const ctx: PaneCtx = {
+      repo: "hope0719/token-fbi",
+      token: "t",
+      login: "u",
+      storage: memoryStorage(),
+      config: null,
+      onExpired: () => {},
+    };
+    const html = renderToStaticMarkup(<ConfigPane ctx={ctx} />);
+    expect(html).toContain('role="status"');
+    expect(html).toContain('class="adm-skeleton"');
+    expect(html).toContain(CONFIG_LOADING_TEXT);
+    expect(html).toContain("正在读取 config/site-config.json…");
+    expect(html).not.toContain("<button");
+    expect(html).not.toContain("保存失败");
   });
 });

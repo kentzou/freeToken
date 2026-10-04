@@ -278,6 +278,12 @@ export function reviewView(ctx: ReviewContext | null, rows: ChangeRow[]): Review
 export const SAVE_BUTTON = "保存并 commit"; // 原型 1027 逐字（执行期 D9：原写 1029 差两行）：commit 这个词要留着，它说的是真的会提交一个 commit
 export const NO_CHANGE_NOTE = "没有待保存的改动";
 export const TYPE_UNSET = "（不覆盖）";
+/** 等待句第三格：Tab2 读的是仓内配置文件，与「待审队列」「crawl.yml 的运行记录」不是同一个对象，
+ *  共用一句会让「正在读取…」在三格里含义漂移（同 `HISTORY_LOADING_TEXT` 上方那条理由）。终审 I-1。 */
+export const CONFIG_LOADING_TEXT = "正在读取 config/site-config.json…";
+/** 行内 meta 报的是「当前覆盖值」，下拉那颗 `TYPE_UNSET` 报的是「选了会怎样」——两个语义角色、两种措辞，
+ *  但出口仍只有 uiModel 这一处（§1 红线 1 约束的是出口唯一，不是条数唯一）。终审 I-1 裁决注，勿再合并。 */
+export const TYPE_UNSET_META = "无";
 export const inviteAriaLabel = (name: string) => `${name} 邀请码`;
 export const hideAriaLabel = (name: string) => `hide ${name} 卡（开为隐藏）`;
 
