@@ -284,6 +284,9 @@ export const CONFIG_LOADING_TEXT = "正在读取 config/site-config.json…";
 /** 行内 meta 报的是「当前覆盖值」，下拉那颗 `TYPE_UNSET` 报的是「选了会怎样」——两个语义角色、两种措辞，
  *  但出口仍只有 uiModel 这一处（§1 红线 1 约束的是出口唯一，不是条数唯一）。终审 I-1 裁决注，勿再合并。 */
 export const TYPE_UNSET_META = "无";
+/** 与上一行同角色：都是「这一格没有覆盖值」的兜底措辞（状态→文案映射，红线 1 射程内），
+ *  所以同样不许在组件里各写一遍。复审 I-① 同族补钉依据。 */
+export const CATEGORY_UNSET_META = "未标注";
 export const inviteAriaLabel = (name: string) => `${name} 邀请码`;
 export const hideAriaLabel = (name: string) => `hide ${name} 卡（开为隐藏）`;
 

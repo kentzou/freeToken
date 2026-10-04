@@ -9,7 +9,7 @@ import type { Draft, DraftItem } from "@/lib/admin/configDraft";
 import { classifyError } from "@/lib/admin/errors";
 import { loadCurrentData } from "@/lib/admin/remote";
 import { catOf } from "@/lib/catalog";
-import { ADD_CARD_NOTE, CONFIG_LOADING_TEXT, NO_CHANGE_NOTE, SAVE_BUTTON, TYPE_UNSET, TYPE_UNSET_META, configSaved, errorBar, hideAriaLabel, inviteAriaLabel } from "@/lib/admin/uiModel";
+import { ADD_CARD_NOTE, CATEGORY_UNSET_META, CONFIG_LOADING_TEXT, NO_CHANGE_NOTE, SAVE_BUTTON, TYPE_UNSET, TYPE_UNSET_META, configSaved, errorBar, hideAriaLabel, inviteAriaLabel } from "@/lib/admin/uiModel";
 import type { ErrorBar, Receipt } from "@/lib/admin/uiModel";
 import type { SiteConfig } from "@/lib/types";
 import type { PaneCtx } from "./AdminApp";
@@ -58,7 +58,7 @@ export function ConfigForm({ rows, draft, preview, busy, dirty, receipt, error, 
               <div className="adm-row" key={r.name}>
                 <div className="adm-meta">
                   <div>{r.name}</div>
-                  <div className="adm-mono">受版分类：{r.category || "未标注"} · 现覆盖：{r.type || TYPE_UNSET_META}</div>
+                  <div className="adm-mono">受版分类：{r.category || CATEGORY_UNSET_META} · 现覆盖：{r.type || TYPE_UNSET_META}</div>
                 </div>
                 <input className="adm-invite" type="text" aria-label={inviteAriaLabel(r.name)} placeholder="邀请码（可选）" value={d.inviteCodes} disabled={busy} onChange={(e) => onRow(r.name, "inviteCodes", e.target.value)} />
                 <select className="adm-select" aria-label={`${r.name} 分类覆盖`} value={d.type} disabled={busy} onChange={(e) => onRow(r.name, "type", e.target.value)}>

@@ -7,7 +7,7 @@ import { draftFrom } from "@/lib/admin/configDraft";
 import ConfigPane, { ConfigForm } from "@/app/admin/ConfigPane";
 import type { PaneCtx } from "@/app/admin/AdminApp";
 import { memoryStorage } from "@/lib/admin/session";
-import { ADD_CARD_NOTE, CONFIG_LOADING_TEXT, NO_CHANGE_NOTE, SAVE_BUTTON, TYPE_UNSET } from "@/lib/admin/uiModel";
+import { ADD_CARD_NOTE, CATEGORY_UNSET_META, CONFIG_LOADING_TEXT, NO_CHANGE_NOTE, SAVE_BUTTON, TYPE_UNSET, TYPE_UNSET_META } from "@/lib/admin/uiModel";
 import type { SiteConfig } from "@/lib/types";
 
 const cfg = JSON.parse(readFileSync("config/site-config.json", "utf8")) as SiteConfig;
@@ -54,6 +54,10 @@ describe("ConfigForm", () => {
   it("分类下拉四档：三档取值 + 「不覆盖」，与 TYPE_VALUES 同源", () => {
     const html = form();
     for (const t of ["大模型", "工具", "项目", TYPE_UNSET]) expect(html).toContain(`>${t}</option>`);
+    /* 行内 meta 的两个兜底措辞也出自 uiModel（红线 1 射程＝状态→文案映射；复审 I-①）。
+       真配置当前零 type 覆盖、零受版分类回填，所以两串在每一行都必现。 */
+    expect(html).toContain(`现覆盖：${TYPE_UNSET_META}`);
+    expect(html).toContain(`受版分类：${CATEGORY_UNSET_META}`);
   });
   it("开关用 role=switch + aria-checked，键盘可达（不是把 checkbox 藏进按钮）", () => {
     const html = form();
@@ -89,5 +93,8 @@ describe("ConfigForm", () => {
     expect(html).toContain("正在读取 config/site-config.json…");
     expect(html).not.toContain("<button");
     expect(html).not.toContain("保存失败");
+    /* 复审 M-①：把「措辞只许出自 uiModel」从文档级 grep 升成自动钉——
+       照 admin-crawl-ui.test.tsx:101-109 的源码文本钉先例，pane 源码里出现这条字面串即为破口。 */
+    expect(readFileSync("src/app/admin/ConfigPane.tsx", "utf8")).not.toContain("正在读取 config/site-config.json");
   });
 });
