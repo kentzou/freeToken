@@ -99,3 +99,47 @@ describe("quality job 的 lint 闸（Task 7 基座钉）", () => {
     expect(pkg.scripts.lint).toContain("--max-warnings=0");
   });
 });
+
+/* —— 「抓到的数据必须真的上线」这条链的红线（2026-10-04 修）——
+   病根：crawl 用 secrets.GITHUB_TOKEN 推 main，而 GitHub 防循环规则下由 GITHUB_TOKEN 触发的
+   push 事件不创建新的 workflow run（例外只有 workflow_dispatch 与 repository_dispatch）；
+   deploy.yml 靠 on: push + paths: data/** 触发，于是抓到的新卡永远躺在仓库里不上站。
+   实证：bot 提交 156a82d 真实改了 data/tokens.json（直接命中 paths），deploy 全部 7 次 run 的
+   head_sha 却无一例外是人工提交。修法是 push 之后显式 dispatch，故下面把这条链逐环节钉死。 */
+describe("crawl → deploy 的上线链（GITHUB_TOKEN 防循环的绕行口）", () => {
+  const crawlSteps = runs(crawl.jobs.crawl);
+  /* 一律走 cmds()（剔注释行）：crawl.yml 的注释里我写了「--fail-with-body：dispatch 失败必须让
+     本步变红」这类说明文字，不剔注释的话「把真命令删掉、只留注释」照样绿——本文件顶部那条围栏
+     说的就是这件事。 */
+  const shell = cmds(crawlSteps);
+
+  it("actions: write 是 dispatch 的命门：缺它 dispatch 403，数据静默不上线", () => {
+    /* 上面那条 toMatchObject 是**部分匹配**，删掉 actions 这一行它照样全绿——所以必须单独钉。
+       这条权限是本轮修复唯一的前置开关，漏了不会有人发现，只表现为「站点数据不动了」。 */
+    expect(crawl.permissions.actions).toBe("write");
+  });
+
+  it("push 之后显式 dispatch deploy.yml，带对 ref、且失败必须变红", () => {
+    expect(shell).toContain("actions/workflows/deploy.yml/dispatches");
+    /* ref 钉死 main：写成别的分支就会拿错误分支的内容去构建发布，而 dispatch 仍是 204 受理成功，
+       症状同样是「站点内容不对」而非报错。 */
+    expect(shell).toContain('{"ref":"main"}');
+    /* 没有 --fail-with-body，dispatch 的 403 会被 curl 吞掉、step 照样绿——那就退回成
+       「数据提交了、但没部署、且没人知道」，正是本轮要修的那个病。 */
+    expect(shell).toContain("--fail-with-body");
+  });
+
+  it("push 失败即中止，不得继续 dispatch（否则部署一份没有新数据的产物）", () => {
+    expect(shell).toContain("git push ||");
+  });
+
+  it("dispatch 排在「无实质数据变化」判定之后：无变化那条路走不到 dispatch", () => {
+    /* 顺序钉（把 dispatch 挪到 git diff --cached --quiet 之前就会破）：无变化时产物不变，
+       白跑一次 quality+lighthouse 约 3-4 分钟没有意义。这是防回归的第二道闸。 */
+    expect(shell.indexOf("git diff --cached --quiet")).toBeLessThan(shell.indexOf("dispatches"));
+  });
+
+  it("deploy.yml 保留 workflow_dispatch 入口：它是 dispatch 的目标端点，删了会让上面的 dispatch 全部 404", () => {
+    expect(Object.keys(deploy.on)).toContain("workflow_dispatch");
+  });
+});
