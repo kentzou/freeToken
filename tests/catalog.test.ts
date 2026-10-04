@@ -36,20 +36,47 @@ describe("目录逻辑（真实种子数据基准）", () => {
     expect(vis.some((c) => c.name === "小米 MiMo（Xiaomi）")).toBe(false);
   });
 
-  it("pin 位次生效：带 pin 的卡恰好落在 index === pin-1", () => {
+  it("pin 位次生效：带 pin 的卡恰好落在 index === pin-1，且不扰动其余卡的自然序", () => {
     const vis = visibleCards(cards, donots, rules);
+    /* pin 之前的可见集用同一套谓词独立复算（与 :26-28 同源、不调用被测函数）。pin 只负责**挪位**，
+       因此重排后的多重集必须与输入完全一致：只移不删就出重卡、删了不插就丢卡。 */
+    const baseline = cards
+      .filter((c) => !donots.some((d) => d.name === c.name) && (c.alwaysShow || isFeatured(c, rules)));
+    expect(vis).toHaveLength(baseline.length);
+    expect(vis.map((c) => c.name).slice().sort()).toEqual(baseline.map((c) => c.name).slice().sort());
+
     const pinned = vis.filter((c) => c.pin);
-    expect(pinned.length).toBeGreaterThan(0); // 样本量：没有 pin 卡时下面循环空转=无牙
+    expect(pinned.length).toBeGreaterThan(0); // 样本量：没有 pin 卡时下面的循环空转=无牙
     for (const c of pinned) {
       expect(vis.indexOf(c)).toBe(Math.min((c.pin || 1) - 1, vis.length - 1));
     }
-    // 具体位次仍钉住一条：阶跃钉第 5（蓝博 sponsored 出局后，第 4 由自然序 Cline 补位）
-    expect(vis[3].name).toBe("Cline");
-    expect(vis[4].name).toBe("阶跃星辰 StepFun");
+    /* 下面这条替掉了原来 `vis[3] === "Cline"` / `vis[4] === "阶跃星辰 StepFun"` 两句硬编码卡名。
+       它们钉的是「第 4、5 位分别是谁」，而 pin 之外的位次就是 tokens.json 的书写顺序——上游每加
+       一张卡都会挤动它（本轮 DeepSeek 开放平台插到 index 1，Cline 就从第 4 位挪到第 5 位）。
+       pin 真正要保证的性质是「只挪被钉的卡，其余卡之间不得重排」，这条不随数据增长而变。 */
+    const natural = baseline.filter((c) => !c.pin).map((c) => c.name);
+    expect(vis.filter((c) => !c.pin).map((c) => c.name)).toEqual(natural);
   });
-  it("精选两张 = WorkBuddy + Qoder", () => {
+
+  it("精选区口径：editorial 的前两张，每张都真过了可见门槛（不钉是哪两张）", () => {
     const vis = visibleCards(cards, donots, rules);
-    expect(vis.slice(0, 2).map((c) => c.name)).toEqual(["WorkBuddy", "阿里云 Qoder（灵码）"]);
+    const editorial = splitByCategory(vis).editorial;
+    expect(editorial.length).toBeGreaterThanOrEqual(2); // 样本量：不足 2 张时下面全是空转=无牙
+    const featured = editorial.slice(0, 2);
+    /* 原来钉的是 `["WorkBuddy", "阿里云 Qoder（灵码）"]`——钉的是「头两张分别是谁」，而 vis 的头两位
+       取自 tokens.json 的书写顺序。上游新加的 DeepSeek 开放平台落到 index 1 后这条立刻假红：那是数据
+       变化，不是回归。精选区的语义是 editorial.slice(0,2)，钉口径与性质才不会每轮定时炸。 */
+    expect(featured).toHaveLength(2);
+    expect(featured.every((c) => catOf(c) !== "项目")).toBe(true); // 「项目」推广卡归 partners，不进今日头条
+    expect(featured.every((c) => c.alwaysShow || isFeatured(c, rules))).toBe(true);
+    expect(featured.some((c) => donots.some((d) => d.name === c.name))).toBe(false);
+    expect(new Set(featured.map((c) => c.name)).size).toBe(featured.length); // 同一张卡不得同时在两个精选位
+    /* 口径同源：HomeClient 的精选区必须仍是 splitByCategory(vis).editorial.slice(0, 2)。写成
+       vis.slice(0, 2) 会让「项目」类推广卡有机会进今日头条；写成 slice(0, 3) 则与上方「精选 2 条」
+       的 UI 文案对不上。UI 与 lib 各有一份取数，这份重复只能靠测试缝住——theme.test.ts 对 layout.tsx
+       用的是同一招。这是本用例唯一一条咬得住「精选区被改动」的断言，故不能省。 */
+    const homeClient = readFileSync(path.resolve(process.cwd(), "src", "components", "HomeClient.tsx"), "utf8");
+    expect(homeClient).toContain("splitByCategory(vis).editorial.slice(0, 2)");
   });
   it("splitByCategory：推广卡归 partners，editorial + partners 恒等于可见集", () => {
     const vis = visibleCards(cards, donots, rules);
