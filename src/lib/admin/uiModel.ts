@@ -5,7 +5,7 @@
  *  时间一律 UTC 且表头标注（D8 附注）：本页同时展示 run 时刻与核验日期，混用时区会让「09-29 12:00 的运行」
  *  看起来比「09-29」的核验更早或更晚，而 GitHub 返回的 ISO 串本来就是 UTC。 */
 import type { AdminView, WaitResult } from "./auth";
-import type { ChangeRow, PendingJson } from "./pending";
+import type { ChangeRow, PendingJson, ReviewContext } from "./pending";
 import type { PublishResult } from "./publish";
 import type { TriggerResult } from "./trigger";
 
@@ -204,3 +204,63 @@ export function sourceLine(pending: PendingJson, issueNumber: number | null): st
  *  故意不写「每 6 小时一定成功」——schedule 在 GitHub 侧会有延迟，措辞只承诺节奏设定。 */
 export const CRAWL_READER_NOTE =
   "数据从哪来：上游 hope0719/token-fbi 的公开 data.json，以及每个条目自己的平台官网直连核验。多久更新：crawl.yml 按 cron \"0 */6 * * *\" 每 6 小时一次，也可点上面的按钮手动触发一次。上游新增条目自动发布；已有条目的修改与删除会进「待审变更」等你盖章。你在这里保存或盖章的每个动作都会真实 commit 回仓库，deploy.yml 看到 data/ 或 config/ 变化后自动重建线上站点。";
+
+/* ── Tab1「待审变更」的四支分流与措辞（Task 7）────────────────────────────── */
+
+export const REVIEW_LOADING_TEXT = "正在读取待审队列…";
+export const RETRY_BUTTON = "重新读取";
+export const REJECT_LABEL = "驳回";
+export const ISSUE_LINK_LABEL = "打开审核 Issue";
+
+/** 措辞里绝不含「批准并发布」那四字：Task 7 的用例钉的是「批准并发布」在页面上出现 3 次
+ *  ＝三条非删除行的按钮。全量按钮若共用这个词根，那条断言就退化成「数实现字数」。 */
+export const approveAllLabel = (n: number) => `一次批准全部 ${n} 条`;
+
+export const WHOLE_CAPTION = "整表对比：规则表按整表审批，不逐条划线";
+export const WHOLE_ABSENT = "（这一侧没有这张表）";
+
+/** 空态三件套。大邮戳复用 app.css 的 .stamp（D8：不新造第三套邮戳），日期那一行了无实事可写，
+ *  所以空态只出 strong 不出 em——StampBadge 的 date 是必填项，它服务的是「核验于某日」，不是「档案已清」。 */
+export const EMPTY_REVIEW = {
+  stamp: "档案已清",
+  heading: "没有待审的变更",
+  note: "上游这一轮没有需要人工确认的改动。新增条目由 crawl.yml 直接自动发布；已有条目的修改与删除才会进这里等你盖章。",
+};
+
+export const extraFieldsNote = (n: number) => `另有 ${n} 处字段差异未列出，逐条核对请打开审核 Issue`;
+
+/** Issue 号决定盖章会留下什么：有 Issue 才有指令与回执，没有 Issue 只写文件。
+ *  「/approve」必须出现在批注里——它是 runReview 唯一认的指令形态，运维在这里读不到它，就会去 Issue 里写中文。 */
+export const approveNote = (issueNumber: number | null) =>
+  issueNumber
+    ? `盖章即向 Issue #${issueNumber} 下发 /approve 与 /reject 指令，并把回执与关单一并做完。`
+    : "当前没有开放的审核 Issue：数据文件照样会真实提交，只是没有回执可留。要留痕请先开一张带 review 标签的 Issue。";
+
+/** 盖章成功后重读回来的条数与写面报的 pendingLeft 不一致，才说明「你看的时候别人也动了」。
+ *  一致时出空串——组件里不许把空串渲成一行噪声（调用点用 `note ? … : null` 兜）。 */
+export const staleNote = (pendingLeft: number, rowCount: number) =>
+  pendingLeft === rowCount ? "" : `队列在你阅读期间又被改动：页面 ${rowCount} 条 / 远端 ${pendingLeft} 条，请刷新后再盖章。`;
+
+/** publishApprovals 只兜「单个文件写失败」；loadCurrentData / runReview 自己抛的会穿到 pane 的 catch。
+ *  这句话要说的是「本次可能只写出去了一半」，绝不是「失败且什么都没发生」——前者能让人去核对，后者会让人再点一次。 */
+export const publishCrash = (message: string, hint: string): Receipt => ({
+  tone: "bad",
+  text: `⚠ 盖章通路中途异常：${message}`,
+  lines: [`${hint} 已提交的文件不会重复提交（重试是幂等的），刷新后以队列实际条数为准。`],
+});
+
+export type ReviewViewState =
+  | { kind: "loading"; text: string }
+  | { kind: "empty" }
+  | { kind: "error"; bar: ErrorBar }
+  | { kind: "list"; rows: ChangeRow[]; source: string; note: string };
+
+/** 四支分流只此一处（§1 红线 1）。ctx 为 null 是「还没回」＝loading，
+ *  与 pending.kind==="empty" 的「回来了、确实是空」是两件事，共用一支就会把加载过程渲成结论。 */
+export function reviewView(ctx: ReviewContext | null, rows: ChangeRow[]): ReviewViewState {
+  if (!ctx) return { kind: "loading", text: REVIEW_LOADING_TEXT };
+  const p = ctx.pending;
+  if (p.kind === "error") return { kind: "error", bar: errorBar("pending", p.message, p.status, p.hint) };
+  if (p.kind === "empty") return { kind: "empty" };
+  return { kind: "list", rows, source: sourceLine(p.pending, ctx.issueNumber || null), note: approveNote(ctx.issueNumber || null) };
+}

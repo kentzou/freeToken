@@ -104,6 +104,8 @@ describe("Tab1 行语义", () => {
     whole: false,
     fields: [],
     extraFields: 0,
+    beforeText: "",
+    afterText: "",
     ...over,
   });
   it("真实 pending 的每一行都归「修改/删除」，绝不出现「新增」（新增是自动发布的，队列里没有）", () => {

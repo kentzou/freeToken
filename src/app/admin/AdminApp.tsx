@@ -5,7 +5,8 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { CHECKING_STATE, missingClientId, resolveView, startLogin, waitLogin } from "@/lib/admin/auth";
 import { loadSiteConfig } from "@/lib/admin/config";
 import { classifyError } from "@/lib/admin/errors";
-import { clearSession } from "@/lib/admin/session";
+import { clearSession, readSession } from "@/lib/admin/session";
+import type { StorageLike } from "@/lib/admin/session";
 import { bootstrapRepo, repoMismatch } from "@/lib/admin/bootstrap";
 import { FIRST_TAB, moveTab, tabAction, tabDomId } from "@/lib/admin/tabs";
 import type { TabKey } from "@/lib/admin/tabs";
@@ -13,6 +14,7 @@ import { loginOutcome } from "@/lib/admin/uiModel";
 import type { SiteConfig } from "@/lib/types";
 import DeniedPanel from "./DeniedPanel";
 import LoginPanel from "./LoginPanel";
+import ReviewPane from "./ReviewPane";
 import Workbench from "./Workbench";
 
 /** 设备码六件套：clientId/deviceCode 用来换 token，userCode/verificationUri 给人看，interval/expiresIn 定节奏。
@@ -24,6 +26,20 @@ interface Device {
   verificationUri: string;
   interval: number;
   expiresIn: number;
+}
+
+/** pane 的上下文包（D9）：外壳只注入「身份 + 上下文」，不注入数据。
+ *  四个 pane 各自在 effect 里发起自己的读，并把模块级 FETCH 显式当实参交给 src/lib/admin/*。
+ *  为什么不把四个 pane 的读态上收到这里：外壳会因此多出八份 state 与两套「何时算过期」，
+ *  而 token 也得不到第二份镜像——过期这件事仍然只有 markExpired 一个出口。
+ *  Task 9/10/11 逐字沿用它。type-only 反向导入（ReviewPane → 本文件）编译期擦除，不构成运行时循环。 */
+export interface PaneCtx {
+  repo: string;
+  token: string;
+  login: string;
+  storage: StorageLike;
+  config: SiteConfig | null;
+  onExpired: (hint: string) => void;
 }
 
 /** §1 红线 3：transport 只在这一处出现，且显式传 globalThis.fetch；组件与 lib 里不许有 mock 分支。
@@ -53,6 +69,8 @@ export default function AdminApp() {
       if (!storage) return;
       const next = await resolveView({ config: cfg, storage, fetchImpl: FETCH });
       setState(next);
+      const s = readSession(storage);
+      if (s?.token) setToken(s.token);
       // resolveView 在 expired 分支里已经 clearSession，本层不再清第二遍
     },
     [storage],
@@ -123,13 +141,28 @@ export default function AdminApp() {
     }
   }, [config, refresh, repo, storage]);
 
-  /** pane 的 401 出口（Task 7/9/10/11 各自在 catch 里调）与 token 载体（readSession 取）都在 Task 7 引入：
-   *  本任务没有任何在途 pane 请求，先写一个没人调的 markExpired 就是死代码。
-   *   expired 的两条出口（D7）此刻只到第一条——首屏就过期 → LoginPanel；
-   *   Workbench 的黄条由 Task 6「登录侧/拒绝页与工作台」的 expired 黄条用例（全文件第 9 例）静态钉住措辞，
-   *   可达性（pane 在途 401 → markExpired）由 Task 7 补上。 */
+  /** token 只在「读到一个非空的」时写 state，过期时不写空：
+   *  D7 第二条要把人留在值班室里看黄条，若顺手抹掉 token，ctx 变 null、Tab1 那一格会被占位文案换掉——
+   *  那等于把「他刚才正在读的东西」也一起没收了。真正的清场只在 onLogout（那时整个 Workbench 都不渲了）。 */
+  const [token, setToken] = useState("");
+  const [pendingCount, setPendingCount] = useState(0); // pane 报数，徽标仍由 Workbench 统一渲（Tab1 的 .n）
+
+  /** D7 第二条出口的唯一入口：pane 的在途请求任一条吃到 401，由这里清会话并把视图翻成 expired。
+   *  hint 是 pane 递上来的 classifyError 原文，黄条措辞仍由 Workbench 的 expiredBarText 独家负责。 */
+  const markExpired = useCallback(
+    (hint: string) => {
+      if (storage) clearSession(storage);
+      setState((prev) => ({ ...prev, view: "expired", hint }));
+    },
+    [storage],
+  );
+
+  /** D7 第二条出口（markExpired）自 Task 7 起真正接通：ReviewPane 的在途 401 由 ctx.onExpired 走到它。
+   *   expired 的两条来路（D7）——首屏就过期 → LoginPanel；在途请求吃到 401 → 留在 Workbench 顶挂黄条（见下 inWorkbench）。 */
   const onLogout = useCallback(() => {
     if (storage) clearSession(storage);
+    setToken("");
+    setPendingCount(0);
     setState({ ...CHECKING_STATE, view: "login" });
     setBanner("");
   }, [storage]);
@@ -147,7 +180,20 @@ export default function AdminApp() {
     [active],
   );
 
-  const pendingCount = 0; // Task 7 接 loadPending 后替换为真实队列长度
+  /** expired 有两种来路（D7），外壳留不留取决于「还认不认得出刚才是谁」：
+   *  resolveView 的两条 expired 分支都带 `login: s.login`（auth.ts:69/74 实测），说明会话至少曾经成立过——
+   *  这时把人留在值班室里、顶上挂黄条，比把他扔回登录页更能让他看懂发生了什么。
+   *  `login` 为空的 expired 只可能是伪造态，回 LoginPanel。Task 7 的 markExpired 沿用同一个条件。 */
+  const inWorkbench = state.view === "ready" || (state.view === "expired" && Boolean(state.login));
+
+  /** ctx 自己必须 memo：pane 的 effect 依赖 [repo, token]，若每次渲染都交一个新 ctx 对象，
+   *  Task 9/10/11 里那些「依赖整个 ctx」的写法就会每次渲染重打一次 GitHub 读；
+   *  顺带把「每次渲染 readSession 一遍」关掉——渲染期读 sessionStorage 既慢又让 pane 拿到抖动值。 */
+  const ctx: PaneCtx | null = useMemo(() => {
+    if (!inWorkbench || !storage || !token) return null;
+    return { repo, token, login: state.login, storage, config, onExpired: markExpired };
+  }, [inWorkbench, repo, token, state.login, storage, config, markExpired]);
+
   const bar = banner ? (
     <p className="adm-statebar bad" role="alert">
       {banner}
@@ -155,11 +201,6 @@ export default function AdminApp() {
   ) : null;
 
   if (state.view === "denied") return <DeniedPanel state={state} />;
-  /** expired 有两种来路（D7），外壳留不留取决于「还认不认得出刚才是谁」：
-   *  resolveView 的两条 expired 分支都带 `login: s.login`（auth.ts:69/74 实测），说明会话至少曾经成立过——
-   *  这时把人留在值班室里、顶上挂黄条，比把他扔回登录页更能让他看懂发生了什么。
-   *  `login` 为空的 expired 只可能是伪造态，回 LoginPanel。Task 7 的 markExpired 沿用同一个条件。 */
-  const inWorkbench = state.view === "ready" || (state.view === "expired" && Boolean(state.login));
   if (!inWorkbench)
     return (
       <>
@@ -182,9 +223,15 @@ export default function AdminApp() {
     <>
       {bar}
       <Workbench state={state} active={active} focusKey={focusKey} pendingCount={pendingCount} onTab={setFocusKey} onKey={onKey} onLogout={onLogout}>
-        {/* Task 7/9/10/11 各自替换自己那一格；届时由 AdminApp 注入上下文包
-            {repo, token（Task 7 起由 readSession 取）, storage, config, onExpired（Task 7 起的 markExpired）} */}
-        <p className="adm-why">面板内容在 Task 7（待审变更）、Task 9（变现配置）、Task 10（触发爬取）、Task 11（发布历史）逐格接入。</p>
+        {active === "review" ? (
+          ctx ? (
+            <ReviewPane ctx={ctx} onCount={setPendingCount} />
+          ) : (
+            <p className="adm-why">登录态尚未就绪：会话里没有可用的凭证，等一次重新登录或刷新。</p>
+          )
+        ) : (
+          <p className="adm-why">面板内容在 Task 9（变现配置）、Task 10（触发爬取）、Task 11（发布历史）逐格接入。</p>
+        )}
       </Workbench>
     </>
   );
