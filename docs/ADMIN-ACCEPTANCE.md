@@ -102,3 +102,9 @@ Device Flow 三段（申请设备码 → 轮询令牌 → 读 `/user` 身份）�
 7. 端到端真跑（真 token、真 Issue、真 PUT）不在本机执行——用户裁决「线上步骤留出」，红线禁止任何 GitHub 写操作。
 8. **`workflow_dispatch` 的 202→run 建立延迟未取证**：`triggerCrawl` 用「后置读是否出现新 run id」判 `queued`，本机只以假应答证实了判定逻辑；真线上若 run 建立慢于 POST 返回（GitHub 无 SLA），首次核对会显示「已受理但未确认」。这是**设计内的保守表述**（不谎报成功），不是故障；计划 4 的 UI 必须在 `queued:false` 时给「稍后刷新」而非「失败」。
 9. **Tab2「合作卡增删改」无实现、也不造假实现**：已 grep 核实两处事实——① 首页「合作情报」板块由 `src/lib/catalog.ts:40` 的 `catOf(c) === "项目"` 与 `HomeClient.tsx:73` 的 `c.type === "项目"` 从**卡表**派生，跟 `config/site-config.json` 的 `partners` 键（当前为 `null`）没有关系；② `partners` 全仓无消费者（`applySiteConfig` 不读它），后台写它等于写一份没人读的 JSON。要「增删合作卡」实际是改某张卡的 `category`，而 `PATCH_KEYS` 白名单里没有它、`applySiteConfig` 也不消费 `category`。因此该能力属产品决策（是否允许站长改写分类、以及改了会不会与上游爬取冲突），登记给计划 4 交用户裁决；本计划只在 `SiteConfig`/`patchSiteConfig` 里**原样保留** `partners` 键（`expect(next.partners).toBe(null)` 与键序断言钉住不丢），**不为其造一条假写路径**（红线 4）。
+
+## 8. 编号换代与下游互指（2026-09-30，计划 5 Task 14 追加）
+
+本文正文（含 §7 缺口清单第 8/9 条）里的「计划 4」按外层计划 3 §7 第 23 条改称**计划 5**，历史原文按裁决保留不回改。该 UI 计划的验收记录与旧编号判读规则见 `docs/ADMIN-UI-ACCEPTANCE.md` §4；§7 第 9 条「合作卡增删改」已由用户裁决放开（`category`/`type` 纳入 `PATCH_KEYS`），由计划 5 Task 2 落地。
+
+补一句 §7-19 的代价（挂在上面的换代注之后，因为它是对本文 §7 缺口清单的续写）：`/admin` 用人类 PAT 发的发布回执是一次真实提交，`crawl.yml` 的 `[bot]` 排除挡不住它，所以**一次后台发布＝多起一个 review job + 一条「未找到（可能已处理过）」噪声评论**；数据零风险（`applied=[]` → `changed:false` → CLI 早退，提交步骤另有 `git diff --cached --quiet` 兜底）。已落地的缓解＝`review` job 的 `concurrency: review-apply`（`cancel-in-progress: false`，排队而非打断）；未消掉的噪声按裁决保留，**不得**为消噪把人类回执改成 bot 身份或关掉回执。

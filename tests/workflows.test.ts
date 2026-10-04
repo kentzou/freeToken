@@ -84,6 +84,15 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     expect(lhrc.ci.assert.assertions["categories:accessibility"]).toEqual(["error", { minScore: 0.95 }]);
     expect(lhrc.ci.collect.url).toEqual(["http://127.0.0.1:3000/", "http://127.0.0.1:3000/intel/workbuddy/"]);
   });
+
+  /* §7-19：/admin 发布的人类回执作者是非 bot login，会多起一次 review job。
+     数据零风险（applied=[] → changed:false → CLI 早退），代价是 runner 与一条噪声评论。
+     串行闸只消「两个 review 同时写 pending/」这一种竞态，不消噪声——噪声属设计内保守表述。
+     js-yaml 会把 cancel-in-progress 解析成布尔 false，写成字符串 "false" 在这条用例里会红。 */
+  it("crawl.yml：review job 串行闸 group=review-apply 且 cancel-in-progress=false（§7-19）", () => {
+    expect(crawl.jobs.review.concurrency).toEqual({ group: "review-apply", "cancel-in-progress": false });
+    expect(crawl.jobs.crawl.concurrency).toBeUndefined();
+  });
 });
 
 describe("quality job 的 lint 闸（Task 7 基座钉）", () => {

@@ -66,3 +66,5 @@ cron `0 */6 * * *` 为 UTC（北京时间 8/14/20/2 点）。公开仓库 Action
 5. **浏览器侧可达性首查**（ADMIN-ACCEPTANCE §7 的未取证项）：完成一次 Device Flow 登录，观察 ① 浏览器是否被 `api.github.com` 的 CORS 放行 ② `/user` 返回的 login 是否与名单一致 ③ Contents PUT 是否成功（403 且提示 scope 不足＝令牌 scope 问题；409＝同一文件被并发改动，后台按设计只重试该文件）。
 6. **发布闭环**（§4 的方案 A/B 决策）：`/admin` 走 Contents PUT 提交，其 commit 由令牌所属用户产生，**会**触发 `deploy.yml` 的 push paths 过滤——即后台发布天然上线，不依赖 `TFN_PUSH_TOKEN`；`crawl.yml` 的自动提交仍需该 PAT 才能触发下游（方案 A）。
 7. **计划 4 之后再回来**：`/admin` 路由、`robots.txt`/noindex、`.adm-*` 样式与九种状态实触发都在计划 4；本计划的收口态**没有任何 `/admin` 页面可访问**（`out` 仍是 25 个 HTML、build 26/26）。
+
+8. **计划 5 已落地**（原第 7 条的「计划 4」，判读规则见 `ADMIN-UI-ACCEPTANCE.md` §4）：`/admin` 路由与四标签、`.adm-*` 样式、十二态、`/admin` 的 meta robots `noindex, follow` 均已进产物；第 1–7 条的线上动作不变，其中第 2 条（`oauthClientId`）缺失时页面显示 `unconfigured` 引导态并指向本步。

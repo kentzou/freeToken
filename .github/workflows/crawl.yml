@@ -55,6 +55,11 @@ jobs:
       && contains(github.event.issue.labels.*.name, 'review')
       && !endsWith(github.event.comment.user.login, '[bot]')
     runs-on: ubuntu-latest
+    # §7-19：后台发布的人类回执会多起一次 review job，两个 review 并发写 pending/ 才有真风险。
+    # 静态群名＝全仓同时只有一个 review 在跑；cancel-in-progress: false＝排队而非打断。
+    concurrency:
+      group: review-apply
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
