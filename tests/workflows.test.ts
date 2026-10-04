@@ -17,7 +17,7 @@ const runs = (job: { steps: { run?: string }[] }) => job.steps.map((s: { run?: s
 
 describe("workflow 结构红线（真实执行列入线上步骤，这里锁死形态）", () => {
   it("crawl.yml：6 小时 cron + dispatch + issue_comment 三入口；数据 commit 只在真变更时发生", () => {
-    expect(crawl.on.schedule).toEqual([{ cron: "0 */6 * * *" }]);
+    expect(crawl.on.schedule).toEqual([{ cron: "23 */6 * * *" }]);
     expect(Object.keys(crawl.on)).toEqual(["schedule", "workflow_dispatch", "issue_comment"]);
     expect(crawl.jobs.crawl.if).toContain("issue_comment");
     const crawlSteps = crawl.jobs.crawl.steps.map((s: { run?: string }) => s.run || "").join("\n");
@@ -150,5 +150,25 @@ describe("crawl → deploy 的上线链（GITHUB_TOKEN 防循环的绕行口）"
 
   it("deploy.yml 保留 workflow_dispatch 入口：它是 dispatch 的目标端点，删了会让上面的 dispatch 全部 404", () => {
     expect(Object.keys(deploy.on)).toContain("workflow_dispatch");
+  });
+});
+
+/* —— cron 档位：避开整点（2026-10-05 修）——
+   病根：原档位分钟位是 0（整点）。Actions 官方文档《Events that trigger workflows》点名整点是
+   高负载时段：「High load times include the start of every hour... some queued jobs may be
+   dropped.」本仓实测 13 次调度的延迟（相对档位起点）最高 5.94 小时，已吃满整整一个 6h 周期，
+   症状就是「档位看起来丢了」——它不是停摆，是被排队挤掉了。
+   现改为分钟位 23（小时位仍是每 6 小时一次，频率未动），触发点 00:23 / 06:23 / 12:23 / 18:23 UTC，
+   只把起点挪出整点那批争抢 runner 的队列。
+   （本段刻意不写 cron 字面量：小时位那段里的「星号+斜杠」会提前闭合块注释，esbuild 直接报
+    Unexpected "*"，整份测试文件连同其它 30 个文件一起变红——踩过一次，别再写进来。）
+   只靠上面那条 toEqual 钉字面量是不够的：谁把 cron 改回整点并顺手改了这条字面量，测试照样绿、
+   病照复发。所以把「分钟位 ≠ 0」单独钉死——它只管分钟，改回整点必红，改频率不误红（频率由
+   上面那条 toEqual 管），两条断言各管一件事，互不遮蔽。 */
+describe("cron 档位（避开官方点名的整点高负载时段）", () => {
+  it("crawl 的 cron 分钟位不为 0：整点排队任务可能被丢弃", () => {
+    const fields = String(crawl.on.schedule[0].cron).trim().split(/\s+/);
+    expect(fields).toHaveLength(5); // 标准 5 段 cron；写成 6 段（带秒）会被 GitHub 判为非法
+    expect(fields[0]).not.toBe("0");
   });
 });

@@ -1,7 +1,15 @@
 name: crawl
 on:
   schedule:
-    - cron: "0 */6 * * *"
+    # 分钟位刻意不取 0（整点）。官方文档《Events that trigger workflows》点名：
+    #   「High load times include the start of every hour. If the load is high enough,
+    #     some queued jobs may be dropped.」
+    # 本仓实测 13 次调度相对档位起点的延迟：3.99/4.81/0.68/4.45/4.66/0.08/3.94/4.37/
+    # 5.28/3.91/2.74/4.89/5.94 小时，最高 5.94h 已经吃满整整一个 6h 周期——排在整点上
+    # 就是和全站所有 `0 * * * *` 抢同一批 runner，档位看起来像「丢了」。
+    # 挪到 :23 分后触发点为 00:23 / 06:23 / 12:23 / 18:23 UTC，`*/6` 频率不变。
+    # 改回 `0 */6 * * *` 会被 tests/workflows.test.ts 的「cron 分钟位 ≠ 0」断言拦下。
+    - cron: "23 */6 * * *"
   workflow_dispatch: {}
   issue_comment:
     types: [created]
