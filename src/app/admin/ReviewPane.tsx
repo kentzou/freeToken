@@ -198,7 +198,7 @@ export default function ReviewPane({ ctx, onCount }: { ctx: PaneCtx; onCount: (n
     if (booted.current === key) return;
     booted.current = key;
     void reload();
-  }, [reload]);
+  }, [reload, repo, token]);
 
   const stamp = useCallback(
     async (decisions: Decision[]) => {

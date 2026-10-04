@@ -104,7 +104,7 @@ export default function HistoryPane({ ctx }: { ctx: PaneCtx }) {
     if (booted.current === key) return;
     booted.current = key;
     void read();
-  }, [read]);
+  }, [read, repo, token]);
 
   return <HistoryTable view={historyView(res)} busy={busy} onReload={() => void read()} />;
 }

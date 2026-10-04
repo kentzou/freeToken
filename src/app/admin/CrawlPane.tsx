@@ -78,7 +78,7 @@ export default function CrawlPane({ ctx }: { ctx: PaneCtx }) {
     if (booted.current === key) return;
     booted.current = key;
     void readBadge();
-  }, [readBadge]);
+  }, [readBadge, repo, token]);
 
   /** 这里没有 catch：triggerCrawl 与 loadRuns 自己把抛错折成了判别联合（runs.ts 顶部立层的原因），
    *  组件再包一层 catch 等于给一条不存在的路修灯。finally 是必须的——busy 卡在 true 就是永久禁用。 */

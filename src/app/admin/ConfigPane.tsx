@@ -136,7 +136,7 @@ export default function ConfigPane({ ctx }: { ctx: PaneCtx }) {
     if (booted.current === key) return;
     booted.current = key;
     void reload();
-  }, [reload]);
+  }, [reload, repo, token]);
 
   const patch = useMemo(() => (rows && draft ? buildPatch(draft, rows) : {}), [draft, rows]);
   const dirty = hasPatch(patch);
