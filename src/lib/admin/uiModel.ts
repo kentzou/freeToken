@@ -230,11 +230,17 @@ export const EMPTY_REVIEW = {
 export const extraFieldsNote = (n: number) => `另有 ${n} 处字段差异未列出，逐条核对请打开审核 Issue`;
 
 /** Issue 号决定盖章会留下什么：有 Issue 才有指令与回执，没有 Issue 只写文件。
- *  「/approve」必须出现在批注里——它是 runReview 唯一认的指令形态，运维在这里读不到它，就会去 Issue 里写中文。 */
-export const approveNote = (issueNumber: number | null) =>
+ *  「/approve」必须出现在批注里——它是 runReview 唯一认的指令形态，运维在这里读不到它，就会去 Issue 里写中文。
+ *  第二参 `issueNote`（执行期 C8 新增，登记见 V26）把「读 Issue 失败」和「确实没有开放 Issue」分家：
+ *  `loadReviewContext` 里 issueNote 非空串就是那条读失败，而 403（缺 Issues:write）时 `authFailed` 仍为 false，
+ *  批注是唯一能看出区别的地方。把「没读到」说成「确实没有」违反 §0 红线 7 与计划 3 §7-1 的事实性口径。
+ *  「Issue 侧的回执与关单会跳过」是实测行为不是推测：`crawler/review.mjs:111-113` 的 `if (issueNumber)` 才发评论与关单。 */
+export const approveNote = (issueNumber: number | null, issueNote: string = "") =>
   issueNumber
     ? `盖章即向 Issue #${issueNumber} 下发 /approve 与 /reject 指令，并把回执与关单一并做完。`
-    : "当前没有开放的审核 Issue：数据文件照样会真实提交，只是没有回执可留。要留痕请先开一张带 review 标签的 Issue。";
+    : issueNote
+      ? `读取审核 Issue 失败：${issueNote}——这一轮判不出有没有开放 Issue。盖章仍会真实提交数据文件，但 Issue 侧的回执与关单会跳过。`
+      : "当前没有开放的审核 Issue：数据文件照样会真实提交，只是没有回执可留。要留痕请先开一张带 review 标签的 Issue。";
 
 /** 盖章成功后重读回来的条数与写面报的 pendingLeft 不一致，才说明「你看的时候别人也动了」。
  *  一致时出空串——组件里不许把空串渲成一行噪声（调用点用 `note ? … : null` 兜）。 */
@@ -262,5 +268,6 @@ export function reviewView(ctx: ReviewContext | null, rows: ChangeRow[]): Review
   const p = ctx.pending;
   if (p.kind === "error") return { kind: "error", bar: errorBar("pending", p.message, p.status, p.hint) };
   if (p.kind === "empty") return { kind: "empty" };
-  return { kind: "list", rows, source: sourceLine(p.pending, ctx.issueNumber || null), note: approveNote(ctx.issueNumber || null) };
+  // C8：批注必须读 ctx.issueNote——issueNumber 为 0 有两种来路（确实没有 / 没读到），分流不能替它挑一个
+  return { kind: "list", rows, source: sourceLine(p.pending, ctx.issueNumber || null), note: approveNote(ctx.issueNumber || null, ctx.issueNote) };
 }
