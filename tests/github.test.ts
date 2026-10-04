@@ -15,10 +15,36 @@ describe("GitHub 单一调用层", () => {
     void noSleep;
   });
 
-  it("GET 三次全 500：抛「重试 3 次」而不是假成功", async () => {
+  it("GET 三次全 500：抛「重试 3 次」而不是假成功，且三次退避时长逐字 [1000,4000,10000]", async () => {
+    const slept: number[] = [];
     const { fn, calls } = mkFetch(res(500));
-    await expect(gh(API + "/x", { fetchImpl: fn, sleep: noSleep() })).rejects.toThrowError(/重试 3 次/);
+    await expect(
+      gh(API + "/x", {
+        fetchImpl: fn,
+        sleep: (ms: number) => {
+          slept.push(ms);
+          return Promise.resolve();
+        },
+      })
+    ).rejects.toThrowError(/重试 3 次/);
     expect(calls).toHaveLength(4);
+    /** 上一条用例只跑到 [1000,4000] 就成功了，第三个退避位从未被断言：
+     *  把 backoff 改成 [1000,4000]（少一轮）或 [1000,4000,1]（末轮不等了）都不会让原有用例红。 */
+    expect(slept).toEqual([1000, 4000, 10000]);
+  });
+
+  it("退避耗尽要带最后一次 HTTP 状态；真网络失败仍无状态（classifyError 靠这个分「未发出请求」与「对方回了 500」）", async () => {
+    const e = (await gh(API + "/x", { fetchImpl: mkFetch(res(502)).fn, sleep: noSleep() }).catch((x: unknown) => x)) as {
+      status?: number;
+      message: string;
+    };
+    expect(e.status).toBe(502);
+    /** 反向那一半同样有牙：fetch 直接 reject 时一个字节都没回来，绝不能把 status 挂成 0 或留上一次的残值 */
+    const net = (await gh(API + "/x", {
+      fetchImpl: mkFetch(new Error("socket hang up")).fn,
+      sleep: noSleep(),
+    }).catch((x: unknown) => x)) as { status?: number };
+    expect(net.status).toBeUndefined();
   });
 
   it("POST 422 不重试（幂等/权限问题重试无意义），原样交调用方判", async () => {

@@ -21,14 +21,19 @@ export type TriggerResult =
 
 export async function triggerCrawl(
   repo: string,
-  { token = "", ref = "main", fetchImpl = globalThis.fetch }: { token?: string; ref?: string; fetchImpl?: Fetch } = {},
+  {
+    token = "",
+    ref = "main",
+    fetchImpl = globalThis.fetch,
+    sleep,
+  }: { token?: string; ref?: string; fetchImpl?: Fetch; sleep?: (ms: number) => Promise<void> } = {},
 ): Promise<TriggerResult> {
   try {
-    const before = await listWorkflowRuns(repo, RUN_WORKFLOW, { token, perPage: 1, fetchImpl });
+    const before = await listWorkflowRuns(repo, RUN_WORKFLOW, { token, perPage: 1, fetchImpl, sleep });
     await dispatchWorkflow(repo, RUN_WORKFLOW, ref, { token, fetchImpl });
     let after: Record<string, any>[];
     try {
-      after = await listWorkflowRuns(repo, RUN_WORKFLOW, { token, perPage: 1, fetchImpl });
+      after = await listWorkflowRuns(repo, RUN_WORKFLOW, { token, perPage: 1, fetchImpl, sleep });
     } catch (e) {
       return { kind: "ok", queued: false, note: `爬取已受理，但没能确认新 run（${classifyError(e).message}）：先去「发布历史」看一眼再决定要不要重发。` };
     }

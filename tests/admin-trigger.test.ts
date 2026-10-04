@@ -69,4 +69,42 @@ describe("triggerCrawl：workflow_dispatch 的受理与回执核对", () => {
     expect((bad as { note: string }).note).toContain("Must have 'Actions: read' permission");
     expect((bad as { note: string }).note).not.toContain("未写入任何数据"); // 那句是 error 态的 hint，用在这里是谎报
   });
+
+  /** §7-21 ②。本文件头那句「刻意不注入 5xx」到这里作废：接缝（triggerCrawl 的 sleep）现在有了，
+   *  真等 15005ms 的代价归零，不再拿注释当免测凭据。 */
+  it("后置读走满三次退避：仍报 ok/未确认，绝不折成 error（已经发生的事不能说成没发生）", async () => {
+    const slept: number[] = [];
+    const f = mkFetch(res(200, envelope([runRow(412)])), res(202, {}), res(500));
+    const out = await triggerCrawl("o/r", {
+      token: "ghu_x",
+      fetchImpl: f.fn,
+      sleep: (ms: number) => {
+        slept.push(ms);
+        return Promise.resolve();
+      },
+    });
+    expect(out).toMatchObject({ kind: "ok", queued: false });
+    expect((out as { note: string }).note).toContain("没能确认新 run");
+    expect((out as { note: string }).note).toContain("HTTP 500");
+    expect(slept).toEqual([1000, 4000, 10000]);
+    expect(seq(f.calls)).toBe("GET,POST,GET,GET,GET,GET"); // 后置读 1 发 + 3 次退避重发
+  });
+
+  it("前置读走满退避＝零 POST，且状态是 500 不是 0（0 会让界面说「未发出请求」，而它发了四次）", async () => {
+    const slept: number[] = [];
+    const f = mkFetch(res(500)); // 执行期 H1：单元素才粘得住 500（fake-fetch 是按序取、耗尽后才复用最后一条）
+    const out = await triggerCrawl("o/r", {
+      token: "ghu_x",
+      fetchImpl: f.fn,
+      sleep: (ms: number) => {
+        slept.push(ms);
+        return Promise.resolve();
+      },
+    });
+    expect(out).toMatchObject({ kind: "error", status: 500 });
+    expect((out as { hint: string }).hint).toContain("GitHub 侧故障");
+    expect(slept).toEqual([1000, 4000, 10000]);
+    /** 读不到现状就不排站外任务：这条是 §3 决策 11 的「前置读 401 零 POST」在 5xx 侧的同款对照 */
+    expect(f.calls.filter(post).length).toBe(0);
+  });
 });

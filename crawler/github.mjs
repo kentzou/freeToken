@@ -38,17 +38,23 @@ export async function gh(url, opts = {}) {
   }
   const attempts = method === "GET" ? backoff.length + 1 : 1;
   let last = "网络错误";
+  /* 只在「确实收到了 ≥500 应答」时留状态：真网络失败一个字节都没回来，必须保持无 status，
+     classifyError 的 network 支与 errorBar 的「未发出请求」全靠这个区分（计划 5 §7-21 实测补正）。 */
+  let lastStatus = 0;
   for (let i = 0; i < attempts; i++) {
     if (i > 0) await sleep(backoff[i - 1]);
     try {
       const res = await fetchImpl(url, { method, headers, body: payload });
       if (method !== "GET" || res.status < 500) return res; // GET 的 4xx 也交调用方判（404=上游不存在该文件）
       last = `HTTP ${res.status}`;
+      lastStatus = res.status;
     } catch (e) {
       last = e.message;
     }
   }
-  throw new Error(`GitHub 请求失败（重试 ${attempts - 1} 次）：${method} ${url} → ${last}`);
+  const err = new Error(`GitHub 请求失败（重试 ${attempts - 1} 次）：${method} ${url} → ${last}`);
+  if (lastStatus) err.status = lastStatus; // 与 httpError() 同一套挂法（e.status/e.note），消费端只有 classifyError 一处
+  throw err;
 }
 
 /** 失败应答里的 message 摘要（GitHub 的 4xx 回 JSON；非 JSON 时回空串，绝不二次抛错） */
@@ -215,8 +221,8 @@ export async function writeRepoFile(repo, path, { message, text, sha = "", branc
 
 /** 发布历史：workflow 文件名的 `.` 不需转义（计划 2 的 dispatchWorkflow 已在用同名路径）。
  *  perPage 固定在前，query 串可被测试逐字断言。 */
-export async function listWorkflowRuns(repo, workflowFile, { token = "", perPage = 5, fetchImpl = globalThis.fetch } = {}) {
-  const res = await gh(`${API}/repos/${repo}/actions/workflows/${workflowFile}/runs?per_page=${perPage}`, { token, fetchImpl });
+export async function listWorkflowRuns(repo, workflowFile, { token = "", perPage = 5, fetchImpl = globalThis.fetch, sleep = sleepDefault } = {}) {
+  const res = await gh(`${API}/repos/${repo}/actions/workflows/${workflowFile}/runs?per_page=${perPage}`, { token, fetchImpl, sleep });
   if (!res.ok) throw await httpError("读取 workflow runs 失败", res);
   const j = await res.json();
   if (!Array.isArray(j.workflow_runs)) throw new Error("runs 应答形态异常：缺 workflow_runs 数组");
