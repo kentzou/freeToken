@@ -58,11 +58,14 @@ describe("运行时读面：Contents 是唯一带凭据的读通道，错误必�
     expect(jsonOf(f.calls[1])).toEqual({ message: "chore: 更新", content: encodeBase64Utf8("新文本\n"), branch: "main", sha: "S1" });
   });
 
-  it("loadCurrentData：三表齐才返回，条数是仓库真值（33 / 22 / 五表）；缺任一条即抛，绝不给半截", async () => {
+  it("loadCurrentData：三表齐才返回，条数是仓库真值（与磁盘 data/*.json 一致）；缺任一条即抛，绝不给半截", async () => {
     const f = mkFetch(fileRes("S-T", tokensText), fileRes("S-D", donotsText), fileRes("S-R", rulesText));
     const cur = await loadCurrentData("o/r", { token: "ghu_x", fetchImpl: f.fn });
-    expect(cur.cards.length).toBe(33);
-    expect(cur.donots.length).toBe(22);
+    /* 期望值直接取自喂进去的那两份仓库真文件（tokensText / donotsText 就是 data/*.json 的原文），
+       所以这条钉的是「读回来的条数 == 仓库真值」这个契约，而不是「仓库恰好有 N 张卡」——
+       crawler 加卡时它自动跟着走，不会像写死数字那样每 6 小时假红一次。 */
+    expect(cur.cards.length).toBe(JSON.parse(tokensText).length);
+    expect(cur.donots.length).toBe(JSON.parse(donotsText).length);
     expect(Object.keys(cur.rules)).toEqual(["featured", "logo", "cardCopy", "detailSlug", "regionByName"]);
     expect(f.calls.map((c) => c.url.split("/contents/")[1])).toEqual(["data/tokens.json", "data/donots.json", "data/rules.json"]);
     expect(cur.shas["data/rules.json"]).toBe("S-R");

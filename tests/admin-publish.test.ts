@@ -5,7 +5,7 @@ import { diffAll } from "../crawler/diff.mjs";
 import { decodeBase64Utf8, dump, encodeBase64Utf8 } from "../crawler/serialize.mjs";
 import { publishApprovals } from "@/lib/admin/publish";
 import { hdr, jsonOf, mkFetch, res } from "./helpers/fake-fetch";
-import { realData, realPending } from "./helpers/pending";
+import { DROPPED, realData, realPending } from "./helpers/pending";
 
 const cur = realData();
 const pend = realPending();
@@ -52,13 +52,13 @@ describe("publishApprovals：白名单 → 指令 → runReview → 逐文件 Co
     expect(out.committed).toEqual(["data/tokens.json", "pending/changes.json"]);
     expect(out.unchanged).toEqual(["data/donots.json", "data/rules.json"]);
     expect(out.failed).toEqual([]);
-    expect(out.pendingLeft).toBe(3);
+    expect(out.pendingLeft).toBe(pend.changes.length - 1); // 批了一条，剩几条由 pending 实际条数推导
     expect(hdr(f.calls[3], "authorization")).toBe("Bearer ghu_x");
     expect(jsonOf(f.calls[3]).body).toContain("✅ 通过 `card:WorkBuddy`");
     expect(decodeBase64Utf8(jsonOf(f.calls[4]).content)).toContain("（核验续期）");
   });
 
-  it("approve all：四文件全 PUT + 回执 + 关单；写回的卡表是 32 张（真数据实算，非手搓）", async () => {
+  it("approve all：四文件全 PUT + 回执 + 关单；写回的卡表 = 真数据条数 − 被删的那条（非手搓）", async () => {
     const f = mkFetch(
       fileRes("S-T", cur.cards), fileRes("S-D", cur.donots), fileRes("S-R", cur.rules),
       res(201, {}), res(200, {}), putOk("A"), putOk("B"), putOk("C"), fileRes("S-P", pend), putOk("D"),
@@ -70,8 +70,10 @@ describe("publishApprovals：白名单 → 指令 → runReview → 逐文件 Co
     expect(f.calls[4].url).toBe("https://api.github.com/repos/hope0719/token-fbi-next/issues/42");
     const puts = f.calls.filter((c) => c.init.method === "PUT");
     const written = JSON.parse(decodeBase64Utf8(jsonOf(puts[0]).content));
-    expect(written).toHaveLength(32);
-    expect(written.find((c: any) => c.name === "书生·端砚 墨点计划（上海AI实验室）")).toBeUndefined();
+    // 期望值来自 data/tokens.json 的条数 − 1（pending 里恰有一条 card 删除），数据增长不会红
+    expect(written).toHaveLength(cur.cards.length - 1);
+    // 被删的那条由 helpers/pending 从 tokens.json 末位派生，不是手搓卡名
+    expect(written.find((c: any) => c.name === DROPPED)).toBeUndefined();
     expect(JSON.parse(decodeBase64Utf8(jsonOf(puts[3]).content))).toMatchObject({ version: 1, changes: [] });
   });
 

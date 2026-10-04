@@ -80,9 +80,10 @@ describe("变现配置读写：写入侧比读取侧更严（未知键直接拒�
     expect(written).toBe(dump(patchSiteConfig(base, patch)));
     // spec §3 的「commit payload 预览」与真 PUT 的内容必须逐字相同（同一个 dump(patchSiteConfig(...))），否则预览是第二套格式化、会自证清白
     expect(configPayloadPreview(base, patch)).toBe(written);
-    // 写回去的配置必须被真 applySiteConfig 吃下：33 → 32，WorkBuddy 真的从卡表消失
+    // 写回去的配置必须被真 applySiteConfig 吃下：卡片数 -1（只藏了 WorkBuddy 一张），且 WorkBuddy 真的从卡表消失。
+    // 期望值来自 data/tokens.json 的条数减本次 patch 隐藏的条数，数据增长不会红。
     const applied = applySiteConfig(cards, donots, JSON.parse(written));
-    expect(applied.cards).toHaveLength(32);
+    expect(applied.cards).toHaveLength(cards.length - 1);
     expect(applied.cards.find((c: any) => c.name === "WorkBuddy")).toBeUndefined();
     /** 清池口径钉（crawler/clean.mjs 的「配 link 未配码池则清池」）：只存 inviteBase 不存 inviteCodes，
      *  管线会把 inviteBase 删掉。Tab2 若允许单独保存前缀，保存成功等于没生效——这条就是那口铃。 */

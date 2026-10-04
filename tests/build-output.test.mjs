@@ -26,13 +26,24 @@ const htmlFiles = [];
 const dirsOf = (rel) =>
   readdirSync(path.join(OUT, rel)).filter((n) => statSync(path.join(OUT, rel, n)).isDirectory());
 
-test("产物数量合理（首页 + 18 详情页 + 4 内容页）", () => {
+test("产物数量合理（首页 + 详情页 + 4 内容页）", () => {
   assert.ok(existsSync(path.join(OUT, "index.html")), "缺 out/index.html");
-  assert.equal(dirsOf("intel").length, 18, "详情页数量应与 visibleCards 一致");
+  /* 详情页数量原来钉死 18，那是「visibleCards 恰好有 18 张」的数据快照，不是契约：
+     crawler 每加一张卡它就假红一次。这里改成两条与数据增长无关的不变式——
+       ① 下界：跌破 18 说明构建退化（路由没生成 / 规则表漂移 / 数据文件损坏）；
+       ② 每个 intel 目录都必须真的产出 index.html（空目录 = 路由生成了但页面没写出来）。
+     「详情页数 == visibleCards 长度」这条等值红线挪到了 tests/catalog.test.ts 的 slug 唯一性用例，
+     那里能 import src/lib/catalog.ts 的真实实现；本文件是 .mjs 跑 node，无法复用 TS 实现，
+     在这里手写第二份 visibleCards 过滤逻辑只会在两处漂移时给出假绿。 */
+  const intelDirs = dirsOf("intel");
+  assert.ok(intelDirs.length >= 18, `详情页仅 ${intelDirs.length} 个，低于下界 18，疑似路由未生成`);
+  for (const d of intelDirs) {
+    assert.ok(existsSync(path.join(OUT, "intel", d, "index.html")), `详情页 /intel/${d}/ 缺 index.html`);
+  }
   for (const p of ["about", "editorial-policy", "privacy", "contact"]) {
     assert.ok(existsSync(path.join(OUT, p, "index.html")), `缺内容页 /${p}/`);
   }
-  /* 实测 25 = 首页 1 + 详情页 18 + 内容页 4 + 404 两份；取下界 23 留一点余量 */
+  /* 实测 26 = 首页 1 + 详情页 19 + 内容页 4 + 404 两份；取下界 23 留一点余量 */
   assert.ok(htmlFiles.length >= 23, `HTML 仅 ${htmlFiles.length} 个，疑似路由未生成`);
 });
 

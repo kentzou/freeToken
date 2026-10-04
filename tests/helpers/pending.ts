@@ -8,10 +8,16 @@
 import { readFileSync } from "node:fs";
 import { diffAll } from "../../crawler/diff.mjs";
 
-export const DROPPED = "书生·端砚 墨点计划（上海AI实验室）"; // data/tokens.json 的真实末条
-export const WATCHED = "火山引擎 Ark 协作计划（字节）"; // data/donots.json 的真实首条
-
 const read = (rel: string) => JSON.parse(readFileSync(`data/${rel}`, "utf8"));
+
+/** 造 pending 用的两个「真实坐标」：被删的那条 = tokens.json 的真实末条，被改的观望项 = donots.json 的真实首条。
+ *  从数据派生而不是写死卡名：crawler 每 6 小时加卡就会换掉末条，写死会让 admin-pending / admin-publish
+ *  的 id 断言随数据增长必然假红（本轮 13 条红灯里两条的直接根因）。派生后「期望值来自 data/*.json 的
+ *  数组末位/首位」，数据增长不再影响这些断言，但下面每条用例对 diffAll 产出形态的校验一条没减。 */
+const CARDS_FOR_ANCHOR = read("tokens.json");
+const DONOTS_FOR_ANCHOR = read("donots.json");
+export const DROPPED: string = CARDS_FOR_ANCHOR[CARDS_FOR_ANCHOR.length - 1].name;
+export const WATCHED: string = DONOTS_FOR_ANCHOR[0].name;
 
 export function realData() {
   return { cards: read("tokens.json"), donots: read("donots.json"), rules: read("rules.json") };

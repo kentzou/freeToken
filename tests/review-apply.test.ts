@@ -115,16 +115,17 @@ describe("review：Issue 评论 → 合入（crawler/review.mjs 是唯一语义�
     expect(parseCommands(commandText(quoted))).toEqual(quoted);
 
     /* 全量真实 id 往返：名字一律从 data/*.json 取、id 一律由 keyOf 造（§2 单一实现，测试不手搓形状）。
-       60 / 34 是数据快照计数，同类于 admin-publish.test.ts 里「写回的卡表是 32 张」——钉的是「这批真实数据
-       确实含空白」这个前提；若将来改名令含空白数为 0，下面三条往返仍全跑，只是鉴别力自动降级，不会假绿。 */
+       条数不再写死：期望值就是上面三张表现场拼出来的长度（cards + donots + rules 的键），
+       数据增长时它自动跟着走。含空白的 id 只保留「确实存在」这个前提（下面三条往返才是真正的红线），
+       写死个数同样会随改名令增减而假红。 */
     const { cards, donots, rules } = realData();
     const ids = [
       ...cards.map((c: any) => keyOf({ kind: "card", name: c.name })),
       ...donots.map((w: any) => keyOf({ kind: "watch", name: w.name })),
       ...Object.keys(rules).map((n: string) => keyOf({ kind: "rules", name: n })),
     ];
-    expect(ids).toHaveLength(60);
-    expect(ids.filter((s: string) => /\s/.test(s))).toHaveLength(34);
+    expect(ids).toHaveLength(cards.length + donots.length + Object.keys(rules).length);
+    expect(ids.filter((s: string) => /\s/.test(s)).length).toBeGreaterThan(0);
     const all = ids.map((id: string) => ({ action: "approve", id }));
     expect(parseCommands(commandText(all))).toEqual(all);
 
