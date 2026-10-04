@@ -102,34 +102,40 @@ export default function ConfigPane({ ctx }: { ctx: PaneCtx }) {
   const sink = useRef({ onExpired: ctx.onExpired });
   sink.current = { onExpired: ctx.onExpired };
 
+  /** 读面失败的唯一处理器：措辞主体是 configLoad（「配置读取失败」）——读取失败不许说成「保存失败」（D6/§1 红线 7）。
+   *  写面失败另有其出口：save() 自己的 catch 用 "config"（「保存失败」），两者不共用一条 bar。 */
+  const reportReadFailure = useCallback((e: unknown) => {
+    const c = classifyError(e);
+    setError(errorBar("configLoad", c.message, c.status, c.hint));
+    if (c.kind === "auth") sink.current.onExpired(c.message);
+  }, []);
+
   const reload = useCallback(async () => {
     // 每次读取起步先清空上一次的错误条：重试成功后若仍挂着「配置读取失败」即为撒谎（评审修复2）。
     // 不在这里清 receipt——那是 save 自己的信号，save() 已在顶部置空。
     setError(null);
-    const [c, cur] = await Promise.all([
-      loadSiteConfig({ repo, token, fetchImpl: FETCH }),
-      loadCurrentData(repo, { token, fetchImpl: FETCH }).catch(() => null), // 拿不到受版分类不拦配置面：那一列显「未标注」
-    ]);
-    const typesByName: Record<string, string> = {};
-    for (const card of cur?.cards ?? []) typesByName[String((card as { name?: unknown }).name ?? "")] = catOf(card as Parameters<typeof catOf>[0]);
-    const nextRows = configRows(c.config, typesByName);
-    setSnap(c);
-    setRows(nextRows);
-    setDraft(draftFrom({ wechatId: c.config.wechatId ?? "", adminLoginsText: (c.config.adminLogins ?? []).join(", ") }, nextRows));
-  }, [repo, token]);
+    try {
+      const [c, cur] = await Promise.all([
+        loadSiteConfig({ repo, token, fetchImpl: FETCH }),
+        loadCurrentData(repo, { token, fetchImpl: FETCH }).catch(() => null), // 拿不到受版分类不拦配置面：那一列显「未标注」
+      ]);
+      const typesByName: Record<string, string> = {};
+      for (const card of cur?.cards ?? []) typesByName[String((card as { name?: unknown }).name ?? "")] = catOf(card as Parameters<typeof catOf>[0]);
+      const nextRows = configRows(c.config, typesByName);
+      setSnap(c);
+      setRows(nextRows);
+      setDraft(draftFrom({ wechatId: c.config.wechatId ?? "", adminLoginsText: (c.config.adminLogins ?? []).join(", ") }, nextRows));
+    } catch (e) {
+      reportReadFailure(e);
+    }
+  }, [repo, token, reportReadFailure]);
 
   const booted = useRef("");
   useEffect(() => {
     const key = `${repo}|${token}`;
     if (booted.current === key) return;
     booted.current = key;
-    void reload().catch((e) => {
-      const c = classifyError(e);
-      /** 执行期 D6：首屏**读取**失败用 configLoad 支（"配置读取失败"），不能借用 "config"（"保存失败"）——
-       *  对没点过保存的人说「保存失败」是 §0 红线 7 禁止的措辞撒谎。 */
-      setError(errorBar("configLoad", c.message, c.status, c.hint));
-      if (c.kind === "auth") sink.current.onExpired(c.message);
-    });
+    void reload();
   }, [reload]);
 
   const patch = useMemo(() => (rows && draft ? buildPatch(draft, rows) : {}), [draft, rows]);
@@ -152,13 +158,9 @@ export default function ConfigPane({ ctx }: { ctx: PaneCtx }) {
       const res = await saveSiteConfig({ repo, config: snap.config, patch, message: "chore(admin): 更新变现配置", remote: { text: snap.text, sha: snap.sha }, token, fetchImpl: FETCH });
       setReceipt(configSaved(res as { kind: string }));
       // 保存后重读单独兜为 configLoad：PUT 已成功却因重读失败而显「保存失败」是措辞撒谎（红线 7 / D6）。
-      // 内层 catch 消费掉 rejection，外层 catch 只会收到 saveSiteConfig 本身的失败，仍该用「保存失败」。
+      // 不必再包内层 catch：reload 现在自己就用 configLoad 上报读面失败，重读失败落不进外层 catch 的「保存失败」（"config"）。
       // 重读仍留在 try 内，令 busy 期间控件保持禁用，避免用户对着旧值再点一次保存。
-      await reload().catch((e) => {
-        const c = classifyError(e);
-        setError(errorBar("configLoad", c.message, c.status, c.hint));
-        if (c.kind === "auth") sink.current.onExpired(c.message);
-      });
+      await reload();
     } catch (e) {
       const c = classifyError(e);
       setError(errorBar("config", c.message, c.status, c.hint));
