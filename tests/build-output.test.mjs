@@ -48,8 +48,13 @@ test("产物数量合理（首页 + 详情页 + 4 内容页）", () => {
   for (const p of ["about", "editorial-policy", "privacy", "contact", "openrouter"]) {
     assert.ok(existsSync(path.join(OUT, p, "index.html")), `缺内容页 /${p}/`);
   }
-  /* 实测 27 = 首页 1 + 详情页 19 + 内容页 5（含 /openrouter/ 台账页）+ 404 两份；取下界 23 留一点余量 */
-  assert.ok(htmlFiles.length >= 23, `HTML 仅 ${htmlFiles.length} 个，疑似路由未生成`);
+  /* 总量用「详情页 + 固定页」的相对式而不是绝对数：crawler 每加一张卡绝对数就腐一次。
+     固定面实测 9 = 首页 1 + 内容页 5（about / editorial-policy / privacy / contact / openrouter 台账页）
+     + /admin/ 1 + 404 两份（404.html 与 404/index.html）。 */
+  assert.ok(
+    htmlFiles.length >= intelDirs.length + 9,
+    `HTML 共 ${htmlFiles.length} 个，少于「详情页 ${intelDirs.length} + 固定页 9」，疑似路由未生成`
+  );
 });
 
 /** 与 brief 的唯一偏差：invite_code 补等号。editorial-policy 页按规范逐字公示清洗参数名
@@ -81,17 +86,22 @@ test("OpenRouter 台账页在产物里：模型表或空态必居其一", () => 
   assert.ok(hasTable !== hasEmpty, "台账页「模型表」与「空态」必须互斥：数据在就渲染表，数据缺就空态");
 });
 
-/* 归类面：台账入口卡必须落在「大模型」区块内部（id="models" 与 id="tools" 之间），
-   不许再作为游离区块漂在合作情报之后。按产物 HTML 的字节位置判定，不看源码。 */
-test("OpenRouter 台账入口卡归在「大模型」区块内", () => {
+/* 形态面：OpenRouter 已改判为普通情报卡，首页不再有它专用的 .or-entry 长条。产物侧钉三条：
+   ① 长条归零；② 它拿到了普通卡才有的详情页产物（/intel/openrouter/）；
+   ③ 首页下发的卡数据里带台账副按钮（extraAction → /openrouter/）。
+   ③ 只在 RSC payload 里：区块默认只渲染前 4 张卡，OpenRouter 按现有排序排在第 11 位，
+      点击「查看全部」才进 DOM——所以这里断言的是「数据已随首页下发、展开即可渲染」，
+      而不是「首屏可见」；区块归属（大模型）由 tests/catalog.test.ts 用生产代码判定。
+   payload 里的字符串带反斜杠转义，断言前先剥掉反斜杠归一，免得把转义形态写死成脆弱钉子。 */
+test("OpenRouter 改判普通卡：长条归零、详情页产物存在、首页卡数据带台账入口", () => {
   const s = readFileSync(path.join(OUT, "index.html"), "utf8");
-  const entries = s.split('class="or-entry"').length - 1;
-  assert.equal(entries, 1, `首页 or-entry 应为 1 处，实测 ${entries}`);
-  const models = s.indexOf('id="models"');
-  const tools = s.indexOf('id="tools"');
-  const entry = s.indexOf('class="or-entry"');
-  assert.ok(models > -1 && tools > models, "缺大模型/编程工具区块锚点");
-  assert.ok(entry > models && entry < tools, "台账入口卡不在「大模型」区块与「编程工具」区块之间");
+  assert.equal(s.split("or-entry").length - 1, 0, "首页仍有 or-entry 长条残留");
+  assert.ok(existsSync(path.join(OUT, "intel", "openrouter", "index.html")), "缺 /intel/openrouter/ 详情页（普通卡管线没走到它）");
+  const flat = s.replace(/\\/g, "");
+  assert.ok(
+    /"name":"OpenRouter"[\s\S]{0,900}?"extraAction":\{"text":"免费模型台账","link":"\/openrouter\/"\}/.test(flat),
+    "首页下发的 OpenRouter 卡数据里没有台账副按钮"
+  );
 });
 
 test("暗色令牌已随产物落地", () => {

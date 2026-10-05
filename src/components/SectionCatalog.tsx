@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import type { ReactNode } from "react";
 import type { CompiledRules } from "@/lib/rules";
 import type { FilterState, TokenCard } from "@/lib/types";
 import { modelsFor, toolsFor } from "@/lib/catalog";
@@ -18,7 +17,6 @@ export default function SectionCatalog({
   rules,
   onPoster,
   onClear,
-  footer,
 }: {
   id: "models" | "tools";
   title: string;
@@ -28,8 +26,6 @@ export default function SectionCatalog({
   rules: CompiledRules;
   onPoster: (src: string, name: string) => void;
   onClear: () => void;
-  /** 区块尾部附属入口（可选）：渲染在 section 内部，让它语义上归属本区块 */
-  footer?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const list = kind === "大模型" ? modelsFor(items, filter) : toolsFor(items, filter);
@@ -65,8 +61,6 @@ export default function SectionCatalog({
           {open ? "收起" : "查看全部"}
         </button>
       ) : null}
-      {/* 区块无卡（空态）时不挂区块附属入口，免得「没有匹配的情报」旁边杵着一条台账入口 */}
-      {shown.length ? footer : null}
     </section>
   );
 }

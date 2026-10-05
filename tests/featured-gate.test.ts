@@ -6,8 +6,9 @@ import type { RulesJson, TokenCard, WatchItem } from "@/lib/types";
 
 /* 精选门槛的放行面必须钉死：data/rules.json 的 featured 是「哪些卡上线」的唯一开关，
  * 改一条正则就会让若干卡同时上/下。这里用生产代码 visibleCards 判定，不手算。
- * 判据两条：新点名的卡必须在场；没点名的卡必须仍在门外（防正则误伤）。 */
-
+ * 判据两条：新点名的卡必须在场；没点名的卡必须仍在门外（防正则误伤）。
+ * OpenRouter 于 2026-10-05 由「首页专用入口长条」改判为普通情报卡，随之放行门槛——
+ * 它现在是门槛表的一员，与其他卡同走 IntelCard 渲染，不再享受版面特例。 */
 const j = (p: string) => JSON.parse(readFileSync(p, "utf8"));
 const load = () => {
   const rules = compiledRules(j("data/rules.json") as RulesJson);
@@ -17,18 +18,17 @@ const load = () => {
 };
 
 describe("精选门槛放行面（featured 规则改动会被这里拦住）", () => {
-  it("3 张新点名的卡已放行：腾讯元器 / 百度千帆（文心）/ 讯飞星火（开放平台）", () => {
+  it("新点名的卡已放行：腾讯元器 / 百度千帆（文心）/ 讯飞星火（开放平台）/ OpenRouter", () => {
     const { names } = load();
-    for (const n of ["腾讯元器", "百度千帆（文心）", "讯飞星火（开放平台）"]) {
+    for (const n of ["腾讯元器", "百度千帆（文心）", "讯飞星火（开放平台）", "OpenRouter"]) {
       expect(names, n).toContain(n);
     }
   });
 
-  it("新规则零误伤：这 9 张未点名卡仍被挡在门外", () => {
+  it("新规则零误伤：这 8 张未点名卡仍被挡在门外", () => {
     const { names } = load();
     for (const n of [
       "Agnes AI",
-      "OpenRouter",
       "MonkeyCode（长亭）",
       "TeleAgent（星辰超级智能体）",
       "小米 MiMo（Xiaomi）",

@@ -2,13 +2,29 @@ import {
   brandName, cleanText, compactCardCopy, ctaHref, ctaRel, displayName, fmtMd, freeLabel, logoFor,
 } from "@/lib/copy";
 import { catOf } from "@/lib/catalog";
-import { assetPath, intelHref } from "@/lib/href";
+import { assetPath, intelHref, pageHref } from "@/lib/href";
 import type { CompiledRules } from "@/lib/rules";
 import type { TokenCard } from "@/lib/types";
 import Highlight from "./Highlight";
 import StampBadge from "./StampBadge";
 
-/** 情报卡：卡脚上缘虚线分隔，左侧内联核验徽标与右侧「领取」按钮 flex 两端对齐（v2 修正，绝不重叠） */
+/** 副动作（card.extraAction）落地：站内相对路径（/openrouter/）经 pageHref 补 BASE 后同页打开，
+ *   http(s) 外链原样并新开窗口；相对判断只此一处，别的组件不得再拼一遍。 */
+function SubAction({ link, text }: { link: string; text: string }) {
+  const external = /^https?:\/\//i.test(link);
+  return external ? (
+    <a className="card-action" href={link} target="_blank" rel="noopener noreferrer">
+      {text}
+    </a>
+  ) : (
+    <a className="card-action" href={pageHref(link)}>
+      {text}
+    </a>
+  );
+}
+
+/** 情报卡：卡脚上缘虚线分隔，左侧内联核验徽标与右侧操作组 flex 两端对齐（v2 修正，绝不重叠）；
+ *  操作组可含「副动作 + 主动作」两枚，窄容器下整组换行、639px 以下各自满宽堆叠（见 app.css）。 */
 export default function IntelCard({
   card,
   rules,
@@ -44,19 +60,22 @@ export default function IntelCard({
       </div>
       <footer className="card-foot">
         <StampBadge date={card.updated} variant="inline" tone={limited ? "warn" : "brand"} />
-        {card.poster ? (
-          <button
-            className="card-action"
-            type="button"
-            onClick={() => onPoster?.(card.poster as string, card.name)}
-          >
-            查看海报
-          </button>
-        ) : (
-          <a className="card-action" href={ctaHref(card)} target="_blank" rel={ctaRel(card)}>
-            立即领取
-          </a>
-        )}
+        <span className="card-actions">
+          {card.extraAction ? <SubAction link={card.extraAction.link} text={card.extraAction.text} /> : null}
+          {card.poster ? (
+            <button
+              className="card-action"
+              type="button"
+              onClick={() => onPoster?.(card.poster as string, card.name)}
+            >
+              查看海报
+            </button>
+          ) : (
+            <a className="card-action" href={ctaHref(card)} target="_blank" rel={ctaRel(card)}>
+              立即领取
+            </a>
+          )}
+        </span>
       </footer>
     </article>
   );

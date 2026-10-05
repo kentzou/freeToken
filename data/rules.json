@@ -44,6 +44,11 @@
       "label": "讯飞星火（开放平台）",
       "source": "讯飞星火|星火spark|讯飞",
       "flags": ""
+    },
+    {
+      "label": "OpenRouter",
+      "source": "openrouter",
+      "flags": ""
     }
   ],
   "logo": [
@@ -429,6 +434,11 @@
       "source": "云工开物",
       "flags": "i",
       "slug": "aliyun-student"
+    },
+    {
+      "source": "^openrouter$",
+      "flags": "i",
+      "slug": "openrouter"
     }
   ],
   "regionByName": {

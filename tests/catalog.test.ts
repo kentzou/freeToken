@@ -91,6 +91,17 @@ describe("目录逻辑（真实种子数据基准）", () => {
     expect(tools.slice(0, 2).map((t) => catOf(t))).toEqual(["工具", "工具"]);
     expect(tools[0].name).toContain("WorkBuddy");
   });
+  it("OpenRouter 归类：以普通卡进「大模型」区块列表，卡数据自带台账副按钮", () => {
+    const editorial = splitByCategory(visibleCards(cards, donots, rules)).editorial;
+    const models = modelsFor(editorial, { type: "all", query: "" });
+    const or = models.find((c) => c.name === "OpenRouter");
+    expect(or, "OpenRouter 不在「大模型」区块列表里").toBeTruthy();
+    expect(catOf(or as TokenCard)).toBe("大模型");
+    /* 台账页入口由这张卡自己承载（不再有首页专用长条）。这里只钉数据契约——extraAction 必须是
+       站内相对路径 /openrouter/，补 BASE 与 target 形态由 IntelCard 负责（见 intel-card-extra-action.test.ts）。
+       序号不钉：区块默认只渲染前 4 张，位次随 PRIORITY_MODELS 与核验日期浮动。 */
+    expect(or?.extraAction).toEqual({ text: "免费模型台账", link: "/openrouter/" });
+  });
   it("rank 与数组顺序解耦：同优先级内先按核验日期降序，再按名称升序（审查 L3）", () => {
     const editorial = splitByCategory(visibleCards(cards, donots, rules)).editorial;
     const all = { type: "all", query: "" } as const;
