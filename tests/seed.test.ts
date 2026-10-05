@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -16,10 +15,15 @@ const meta = JSON.parse(read("data/meta.json"));
 const PIPELINE = buildSeed(read("tests/fixtures/upstream-data.json"), JSON.parse(read("config/site-config.json")), loadLocal());
 
 describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed 导出）", () => {
-  it("条数与上游一致", () => {
-    expect(tokens).toHaveLength(36 - 3); // 上游 36 − sponsored 3（Q6）；小米 MiMo 已由 hide 改为配 link（解禁），不再从卡表剔除
-    expect(donots).toHaveLength(22);
-    expect(meta.counts).toEqual({ tokens: 33, donots: 22 });
+  it("条数与上游一致：管线收取数由冻结 fixture 决定，磁盘条数只增不减", () => {
+    /* 期望值来自 tests/fixtures/upstream-data.json 的 items 长度（36）− 决策 Q6 挡掉的 sponsored 3。
+       fixture 是冻结快照，这个数只会在「有意更新 fixture」时才变——那时才该显式改这里。 */
+    expect(PIPELINE.cards).toHaveLength(36 - 3);
+    expect(donots).toHaveLength(22); // donots 是本地固定资产（决策 Q4），crawler 不改它
+    /* 磁盘条数不能写死：crawler 会持续加卡，写死等于给流水线埋一颗每 6 小时响一次的雷。
+       真正的不变式是「磁盘条数 ≥ 管线收取数」——磁盘只会比冻结 fixture 更全，不会更少。 */
+    expect(tokens.length).toBeGreaterThanOrEqual(PIPELINE.cards.length);
+    expect(meta.counts).toEqual({ tokens: tokens.length, donots: donots.length });
   });
 
   it("全量链接过 linkRisk（与 seed 脚本同一份判定，含 hash 参数与推广短链域）", () => {
@@ -66,9 +70,14 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
     });
   });
 
-  it("meta 含条数，lastSyncedSha 为 null 表示本地种子", () => {
+  it("meta 含条数；lastSyncedSha 是「本地种子 null」或「爬虫回填的 commit SHA」二选一", () => {
     expect(meta.counts).toEqual({ tokens: tokens.length, donots: donots.length });
-    expect(meta.lastSyncedSha).toBeNull();
+    /* lastSyncedSha 的语义见 scripts/export-seed.mjs：buildSeed 产出时恒为 null（本地种子），
+       爬虫侧会用 commit SHA 覆盖它。所以合法形态只有两种——null，或一个 40 位十六进制串。
+       原来钉死 toBeNull()，等于断言「这个仓库永远不做真实同步」，上游一切同步就会假红。 */
+    expect(meta.lastSyncedSha === null || /^[0-9a-f]{40}$/i.test(meta.lastSyncedSha)).toBe(true);
+    /* sourceFingerprint 是上游快照原文的 sha256 前 16 位（buildSeed 现算），钉死同样会随上游换代假红 */
+    expect(meta.sourceFingerprint).toMatch(/^[0-9a-f]{16}$/);
     expect(meta.lastSyncedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     expect(meta.issueNo).toBeUndefined();
   });
@@ -101,19 +110,36 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
   it("Q4/Q5：观望名单与规则表由本地快照直通，上游 retired 一条也没进表", () => {
     expect(JSON.stringify(PIPELINE.donots)).toBe(JSON.stringify(donots));
     expect(JSON.stringify(PIPELINE.rules)).toBe(JSON.stringify(rules));
-    expect(PIPELINE.cards).toHaveLength(tokens.length);
     /* retired 名单里的卡名绝不能凭空出现在 donots（donots 与切换前逐字一致即已证，这里再点一次） */
     const retired = JSON.parse(read("tests/fixtures/upstream-data.json")).retired.map((r: any) => r.name);
     expect(retired).toContain("阿里云 Qoder（灵码）"); // 上游确实把它挪进了 retired
     expect(tokens.some((t: any) => t.name === "阿里云 Qoder（灵码）")).toBe(true); // alias 后仍在线
   });
 
-  it("可复现：管线导出与磁盘快照同 SHA256（pipeline↔disk 等价，幂等红线的单测层）", () => {
-    const sha = (o: unknown) =>
-      createHash("sha256").update(JSON.stringify(o)).digest("hex").slice(0, 12);
-    // 原来比的是 sha(tokens) vs sha(重读同一文件)＝同一表达式比自身，恒真；改比「管线产物」与「磁盘」
-    expect(sha(PIPELINE.cards)).toBe(sha(tokens));
-    expect(sha(PIPELINE.cards)).toBe("64e26640c52d"); // 计划 §0.1 实测哈希：换卡必须显式改这里
+  it("管线↔磁盘等价：管线产出的卡逐字在磁盘上，磁盘多出的卡来自冻结 fixture 之外的新上游", () => {
+    /* 这条替代了原来的「sha(PIPELINE.cards) 钉死 "64e26640c52d" + 与磁盘等长」。
+       钉哈希在有 crawler 的仓库里必然反复炸：buildSeed 以**实时** data/tokens.json 作观点基底
+       （loadLocal），磁盘每多一张卡基底就变、哈希就变，而 .github/workflows/crawl.yml 从不重签哈希
+       ——crawler 每 6 小时加一张卡，CI 的 quality job 就红一次。真正该守的不变式是下面三条，
+       都与「数据增长多少张」无关：
+         ① 管线看见的每一张卡，磁盘上必须存在且逐字段完全相同（观点层没被管线改坏）；
+         ② 管线产出的卡必须全部来自冻结 fixture 的 items/retired（没有跑飞造出幽灵卡）；
+         ③ 磁盘多出的卡必须不在冻结 fixture 里（它们是真实上游新增，不是管线污染）。
+       ①②③ 任一被破坏都会红；数据正常增长不会红。 */
+    const upstream = JSON.parse(read("tests/fixtures/upstream-data.json"));
+    const upstreamNames = new Set([...upstream.items, ...upstream.retired].map((i: any) => i.name));
+    const diskByName = new Map(tokens.map((t: any) => [t.name, t]));
+    const diskNames = new Set(diskByName.keys());
+
+    // ①
+    expect(PIPELINE.cards.filter((c: any) => !diskNames.has(c.name))).toEqual([]);
+    expect(PIPELINE.cards.map((c: any) => diskByName.get(c.name))).toEqual(PIPELINE.cards);
+    // ②
+    expect(PIPELINE.cards.filter((c: any) => !upstreamNames.has(c.name))).toEqual([]);
+    // ③
+    const extra = tokens.filter((t: any) => !PIPELINE.cards.some((c: any) => c.name === t.name));
+    expect(extra.length).toBeGreaterThan(0); // 样本量：③ 若无多出卡则该条空转，先钉住「确实有新增」这个前提
+    expect(extra.filter((t: any) => upstreamNames.has(t.name)).map((t: any) => t.name)).toEqual([]);
   });
 
   it("四道 fail-stop 护栏：基底缺失或上游全被挡架都拒绝导出，绝不发布空壳", () => {

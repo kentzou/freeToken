@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/subset-fonts.mjs",
     "seo": "node scripts/gen-seo.mjs",
     "start": "next dev",
     "seed": "node scripts/export-seed.mjs",
@@ -31,6 +31,7 @@
     "eslint": "8.57.1",
     "eslint-config-next": "14.2.35",
     "js-yaml": "4.1.0",
+    "subset-font": "^2.9.0",
     "typescript": "5.5.4",
     "vitest": "2.1.9"
   }

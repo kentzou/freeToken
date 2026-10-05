@@ -35,7 +35,13 @@ export const metadata: Metadata = {
 };
 
 /* 主题内联脚本：首屏绘制前定 data-theme，避免明暗闪白 */
-const themeScript = `(function(){try{var k='tfb-theme';var m=localStorage.getItem(k);var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=m||(d?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
+/* 首屏防闪：必须在首次绘制前把 data-theme 写好。
+   口径必须与 src/lib/theme.ts 的 resolveTheme **逐条一致**——无记录或值非法一律 dark（默认暗色），
+   只有 localStorage 里的合法值才被采纳；两处若不一致，会出现「首屏暗色、React 接管后跳回亮色」。
+   catch 分支同样写 dark：隐私模式下 localStorage 读取会抛，此时若不写属性，
+   data-theme 就整体缺失，CSS 会落回 :root 的亮色令牌——等于绕过了本次改动。
+   保持字面量、零插值（全站仅此一处内联注入点，见 tests/hygiene.test.ts 的注入面围栏断言）。 */
+const themeScript = `(function(){try{var k='tfb-theme';var m=localStorage.getItem(k);document.documentElement.setAttribute('data-theme',(m==='light'||m==='dark')?m:'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

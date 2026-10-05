@@ -14,14 +14,17 @@ const files: string[] = [];
   }
 })(SRC);
 
-/* 判据覆盖innerHTML 的全部写入形态：直接赋值、`+=` 追加、setAttribute 属性名形态、
-   outerHTML 与 insertAdjacentHTML；`(?!=)` 排除 `innerHTML == x` 这类比较，避免误报。 */
+/* 判据覆盖 HTML 写入 sink 的全部形态：`=`/`+=` 直接赋值、计算属性名形态（el 方括号引号 innerHTML 再赋值）、
+   `Object.assign(el, { innerHTML })`、`setAttribute` 属性名形态、`insertAdjacentHTML`、`document.write` 与
+   `document.writeln`（同族注入原语，只差三个字母，不能只钉前者），外加 `eval` 与 `new Function`。
+   `(?!=)` 排除 `innerHTML == x` 这类比较，避免把读取误判成写入。 */
 const FORBIDDEN = [
-  /\binnerHTML\b\s*\+?=(?!=)/,
-  /\bouterHTML\b\s*\+?=(?!=)/,
-  /setAttribute\(\s*["']innerHTML/,
+  /\b(?:inner|outer)HTML\b\s*\+?=(?!=)/,
+  /\[\s*["'](?:inner|outer)HTML["']\s*\]\s*\+?=(?!=)/,
+  /Object\.assign\([^)]*\b(?:inner|outer)HTML\b/,
+  /setAttribute\(\s*["'](?:inner|outer)HTML/,
   /insertAdjacentHTML\s*\(/,
-  /document\.write\s*\(/,
+  /document\.write(?:ln)?\s*\(/,
   /\beval\s*\(/,
   /\bnew Function\s*\(/,
 ];
@@ -31,7 +34,7 @@ const FORBIDDEN = [
 const LAYOUT = path.join(SRC, "app", "layout.tsx");
 
 describe("注入面围栏", () => {
-  it("src/ 无 innerHTML/outerHTML 写入（含 +=、setAttribute、insertAdjacentHTML）/ document.write / eval / new Function", () => {
+  it("src/ 无 HTML 写入 sink（赋值/追加/计算属性名/Object.assign/setAttribute/insertAdjacentHTML/document.write 与 writeln）/ eval / new Function", () => {
     const hits: string[] = [];
     for (const f of files) {
       const s = readFileSync(f, "utf8");

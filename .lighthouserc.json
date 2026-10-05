@@ -7,8 +7,8 @@
     },
     "assert": {
       "assertions": {
-        "largest-contentful-paint": ["error", { "median": 2500 }],
-        "cumulative-layout-shift": ["error", { "median": 0.1 }],
+        "largest-contentful-paint": ["error", { "maxNumericValue": 2500, "minScore": 0 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1, "minScore": 0 }],
         "categories:accessibility": ["error", { "minScore": 0.95 }]
       }
     },

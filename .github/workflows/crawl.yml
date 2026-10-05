@@ -1,7 +1,15 @@
 name: crawl
 on:
   schedule:
-    - cron: "0 */6 * * *"
+    # 分钟位刻意不取 0（整点）。官方文档《Events that trigger workflows》点名：
+    #   「High load times include the start of every hour. If the load is high enough,
+    #     some queued jobs may be dropped.」
+    # 本仓实测 13 次调度相对档位起点的延迟：3.99/4.81/0.68/4.45/4.66/0.08/3.94/4.37/
+    # 5.28/3.91/2.74/4.89/5.94 小时，最高 5.94h 已经吃满整整一个 6h 周期——排在整点上
+    # 就是和全站所有 `0 * * * *` 抢同一批 runner，档位看起来像「丢了」。
+    # 挪到 :23 分后触发点为 00:23 / 06:23 / 12:23 / 18:23 UTC，`*/6` 频率不变。
+    # 改回 `0 */6 * * *` 会被 tests/workflows.test.ts 的「cron 分钟位 ≠ 0」断言拦下。
+    - cron: "23 */6 * * *"
   workflow_dispatch: {}
   issue_comment:
     types: [created]
@@ -9,6 +17,10 @@ on:
 permissions:
   contents: write
   issues: write
+  # dispatch deploy.yml 要用：GitHub 防循环规则下，crawl 用 GITHUB_TOKEN 推的 commit
+  # 不会触发 deploy.yml（见下方 dispatch 步骤的注释）。改用 workflow_dispatch 绕开，
+  # 而 workflow_dispatch 的 REST 端点要求 actions: write —— 缺这一行会直接 403。
+  actions: write
 
 jobs:
   crawl:
@@ -26,7 +38,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: npm run crawl --silent
-      - name: 数据确有变化才提交（push 触发 deploy.yml 的 paths 过滤）
+      - name: 数据确有变化才提交 + 显式触发部署（push 事件不会自动触发 deploy）
+        env:
+          # dispatch 用 GITHUB_TOKEN 即可：workflow_dispatch 是防循环规则明列的无条件例外。
+          # 前提是 permissions 里有 actions: write（本文件顶部已加），否则这里 403。
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -38,7 +55,58 @@ jobs:
             echo "无实质数据变化，跳过提交"
           else
             git commit -m "chore(crawl): 上游同步（trigger ${{ github.sha }}）"
-            git push
+            # 必须先 rebase 再推：这是「定时任务撞上人工推送」，不是偶发。
+            # cron 与人共用 main 分支且互不同步——本 job 在 11:56:27 checkout 到 56c76cd，
+            # 人工 11:56:34 推了 1c408e0，11:57:02 的裸 git push 就被 non-fast-forward 拒了
+            # （run #13 首次失败；此前 12 次都只是恰好没人在这个 35 秒窗口里推 main）。
+            # rebase 把远端新提交垫到本地提交之下，让本提交永远落在最新 main 之上。
+            # 不用 --force：强推会覆盖掉人工提交，那是掩盖问题不是修复。
+            if ! git pull --rebase origin main; then
+              # 冲突意味着人工提交与本次自动提交改了同一个文件（如 data/tokens.json），
+              # 只能由人裁决——绝不静默吞掉，也绝不替人做选择。
+              if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+                echo "::error::同步远端时 rebase 冲突：人工提交与本次自动提交改了同一文件，需人工裁决后重跑本 workflow。"
+              else
+                echo "::error::同步远端失败（rebase 未开始，通常是网络或权限问题），本次不提交。"
+              fi
+              git rebase --abort 2>/dev/null || true
+              exit 1
+            fi
+            # push 必须显式判成败：后面要 dispatch deploy，若 push 静默失败还去 dispatch，
+            # 就会部署一份「没有新数据」的产物，白跑 3-4 分钟门禁并掩盖真正的推送故障。
+            # 不依赖 shell 的 -e（GitHub Actions 默认 bash -e，但那是隐式行为，显式更稳）。
+            git push || {
+              echo "::error::推送数据到 main 失败：本次不触发部署，避免部署无新数据的产物。"
+              exit 1
+            }
+            # 数据推上去了，但站点不会自动更新——必须显式 dispatch 一次 deploy。
+            # 原因：GitHub 防循环规则「由 GITHUB_TOKEN 触发的事件不会创建新的 workflow run」，
+            # 例外只有 workflow_dispatch 与 repository_dispatch。deploy.yml 靠 on: push + data/**
+            # 过滤触发，而本次 push 用的正是 secrets.GITHUB_TOKEN，所以它永远不会被触发。
+            # 实证：bot 提交 156a82d 真实改了 data/tokens.json（直接命中 paths），但 deploy
+            # 全部 7 次 run 的 head_sha 无一例外是人工提交——抓取通了，上线这一环是断的。
+            # workflow_dispatch 是文档明列的无条件例外，用 GITHUB_TOKEN 触发也会创建 run，
+            # 所以不需要 PAT、不需要 GitHub App。
+            #
+            # 放在 else 分支内：走「无实质数据变化」那条路时产物不会变，白跑一次
+            # quality+lighthouse 约 3-4 分钟没有意义。
+            # --fail-with-body：dispatch 失败（如 403 权限不足）必须让本步变红，
+            # 否则会出现「数据提交了、但没部署、且没人知道」——这正是本轮要修的病。
+            echo "::group::触发 deploy（数据已推 main，push 事件不会自动触发它）"
+            code=$(curl --fail-with-body -sS -o /tmp/dispatch.out -w '%{http_code}' \
+              -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/vnd.github+json" \
+              --data-binary '{"ref":"main"}' \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/deploy.yml/dispatches") || {
+                echo "::error::触发 deploy 失败（HTTP ${code:-未知}）：数据已提交但不会上线。$(cat /tmp/dispatch.out 2>/dev/null)"
+                echo "::endgroup::"
+                exit 1
+              }
+            echo "dispatch 返回 HTTP ${code}（204 为受理成功）"
+            [ -s /tmp/dispatch.out ] && cat /tmp/dispatch.out
+            echo "::endgroup::"
           fi
 
   review:
@@ -88,5 +156,19 @@ jobs:
             echo "数据未变，跳过提交"
           else
             git commit -m "chore(review): 盖章合入 issue#${{ github.event.issue.number }}"
+            # 与 crawl job 同一处置、同一理由：定时/评论触发的 job 与人工推送共用 main 分支
+            # 且互不同步，裸 git push 在有人先推过时必被 non-fast-forward 拒（crawl run #13 实测）。
+            # 本 job 更容易撞上——放宽触发后每条带 review 标签的评论都会起它，人工审核期间
+            # 很可能正好有别的提交进 main。rebase 后再推，不静默覆盖、不强推。
+            if ! git pull --rebase origin main; then
+              # 冲突＝人工提交与本次盖章结果改了同一文件，审核结论与人工改动打架，必须人来裁决。
+              if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+                echo "::error::同步远端时 rebase 冲突：人工提交与本次盖章结果改了同一文件，需人工裁决后重跑本 workflow。"
+              else
+                echo "::error::同步远端失败（rebase 未开始，通常是网络或权限问题），本次不提交。"
+              fi
+              git rebase --abort 2>/dev/null || true
+              exit 1
+            fi
             git push
           fi

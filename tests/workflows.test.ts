@@ -6,9 +6,18 @@ const crawl = load(readFileSync(".github/workflows/crawl.yml", "utf8")) as Recor
 const deploy = load(readFileSync(".github/workflows/deploy.yml", "utf8")) as Record<string, any>;
 const lhrc = JSON.parse(readFileSync(".lighthouserc.json", "utf8"));
 
+/* 两条提取器提到模块级。此前 crawlSteps / reviewSteps 是每个用例内联一份
+   `.map((s) => s.run || "").join("\n")`，而 `cmds` 只定义在第一个 it() 的作用域内——
+   别的 describe 块根本拿不到它。本组红线（crawl → deploy 上线链）需要在模块级取这两条，
+   故一并提上来共用，避免同一个过滤/拼接逻辑在文件里散落多份。
+   注：第一个 it() 内部仍留有一份同名 `cmds`，它会遮蔽本处（实现逐字相同，行为无差异），
+   属过渡态；等那处内联定义被清理时一并删除即可，不影响任何断言。 */
+const cmds = (steps: string) => steps.split("\n").filter((l) => !l.trim().startsWith("#")).join("\n");
+const runs = (job: { steps: { run?: string }[] }) => job.steps.map((s: { run?: string }) => s.run || "").join("\n");
+
 describe("workflow 结构红线（真实执行列入线上步骤，这里锁死形态）", () => {
   it("crawl.yml：6 小时 cron + dispatch + issue_comment 三入口；数据 commit 只在真变更时发生", () => {
-    expect(crawl.on.schedule).toEqual([{ cron: "0 */6 * * *" }]);
+    expect(crawl.on.schedule).toEqual([{ cron: "23 */6 * * *" }]);
     expect(Object.keys(crawl.on)).toEqual(["schedule", "workflow_dispatch", "issue_comment"]);
     expect(crawl.jobs.crawl.if).toContain("issue_comment");
     const crawlSteps = crawl.jobs.crawl.steps.map((s: { run?: string }) => s.run || "").join("\n");
@@ -79,8 +88,11 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
   });
 
   it(".lighthouserc.json：三项门槛值 = spec §9 承诺值（LCP 2500ms / CLS 0.1 / A11y 0.95），URL 打本地根路径", () => {
-    expect(lhrc.ci.assert.assertions["largest-contentful-paint"]).toEqual(["error", { median: 2500 }]);
-    expect(lhrc.ci.assert.assertions["cumulative-layout-shift"]).toEqual(["error", { median: 0.1 }]);
+    /* LCP/CLS 用 maxNumericValue 钉数值门槛（LCP 2500ms / CLS 0.1，= spec §9 承诺）；
+       minScore:0 是为了压掉 LHCI 对未显式给出断言类型的指标自动补的 minScore 0.9 默认断言——
+       首轮 CI 实测它会把 LCP 1874ms（本已 < 2500ms）按分数 0.67 误杀。 */
+    expect(lhrc.ci.assert.assertions["largest-contentful-paint"]).toEqual(["error", { maxNumericValue: 2500, minScore: 0 }]);
+    expect(lhrc.ci.assert.assertions["cumulative-layout-shift"]).toEqual(["error", { maxNumericValue: 0.1, minScore: 0 }]);
     expect(lhrc.ci.assert.assertions["categories:accessibility"]).toEqual(["error", { minScore: 0.95 }]);
     expect(lhrc.ci.collect.url).toEqual(["http://127.0.0.1:3000/", "http://127.0.0.1:3000/intel/workbuddy/"]);
   });
@@ -103,5 +115,69 @@ describe("quality job 的 lint 闸（Task 7 基座钉）", () => {
     expect(lintRuns).toContain("npm run lint");
     const pkg = JSON.parse(readFileSync("package.json", "utf8")) as { scripts: Record<string, string> };
     expect(pkg.scripts.lint).toContain("--max-warnings=0");
+  });
+});
+
+/* —— 「抓到的数据必须真的上线」这条链的红线（2026-10-04 修）——
+   病根：crawl 用 secrets.GITHUB_TOKEN 推 main，而 GitHub 防循环规则下由 GITHUB_TOKEN 触发的
+   push 事件不创建新的 workflow run（例外只有 workflow_dispatch 与 repository_dispatch）；
+   deploy.yml 靠 on: push + paths: data/** 触发，于是抓到的新卡永远躺在仓库里不上站。
+   实证：bot 提交 156a82d 真实改了 data/tokens.json（直接命中 paths），deploy 全部 7 次 run 的
+   head_sha 却无一例外是人工提交。修法是 push 之后显式 dispatch，故下面把这条链逐环节钉死。 */
+describe("crawl → deploy 的上线链（GITHUB_TOKEN 防循环的绕行口）", () => {
+  const crawlSteps = runs(crawl.jobs.crawl);
+  /* 一律走 cmds()（剔注释行）：crawl.yml 的注释里我写了「--fail-with-body：dispatch 失败必须让
+     本步变红」这类说明文字，不剔注释的话「把真命令删掉、只留注释」照样绿——本文件顶部那条围栏
+     说的就是这件事。 */
+  const shell = cmds(crawlSteps);
+
+  it("actions: write 是 dispatch 的命门：缺它 dispatch 403，数据静默不上线", () => {
+    /* 上面那条 toMatchObject 是**部分匹配**，删掉 actions 这一行它照样全绿——所以必须单独钉。
+       这条权限是本轮修复唯一的前置开关，漏了不会有人发现，只表现为「站点数据不动了」。 */
+    expect(crawl.permissions.actions).toBe("write");
+  });
+
+  it("push 之后显式 dispatch deploy.yml，带对 ref、且失败必须变红", () => {
+    expect(shell).toContain("actions/workflows/deploy.yml/dispatches");
+    /* ref 钉死 main：写成别的分支就会拿错误分支的内容去构建发布，而 dispatch 仍是 204 受理成功，
+       症状同样是「站点内容不对」而非报错。 */
+    expect(shell).toContain('{"ref":"main"}');
+    /* 没有 --fail-with-body，dispatch 的 403 会被 curl 吞掉、step 照样绿——那就退回成
+       「数据提交了、但没部署、且没人知道」，正是本轮要修的那个病。 */
+    expect(shell).toContain("--fail-with-body");
+  });
+
+  it("push 失败即中止，不得继续 dispatch（否则部署一份没有新数据的产物）", () => {
+    expect(shell).toContain("git push ||");
+  });
+
+  it("dispatch 排在「无实质数据变化」判定之后：无变化那条路走不到 dispatch", () => {
+    /* 顺序钉（把 dispatch 挪到 git diff --cached --quiet 之前就会破）：无变化时产物不变，
+       白跑一次 quality+lighthouse 约 3-4 分钟没有意义。这是防回归的第二道闸。 */
+    expect(shell.indexOf("git diff --cached --quiet")).toBeLessThan(shell.indexOf("dispatches"));
+  });
+
+  it("deploy.yml 保留 workflow_dispatch 入口：它是 dispatch 的目标端点，删了会让上面的 dispatch 全部 404", () => {
+    expect(Object.keys(deploy.on)).toContain("workflow_dispatch");
+  });
+});
+
+/* —— cron 档位：避开整点（2026-10-05 修）——
+   病根：原档位分钟位是 0（整点）。Actions 官方文档《Events that trigger workflows》点名整点是
+   高负载时段：「High load times include the start of every hour... some queued jobs may be
+   dropped.」本仓实测 13 次调度的延迟（相对档位起点）最高 5.94 小时，已吃满整整一个 6h 周期，
+   症状就是「档位看起来丢了」——它不是停摆，是被排队挤掉了。
+   现改为分钟位 23（小时位仍是每 6 小时一次，频率未动），触发点 00:23 / 06:23 / 12:23 / 18:23 UTC，
+   只把起点挪出整点那批争抢 runner 的队列。
+   （本段刻意不写 cron 字面量：小时位那段里的「星号+斜杠」会提前闭合块注释，esbuild 直接报
+    Unexpected "*"，整份测试文件连同其它 30 个文件一起变红——踩过一次，别再写进来。）
+   只靠上面那条 toEqual 钉字面量是不够的：谁把 cron 改回整点并顺手改了这条字面量，测试照样绿、
+   病照复发。所以把「分钟位 ≠ 0」单独钉死——它只管分钟，改回整点必红，改频率不误红（频率由
+   上面那条 toEqual 管），两条断言各管一件事，互不遮蔽。 */
+describe("cron 档位（避开官方点名的整点高负载时段）", () => {
+  it("crawl 的 cron 分钟位不为 0：整点排队任务可能被丢弃", () => {
+    const fields = String(crawl.on.schedule[0].cron).trim().split(/\s+/);
+    expect(fields).toHaveLength(5); // 标准 5 段 cron；写成 6 段（带秒）会被 GitHub 判为非法
+    expect(fields[0]).not.toBe("0");
   });
 });

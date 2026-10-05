@@ -7,7 +7,7 @@
   --line-strong: #17201b;
   --ink-1: #17201b;
   --ink-2: #3c463f;
-  --ink-3: #6b766d;
+  --ink-3: #5f6a61; /* 对 --surface-2(#f0ede3) 对比度 4.82:1 ≥ 4.5（原 #6b766d 仅 4.04，Lighthouse color-contrast 红灯） */
   --ink-4: #9a938a;
   --brand: #0f966e;
   --brand-deep: #0b7a59;
