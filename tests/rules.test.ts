@@ -21,10 +21,11 @@ describe("compiledRules 报错可读性与结构守卫", () => {
       /logo 缺失或不是数组/
     );
   });
-  it("真实 data/rules.json：六 featured / 32 logo / 19 cardCopy / 21 detailSlug 全还原", () => {
+  it("真实 data/rules.json：九 featured / 32 logo / 19 cardCopy / 21 detailSlug 全还原", () => {
     const rules = JSON.parse(readFileSync("data/rules.json", "utf8")) as RulesJson;
     const c = compiledRules(rules);
-    expect(c.featured).toHaveLength(6);
+    /* featured 2026-10-05 由 6 扩到 9（放行腾讯元器/百度千帆/讯飞星火），其余三表未动 */
+    expect(c.featured).toHaveLength(9);
     expect(c.logo).toHaveLength(32);
     expect(c.cardCopy).toHaveLength(19);
     expect(c.detailSlug).toHaveLength(21);

@@ -53,7 +53,12 @@ deploy.yml 首次全绿即已发布（Settings → Pages 显示 live URL）。�
 deploy.yml 已按仓库注入 `NEXT_PUBLIC_BASE_PATH` 与 `NEXT_PUBLIC_SITE_URL`（github.io 形态）。绑自定义域名时只改这两处 env + Settings → Pages → Custom domain，代码零改动（终审 #5 的留白就此闭合）。
 
 ## 9. 节奏与费用
-cron `0 */6 * * *` 为 UTC（北京时间 8/14/20/2 点）。公开仓库 Actions 免费；单跑≈构建 3–5 分钟 + Lighthouse 1–2 分钟。
+两条 cron 都按 UTC 写（Actions 的 `schedule` 不认 `timezone` 字段）：
+
+- `crawl.yml` = `23 */6 * * *` → 北京时间 **08:23 / 14:23 / 20:23 / 02:23**。分钟位刻意避开整点：官方点名整点是 runner 争抢的高负载时段，本仓实测延迟最大 5.94 小时，起点错开整点能挤进队列。
+- `crawl-openrouter.yml` = `0 22 * * *` → 北京时间 **06:00**（前一日 22:00 UTC）。一天只有 1 档，延迟不影响台账新鲜度，保持整点这个对读者友好的时刻更值得。
+
+分钟位被 `tests/workflows.test.ts` 钉成红线，改 cron 必须连同那两条断言一起改。公开仓库 Actions 免费；单跑≈构建 3–5 分钟 + Lighthouse 1–2 分钟。
 
 ## 10. /admin 后台启用（Day-1 必做，计划 3）
 

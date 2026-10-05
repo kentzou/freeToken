@@ -51,6 +51,9 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
   it("规则表可还原为 RegExp 且门槛标签齐全", () => {
     expect(rules.featured.map((r: any) => r.label)).toEqual([
       "DeepSeek V4", "GLM 5.2", "Kimi K3", "千问 3.8 Max", "Hy3", "LongCat 2.0",
+      /* 后三条为 2026-10-05 扩充：放行腾讯元器 / 百度千帆（文心）/ 讯飞星火（开放平台）。
+         放行面与「零误伤」由 tests/featured-gate.test.ts 用生产代码钉住。 */
+      "腾讯元器", "百度千帆（文心）", "讯飞星火（开放平台）",
     ]);
     rules.featured.forEach((r: any) => expect(() => new RegExp(r.source, r.flags)).not.toThrow());
     expect(rules.logo.length).toBe(32);
