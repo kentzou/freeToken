@@ -97,8 +97,10 @@ describe("HistoryTable", () => {
   });
   it("静态钉：门禁三个数与仓内配置同源；本 pane 一处 FETCH、无 mock、错误条与空态都来自共用原子", () => {
     const lh = readFileSync(".lighthouserc.json", "utf8");
-    expect(lh).toContain('"median": 2500');
-    expect(lh).toContain('"median": 0.1');
+    // 键名出自 main 的 7f4630e（median 形态改写为 maxNumericValue 上限 + minScore 兜底，阈值数值一个没动）；
+    // 判据方向不松：仍是「三个门禁数与本仓配置文件同源」，改配置而不同步措辞照样红。
+    expect(lh).toContain('"maxNumericValue": 2500');
+    expect(lh).toContain('"maxNumericValue": 0.1');
     expect(lh).toContain('"minScore": 0.95');
     for (const n of ["2500", "0.1", "0.95"]) expect(HISTORY_GATE_NOTE).toContain(n);
     expect(readFileSync(".github/workflows/deploy.yml", "utf8")).toContain("needs: lighthouse");

@@ -219,7 +219,9 @@ describe("Tab3 读者口径说明（用户裁决③）", () => {
     expect(CRAWL_READER_NOTE).toContain("每 6 小时");
     const yml = readFileSync(".github/workflows/crawl.yml", "utf8");
     const cron = yml.match(/cron:\s*"([^"]+)"/)?.[1];
-    expect(cron).toBe("0 */6 * * *");
+    // 分钟位 23 出自 main 的 8b403de（把调度挪出整点，规避官方点名的 runner 高负载时刻）；
+    // 这里继续写死完整字面而不改成「只核频率」——这条钉的全部价值就是逼着改 cron 的人同时改读者文案。
+    expect(cron).toBe("23 */6 * * *");
     expect(CRAWL_READER_NOTE).toContain(cron);
   });
   it("说明必须区分「新增自动发布 / 修改与删除待审」两条路，与 run.mjs 的分类一致", () => {

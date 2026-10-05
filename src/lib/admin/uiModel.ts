@@ -204,7 +204,7 @@ export function sourceLine(pending: PendingJson, issueNumber: number | null): st
  *  新增自动发布 / 修改删除待审出自 crawler/run.mjs 的 syncOnce，deploy 自动重建出自 deploy.yml 的 paths。
  *  故意不写「每 6 小时一定成功」——schedule 在 GitHub 侧会有延迟，措辞只承诺节奏设定。 */
 export const CRAWL_READER_NOTE =
-  "数据从哪来：上游 hope0719/token-fbi 的公开 data.json，以及每个条目自己的平台官网直连核验。多久更新：crawl.yml 按 cron \"0 */6 * * *\" 每 6 小时一次，也可点上面的按钮手动触发一次。上游新增条目自动发布；已有条目的修改与删除会进「待审变更」等你盖章。你在这里保存或盖章的每个动作都会真实 commit 回仓库，deploy.yml 看到 data/ 或 config/ 变化后自动重建线上站点。";
+  "数据从哪来：上游 hope0719/token-fbi 的公开 data.json，以及每个条目自己的平台官网直连核验。多久更新：crawl.yml 按 cron \"23 */6 * * *\" 每 6 小时一次，也可点上面的按钮手动触发一次。上游新增条目自动发布；已有条目的修改与删除会进「待审变更」等你盖章。你在这里保存或盖章的每个动作都会真实 commit 回仓库，deploy.yml 看到 data/ 或 config/ 变化后自动重建线上站点。";
 
 /* ── Tab1「待审变更」的四支分流与措辞（Task 7）────────────────────────────── */
 
@@ -344,7 +344,8 @@ export const EMPTY_HISTORY = {
   note: `点「${TRIGGER_BUTTON}」排一次队，或等 crawl.yml 的自动运行跑完，这里就会出现记录。`,
 };
 
-/** 三个阈值照抄 .lighthouserc.json（median 2500 / median 0.1 / minScore 0.95）；
+/** 三个阈值照抄 .lighthouserc.json（LCP 与 CLS 用 maxNumericValue 卡上限、无障碍用 minScore 卡下限，
+ *  数值 2500 / 0.1 / 0.95）；
  *  「不带病上线」出自 deploy.yml 门禁步骤的注释，「保持上一次成功发布的版本」出自 deploy job 的
  *  `needs: lighthouse`——门禁红，发布 job 根本不跑，Pages 上还是上次的产物。
  *  用例⑧直接读这两个文件对账，配置改口而措辞没跟上就会红。 */
