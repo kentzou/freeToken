@@ -128,3 +128,32 @@ grep -n "更正\|不采\|明确不做\|改为" docs/superpowers/plans/2026-09-30
 | F9 | 四个面板的「重读」按钮在真浏览器里的反馈与并发行为（V34 登记的不对称） | `renderToStaticMarkup` 无事件循环，`reload` 由 effect/`onClick` 触发，本机够不到 | 裸 CDP 下分别对 Tab1–Tab4 连点两次重读，判据＝①重读期间 `aria-busy="true"` 或按钮 `disabled` 至少其一成立；②两份并发 GET 的响应不得让后到者覆盖先到者之后再由 `finally` 提前撤掉反馈（观察点：`busy` 翻转次数与最终渲染数据来自哪一次响应）；③读失败仍走 `ErrorNotice` 分支而不是空态。结论回写本文档，不在代码里补断言 |
 
 线上侧动作不在本表重复：`ONLINE-STEPS.md` §10 第 1–8 条是 F 的执行清单，`ADMIN-ACCEPTANCE.md` §7 是数据面的诚实缺口。三份文档的分工＝**数据面（计划 3）／界面与措辞（本文）／线上动作（ONLINE-STEPS）**，同一条缺口只在其归属文档里写一次。
+
+---
+
+## 7. 预合并 main 后的追加读数（2026-10-05 追加式入账，§1–§6 的读数不回改）
+
+§1–§6 的全部读数锚在分枝自身的树（终审态 `b3c394a`／登记态 `34cbf55`），本节只记录「把 main 拉进来之后」的新态，两组数各自可复算，不互相覆盖。
+
+两笔提交：合并 `7ed5754`（`git merge --no-ff main`，main＝`f5af34b`，merge-base＝`b4c7c12`，文本零冲突，27 文件 +765/−105）＋同源钉同步 `e8a66b0`（3 文件 +10/−5）。
+
+| 门禁 | 分枝态（§1） | 合并态（本节实测于 `e8a66b0`） | 差值与成因 |
+| --- | --- | --- | --- |
+| vitest | 41 files / 349 tests | 41 files / **357** tests，全绿 | ＋8 例全部来自 main（workflows/catalog/seed/theme 等动态自洽改造），本枝零新增用例 |
+| `tsc --noEmit` / `next lint` | 0 / 0 | 0 / 0（`✔ No ESLint warnings or errors`） | 无变化 |
+| `next build` | 27 页 | **30 页** | ＋3 页，见下「数据换代归因」 |
+| `out/` HTML 计数 | 26 | **29** | ＋3，与 build 同因 |
+| `out/intel/` 计数 | 18 | **21** | ＋3 |
+| `grep -c noindex out/index.html` | 0 | 0 | 首页仍不该带 noindex |
+| `npm run test:out` | 9 pass / 0 fail | 9 pass / 0 fail | 产物红线全过（`build ⇒ seo ⇒ test:out` 硬序未打乱） |
+| seed 三哈希 | `cards=64e26640c52d`<br>`donots=88f99a96da35`<br>`rules=7888f2ec168b` | `cards=64e26640c52d`<br>`donots=88f99a96da35`<br>`rules=**a789559190e6**` | cards／donots 不变——种子出自冻结 fixture（`tests/fixtures/upstream-data.json`，`FIXTURE_SHA16=0276a024c4f6e10e` 未漂移），与磁盘卡数无关；rules 变＝main 把 workbuddy 规则锚成 `^workbuddy$`（磁盘 `data/rules.json` 一行） |
+| 泄漏扫描（`data out`） | 零命中，`EXIT=1` | 零命中，rc=1 | 合并带进 `data/openrouter.json` 之类新文件后仍零命中 |
+
+**两枚同源钉的对齐**（不是「改期望值凑绿」，而是钉按设计抓住了跨文件换代，值与方向都写在这里）：`crawl.yml` 的 cron 由 `0 */6 * * *` 变为 `23 */6 * * *`（main `8b403de`，分钟位非 0 已被 main 自己钉成断言），本枝随附三处跟改——`tests/admin-uimodel.test.ts` 的期望值、`uiModel.ts` 的 `CRAWL_READER_NOTE` 读者文案（「每 6 小时」仍成立、不动），并保留 `toContain(cron)` 那条同源断言；`.lighthouserc.json` 的断言键名由 `median` 改为 `maxNumericValue` + `minScore`（main `7f4630e`，阈值 2500／0.1／0.95 一个没动），本枝跟改 `tests/admin-history-ui.test.tsx` 两行键名与 `uiModel.ts` 那句「三个阈值照抄配置」的注释，判据仍是「三个门禁数与仓内配置同源」。
+
+**数据换代归因**（+8 张卡只换来 +3 页，逐张点名不留悬案）：分枝基点树里 `data/tokens.json` 实为 **33 张**（main 提交消息写的「37→41」是它的中间态，不是本枝基线），合并后 **41 张**、零删除。新增 8 张＝`腾讯元器`／`DeepSeek 开放平台`／`WorkBuddy 国际版`／`MiniMax Code 国庆签到`／`华为云码道`／`Google Antigravity（反重力）`／`百度千帆（文心）`／`讯飞星火（开放平台）`；过 `visibleCards`（观望剔除→featured 门槛→pin 位次）而拿到详情页的只有 3 张＝`item-15oui2c`(DeepSeek 开放平台)、`item-10oxwka`(WorkBuddy 国际版)、`item-17xtwio`(华为云码道)，其余 5 张未过 featured 门槛故无页——与 donots 无关（`out/donots/index.html` 对这 4 个名字零命中）。`out`／`out/intel`／build 三处 +3 互相对得上。
+
+**红线面在合并态的复验**：红线 3（`grep -rn "mkFetch\|fake-fetch\|FakeRes" src/`）＝0 命中；红线 7（原型演示值 `#42`／`a1b2c3d`／`WDJB-MJHT`）＝0 命中；红线 6 新增路由只有 `src/app/admin/page.tsx` 一条（`src/app/contact|privacy/page.tsx`、`globals.css`、`layout.tsx` 是 M 不是 A）；红线 2 在 `src/lib/admin/*` 命中三处、逐处判归属＝`auth.ts:50` 与 `auth.ts:123` 是注入参数的默认值 `now = () => Date.now()`（调用时才取时，非模块顶层执行）、`bootstrap.ts:3` 是注释，全数合规。**红线 4 要分两面写**：本枝相对 `b4c7c12` 对 `package.json`／`package-lock.json` 的 diff 为 **0 行**（「计划 5 不新增依赖」守住），但合并树里多了 main 带来的 `subset-font@^2.9.0` 与 `build` 脚本尾部的 `node scripts/subset-fonts.mjs`——这是 main 的合法引入，不由本枝负责，登记于此以免下一个读者把它的红算到计划 5 头上。
+
+**交接项（本枝不改，属 main 侧文档）**：`docs/ONLINE-STEPS.md:56` 与 `docs/PIPELINE-ACCEPTANCE.md:54` 仍写着旧 cron `0 */6 * * *`，是 `8b403de` 改 cron 时漏更的陈旧叙述（截至本节入账实测，这两份文件不在并行窗口的脏文件名单里，它此刻在改的是 `package.json`／`tests/workflows.test.ts` 与 OpenRouter 那批未跟踪文件）。本枝不碰：改 cron 的人补自己那条链最省事，而计划 5 的射程是界面与措辞，越界改这两行只会给下一笔合并多造一个冲突面。谁先落地谁补，登记在此以免它变成第三次「没人记得的陈旧文档」。
+
