@@ -6,12 +6,19 @@ import "@fontsource/jetbrains-mono/latin-400.css";
 import "@fontsource/jetbrains-mono/latin-700.css";
 import "./globals.css";
 import { canonicalAsset, SITE_URL } from "@/lib/href";
+import { ROBOTS_META } from "@/lib/siteRole";
 
 /* metadataBase 用 href.ts 的 SITE_URL（线上 Pages 地址由 NEXT_PUBLIC_SITE_URL 注入，deploy.yml 已接；
    本地构建为空串 → 不出 absolute URL）。不在这里重读 env：同一个地址读两次就是两个口径。 */
 
 export const metadata: Metadata = {
   metadataBase: SITE_URL ? new URL(SITE_URL) : undefined,
+  /* 镜像口径下全站 noindex, follow（主站为 undefined，等于不写这条标签）。
+     放在根 layout 是因为镜像的每一页都要带——放在某个页面里就等于只保护那一路由。
+     与 canonical 指主站是同一个裁决的两半：只声明「正式地址在别处」而不拒绝索引，
+     是把「谁来竞争排名」的决定权交给爬虫；noindex 才是「镜像不争排名」的显式表态，
+     而 follow 保证爬虫仍能顺链看见同页的 canonical，把权重归到主站。 */
+  robots: ROBOTS_META,
   title: "Token 情报局｜免费 AI 额度情报",
   description: "核验过的免费 AI 额度、模型与编程工具情报，每 6 小时同步一次。",
   openGraph: {

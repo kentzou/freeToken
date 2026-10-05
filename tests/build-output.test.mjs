@@ -3,9 +3,14 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { test } from "node:test";
+import { publishesSitemap, roleOf } from "../scripts/gen-seo.mjs";
 
 const OUT = path.resolve(process.cwd(), "out");
 if (!existsSync(OUT)) throw new Error("缺 out/：先跑 npm run build 再执行本检查");
+/* 抓取面口径与 npm run seo 用的是同一个 roleOf：产物按 A 口径生成、检查按 B 口径判定，
+   就等于这条自检没有牙。拼错的 SITE_ROLE 在这里同样当场红。 */
+const ROLE = roleOf(process.env.SITE_ROLE);
+const MIRROR = !publishesSitemap(ROLE);
 /* 分享面（canonical / og:image）只有两种可接受形态：线上口径=站点绝对地址（SITE 已含仓库子路径），
    本地口径=带 BASE 的相对路径或由 Next 默认 origin 补全。BASE 叠两次是 Step 10 实测踩过的坑。 */
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/+$/, "");
@@ -126,18 +131,35 @@ test("首页含 og:image 与 twitter 大图卡，且声明尺寸等于图片真�
 
 test("robots.txt 随产物落地；有站点地址时 sitemap 与产物页集合一致", () => {
   assert.ok(existsSync(path.join(OUT, "robots.txt")), "缺 out/robots.txt：npm run build 后要跑 npm run seo");
-  if (!SITE) {
+  /* 镜像口径：SITE 是主站地址（canonical 靠它），但本站主机上不供 sitemap——
+     跨主机的 loc 清单按 sitemaps.org 需另行验证才生效，静默无效比 404 更难发现。 */
+  if (MIRROR) {
+    assert.ok(SITE, "镜像口径必须给 NEXT_PUBLIC_SITE_URL（主站地址），否则 canonical 只是相对路径，镜像就没意义");
+    assert.ok(!existsSync(path.join(OUT, "sitemap.xml")), "镜像口径不该出 sitemap.xml");
+    assert.ok(!readFileSync(path.join(OUT, "robots.txt"), "utf8").includes("Sitemap:"), "镜像口径不得声明 Sitemap 行");
+    /* 逐文件核 noindex，漏一页就等于那一页在第二个主机上重新参与排名。
+       刻意不写「共 N 页」这种绝对数：卡数会长，绝对数只会在下次加卡时假红（同 intel 下界那条的教训）。 */
+    for (const f of htmlFiles) {
+      assert.match(
+        readFileSync(f, "utf8"),
+        /<meta name="robots" content="noindex, follow"/,
+        `镜像口径下该页没带 noindex：${path.relative(OUT, f)}`
+      );
+    }
+  } else if (!SITE) {
     /* 本地口径：绝不允许把占位域名或相对 loc 写进产物 */
     assert.ok(!existsSync(path.join(OUT, "sitemap.xml")), "本地口径不该出 sitemap");
     assert.ok(!readFileSync(path.join(OUT, "robots.txt"), "utf8").includes("Sitemap:"), "无站点地址不得写 Sitemap 行");
     return;
+  } else {
+    const locs = [...readFileSync(path.join(OUT, "sitemap.xml"), "utf8").matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+    assert.equal(locs.length, dirsOf("intel").length + 6, "sitemap 条数 = 首页 1 + 内容页 5（含 openrouter）+ 详情页 N");
+    for (const l of locs) assert.ok(l.startsWith(`${SITE}/`), `loc 不是本站绝对地址：${l}`);
+    assert.ok(!locs.some((l) => /\/(404|admin)\//.test(l)), "sitemap 混入了 404/admin 地址");
   }
-  const locs = [...readFileSync(path.join(OUT, "sitemap.xml"), "utf8").matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  assert.equal(locs.length, dirsOf("intel").length + 6, "sitemap 条数 = 首页 1 + 内容页 5（含 openrouter）+ 详情页 N");
-  for (const l of locs) assert.ok(l.startsWith(`${SITE}/`), `loc 不是本站绝对地址：${l}`);
-  assert.ok(!locs.some((l) => /\/(404|admin)\//.test(l)), "sitemap 混入了 404/admin 地址");
   /* canonical 是本页唯一的地道地址：两种可接受形态（Next 依 metadataBase 解析成绝对地址，
-     或原样输出带 BASE 的相对路径）都算对，但前缀绝不许重复，也绝不许缺。 */
+     或原样输出带 BASE 的相对路径）都算对，但前缀绝不许重复，也绝不许缺。
+     镜像口径下这条尤其要紧——它正是「把权重归给主站」的落点，SITE 给的就是主站地址。 */
   const home = readFileSync(path.join(OUT, "index.html"), "utf8");
   const canon = /rel="canonical" href="([^"]+)"/.exec(home)?.[1] || "";
   assert.ok(canon === `${SITE}/` || canon === `${BASE}/`, `首页 canonical 形态意外：${canon}`);
@@ -156,6 +178,14 @@ test("/admin 已进产物且带 noindex（§7-8）", () => {
      匹配到 content 值的右引号为止，不把自闭合写法（"/>" 还是 ">"）钉进去——那是 React 的渲染细节，不是本站的承诺。
      真正的承诺是「noindex 在、且和 follow 一起出现」：只写 noindex 不给 follow，爬虫就不跟站内链接，前台的更新会被拖慢。 */
   assert.match(admin, /<meta name="robots" content="noindex, follow"/);
-  /* 反向牙：前台首页不许出现 noindex。首页一旦被误挂，整站自然搜索归零，而这在 /admin 那一行同样改一行 metadata 就能发生。 */
-  assert.ok(!readFileSync(path.join(OUT, "index.html"), "utf8").includes("noindex"), "首页被挂上了 noindex");
+  /* 首页的 meta robots 只随部署口径变，两种口径都必须被显式检查（留空等于这一路无人守）：
+     主站——首页挂上 noindex 就整站自然搜索归零，而这和 /admin 那一行是同一种改法；
+     镜像——全站 noindex 是「副本站不争排名」的承诺本体，漏了就是把副本当主站投进索引，
+     于是又回到「两个主机抢同一个关键词、canonical 还说谎」的原点。 */
+  const homeHtml = readFileSync(path.join(OUT, "index.html"), "utf8");
+  if (MIRROR) {
+    assert.match(homeHtml, /<meta name="robots" content="noindex, follow"/, "镜像口径的首页没带 noindex");
+  } else {
+    assert.ok(!homeHtml.includes("noindex"), "首页被挂上了 noindex");
+  }
 });
