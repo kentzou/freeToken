@@ -221,4 +221,33 @@ describe("cron 档位（避开官方点名的整点高负载时段）", () => {
     expect(fields).toHaveLength(5); // 标准 5 段 cron；写成 6 段（带秒）会被 GitHub 判为非法
     expect(fields[0]).not.toBe("0");
   });
+
+  /* —— openrouter 这条**刻意相反**：分钟位就是 0（每日 06:00 CST = 前一日 22:00 UTC）——
+     为什么不跟着 crawl 一起挪走？两条的档位密度根本不同：
+       crawl  一天 4 档（每 6 小时一次），延迟以小时计、且会吃满整个周期（本仓实测最高
+              5.94h），所以必须把起点挪出整点那批抢 runner 的队列；
+       or     一天只有 1 档，延迟几小时对「免费模型台账」这种事实型数据的新鲜度毫无影响，
+              而 06:00 CST 是对读者友好的时刻（早上看正好是昨天定下来的账）。
+     代价（一天 1 档的量级下，官方点名的高负载时段挤掉一次，次日自愈）远小于收益。
+     所以这里的分钟位 0 是**决定**、不是遗漏——把它钉成红线，防止将来有人看到 crawl 改
+     非整点就顺手把这条也「对齐」掉。（字面量由上面那条 toEqual 管，本条只钉性质：
+     改回整点必红，改小时位 22 不误红——那是 06:00 CST 这个对外时刻本身的改动，
+     属于要重新拍板的事，得连字面量一起改、被 review 看见。） */
+  it("openrouter 的 cron 保持整点：06:00 CST = 22:00 UTC，整点是刻意选择", () => {
+    const fields = String(orCrawl.on.schedule[0].cron).trim().split(/\s+/);
+    expect(fields).toHaveLength(5); // 同上：5 段标准形态，防「带秒的 6 段」这种非法配置蒙混过关
+    expect(fields[0]).toBe("0");
+  });
+
+  /* 防「口径泛化」这条后路：把 crawl 的「分钟位 ≠ 0」泛化成「所有 workflow 的分钟位都不为 0」，
+     会让 or 的整点选择立刻变红，从而逼迫后来者把一个刻意决定悄悄改掉——泛化本身才是回归。
+     本条同时看两条 workflow 的分钟位，并要求它们**方向相反**（crawl 非 0、or 为 0）。
+     注意这是与上面两条独立的第三道闸：把 crawl 改成整点时它会红，把 or 改成非整点时它也会红，
+     所以它在「两条都被顺手改成同一个值」时同样会红。 */
+  it("两条 workflow 的分钟位口径相反且互不遮蔽：crawl 非整点、or 整点（泛化即回归）", () => {
+    const crawlMinute = String(crawl.on.schedule[0].cron).trim().split(/\s+/)[0];
+    const orMinute = String(orCrawl.on.schedule[0].cron).trim().split(/\s+/)[0];
+    expect(crawlMinute).not.toBe("0");
+    expect(orMinute).toBe("0");
+  });
 });
