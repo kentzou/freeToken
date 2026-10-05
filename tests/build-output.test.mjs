@@ -40,10 +40,10 @@ test("产物数量合理（首页 + 详情页 + 4 内容页）", () => {
   for (const d of intelDirs) {
     assert.ok(existsSync(path.join(OUT, "intel", d, "index.html")), `详情页 /intel/${d}/ 缺 index.html`);
   }
-  for (const p of ["about", "editorial-policy", "privacy", "contact"]) {
+  for (const p of ["about", "editorial-policy", "privacy", "contact", "openrouter"]) {
     assert.ok(existsSync(path.join(OUT, p, "index.html")), `缺内容页 /${p}/`);
   }
-  /* 实测 26 = 首页 1 + 详情页 19 + 内容页 4 + 404 两份；取下界 23 留一点余量 */
+  /* 实测 27 = 首页 1 + 详情页 19 + 内容页 5（含 /openrouter/ 台账页）+ 404 两份；取下界 23 留一点余量 */
   assert.ok(htmlFiles.length >= 23, `HTML 仅 ${htmlFiles.length} 个，疑似路由未生成`);
 });
 
@@ -64,6 +64,16 @@ test("首页版面区块齐全", () => {
   for (const t of ["Token 情报局", "今日头条", "大模型", "编程工具", "合作情报", "观望名单", "加入情报群"]) {
     assert.ok(s.includes(t), `首页缺「${t}」`);
   }
+});
+
+/* 上线链产物面：台账数据进仓库必须真的出现在站点产物里（页面有数据时模型表完整渲染，
+   数据缺席时才允许空态——空态文案与模型表二者必居其一，不许「有数据却不渲染表头」）。 */
+test("OpenRouter 台账页在产物里：模型表或空态必居其一", () => {
+  const s = readFileSync(path.join(OUT, "openrouter", "index.html"), "utf8");
+  assert.ok(s.includes("OpenRouter 免费模型台账"), "台账页缺页名");
+  const hasTable = s.includes('class="or-table"');
+  const hasEmpty = s.includes("台账暂无数据");
+  assert.ok(hasTable !== hasEmpty, "台账页「模型表」与「空态」必须互斥：数据在就渲染表，数据缺就空态");
 });
 
 test("暗色令牌已随产物落地", () => {
@@ -123,7 +133,7 @@ test("robots.txt 随产物落地；有站点地址时 sitemap 与产物页集合
     return;
   }
   const locs = [...readFileSync(path.join(OUT, "sitemap.xml"), "utf8").matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  assert.equal(locs.length, dirsOf("intel").length + 5, "sitemap 条数 = 首页 1 + 内容页 4 + 详情页 N");
+  assert.equal(locs.length, dirsOf("intel").length + 6, "sitemap 条数 = 首页 1 + 内容页 5（含 openrouter）+ 详情页 N");
   for (const l of locs) assert.ok(l.startsWith(`${SITE}/`), `loc 不是本站绝对地址：${l}`);
   assert.ok(!locs.some((l) => /\/(404|admin)\//.test(l)), "sitemap 混入了 404/admin 地址");
   /* canonical 是本页唯一的地道地址：两种可接受形态（Next 依 metadataBase 解析成绝对地址，

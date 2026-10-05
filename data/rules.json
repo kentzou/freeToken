@@ -29,6 +29,21 @@
       "label": "LongCat 2.0",
       "source": "longcat",
       "flags": ""
+    },
+    {
+      "label": "腾讯元器",
+      "source": "腾讯元器|元器api",
+      "flags": ""
+    },
+    {
+      "label": "百度千帆（文心）",
+      "source": "百度千帆|千帆文心|文心ernie",
+      "flags": ""
+    },
+    {
+      "label": "讯飞星火（开放平台）",
+      "source": "讯飞星火|星火spark|讯飞",
+      "flags": ""
     }
   ],
   "logo": [

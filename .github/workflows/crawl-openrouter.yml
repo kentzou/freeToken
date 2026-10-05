@@ -1,0 +1,81 @@
+name: crawl-openrouter
+# 每日 06:00（Asia/Shanghai）抓 OpenRouter 免费模型台账。
+# Actions 的 schedule 只认 UTC，不认 timezone 字段：06:00 CST = 前一日 22:00 UTC，故写 0 22 * * *。
+# 分钟位保持 0 是刻意选择，与 crawl.yml 的 :23 不同档，理由是档位密度不同：crawl 一天 4 档、
+# 延迟以小时计且实测能吃满整个 6h 周期，必须避开整点的 runner 争抢；本条一天只有 1 档，
+# 延迟几小时不影响台账新鲜度，保持 06:00 CST 这个对读者友好的时刻更值得。
+# tests/workflows.test.ts 有对应断言钉住这个决定（改分钟位会红），改动请连同该断言一起改。
+# 与 crawl.yml 的分工：那条管上游 hope0719/token-fbi 的三产物 + 两队列审核（决策 #7 仍在），
+# 这条只管 data/openrouter.json 一份纯事实台账——它不进 diff/pending，改动即提交。
+on:
+  schedule:
+    - cron: "0 22 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  # dispatch deploy.yml 要用：与 crawl.yml 同一病根——GITHUB_TOKEN 推的提交不触发 deploy.yml，
+  # 必须显式 workflow_dispatch，而该端点要求 actions: write，缺了会 403。
+  actions: write
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # 刻意不跑 npm ci：crawler/openrouter.mjs 只用 node:crypto/node:fs/node:url + 内置 fetch，零依赖。
+      # 抓不到就非 0 退出（fail-stop，旧台账原样保留），job 直接红——不允许用空数据覆盖真实台账。
+      - name: 抓取 OpenRouter 免费模型台账
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: npm run crawl:or --silent
+      # 实测口径（仓库外一次性 git 目录预演，零 node_modules + 真实网络）：fetchedAt 每次抓取都前进，
+      # 所以抓成功＝台账必有差异，每天会落一条提交。下面两道判断防的是另外两件事：
+      # 抓取 fail-stop 没产出文件时不提空文件；手工重跑（内容真没变）时不产生空提交。
+      # 推 main 的 GITHUB_TOKEN 不会触发 deploy.yml（防循环规则），台账上线靠下面的显式 dispatch。
+      - name: 提交（缺产出不提交 · 无差异不空提交）
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ ! -f data/openrouter.json ]; then
+            echo "data/openrouter.json 不存在（抓取未产出），跳过提交"
+            exit 0
+          fi
+          git add data/openrouter.json
+          if git diff --cached --quiet; then
+            echo "台账未变，跳过提交"
+          else
+            git commit -m "chore(crawl): OpenRouter 免费模型台账（run ${{ github.run_id }}）"
+            # 必须先 rebase 再推（与 crawl.yml 同一处置）：定时抓取与人工推送共用 main 且互不同步，
+            # 裸 git push 撞上 non-fast-forward 就红了。冲突只能由人裁决，绝不静默吞掉。
+            if ! git pull --rebase origin main; then
+              echo "::error::同步远端失败（rebase 冲突或网络/权限问题），本次不提交。"
+              git rebase --abort 2>/dev/null || true
+              exit 1
+            fi
+            # push 判败即止：推不上去还 dispatch 就会部署一份没有新数据的产物（与 crawl.yml 同一病）。
+            git push || {
+              echo "::error::推送台账到 main 失败：本次不触发部署。"
+              exit 1
+            }
+            # 数据推上去了但站点不会自动更新：GITHUB_TOKEN 的 push 不触发 deploy.yml（防循环规则，
+            # 例外只有 workflow_dispatch），所以显式 dispatch。放在 else 内：台账未变不白跑部署。
+            # --fail-with-body：dispatch 403 必须让本步变红，否则「提交了但没上线且没人知道」。
+            code=$(curl --fail-with-body -sS -o /tmp/or-dispatch.out -w '%{http_code}' \
+              -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/vnd.github+json" \
+              --data-binary '{"ref":"main"}' \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/deploy.yml/dispatches") || {
+                echo "::error::触发 deploy 失败（HTTP ${code:-未知}）：台账已提交但不会上线。$(cat /tmp/or-dispatch.out 2>/dev/null)"
+                exit 1
+              }
+            echo "dispatch 返回 HTTP ${code}（204 为受理成功）"
+          fi
