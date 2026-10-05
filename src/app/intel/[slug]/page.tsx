@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import SiteHeaderLite from "@/components/SiteHeaderLite";
 import SiteFooter from "@/components/SiteFooter";
+import SubAction from "@/components/SubAction";
 import { ctaHref, ctaRel, detailSlug, fmtMd } from "@/lib/copy";
 import { canonicalHref, pageHref } from "@/lib/href";
 import { visibleCards } from "@/lib/catalog";
@@ -59,6 +60,7 @@ export default function IntelPage({ params }: { params: { slug: string } }) {
           <a className="btn-primary" href={ctaHref(card)} target="_blank" rel={ctaRel(card)}>
             前往平台领取
           </a>
+          {card.extraAction ? <SubAction link={card.extraAction.link} text={card.extraAction.text} className="btn-ghost" /> : null}
           <a className="btn-ghost" href={pageHref("/")}>
             返回目录
           </a>

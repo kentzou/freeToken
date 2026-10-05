@@ -104,6 +104,24 @@ test("OpenRouter 改判普通卡：长条归零、详情页产物存在、首页
   );
 });
 
+/* 详情页是「点进卡片之后」的落点：台账入口只挂在首页卡上时，详情页就成了死胡同。
+   这条钉 /intel/openrouter/ 的**静态 markup**（不是 payload）里确有指向台账页的副按钮，
+   且它与「前往平台领取」「返回目录」同处 .detail-acts 动作行。
+   href 按口径不同：本地口径是 /openrouter/，Pages 口径经 pageHref 补成 /freeToken/openrouter/，
+   所以前缀写成可选，两种口径下这条钉子都必须绿。 */
+test("详情页也带台账入口：/intel/openrouter/ 的动作行里有指向台账页的按钮", () => {
+  const f = path.join(OUT, "intel", "openrouter", "index.html");
+  assert.ok(existsSync(f), "缺 /intel/openrouter/ 详情页产物");
+  const s = readFileSync(f, "utf8");
+  const acts = /<div class="detail-acts">([\s\S]*?)<\/div>/.exec(s);
+  assert.ok(acts, "详情页没有 .detail-acts 动作行");
+  assert.ok(
+    /<a class="btn-ghost" href="(?:\/freeToken)?\/openrouter\/"[^>]*>免费模型台账<\/a>/.test(acts[1]),
+    "详情页动作行里找不到台账入口（站内链接未成形或没挂进详情页）"
+  );
+  assert.ok(acts[1].includes("返回目录"), "详情页动作行丢了返回目录");
+});
+
 test("暗色令牌已随产物落地", () => {
   const css = readdirSync(path.join(OUT, "_next", "static", "css"))
     .map((f) => readFileSync(path.join(OUT, "_next", "static", "css", f), "utf8"))
