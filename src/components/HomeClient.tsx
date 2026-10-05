@@ -114,6 +114,16 @@ export default function HomeClient({
           setType("all");
           setQuery("");
         }}
+        footer={
+          /* 台账入口卡：归属「大模型」区块（footer 渲染在 section 内），模型表本体在 /openrouter/ 页，
+             首页只放入口（数量来自服务端传入的台账，不另取数） */
+          <a className="or-entry" href={pageHref("/openrouter/")}>
+            <strong>OpenRouter 免费模型台账</strong>
+            <span>
+              {openrouter.models.length ? `${openrouter.freeModelCount} 个免费模型在档` : "台账待入库"}
+            </span>
+          </a>
+        }
       />
       <SectionCatalog
         id="tools"
@@ -140,12 +150,6 @@ export default function HomeClient({
           {!partners.length ? <p className="section-note">当前没有合作内容。</p> : null}
         </div>
       </section>
-
-      {/* 台账入口卡：模型表本体在 /openrouter/ 页，首页只放入口（数量来自服务端传入的台账，不另取数） */}
-      <a className="or-entry" href={pageHref("/openrouter/")}>
-        <strong>OpenRouter 免费模型台账</strong>
-        <span>{openrouter.models.length ? `${openrouter.freeModelCount} 个免费模型在档` : "台账待入库"}</span>
-      </a>
 
       <WatchList items={donots} />
 

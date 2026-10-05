@@ -81,6 +81,19 @@ test("OpenRouter 台账页在产物里：模型表或空态必居其一", () => 
   assert.ok(hasTable !== hasEmpty, "台账页「模型表」与「空态」必须互斥：数据在就渲染表，数据缺就空态");
 });
 
+/* 归类面：台账入口卡必须落在「大模型」区块内部（id="models" 与 id="tools" 之间），
+   不许再作为游离区块漂在合作情报之后。按产物 HTML 的字节位置判定，不看源码。 */
+test("OpenRouter 台账入口卡归在「大模型」区块内", () => {
+  const s = readFileSync(path.join(OUT, "index.html"), "utf8");
+  const entries = s.split('class="or-entry"').length - 1;
+  assert.equal(entries, 1, `首页 or-entry 应为 1 处，实测 ${entries}`);
+  const models = s.indexOf('id="models"');
+  const tools = s.indexOf('id="tools"');
+  const entry = s.indexOf('class="or-entry"');
+  assert.ok(models > -1 && tools > models, "缺大模型/编程工具区块锚点");
+  assert.ok(entry > models && entry < tools, "台账入口卡不在「大模型」区块与「编程工具」区块之间");
+});
+
 test("暗色令牌已随产物落地", () => {
   const css = readdirSync(path.join(OUT, "_next", "static", "css"))
     .map((f) => readFileSync(path.join(OUT, "_next", "static", "css", f), "utf8"))
