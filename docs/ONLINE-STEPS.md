@@ -74,7 +74,7 @@ deploy.yml 已按仓库注入 `NEXT_PUBLIC_BASE_PATH` 与 `NEXT_PUBLIC_SITE_URL`
 
 8. **计划 5 已落地**（原第 7 条的「计划 4」，判读规则见 `ADMIN-UI-ACCEPTANCE.md` §4）：`/admin` 路由与四标签、`.adm-*` 样式、十二态、`/admin` 的 meta robots `noindex, follow` 均已进产物；第 1–7 条的线上动作不变，其中第 2 条（`oauthClientId`）缺失时页面显示 `unconfigured` 引导态并指向本步。
 
-## 11. 同一份导出放到第二个主机上（副本站）：`SITE_ROLE`
+## 11. 同一份导出放到第二个主机上（副本站）：`NEXT_PUBLIC_SITE_ROLE`
 
 静态导出不知道自己会被放到哪个主机上，所以部署口径必须显式声明。**为什么这是一条线上步骤而不是代码注释**：
 2026-10-05 实测到的线上缺陷正是"同一份产物换了主机、绝对地址没跟着换"——副本站那份的 26 条 sitemap loc
@@ -82,26 +82,34 @@ deploy.yml 已按仓库注入 `NEXT_PUBLIC_BASE_PATH` 与 `NEXT_PUBLIC_SITE_URL`
 等于每个页面都在告诉搜索引擎"正式地址在别处"，而那个地址上没有对应页面。重构建修不掉它，
 因为值不在仓库里，是当时构建命令行上带了那个 `NEXT_PUBLIC_SITE_URL`。
 
-口径由构建期变量 `SITE_ROLE` 声明，只有两支；`deploy.yml` 不设它，Pages 那条链路走 `primary`，零改动。
+口径由构建期变量 `NEXT_PUBLIC_SITE_ROLE` 声明，只有两支；`deploy.yml` 不设它，Pages 那条链路走 `primary`，零改动。
+变量名必须带 `NEXT_PUBLIC_`：口径不只决定抓取面（robots/sitemap），还决定**站内链接落成什么形态**（见下条），
+而 `SectionCatalog` 这类 `"use client"` 组件在浏览器里也会重渲染卡片——裸 `SITE_ROLE` 不会内联进浏览器包，
+镜像产物就会「服务端那份链接对、点一次「查看全部」就错」（2026-10-05 实测到的正是这个形态）。
 
-| 口径 | canonical / og:image | 每页 `meta robots` | `robots.txt` | `sitemap.xml` |
-| --- | --- | --- | --- | --- |
-| `primary`（缺省） | 指本站 | 不写 | 带 `Sitemap:` 行 | 生成 |
-| `mirror` | 指**主站**地址 | `noindex, follow` | 只有 `User-agent`/`Allow` | **不生成** |
+| 口径 | canonical / og:image | 每页 `meta robots` | `robots.txt` | `sitemap.xml` | 站内页面链接 |
+| --- | --- | --- | --- | --- | --- |
+| `primary`（缺省） | 指本站 | 不写 | 带 `Sitemap:` 行 | 生成 | `/x/`（clean URL） |
+| `mirror` | 指**主站**地址 | `noindex, follow` | 只有 `User-agent`/`Allow` | **不生成** | `/x/index.html` |
 
-两条设计约束，改代码前先看：
+三条设计约束，改代码前先看：
 
 - 副本站**不许自带**一份 loc 指向主站的 sitemap：按 sitemaps.org，`loc` 必须与 sitemap 文件所在主机同源，
   跨主机那份需要另行验证才生效——放在副本站上是静默无效，比 404 更难被发现。
 - 用 `noindex, follow` 而不是 `robots.txt` 里的 `Disallow`：爬虫照样顺链抓取，能在同一页同时看见
   noindex 与 canonical，两个信号不打架（`Disallow` 会让它两个都看不见，归权链就断了）。
+- 镜像的站内链接只能指向**真实文件名**：Qoder Sites 的静态托管关掉了目录索引，`/intel/openrouter/`
+  不会解析到该目录的 `index.html`，而是 200 回落到首页（`prepare_site` 传 `spa: false` 也一样，
+  2026-10-05 两轮发布各自实测）。`pageHref` 因此按口径分流；canonical 仍走 clean 形态，
+  不能跟着带 `/index.html`（那会给主站的同一内容造第二个 URL）。改这条时看 `tests/href.test.ts`
+  与 `tests/build-output.test.mjs` 的「站内页面链接形态随口径落地」——两头各钉一条。
 
 副本站重发（本机实测过的命令与读数，在 `token-fbi-next` 里跑）：
 
 ```bash
-SITE_ROLE=mirror NEXT_PUBLIC_SITE_URL=https://kentzou.github.io/freeToken npm run build   # ✓ 34/34 页
-SITE_ROLE=mirror NEXT_PUBLIC_SITE_URL=https://kentzou.github.io/freeToken npm run seo     # [seo] robots.txt 已出（mirror）；镜像口径不供 sitemap
-SITE_ROLE=mirror NEXT_PUBLIC_SITE_URL=https://kentzou.github.io/freeToken npm run test:out # ℹ pass 10 / ℹ fail 0
+NEXT_PUBLIC_SITE_ROLE=mirror NEXT_PUBLIC_SITE_URL=https://kentzou.github.io/freeToken npm run build    # ✓ Generating static pages (35/35)
+NEXT_PUBLIC_SITE_ROLE=mirror NEXT_PUBLIC_SITE_URL=https://kentzou.github.io/freeToken npm run seo      # [seo] robots.txt 已出（mirror）；镜像口径不供 sitemap
+NEXT_PUBLIC_SITE_ROLE=mirror NEXT_PUBLIC_SITE_URL=https://kentzou.github.io/freeToken npm run test:out # ℹ pass 13 / ℹ fail 0（读数是 2026-10-05 那轮，用例只增不减）
 ```
 
 - 副本站挂在自家主机根路径上，**不要**设 `NEXT_PUBLIC_BASE_PATH`（设了资源前缀会变成 `/freeToken/_next`，
@@ -112,12 +120,12 @@ SITE_ROLE=mirror NEXT_PUBLIC_SITE_URL=https://kentzou.github.io/freeToken npm ru
 - **换口径必须连 `build` 一起重跑**：只重跑 seo 会得到「主站口径的页面 + 镜像口径的抓取面」这种混合态。
   本机实测这种态下 `npm run test:out` 红在两条（`robots.txt 随产物落地…` 与 `/admin 已进产物且带 noindex`），
   因为页面里没有 `noindex` 标签——**这是保护，不是故障**：产物与口径不一致就别往外发。
-- 三条产物核对由 `tests/build-output.test.mjs` 在 `SITE_ROLE=mirror` 下逐页自动做（sitemap 不存在、
-  robots 无 `Sitemap:` 行、每一页 HTML 都带 `noindex, follow`），不必手工重复；`test:out` 就是那道闸。
+- 产物核对由 `tests/build-output.test.mjs` 在 `NEXT_PUBLIC_SITE_ROLE=mirror` 下逐页自动做（sitemap 不存在、
+  robots 无 `Sitemap:` 行、每一页 HTML 都带 `noindex, follow`、站内链接全带 `index.html`），不必手工重复；`test:out` 就是那道闸。
   本轮实测：33 份 HTML 全部带标签，首页 canonical 落成 `https://kentzou.github.io/freeToken/`，
   详情页与 `og:image` 同主机；`out/sitemap.xml` 不存在。
-- `SITE_ROLE` 拼错就地失败，不会静默按主站出产物：`npm run seo` 退出 1 并点名收到的值
-  （`[seo] SITE_ROLE 只接受 primary|mirror，收到 "Mirror"`），`src/lib/siteRole.ts` 在构建期抛。
+- 口径变量拼错就地失败，不会静默按主站出产物：`npm run seo` 退出 1 并点名收到的值
+  （`[seo] NEXT_PUBLIC_SITE_ROLE 只接受 primary|mirror，收到 "Mirror"`），`src/lib/siteRole.ts` 在构建期抛。
   校验在 `scripts/gen-seo.mjs`（抓取面）与 `src/lib/siteRole.ts`（页面 meta）各有一份，
   用例分别钉在 `tests/seo.test.ts` 与 `tests/site-role.test.ts`，两处的判定表一致。
 - 上传动作本身仍是人工闸门，不在本文件范围内（见外层 `docs/PUBLISH-NOTES.md`）。

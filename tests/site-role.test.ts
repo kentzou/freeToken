@@ -1,22 +1,24 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-/* SITE_ROLE 是构建期常量（模块加载时读一次就定终身），所以每种口径都要重开一个模块实例——
+/* NEXT_PUBLIC_SITE_ROLE 是构建期常量（模块加载时读一次就定终身），所以每种口径都要重开一个模块实例——
    与 tests/href.test.ts 同一手法。这条围栏要存在的理由：镜像那次事故就是「同一份产物被放到
-   另一个主机上、而产物里的绝对地址没有跟着变」，口径必须显式声明、拼错必须当场红。 */
+   另一个主机上、而产物里的绝对地址没有跟着变」，口径必须显式声明、拼错必须当场红。
+   变量名带 NEXT_PUBLIC_ 是因为它同时决定浏览器里重渲染的站内链接形态（见 href.ts 的 pageHref）——
+   裸 SITE_ROLE 不会内联进浏览器包，镜像产物就会「服务端链接对、点一次查看全部就错」。 */
 const load = async (role?: string) => {
   vi.resetModules();
-  if (role === undefined) delete process.env.SITE_ROLE;
-  else process.env.SITE_ROLE = role;
+  if (role === undefined) delete process.env.NEXT_PUBLIC_SITE_ROLE;
+  else process.env.NEXT_PUBLIC_SITE_ROLE = role;
   const m = await import("@/lib/siteRole");
   return { role: m.SITE_ROLE as string, robots: m.ROBOTS_META };
 };
 
 afterEach(() => {
-  delete process.env.SITE_ROLE;
+  delete process.env.NEXT_PUBLIC_SITE_ROLE;
   vi.resetModules();
 });
 
-describe("SITE_ROLE：只有 primary 与 mirror 两种口径", () => {
+describe("NEXT_PUBLIC_SITE_ROLE：只有 primary 与 mirror 两种口径", () => {
   it("默认（不设变量）＝primary，且不写 meta robots", async () => {
     const { role, robots } = await load();
     expect(role).toBe("primary");

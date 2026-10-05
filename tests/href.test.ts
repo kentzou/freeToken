@@ -50,6 +50,25 @@ describe("路径出口", () => {
     vi.resetModules();
   });
 
+  /* 镜像口径单独开一份模块实例：Qoder Sites 的静态托管关掉了目录索引，/about/ 不会落到
+     out/about/index.html 而是回落到首页，所以镜像产物的站内链接只能指向真实文件名；
+     canonical 反过来必须保持主站的 clean URL，资源路径也不该被这套改造波及。 */
+  it("镜像口径：站内链接落成显式文件名，根路径与资源路径不变，canonical 仍指主站 clean URL", async () => {
+    vi.resetModules();
+    process.env.NEXT_PUBLIC_SITE_ROLE = "mirror";
+    process.env.NEXT_PUBLIC_SITE_URL = "https://kentzou.github.io/freeToken";
+    const m = await import("@/lib/href");
+    expect(m.pageHref("/about")).toBe("/about/index.html");
+    expect(m.pageHref("/intel/openrouter/")).toBe("/intel/openrouter/index.html");
+    expect(m.pageHref("/")).toBe("/");
+    expect(m.assetPath("assets/og-cover.png")).toBe("/assets/og-cover.png");
+    expect(m.canonicalHref("/about")).toBe("https://kentzou.github.io/freeToken/about/");
+    expect(m.canonicalHref("/")).toBe("https://kentzou.github.io/freeToken/");
+    delete process.env.NEXT_PUBLIC_SITE_ROLE;
+    delete process.env.NEXT_PUBLIC_SITE_URL;
+    vi.resetModules();
+  });
+
   /* deploy.yml 注入的地址若带尾斜杠，而 gen-seo.mjs 对同一个 env 是剥尾斜杠的——
      href.ts 不剥就会产出 …/token-fbi-next//about/ 这种双斜杠 canonical，与 sitemap 的
      loc 两个口径不一致（计划 4 Task 6 评审 Minor-4，评审人直跑复现）。 */

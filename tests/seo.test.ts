@@ -56,7 +56,7 @@ describe("镜像口径：不供跨主机的抓取面", () => {
   it("publishesSitemap：默认与 primary 出 sitemap，mirror 不出", () => {
     expect(publishesSitemap("primary")).toBe(true);
     expect(publishesSitemap("mirror")).toBe(false);
-    // deploy.yml 不设 SITE_ROLE，缺省必须还是主站口径——不能让镜像决定默认行为
+    // deploy.yml 不设 NEXT_PUBLIC_SITE_ROLE，缺省必须还是主站口径——不能让镜像决定默认行为
     expect(publishesSitemap(undefined)).toBe(true);
   });
 

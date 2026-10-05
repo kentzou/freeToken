@@ -26,13 +26,13 @@ export function locsFromHtml(htmlFiles, siteUrl) {
   return locs.sort();
 }
 
-/** SITE_ROLE 的取值口径（唯一实现，tests/build-output.test.mjs 复用同一个函数，杜绝「产物按 A 口径生成、检查按 B 口径判定」）。
+/** 部署口径的取值（唯一实现，tests/build-output.test.mjs 复用同一个函数，杜绝「产物按 A 口径生成、检查按 B 口径判定」）。
  *  空/缺省＝primary；未知值就地抛错——静默回落成 primary 就会把镜像当主站发出去，正是这次要防的事故形态。
- *  与 src/lib/siteRole.ts 里的同名校验必须逐条一致：那是页面侧（meta robots），这里是抓取面侧（robots/sitemap）。 */
+ *  与 src/lib/siteRole.ts 里的同名校验必须逐条一致：那是页面侧（meta robots）与链接形态，这里是抓取面侧（robots/sitemap）。 */
 export function roleOf(raw) {
   const v = (raw ?? "").trim();
   if (v !== "" && v !== "primary" && v !== "mirror") {
-    throw new Error(`SITE_ROLE 只接受 primary|mirror，收到 ${JSON.stringify(raw)}`);
+    throw new Error(`NEXT_PUBLIC_SITE_ROLE 只接受 primary|mirror，收到 ${JSON.stringify(raw)}`);
   }
   return v === "mirror" ? "mirror" : "primary";
 }
@@ -88,11 +88,12 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     console.error("[seo] 缺 out/：先跑 npm run build");
     process.exit(1);
   }
-  /* SITE_ROLE 与 src/lib/siteRole.ts 读的是同一个构建期环境变量，两处口径必须一致：
+  /* 口径变量与 src/lib/siteRole.ts 读的是同一个（NEXT_PUBLIC_ 前缀，好让浏览器包里的
+     链接改造与服务端口径同源）；两处取值必须一致：
      这里若放宽成「未知值按 primary」，就会出现「页面 meta 说 noindex、robots.txt 却供 sitemap」的镜像。 */
   let role;
   try {
-    role = roleOf(process.env.SITE_ROLE);
+    role = roleOf(process.env.NEXT_PUBLIC_SITE_ROLE);
   } catch (e) {
     console.error(`[seo] ${e.message}`);
     process.exit(1);

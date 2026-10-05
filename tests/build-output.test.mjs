@@ -8,8 +8,8 @@ import { publishesSitemap, roleOf } from "../scripts/gen-seo.mjs";
 const OUT = path.resolve(process.cwd(), "out");
 if (!existsSync(OUT)) throw new Error("缺 out/：先跑 npm run build 再执行本检查");
 /* 抓取面口径与 npm run seo 用的是同一个 roleOf：产物按 A 口径生成、检查按 B 口径判定，
-   就等于这条自检没有牙。拼错的 SITE_ROLE 在这里同样当场红。 */
-const ROLE = roleOf(process.env.SITE_ROLE);
+   就等于这条自检没有牙。拼错的 NEXT_PUBLIC_SITE_ROLE 在这里同样当场红。 */
+const ROLE = roleOf(process.env.NEXT_PUBLIC_SITE_ROLE);
 const MIRROR = !publishesSitemap(ROLE);
 /* 分享面（canonical / og:image）只有两种可接受形态：线上口径=站点绝对地址（SITE 已含仓库子路径），
    本地口径=带 BASE 的相对路径或由 Next 默认 origin 补全。BASE 叠两次是 Step 10 实测踩过的坑。 */
@@ -107,8 +107,9 @@ test("OpenRouter 改判普通卡：长条归零、详情页产物存在、首页
 /* 详情页是「点进卡片之后」的落点：台账入口只挂在首页卡上时，详情页就成了死胡同。
    这条钉 /intel/openrouter/ 的**静态 markup**（不是 payload）里确有指向台账页的副按钮，
    且它与「前往平台领取」「返回目录」同处 .detail-acts 动作行。
-   href 按口径不同：本地口径是 /openrouter/，Pages 口径经 pageHref 补成 /freeToken/openrouter/，
-   所以前缀写成可选，两种口径下这条钉子都必须绿。 */
+   href 按口径有三态：本地 /openrouter/、Pages /freeToken/openrouter/、镜像 /openrouter/index.html
+   （镜像托管关掉目录索引，站内链接只能指向真实文件，见 pageHref），期望值随口径算，不写死。 */
+const ledgerHref = MIRROR ? `${BASE}/openrouter/index.html` : `${BASE}/openrouter/`;
 test("详情页也带台账入口：/intel/openrouter/ 的动作行里有指向台账页的按钮", () => {
   const f = path.join(OUT, "intel", "openrouter", "index.html");
   assert.ok(existsSync(f), "缺 /intel/openrouter/ 详情页产物");
@@ -116,10 +117,36 @@ test("详情页也带台账入口：/intel/openrouter/ 的动作行里有指向�
   const acts = /<div class="detail-acts">([\s\S]*?)<\/div>/.exec(s);
   assert.ok(acts, "详情页没有 .detail-acts 动作行");
   assert.ok(
-    /<a class="btn-ghost" href="(?:\/freeToken)?\/openrouter\/"[^>]*>免费模型台账<\/a>/.test(acts[1]),
-    "详情页动作行里找不到台账入口（站内链接未成形或没挂进详情页）"
+    acts[1].includes(`href="${ledgerHref}"`) && acts[1].includes("免费模型台账"),
+    `详情页动作行里找不到台账入口（期望 href="${ledgerHref}"）`
   );
   assert.ok(acts[1].includes("返回目录"), "详情页动作行丢了返回目录");
+});
+
+/* 站内页面链接的形态就是「这台主机能不能解析目录索引」。Qoder Sites 的静态托管关掉了目录索引
+   （实测 /intel/openrouter/ 不落到该目录的 index.html，而是 200 回落到首页），镜像产物只能指真实文件名；
+   主站反过来——多一个 /index.html 就等于给同一内容造第二个 URL。两种口径各钉一条，
+   改造只在 lib 里做、产物面上不咬住是不算数的。 */
+test("站内页面链接形态随口径落地：镜像全带 index.html，主站全为 clean URL", () => {
+  /* 先剥 BASE 再判资源：Pages 口径下资源路径是 /freeToken/assets/…，不剥就漏判成页面链接。 */
+  const relOf = (h) => (BASE && h.startsWith(`${BASE}/`) ? h.slice(BASE.length) : h);
+  const isAsset = (r) => /^(\/)?(_next\/|assets\/)|\.(png|jpe?g|svg|css|js|ico|txt|xml|webmanifest|json|webp)$/i.test(r);
+  const bad = [];
+  let pages = 0;
+  for (const f of htmlFiles) {
+    const s = readFileSync(f, "utf8");
+    for (const m of s.matchAll(/href="(\/[^"#]*?)"/g)) {
+      const h = m[1];
+      if (h.startsWith("//")) continue;
+      const rel = relOf(h);
+      if (isAsset(rel)) continue;
+      pages += 1;
+      const ok = h === `${BASE}/` || (MIRROR ? h.endsWith("/index.html") : h.endsWith("/"));
+      if (!ok) bad.push(`${f.replace(OUT, ".")} → ${h}`);
+    }
+  }
+  assert.ok(pages > 0, "一条站内页面链接都没扫到——这条自检失去被测对象");
+  assert.deepEqual(bad.slice(0, 8), [], `${MIRROR ? "镜像" : "主站"}口径下的站内页面链接形态不符（共 ${bad.length} 处）`);
 });
 
 test("暗色令牌已随产物落地", () => {
