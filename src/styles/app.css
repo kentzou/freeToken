@@ -247,10 +247,15 @@ mark.hl { border-radius: 2px; }
   bottom: 0;
   padding: 4px 12px;
   font-size: 11px;
-  color: var(--brand-soft);
+  /* 前景原为 --brand-soft，压在 --brand-deep 底上对比不足（截图里文案读不出）；
+     与 .btn-primary/.chip.is-active 同色板 */
+  color: #fff;
   background: var(--brand-deep);
   border-radius: 0 10px 0 12px;
 }
+/* 角标绝对定位在左下角，卡脚事实行（.featured-facts）就落在同一块区域上——不预留底部空间
+   就会互撞（腾讯元器卡的「免费额度」曾被角标盖住）。带角标的卡自己认领这段留白。 */
+.featured-card.has-editor-badge { padding-bottom: 46px; }
 .product-line { display: flex; align-items: center; gap: 8px; margin: 0; }
 .product-logo { border-radius: 6px; }
 

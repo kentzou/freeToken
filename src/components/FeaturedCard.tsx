@@ -1,5 +1,6 @@
 import { assetPath, intelHref } from "@/lib/href";
 import { cleanText, ctaHref, ctaRel, heroTitle, logoFor } from "@/lib/copy";
+import { catOf } from "@/lib/catalog";
 import type { CompiledRules } from "@/lib/rules";
 import type { TokenCard } from "@/lib/types";
 import Highlight from "./Highlight";
@@ -20,8 +21,16 @@ export default function FeaturedCard({
       ? "集成多模型的生产力平台，注册即送可观免费额度。"
       : "支持多模型，免费额度助你更高效地完成项目。";
   const facts = ["免费额度", index === 0 ? "新用户领取" : "注册即送", `已核验 ${card.updated}`];
+  /* 角标文案跟着这张卡自己的类目走：写死「编程工具精选」是旧版第二格恰为工具卡时的产物，
+     精选对换成大模型卡（腾讯元器）后它就变成假标签。精选区只收 editorial（项目卡被
+     splitByCategory 分走），所以这里只需区分 工具 / 大模型 两支。 */
+  const badgeLabel = catOf(card) === "工具" ? "编程工具精选" : "大模型精选";
+  const withBadge = index === 1;
   return (
-    <article className="featured-card" data-testid="featured-card">
+    <article
+      className={withBadge ? "featured-card has-editor-badge" : "featured-card"}
+      data-testid="featured-card"
+    >
       <div className="featured-content">
         <p className="product-line">
           <img src={assetPath(logoFor(card, rules))} alt="" width={26} height={26} className="product-logo" />
@@ -48,7 +57,7 @@ export default function FeaturedCard({
           <li key={f}>{f}</li>
         ))}
       </ul>
-      {index === 1 ? <span className="editor-badge">编程工具精选</span> : null}
+      {withBadge ? <span className="editor-badge">{badgeLabel}</span> : null}
     </article>
   );
 }
