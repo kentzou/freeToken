@@ -157,3 +157,45 @@ grep -n "更正\|不采\|明确不做\|改为" docs/superpowers/plans/2026-09-30
 
 **交接项（本枝不改，属 main 侧文档）**：`docs/ONLINE-STEPS.md:56` 与 `docs/PIPELINE-ACCEPTANCE.md:54` 仍写着旧 cron `0 */6 * * *`，是 `8b403de` 改 cron 时漏更的陈旧叙述（截至本节入账实测，这两份文件不在并行窗口的脏文件名单里，它此刻在改的是 `package.json`／`tests/workflows.test.ts` 与 OpenRouter 那批未跟踪文件）。本枝不碰：改 cron 的人补自己那条链最省事，而计划 5 的射程是界面与措辞，越界改这两行只会给下一笔合并多造一个冲突面。谁先落地谁补，登记在此以免它变成第三次「没人记得的陈旧文档」。
 
+
+---
+
+## 8. 阶段 F 开工前置实测与 F8 读数（2026-10-05 追加式入账，§6 的验法表不回改）
+
+### 8.1 F8 已闭合（本机可证的那一项）
+
+判据按 §6 原文执行，注入值取本仓今天的 Pages 形态 `https://kentzou.github.io/freeToken`（§6 例值写的是旧仓名 `token-fbi-next`，实质判据是「注入值的字面量必须进 admin 客户端 chunk」，不是那个字符串本身）。
+
+仪器：`.superpowers/sdd/run-f8.sh`（外层 scratch，不入生产面）。
+
+| 读数 | 值 |
+| --- | --- |
+| 注入式构建（`SITE_ROLE=primary NEXT_PUBLIC_SITE_URL=<Pages> NEXT_PUBLIC_BASE_PATH=/freeToken`） | `✓ Generating static pages (34/34)`，`build_rc=0` |
+| admin chunk | `out/_next/static/chunks/app/admin/page-95cfdca1ba52ff14.js` |
+| 判据①「字面量命中 ≥1」 | `literal_hits=2`（仓名段 `freeToken` 命中 3 次） |
+| 判据②「`.env[` 零命中」 | `dyn_subscript_hits=0`，且同 chunk 内 `process.env` 引用数 = 0（完全内联，V24 的垫片路径不存在） |
+| 注入态 `npm run seo` / `test:out` | `sitemap.xml 30 条` / `pass 10 fail 0`（注入没把 Pages 口径自检跑坏） |
+| 收尾重建（§6 要求「别把带仓名的产物留作发布物」） | 已按镜像口径重跑 `build ⇒ seo`，`out/` 现为镜像产物 |
+
+补一条 §6 没写而裁决要求对齐的「origin 一致性」：`bootstrapRepo()` 的产物级取值 = 上表的内联字面量，把该字面量喂给 `deriveRepo`（`src/lib/admin/bootstrap.ts:11` 的正则，node 复算）得 `kentzou/freeToken`，空串则得空串＝`login` 分支的 `blocked`。⇒ **/admin 不会因内联失败而恒落 noRepo**，V24 的隐患在产物级证伪。
+
+### 8.2 F1／F2／F3／F7／F9 的真实前置＝一次真登录（不是本机仪器不够）
+
+这五项都要求 `Workbench` 外壳在场，而它唯一的入口条件是 `AdminApp.tsx:190` 的 `inWorkbench`（`state.view === "ready"`，或带 `login` 的 `expired`）；`:210` 的 `if (!inWorkbench) return <LoginPanel …>` 意味着**四标签、审核开关、899px 断点下的 Tab4 表头、重读按钮全都不在 DOM 里**。裸 CDP 首屏实测（本机静态服务 `out/` ⇒ `http://127.0.0.1:4173/admin/`，Chrome `--headless=new`＋websocket-client 连 9333）：
+
+- `document.querySelectorAll('[role="tablist"]').length = 0`，`[role="tabpanel"] = 0`，`[role="switch"] = 0`；
+- 唯一按钮是 `发起 Device Flow 登录` 且 `disabled=true`；`H1` 为「后台尚未配置」；
+- `[role="alert"]` 搬运的是 GitHub 真应答原文：`API rate limit exceeded for <egress IP>`。
+
+成因分两层，均已实测：
+
+1. **配置面（用户线上动作，`ONLINE-STEPS.md` §10 第 2 条）**：`origin/main` 里的 `config/site-config.json` 第 4 行 `"oauthClientId": ""`（`adminLogins` 为空数组、`githubRepo` 空串同表实测）。空 client_id 按 `uiModel.ts:36` 就是 `unconfigured` 引导态——这是裁决 3「线上留出」的既定形态，不是缺陷。
+2. **限额面（临时）**：本机未认证 egress 的 `core.remaining = 0`，`reset` 在实测时刻之后约 26 分钟。`/admin` 首屏要读一次 Contents API（`remote.ts` 走 `api.github.com`，无同域兜底），所以限额窗口内即使 client_id 已填也会先吃一次 403。
+
+⇒ 结论与处置：**这五项不是「代码没证」，是「入口在用户线上动作之后」**。执行顺序＝建 GitHub OAuth App → 把 `Client ID` 与其 login 填进 `config/site-config.json` 并提交（这是公开值，Device Flow 不需要 secret）→ 浏览器里走一次 Device Flow（人工输 userCode，无法脚本代做）→ 拿到 `ready` 态后 §6 的 F1/F2/F3/F7/F9 判据与脚本才可达。四项里 F7 的 axe 只需要 DOM 在场，可在 `login` 态先跑一遍作为下限证据，但**表头断点（F3）、开关翻转（F2）、重读并发（F9）在 `login` 态无处可测**，故整体仍登记为待用户线上动作。F4/F5/F6 的前置另计（真令牌撤销／真 202 排队／Actions 观察），同样不在本机闭合。
+
+### 8.3 本轮为 F 落下的可复用仪器
+
+- `.superpowers/sdd/serve-out.mjs`：把 `out/` 按根路径只读服务在 `127.0.0.1:4173`（镜像口径产物＝无 `BASE_PATH`，与副本站同形）。
+- `.superpowers/sdd/f0_probe.py`：裸 CDP 连 9333 打 DOM 形态快照。两处本会话实测的环境细节：Chrome ≥111 校验 `Origin` 头，直连调试端口必须 `suppress_origin=True`（否则握手 403），与 §7-13 记的「HKCR .js=text/plain 白屏」是两类不同的接入坑。
+- 取证纪律：`unconfigured` 态下**不许**用拦截 `api.github.com`、塞占位 client_id 一类办法把外壳"造"出来再报 F1/F2/F3/F7 通过——那违反本仓真实性口径（不允许假数据或替代实现充当验收证据）。宁可登记为阻塞项。
