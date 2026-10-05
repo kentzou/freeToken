@@ -1,0 +1,245 @@
+{
+  "source": "https://openrouter.ai/api/v1/models",
+  "fetchedAt": "2026-09-30T08:01:56.822Z",
+  "totalModels": 464,
+  "freeModelCount": 20,
+  "quotaPolicy": {
+    "source": "https://openrouter.ai/docs/limits",
+    "scope": "account",
+    "perModelAllocation": null,
+    "appliesTo": "所有 id 以 :free 结尾、或 prompt/completion 单价均为 0 的模型变体",
+    "requestsPerMinute": 20,
+    "creditsThreshold": 10,
+    "requestsPerDay": {
+      "lessThanCreditsThreshold": 50,
+      "atLeastCreditsThreshold": 1000
+    },
+    "reset": "UTC 每日 0 点重置；换用其它免费模型不刷新计数",
+    "note": "OpenRouter 不为单个模型分配免费额度：免费体现在 token 单价为 0，请求次数受账号级共享上限约束。",
+    "scraped": false,
+    "verifiedAt": "2026-09-30"
+  },
+  "models": [
+    {
+      "id": "cohere/north-mini-code:free",
+      "name": "Cohere: North Mini Code (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 256000,
+      "maxCompletionTokens": 64000,
+      "modality": "text->text",
+      "moderated": true
+    },
+    {
+      "id": "dots-studio/dots-3-note-preview:free",
+      "name": "Dots Studio: Dots3-Note Preview (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 512000,
+      "maxCompletionTokens": 460800,
+      "modality": "text+image->text",
+      "moderated": false
+    },
+    {
+      "id": "google/gemma-4-26b-a4b-it:free",
+      "name": "Google: Gemma 4 26B A4B  (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 32768,
+      "modality": "text+image+video->text",
+      "moderated": false
+    },
+    {
+      "id": "google/gemma-4-31b-it:free",
+      "name": "Google: Gemma 4 31B (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 32768,
+      "modality": "text+image+video->text",
+      "moderated": false
+    },
+    {
+      "id": "google/lyria-3-clip-preview",
+      "name": "Google: Lyria 3 Clip Preview",
+      "freeVariant": false,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 1048576,
+      "maxCompletionTokens": 65536,
+      "modality": "text+image->text+audio",
+      "moderated": false
+    },
+    {
+      "id": "google/lyria-3-pro-preview",
+      "name": "Google: Lyria 3 Pro Preview",
+      "freeVariant": false,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 1048576,
+      "maxCompletionTokens": 65536,
+      "modality": "text+image->text+audio",
+      "moderated": false
+    },
+    {
+      "id": "inclusionai/ling-3.0-flash-sante:free",
+      "name": "inclusionAI: Ling 3.0 Flash Sante (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 32768,
+      "modality": "text->text",
+      "moderated": false
+    },
+    {
+      "id": "liquid/lfm-2.5-2.6b:free",
+      "name": "LiquidAI: LFM2.5-2.6B (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 65536,
+      "maxCompletionTokens": 8192,
+      "modality": "text->text",
+      "moderated": false
+    },
+    {
+      "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+      "name": "NVIDIA: Nemotron 3 Nano Omni (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 256000,
+      "maxCompletionTokens": 65536,
+      "modality": "text+image+audio+video->text",
+      "moderated": false
+    },
+    {
+      "id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "name": "NVIDIA: Nemotron 3 Super (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 235929,
+      "modality": "text->text",
+      "moderated": false
+    },
+    {
+      "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "name": "NVIDIA: Nemotron 3 Ultra (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 1000000,
+      "maxCompletionTokens": 65536,
+      "modality": "text->text",
+      "moderated": false
+    },
+    {
+      "id": "nvidia/nemotron-3.5-content-safety:free",
+      "name": "NVIDIA: Nemotron 3.5 Content Safety (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 128000,
+      "maxCompletionTokens": 8192,
+      "modality": "text+image->text",
+      "moderated": false
+    },
+    {
+      "id": "nvidia/nemotron-3.5-lightning:free",
+      "name": "NVIDIA: Nemotron 3.5 Lightning (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 1000000,
+      "maxCompletionTokens": 65536,
+      "modality": "text->text",
+      "moderated": false
+    },
+    {
+      "id": "openrouter/free",
+      "name": "Free Models Router",
+      "freeVariant": false,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 200000,
+      "maxCompletionTokens": null,
+      "modality": "text+image->text",
+      "moderated": false
+    },
+    {
+      "id": "poolside/laguna-s-2.1:free",
+      "name": "Poolside: Laguna S 2.1 (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 32768,
+      "modality": "text->text",
+      "moderated": false
+    },
+    {
+      "id": "poolside/laguna-xs-2.1:free",
+      "name": "Poolside: Laguna XS 2.1 (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 32768,
+      "modality": "text->text",
+      "moderated": false
+    },
+    {
+      "id": "qwen/qwen3.8-27b:free",
+      "name": "Qwen: Qwen3.8 27B (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 235929,
+      "modality": "text+image+video->text",
+      "moderated": false
+    },
+    {
+      "id": "stealth/space-bunny-alpha",
+      "name": "Space Bunny Alpha",
+      "freeVariant": false,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 1000000,
+      "maxCompletionTokens": 524288,
+      "modality": "text+image+video->text",
+      "moderated": false
+    },
+    {
+      "id": "thinkingmachines/inkling-small:free",
+      "name": "Thinking Machines: Inkling Small (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 1048576,
+      "maxCompletionTokens": 262144,
+      "modality": "text+image+audio->text",
+      "moderated": false
+    },
+    {
+      "id": "thinkingmachines/inkling:free",
+      "name": "Thinking Machines: Inkling (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 1048576,
+      "maxCompletionTokens": 262144,
+      "modality": "text+image+audio->text",
+      "moderated": false
+    }
+  ],
+  "sourceFingerprint": "68a07139c45c8448"
+}

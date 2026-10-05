@@ -474,3 +474,19 @@ mark.hl { border-radius: 2px; }
 .shell-top nav a { text-decoration: none; color: var(--ink-2); }
 .shell-top nav a:hover { color: var(--brand-deep); }
 .detail-name { font-family: var(--font-serif); font-size: clamp(24px, 4vw, 34px); margin: 18px 0 4px; color: var(--ink-1); }
+/* OpenRouter 台账页（/openrouter/）：表格外壳 + 可横向滚动容器 + 免费判据徽标 + 首页入口卡。
+   全部走既有设计令牌（ink 系 / surface 系 / line / brand 系变量），亮暗两套主题自动跟随，不写死色值。 */
+.or-wrap { max-width: 100%; overflow-x: auto; }
+.or-table { width: 100%; border-collapse: collapse; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); font-size: 13.5px; }
+.or-table th,
+.or-table td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; line-height: 1.6; }
+.or-table thead th { background: var(--surface-2); color: var(--ink-3); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.or-table tbody tr:last-child td { border-bottom: 0; }
+.or-table td { color: var(--ink-1); font-family: var(--font-mono); font-size: 13px; }
+.or-table td.or-name { font-family: var(--font-sans); color: var(--ink-2); }
+.or-badge { display: inline-block; padding: 1px 8px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; color: var(--ink-3); margin-right: 6px; white-space: nowrap; }
+.or-badge.or-yes { border-color: var(--brand); color: var(--brand-deep); background: var(--brand-soft); }
+/* 首页入口卡：链接到 /openrouter/，数量来自服务端传入的台账 */
+.or-entry { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 26px 0 0; padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink-2); text-decoration: none; }
+.or-entry strong { color: var(--ink-1); font-size: 15px; }
+.or-entry:hover { border-color: var(--brand); color: var(--brand-deep); }

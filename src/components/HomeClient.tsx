@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { FilterType, MetaJson, RulesJson, SiteConfig, TokenCard, WatchItem } from "@/lib/types";
+import type { FilterType, MetaJson, OpenRouterLedger, RulesJson, SiteConfig, TokenCard, WatchItem } from "@/lib/types";
 import { compiledRules } from "@/lib/rules";
 import { chipCounts, matchesFilter, splitByCategory } from "@/lib/catalog";
+import { pageHref } from "@/lib/href";
 import FilterChips from "./FilterChips";
 import FeaturedCard from "./FeaturedCard";
 import PartnerCard from "./PartnerCard";
@@ -21,6 +22,7 @@ export default function HomeClient({
   compiled,
   meta,
   config,
+  openrouter,
 }: {
   /** 服务端已算好的可见集（visibleCards 只在 page.tsx 调用一次，避免客户端重复计算） */
   vis: TokenCard[];
@@ -30,6 +32,8 @@ export default function HomeClient({
   compiled: RulesJson;
   meta: MetaJson;
   config: SiteConfig;
+  /** OpenRouter 台账（纯 JSON 线格式，与 catalog 其余 prop 同性质）：首页只放入口卡，模型表在 /openrouter/ 页 */
+  openrouter: OpenRouterLedger;
 }) {
   const [type, setType] = useState<FilterType>("all");
   const [query, setQuery] = useState("");
@@ -125,8 +129,7 @@ export default function HomeClient({
         }}
       />
 
-      <section id="partners" className="section" aria-labelledby="partners-title">
-        <h2 id="partners-title" className="section-title">
+      <section id="partners" className="section" aria-labelledby="partners-title">        <h2 id="partners-title" className="section-title">
           合作情报<span className="section-count">{partners.length} 条</span>
         </h2>
         <p className="section-note">含商业合作，均已标注，不影响其余条目的中立核验。</p>
@@ -137,6 +140,12 @@ export default function HomeClient({
           {!partners.length ? <p className="section-note">当前没有合作内容。</p> : null}
         </div>
       </section>
+
+      {/* 台账入口卡：模型表本体在 /openrouter/ 页，首页只放入口（数量来自服务端传入的台账，不另取数） */}
+      <a className="or-entry" href={pageHref("/openrouter/")}>
+        <strong>OpenRouter 免费模型台账</strong>
+        <span>{openrouter.models.length ? `${openrouter.freeModelCount} 个免费模型在档` : "台账待入库"}</span>
+      </a>
 
       <WatchList items={donots} />
 

@@ -27,6 +27,7 @@ export default function Page() {
           compiled={catalog.rules}
           meta={catalog.meta}
           config={catalog.config}
+          openrouter={catalog.openrouter}
         />
       </main>
       <SiteFooter />

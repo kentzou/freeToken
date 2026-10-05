@@ -74,3 +74,46 @@ export interface FilterState {
   type: FilterType;
   query: string;
 }
+
+/** OpenRouter 免费模型台账（data/openrouter.json，由 crawler/openrouter.mjs 产出；
+ *  字段形态与 crawler/openrouter.d.mts 的 OpenRouterDoc 保持同步，页面消费侧只声明用到的最小集） */
+export interface OpenRouterLedgerQuotaPolicy {
+  source: string;
+  scope: "account";
+  perModelAllocation: null;
+  appliesTo: string;
+  requestsPerMinute: number;
+  creditsThreshold: number;
+  requestsPerDay: { lessThanCreditsThreshold: number; atLeastCreditsThreshold: number };
+  reset: string;
+  note: string;
+  /** 恒为 false：/api/v1/models 不返回额度数值，这些数是代码常量，需人工核对 */
+  scraped: boolean;
+  verifiedAt: string;
+}
+
+export interface OpenRouterLedgerModel {
+  id: string;
+  name: string;
+  /** 模型 id 以 :free 结尾（免费变体标记） */
+  freeVariant: boolean;
+  /** prompt/completion 单价均为 0（另一条免费判据，两者满足其一即入选台账） */
+  tokenPriceZero: boolean;
+  quotaRef: "quotaPolicy";
+  contextLength: number | null;
+  maxCompletionTokens: number | null;
+  modality: string | null;
+  moderated: boolean | null;
+}
+
+export interface OpenRouterLedger {
+  source: string;
+  fetchedAt: string;
+  totalModels: number;
+  freeModelCount: number;
+  quotaPolicy: OpenRouterLedgerQuotaPolicy;
+  models: OpenRouterLedgerModel[];
+  sourceFingerprint?: string;
+  accountQuota?: { used: number | null; limit: number | null; remaining: number | null };
+  accountQuotaError?: string;
+}

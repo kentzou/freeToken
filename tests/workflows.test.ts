@@ -4,23 +4,21 @@ import { describe, expect, it } from "vitest";
 
 const crawl = load(readFileSync(".github/workflows/crawl.yml", "utf8")) as Record<string, any>;
 const deploy = load(readFileSync(".github/workflows/deploy.yml", "utf8")) as Record<string, any>;
+const orCrawl = load(readFileSync(".github/workflows/crawl-openrouter.yml", "utf8")) as Record<string, any>;
 const lhrc = JSON.parse(readFileSync(".lighthouserc.json", "utf8"));
 
-/* 两条提取器提到模块级。此前 crawlSteps / reviewSteps 是每个用例内联一份
-   `.map((s) => s.run || "").join("\n")`，而 `cmds` 只定义在第一个 it() 的作用域内——
-   别的 describe 块根本拿不到它。本组红线（crawl → deploy 上线链）需要在模块级取这两条，
-   故一并提上来共用，避免同一个过滤/拼接逻辑在文件里散落多份。
-   注：第一个 it() 内部仍留有一份同名 `cmds`，它会遮蔽本处（实现逐字相同，行为无差异），
-   属过渡态；等那处内联定义被清理时一并删除即可，不影响任何断言。 */
+/* 反向断言只查「会被执行的那行」：yml 注释里刻意引用了旧命令原文作说明（如 crawl.yml 的
+   `git add data pending` 教训、本文件 openrouter 那条的「刻意不跑 npm ci」），
+   不剔注释行会把自己写的注释判成回归。 */
 const cmds = (steps: string) => steps.split("\n").filter((l) => !l.trim().startsWith("#")).join("\n");
-const runs = (job: { steps: { run?: string }[] }) => job.steps.map((s: { run?: string }) => s.run || "").join("\n");
+const runs = (job: { steps: { run?: string }[] }) => job.steps.map((s) => s.run || "").join("\n");
 
 describe("workflow 结构红线（真实执行列入线上步骤，这里锁死形态）", () => {
   it("crawl.yml：6 小时 cron + dispatch + issue_comment 三入口；数据 commit 只在真变更时发生", () => {
     expect(crawl.on.schedule).toEqual([{ cron: "23 */6 * * *" }]);
     expect(Object.keys(crawl.on)).toEqual(["schedule", "workflow_dispatch", "issue_comment"]);
     expect(crawl.jobs.crawl.if).toContain("issue_comment");
-    const crawlSteps = crawl.jobs.crawl.steps.map((s: { run?: string }) => s.run || "").join("\n");
+    const crawlSteps = runs(crawl.jobs.crawl);
     expect(crawlSteps).toContain("npm run crawl");
     expect(crawlSteps).toContain("git diff --cached --quiet"); // 无实质变更不产生空提交
     /* 终审遗留 (C)：命令前缀判定权归 parseCommands（/i + 容忍前导空白 + 逐行解析）。
@@ -38,10 +36,7 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     /* 评审 C1：触发面放宽后「无指令→空跑退 0」是新承诺，而 fresh checkout 里 pending/ 既未跟踪
        也不存在（review-apply 早退时不写盘、run.mjs 只在有待审条目时才写），`git add data pending`
        会 pathspec 128 把整个 job 染红。两个 job 的提交步骤都得钉住「data 恒加、pending 有才加」。 */
-    const reviewSteps = crawl.jobs.review.steps.map((s: { run?: string }) => s.run || "").join("\n");
-    /* 反向断言只查「会被执行的那行」：yml 注释里刻意引用了旧命令原文作说明，
-       不剔注释行会把自己写的注释判成回归。 */
-    const cmds = (steps: string) => steps.split("\n").filter((l) => !l.trim().startsWith("#")).join("\n");
+    const reviewSteps = runs(crawl.jobs.review);
     expect(crawlSteps).toContain("if [ -d pending ]; then git add pending; fi");
     expect(reviewSteps).toContain("if [ -d pending ]; then git add pending; fi");
     expect(cmds(crawlSteps)).not.toContain("git add data pending");
@@ -52,7 +47,7 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
   it("deploy.yml：quality → lighthouse → deploy 三级链；红线测试与 Lighthouse 门禁都在部署前", () => {
     expect(deploy.jobs.lighthouse.needs).toBe("quality");
     expect(deploy.jobs.deploy.needs).toBe("lighthouse");
-    const q = deploy.jobs.quality.steps.map((s: { run?: string }) => s.run || "").join("\n");
+    const q = runs(deploy.jobs.quality);
     expect(q).toContain("npm run test\n");
     expect(q).toContain("npm run seed:repro");
     expect(q).toContain("npm run test:out"); // 终审 #6：产物红线接 CI
@@ -83,8 +78,40 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     expect(gate.env.TFN_COMMENTER).toBe("${{ github.event.comment.user.login }}");
     expect(gate.env.ISSUE_NUMBER).toBe("${{ github.event.issue.number }}");
     /* 反向：闸门失效也不能靠 yml 兜住数据写入——提交步骤仍只在真有变更时提交 */
-    const steps = review.steps.map((s: { run?: string }) => s.run || "").join("\n");
-    expect(steps).toContain("git diff --cached --quiet");
+    expect(runs(review)).toContain("git diff --cached --quiet");
+  });
+
+  it("crawl-openrouter.yml：06:00 CST 换算成 UTC cron；零依赖不装包；只提交 data/openrouter.json 一份", () => {
+    /* schedule 无 timezone 字段（Actions 不支持），06:00 Asia/Shanghai 必须写成前一日 22:00 UTC。
+       toEqual 而非 toContain：多写一个 timezone 键（无效配置、给人「已经按时区跑了」的错觉）也会红。 */
+    expect(orCrawl.on.schedule).toEqual([{ cron: "0 22 * * *" }]);
+    expect(Object.keys(orCrawl.on)).toEqual(["schedule", "workflow_dispatch"]);
+    /* 回写远端要写权限；不给 issues：这条不碰决策 #7 的两队列审核，不该有评论触发面。
+       actions: write 是显式 dispatch deploy.yml 的命门（同 crawl.yml 修法），故一并钉入。 */
+    expect(orCrawl.permissions).toEqual({ "contents": "write", "actions": "write" });
+    const job = orCrawl.jobs.crawl;
+    const all = runs(job);
+    /* 抓取口径复用 package.json 的 crawl:or，与本机手工跑同一条命令——不允许 CI 与本地两套取数路径 */
+    expect(all).toContain("npm run crawl:or");
+    /* 刻意零依赖：openrouter.mjs 只用 node:crypto/node:fs/node:url + 内置 fetch，装包只会把 CI
+       绑在 node_modules 上。断言剔注释，否则「刻意不跑 npm ci」那句注释会自己抓自己。 */
+    expect(cmds(all)).not.toContain("npm ci");
+    expect(cmds(all)).not.toContain("npm install");
+    /* 提交面只有一份台账：把它接进 pending/tokens 的审核管道就是踩决策 #7 红线 */
+    expect(cmds(all)).toContain("git add data/openrouter.json");
+    expect(cmds(all)).not.toContain("git add pending");
+    expect(cmds(all)).not.toMatch(/git add data(?!\/openrouter\.json)/);
+    /* 抓取 fail-stop 时不产出文件，宁可台账停在前一天，也不能提交空/半成品；无实质变更不产生空提交 */
+    expect(cmds(all)).toContain("if [ ! -f data/openrouter.json ]");
+    expect(cmds(all)).toContain("git diff --cached --quiet");
+    /* 回归钉：commit message 里的 run id 必须是 Actions 表达式 `${{ github.run_id }}`；
+       写成 shell 的 ${github.run_id} 会被 bash 展开成空串——日志里那条提交看起来像没带 run 号，
+       排查时无法反查是哪次调度。这里同时钉正例与错例形态。 */
+    expect(cmds(all)).toContain("${{ github.run_id }}");
+    expect(cmds(all)).not.toMatch(/\$\{github\./);
+    /* API key 只作为可选增强传入（缺 key 时 accountQuota 整个缺席，不影响台账主体） */
+    const keyStep = job.steps.find((s: { run?: string }) => (s.run || "").includes("npm run crawl:or"));
+    expect(keyStep.env.OPENROUTER_API_KEY).toBe("${{ secrets.OPENROUTER_API_KEY }}");
   });
 
   it(".lighthouserc.json：三项门槛值 = spec §9 承诺值（LCP 2500ms / CLS 0.1 / A11y 0.95），URL 打本地根路径", () => {
@@ -150,6 +177,29 @@ describe("crawl → deploy 的上线链（GITHUB_TOKEN 防循环的绕行口）"
 
   it("deploy.yml 保留 workflow_dispatch 入口：它是 dispatch 的目标端点，删了会让上面的 dispatch 全部 404", () => {
     expect(Object.keys(deploy.on)).toContain("workflow_dispatch");
+  });
+
+  /* —— crawl-openrouter.yml 的同一条上线链（台账也要真的上线，复刻上面 5 条红线；
+       deploy.on 含 workflow_dispatch 与 crawl 共用一条，不重复钉） —— */
+  const orShell = cmds(runs(orCrawl.jobs.crawl));
+
+  it("or：actions: write 单独钉（上面的 toEqual 已钉入全量形态，这里是上线链视角的独立闸）", () => {
+    expect(orCrawl.permissions.actions).toBe("write");
+  });
+
+  it("or：push 之后显式 dispatch deploy.yml，带对 ref、且失败必须变红", () => {
+    expect(orShell).toContain("actions/workflows/deploy.yml/dispatches");
+    expect(orShell).toContain('{"ref":"main"}');
+    expect(orShell).toContain("--fail-with-body");
+  });
+
+  it("or：push 失败即中止，不得继续 dispatch（否则部署一份没有新台账的产物）", () => {
+    expect(orShell).toContain("git push ||");
+  });
+
+  it("or：dispatch 排在「台账未变」判定之后：无变化那条路走不到 dispatch", () => {
+    /* openrouter 的提交步里 git diff --cached --quiet 在 if 分支内，顺序断言（indexOf 比较）仍成立 */
+    expect(orShell.indexOf("git diff --cached --quiet")).toBeLessThan(orShell.indexOf("dispatches"));
   });
 });
 
