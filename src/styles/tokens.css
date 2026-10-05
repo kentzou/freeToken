@@ -7,13 +7,19 @@
   --line-strong: #17201b;
   --ink-1: #17201b;
   --ink-2: #3c463f;
-  --ink-3: #5f6a61; /* 对 --surface-2(#f0ede3) 对比度 4.82:1 ≥ 4.5（原 #6b766d 仅 4.04，Lighthouse color-contrast 红灯） */
-  --ink-4: #9a938a;
+  --ink-3: #4e584f; /* 对 --surface-2 6.33:1。#6b766d→#5f6a61（4.04→4.82，Lighthouse 红灯）→#4e584f：F7 把 ink-4 提到 AA 线后两档几乎并列，再压一档把层级差让出来 */
+  --ink-4: #6f6a63; /* F7 axe color-contrast：原 #9a938a 对 surface/bg/surface-2 只有 3.01/2.76/2.59，同色相压暗到 5.31/4.87/4.58 */
   --brand: #0f966e;
   --brand-deep: #0b7a59;
   --brand-soft: #e2f6ee;
-  --warn-ink: #9a6a00;
+  --warn-ink: #8a6000; /* 原 #9a6a00 对 --warn-bg 只有 4.29:1，同色相压暗到 5.07:1 */
   --warn-bg: #fef3d8;
+  /* 红族两件套。原先 admin.css 里写死 #a14141 配 rgba(161,65,65,.1/.08) 底色——暗色主题沿用同一组值时，
+     红字铺在暗底合成色上只有 2.54:1（F7 axe 报 serious color-contrast）。改成语义令牌、两套主题各给一份；
+     浅色档取「原半透明红铺在本主题表面色上的等效实色」，与 .1 那档底色逐通道同色（.08 的 diff 单元格并入同一档）；
+     statebar 那圈边框仍按本文件既有约定写成 rgba 边框色（装饰件，不参与文字对比度）。 */
+  --bad-ink: #a14141;
+  --bad-bg: #f6ebe7;
   --hl-y: #ffe66b;
   --hl-g: #b8f0c9;
   --stamp: #0b7a59;
@@ -40,12 +46,16 @@
   --ink-1: #e8ede9;
   --ink-2: #b5c2ba;
   --ink-3: #8fa39a;
-  --ink-4: #5f6f66;
+  --ink-4: #828f88; /* 原 #5f6f66 对 surface/bg/surface-2 只有 3.18/3.40/2.94，同色相提亮到 5.02/5.36/4.64，仍比 --ink-3（对 surface 6.34）安静一档 */
   --brand: #7fd8b0;
   --brand-deep: #4fbf92;
   --brand-soft: rgba(127, 216, 176, 0.14);
   --warn-ink: #ffd58a;
   --warn-bg: rgba(255, 196, 77, 0.12);
+  /* 红族暗色档：等效底色取「#a14141 一成透明度铺在 --surface 上」的合成值 #23221e，
+     这正是 F7 在真实浏览器里量到的那块背景色，观感不变、只把 2.54:1 的字色换发达标档。 */
+  --bad-ink: #d96b6b;
+  --bad-bg: #23221e;
   --stamp: #7fd8b0;
 }
 *,

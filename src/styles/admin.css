@@ -33,12 +33,12 @@
 .adm-kind.mod { background: var(--warn-bg); color: var(--warn-ink); }
 /* Task 7 改口：真实队列的第二种形态是「删除」而不是「新增」（run.mjs 的 syncOnce 把 added 直接自动发布），
    原型那支 `.adm-kind.add` 在这里是永远不会挂上的死类名——换成删除那支，红色沿用 .del 的同族值。 */
-.adm-kind.del { background: rgba(161, 65, 65, 0.1); color: #a14141; }
+.adm-kind.del { background: var(--bad-bg); color: var(--bad-ink); }
 
 .adm-diff { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 12px 0 2px; }
 .adm-diff th, .adm-diff td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
 .adm-diff th { width: 88px; background: var(--surface-2); font-weight: 700; white-space: nowrap; }
-.adm-diff .del { color: #a14141; background: rgba(161, 65, 65, 0.08); text-decoration: line-through; word-break: break-all; }
+.adm-diff .del { color: var(--bad-ink); background: var(--bad-bg); text-decoration: line-through; word-break: break-all; }
 .adm-diff .add { color: var(--brand-deep); background: var(--brand-soft); word-break: break-all; }
 /* 规则表的整表全文（Task 7 的 whole 行两块 <pre>）：整表 JSON 带换行与缩进，
    不 pre-wrap 会横着捅穿卡片，不换行读不到「哪一条被删了」。 */
@@ -71,7 +71,7 @@
 .adm-hist th { color: var(--ink-3); font-size: 11.5px; font-weight: 700; white-space: nowrap; }
 .adm-badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 800; white-space: nowrap; }
 .adm-badge.ok { background: var(--brand-soft); color: var(--brand-deep); }
-.adm-badge.bad { background: rgba(161, 65, 65, 0.1); color: #a14141; }
+.adm-badge.bad { background: var(--bad-bg); color: var(--bad-ink); }
 .adm-badge.run { background: var(--warn-bg); color: var(--warn-ink); }
 
 /* 邮戳两族（D8）：行内小戳自成一类，整页大戳复用 app.css 的 .stamp 只做定位 */
@@ -94,7 +94,7 @@
    最该被看见的确认反而最不像确认。绿族沿用 tokens.css 的 --brand-soft/--brand-deep（深浅两套主题都有值）。 */
 .adm-statebar.ok { background: var(--brand-soft); color: var(--brand-deep); border: 1px solid rgba(15, 150, 110, 0.28); }
 .adm-statebar.warn { background: var(--warn-bg); color: var(--warn-ink); border: 1px solid rgba(154, 106, 0, 0.3); }
-.adm-statebar.bad { background: rgba(161, 65, 65, 0.1); color: #a14141; border: 1px solid rgba(161, 65, 65, 0.3); }
+.adm-statebar.bad { background: var(--bad-bg); color: var(--bad-ink); border: 1px solid rgba(161, 65, 65, 0.3); }
 .adm-statebar.info { background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--line); }
 
 .adm-crawl { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 20px; border: 1px dashed var(--line-strong); border-radius: 14px; background: var(--surface); }

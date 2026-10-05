@@ -199,3 +199,36 @@ grep -n "更正\|不采\|明确不做\|改为" docs/superpowers/plans/2026-09-30
 - `.superpowers/sdd/serve-out.mjs`：把 `out/` 按根路径只读服务在 `127.0.0.1:4173`（镜像口径产物＝无 `BASE_PATH`，与副本站同形）。
 - `.superpowers/sdd/f0_probe.py`：裸 CDP 连 9333 打 DOM 形态快照。两处本会话实测的环境细节：Chrome ≥111 校验 `Origin` 头，直连调试端口必须 `suppress_origin=True`（否则握手 403），与 §7-13 记的「HKCR .js=text/plain 白屏」是两类不同的接入坑。
 - 取证纪律：`unconfigured` 态下**不许**用拦截 `api.github.com`、塞占位 client_id 一类办法把外壳"造"出来再报 F1/F2/F3/F7 通过——那违反本仓真实性口径（不允许假数据或替代实现充当验收证据）。宁可登记为阻塞项。
+
+### 8.4 F7 下限读数里那两条缺陷的处置（2026-10-05，追加段，不回改 §8.1–§8.3）
+
+§8.1 的 axe 下限读数扫出 `color-contrast`（serious，两节点）与 `region`（moderate）。前者就地修了，后者按裁决留作用户裁定项。
+
+**改了什么**（只动 `src/styles/tokens.css` 与 `src/styles/admin.css`，`app.css` 归并行窗口未碰）：
+
+| 令牌 | 改造前（对 surface/bg/surface-2） | 改造后 | 依据 |
+| --- | --- | --- | --- |
+| 浅色 `--ink-4` | `#9a938a` 3.01/2.76/2.59 | `#6f6a63` 5.31/4.87/4.58 | 同色相沿 RGB 直线压暗，色相与饱和度不动 |
+| 暗色 `--ink-4` | `#5f6f66` 3.18/3.40/2.94 | `#828f88` 5.02/5.36/4.64 | 同上，往白方向提亮；仍比暗色 `--ink-3`（对 surface 6.34）安静一档 |
+| 浅色 `--ink-3` | `#5f6a61` 5.59/5.13/4.82 | `#4e584f` 7.34/6.74/6.33 | `--ink-4` 被顶到 AA 线后与 `--ink-3` 几乎并列，把 `--ink-3` 再压一档把层级差让出来（只增对比度） |
+| 浅色 `--warn-ink` | `#9a6a00` 对 `--warn-bg` 4.29 | `#8a6000` 5.07 | 普查时新发现的第二条同类缺陷（未及出现在 axe 读数里，因为 `.adm-badge.run` 那类元素当时不在 DOM） |
+| 红族 | `admin.css` 里四处写死 `#a14141` + `rgba(161,65,65,.1/.08)` | 新增 `--bad-ink`/`--bad-bg` 两套主题各一份：浅 `#a14141`/`#f6ebe7`（5.42）、暗 `#d96b6b`/`#23221e`（4.75） | 暗主题沿用浅主题那组红字时，红字铺在暗底合成色上只有 2.54:1，正是 axe 报的 serious |
+
+底色不是随手挑的：`--bad-bg` 取「原来那层半透明红铺在本主题 `--surface` 上的等效实色」，逐通道等于改造前的合成值——暗色档的 `#23221e` 就是 axe 在真实浏览器里量到的那个背景色，所以除 `.adm-diff .del`（原本 `.08` 一档透明度，现并入 `.1` 同档，观感差一档透明度）以外，前台颜色与改造前同色。
+
+**量具与自校**：比值由 `.superpowers/sdd/f7_contrast.mjs`（普查）与 `f7_pick.mjs`（同色相搜索达标档）计算，合成 alpha 的那段最初写成了「三个通道都取红通道」，导致一批假红（例如把 `--brand-deep` on `--brand-soft` 算成 4.11，实为 4.73）；修正后用 §8.1 的浏览器读数反向校准——暗色 `#a14141` 合成底复算出 2.54（axe 报 2.53）、`#5f6f66` 复算出 3.18（axe 报 3.18），两档对上才继续用它选值。`--brand-deep`/`--brand-soft` 两档经实测本就达标，未动。
+
+**机制级回归钉**：新增 `tests/contrast.test.ts`（3 例）。它从 `tokens.css` 里按 `:root` 与 `[data-theme="dark"]` 两块解析自定义属性，再拿一张 17 行的「文字令牌 × 它会真实落在的底色」配对表逐条判 ≥4.5:1，浅暗两档各跑一遍；表里每行都注了消费它的选择器，防止变成凭空组合。半透明底色先合成再算，口径同上。有牙检查（只退数值、保留令牌名，好让配对表按对比度而不是按「令牌缺失」报红）：把四个新值写回 §8.1 的旧值 ⇒ `rc=1`，浅色档 3 条配对报红、暗色档 4 条；恢复后备份文件与工作树文件 `sha256sum` 前 12 位一致（`60623ace71e8`），复跑 `3 passed`。
+
+**修复后的读数**（本机把 `out/` 静态服务在 `127.0.0.1:4173`，`f7_axe.py` 新增第二个参数走 `document.documentElement.setAttribute('data-theme', …)`——复用应用自身的主题机制，不给页面打样式补丁）：
+
+| 口径 | 读数 |
+| --- | --- |
+| 暗色档 axe | 页面态 `{"h1": "后台尚未配置", "tablists": 0}`，`total=1`，`byImpact {moderate: 1}`＝`region`；**serious 归零** |
+| 浅色档 axe | 同上，`total=1` 仅 `region`；**serious 归零** |
+| incomplete 项 | 暗色档 1 项：`color-contrast` serious 档 1 节点，指向 `.shell-brand`——品牌字的底是 `body` 上那层 3% 噪点 SVG，axe 取不到确定底色所以判「不确定」而非违规（浅色档同数＝1，取详情的那版仪器只在暗色档复跑过）。代证：`--ink-1` 浅档对 bg/surface/surface-2 = 15.2/16.5/14.2，暗档 = 15.2/14.3/13.2，由配对表覆盖 |
+| 静态门禁 | `vitest 48 files / 393 tests`、`tsc --noEmit` 零输出、`lint --max-warnings=0` 零警告 |
+| 三口径产物 | A 本地 `build/seo/test:out` 全 0（无 `NEXT_PUBLIC_SITE_URL` ⇒ 按本地口径跳过 sitemap，与任务 #54 读数同形）；B 主站 `34/34`、`sitemap.xml` 存在、canonical 指 `kentzou.github.io/freeToken`；C 镜像 `34/34`、无 sitemap、`robots` 仅 `User-agent: *|Allow: /|`、首页与 `/admin/` 各 1 处 noindex；D 拼错 `SITE_ROLE=Mirror` ⇒ `rc=1` 当场红；E 泄漏扫描 `data out` 零命中（0 字节） |
+| 产物级颜色 | `out/_next/static/css/*.css` 命中 `6f6a63 828f88 4e584f 8a6000 f6ebe7 d96b6b 23221e`；旧值 `9a938a 5f6f66 9a6a00 fbebe7` 零残留 |
+
+**仍未闭合的两件事**：① 这份读数依然是**下限**——四标签、审核开关、899px 表头要在 `ready` 态才进 DOM，前置仍是 §8.2 的那次真登录；② `region` 属站点共享外壳（`SiteHeaderLite.tsx` 与 `admin/Workbench.tsx` 都把 `.shell-brand` 放在 `<div className="shell-top">` 里，全站顶栏同形），一行改法是把它改成 `<header className="shell-top">` 使其成为 banner landmark，但它会同时改到前台七页的 HTML 骨架、且 `app.css`/外壳组件正被并行窗口编辑，故不擅改，登记为待裁决项。
