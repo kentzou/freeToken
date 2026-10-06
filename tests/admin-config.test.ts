@@ -99,7 +99,8 @@ describe("变现配置读写：写入侧比读取侧更严（未知键直接拒�
     const rows = configRows(base);
     expect(rows.length).toBe(11);
     expect(rows.filter((r) => r.hidden).map((r) => r.name)).toEqual(["豆包拉新项目"]);
-    expect(rows.find((r) => r.name === "WorkBuddy")!.link).toBe("https://hunyuan.tencent.com/");
+    // 现值快照（2026-10-06：WorkBuddy 改挂本站活动邀请链接）。「磁盘 == 声明」那层守卫在 tests/seed.test.ts
+    expect(rows.find((r) => r.name === "WorkBuddy")!.link).toBe("https://www.workbuddy.cn/events/invite?inviteCode=binccyhvk7bl");
     expect(rows.find((r) => r.name === "豆包拉新项目")!.overridden).toBe(false);
   });
 });

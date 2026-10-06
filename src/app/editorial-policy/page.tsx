@@ -23,7 +23,11 @@ export default function EditorialPolicy() {
         「观望名单」是另一套判定：平台能用但性价比、速度或稳定性存在明确短板，我们会写明理由，不做推荐。
         每条情报的核验日期来自上游更新时间，本站不擅自改写。
       </p>
-      <p>链接清洗规则：剥除 <code>userCode</code>、<code>invite_code</code>、<code>aff</code>、<code>keyfrom</code>、<code>utm_*</code> 等推广与追踪参数；邀请码池与推广短链一律不入库。</p>
+      <p>
+        链接清洗规则：剥除 <code>userCode</code>、<code>invite_code</code>、<code>aff</code>、<code>keyfrom</code>、<code>utm_*</code> 等推广与追踪参数；
+        上游作者的邀请码池与推广短链一律不入库。少数条目指向本站参与的活动页、带上本站的活动码，
+        这类链接一律标 <code>sponsored</code>（向搜索引擎声明非自然链），码值公开登记在仓库的清洗器里。
+      </p>
     </PageShell>
   );
 }

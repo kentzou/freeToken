@@ -29,6 +29,18 @@ const PROMO_KEYS = [
  */
 export const SHORT_LINK_HOSTS = ["curl.qcloud.com", "s.qiniu.com", "s.mi.cn", "url.cn", "t.cn"];
 
+/**
+ * 本站自有邀请码：引流红线拦的是「把上游原作者的推广码发出去替别人引流」，
+ * 不是站长自己的活动链接——2026-10-06 裁决：WorkBuddy 的「立即领取」挂本站活动邀请页，
+ * 这类链接由 `ctaRel`（src/lib/copy.ts）自动带上 `sponsored nofollow`，向搜索引擎声明非自然链，
+ * 并在「精选门槛与收录标准」页公开说明。
+ * 放行判据是**码值**而不是参数名：`?inviteCode=<别人的码>` 照样报红，
+ * 短链域名与裸域名两类宿主判定也与本放行无关（linkRisk 里各走一支）。
+ * 新增自有码只改这一处（linkRisk 是全站唯一实现，seed / validate / 测试共用）；
+ * 只改 config/site-config.json 的 link 而不登记码值，会在入库闸上得到一条指名报错，不会静默放行。
+ */
+export const OWN_INVITE_CODES = ["binccyhvk7bl"];
+
 function isPromoKey(key) {
   const k = key.toLowerCase();
   return PROMO_KEYS.includes(k) || k.startsWith("utm_");
@@ -86,7 +98,8 @@ export function stripPromoParams(url) {
   return parsed.toString().replace(/\/\?$/, "");
 }
 
-/** 清洗后残余风险检测；返回 null 表示干净，否则返回可读原因（seed 与阶段 D 爬虫共用） */
+/** 清洗后残余风险检测；返回 null 表示干净，否则返回可读原因（seed 与阶段 D 爬虫共用）。
+ *  引流参数一支按码值豁免 OWN_INVITE_CODES（本站自有活动码），其余判定不受影响。 */
 export function linkRisk(url) {
   if (typeof url !== "string" || !url) return null;
   const loose = parseLoose(url);
@@ -94,8 +107,9 @@ export function linkRisk(url) {
   const parsed = loose.p;
   const hits = [];
   const collect = (qs) =>
-    new URLSearchParams(qs).forEach((_v, key) => {
-      if (isPromoKey(key)) hits.push(key);
+    new URLSearchParams(qs).forEach((value, key) => {
+      /* 码值命中 OWN_INVITE_CODES 即放行（站长自己的活动链接），其余引流参数一律点名 */
+      if (isPromoKey(key) && !OWN_INVITE_CODES.includes(value)) hits.push(key);
     });
   collect(parsed.search.replace(/^\?/, ""));
   const cut = parsed.hash.indexOf("?");

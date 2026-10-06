@@ -69,6 +69,28 @@ test("全部产物零原作者引流痕迹", () => {
   assert.deepEqual(bad, [], "以下产物含引流痕迹");
 });
 
+/* WorkBuddy 的「立即领取」由站长在 config/site-config.json 逐卡声明（2026-10-06 改挂本站活动邀请链接）。
+   产物面钉两点：① 首页与详情页的 CTA href 都等于声明值——抓取每一轮都会重打这层，产物必须跟上；
+   ② 带 invite 特征的自荐链接必须标 sponsored（src/lib/copy.ts 的 ctaRel），否则等于把推广链当自然链交给搜索引擎。
+   期望值现读 config 而不写死字面量：这条钉子守的是「产物 == 声明」这个关系，写死值会随站长改码一起腐。 */
+test("WorkBuddy 卡 CTA 指向 config 声明的链接，且自荐链接标了 sponsored", () => {
+  const cfg = JSON.parse(readFileSync(path.resolve(process.cwd(), "config", "site-config.json"), "utf8"));
+  const want = cfg.cards["WorkBuddy"].link;
+  assert.ok(typeof want === "string" && /^https:\/\//.test(want), "config 里 WorkBuddy 的 link 声明本身不合法");
+  const esc = want.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  for (const rel of [path.join("index.html"), path.join("intel", "workbuddy", "index.html")]) {
+    const f = path.join(OUT, rel);
+    assert.ok(existsSync(f), `缺产物 ${rel}`);
+    const s = flat(readFileSync(f, "utf8"));
+    assert.ok(s.includes(`href="${want}"`), `${rel} 的 CTA href 不等于声明值 ${want}`);
+    assert.match(
+      s,
+      new RegExp(`href="${esc}"[^>]*rel="[^"]*sponsored`),
+      `${rel} 的自荐链接没带上 sponsored——href 对了但 rel 丢了，同样是在给搜索引擎递自然链`
+    );
+  }
+});
+
 test("首页版面区块齐全", () => {
   const s = readFileSync(path.join(OUT, "index.html"), "utf8");
   for (const t of ["Token 情报局", "今日头条", "大模型", "编程工具", "合作情报", "观望名单", "加入情报群"]) {

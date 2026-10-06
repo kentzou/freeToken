@@ -53,6 +53,15 @@
 - 含 `poster` 字段的卡 **0** 张（原作者海报物料不入包）。
 - 已知旁路（Task 5 报告遗留）：`linkRisk` 对无协议裸短链（如 `s.mi.cn/…`）返回 null；当前 62 条链接全带 `http(s)://` 前缀，无实际泄漏，补丁归属计划 3 爬虫任务。
 
+### 3.3 2026-10-06 追加：WorkBuddy「立即领取」改挂本站活动邀请链接（裁决入账，上方 §3.1 的历史正文不回改，本小节即其现行替代）
+
+- 根因链：CTA 的唯一出口是 `src/lib/copy.ts::ctaHref(card) = card.link || "#"`，而 `card.link` 来自 `data/tokens.json`（渲染链路 `page.tsx → visibleCards` 不再套一层 config）。`hunyuan.tencent.com/` 是 §3.1 那轮清洗写在 `config/site-config.json` 的逐卡覆盖值，由 `applySiteConfig` 在**每一轮抓取**（`crawler/run.mjs → buildSeed`）重打回 `data/tokens.json`。因此：只改磁盘值 → 下一轮抓取打回；只改 config → 本轮产物不变。两层必须同改，另加 `pending/changes.json` 里 WorkBuddy 待审项的 `before.link`/`after.link`（审批合入走 `applyDecisions` 的**整卡覆写** `e.after`，漏这处会在 `/approve` 那条 quota/limited 变更时把链接一并覆盖回旧值）。
+- 新值：`https://www.workbuddy.cn/events/invite?inviteCode=binccyhvk7bl`（站长自有活动码）。
+- 门径调整：全站第一处「入库链接自带邀请码」，与 §3.1 的剥参口径相反。放行判据按**码值**而非参数名——`crawler/clean.mjs` 新增 `OWN_INVITE_CODES`，`linkRisk` 只对命中该名单的参数值豁免：别人的 `?inviteCode=<码>` 照旧报「残留引流参数」，短链域名与裸域名两支不受影响。名单只此一处（seed、`validateCards`、测试共用同一实现，后台改链接若不登记码值会在入库闸上得到指名报错，不会静默放行）。
+- 公开口径同步：`src/app/editorial-policy/page.tsx` 的清洗规则段补了「本站参与的活动页会带本站活动码，且标 `sponsored`」——`ctaRel` 对含 `invite` 特征的链接本就自动加 `sponsored nofollow`，产物实测 `rel="sponsored nofollow noopener noreferrer"`。
+- 门禁实测：`npm run test` 405/405（新增两钉：`clean.test.ts` 自有码豁免三例、`seed.test.ts` 「config 声明的逐卡 link 即权威」）、`npx tsc --noEmit` 0、`npm run seed:repro` OK、三口径 `npm run test:out` 各 **14 pass / 0 fail**（新增产物钉：首页与 `/intel/workbuddy/` 的 CTA `href` == config 声明值且 `rel` 带 sponsored）。
+- 有牙检查：只改 config、尚未烘焙磁盘时，`seed.test.ts` 新钉报 `WorkBuddy：磁盘 https://hunyuan.tencent.com/ ≠ 声明 …binccyhvk7bl`，`tests/admin-config.test.ts` 的 configRows 现值快照同时报红——正是这两条判据该拦的形态。
+
 ## 4. 功能对照表（证据分级：已实测 / 仅产物断言 / 未实测+原因）
 
 | 功能 | 状态 | 证据 |

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { applySiteConfig, cleanCard, linkRisk, stripPromoParams } from "../crawler/clean.mjs";
+import { applySiteConfig, cleanCard, linkRisk, OWN_INVITE_CODES, stripPromoParams } from "../crawler/clean.mjs";
 
 describe("stripPromoParams（期望值 = 对真实镜像跑出的实测结果）", () => {
   it.each([
@@ -40,6 +40,18 @@ describe("linkRisk", () => {
     expect(linkRisk("https://cline.bot")).toBeNull();
     expect(linkRisk("#")).toBeNull();
     expect(linkRisk(undefined)).toBeNull();
+  });
+
+  /* 引流红线防的是「把上游原作者的推广码发出去」，不是站长自己的活动链接。
+     判据按**码值**放行而非按参数名放行：别人的码照拦（下方第二例），
+     且推广短链域/裸域名两条宿主检查不受影响（第三例）。 */
+  it("本站登记的自有码放行，他人同名片段仍拦", () => {
+    expect(OWN_INVITE_CODES.length).toBeGreaterThan(0); // 前提空转防御：名单为空时下面两例都无牙
+    expect(linkRisk(`https://www.workbuddy.cn/events/invite?inviteCode=${OWN_INVITE_CODES[0]}`)).toBeNull();
+    expect(linkRisk("https://www.workbuddy.cn/events/invite?inviteCode=someoneElsesCode")).toContain(
+      "残留引流参数 inviteCode"
+    );
+    expect(linkRisk(`https://s.mi.cn/x?inviteCode=${OWN_INVITE_CODES[0]}`)).toBe("推广短链域名 s.mi.cn");
   });
 });
 

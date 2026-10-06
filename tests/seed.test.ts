@@ -48,6 +48,23 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
     expect(tokens.every((t: any) => t.poster === undefined)).toBe(true);
   });
 
+  /* 逐卡链接覆盖是抓取每一轮都会重打的一层（crawler/run.mjs → buildSeed → applySiteConfig），
+     所以磁盘上的 link 必须恒等于 config 声明值。反过来说：只改 data/tokens.json 而不改
+     config/site-config.json，下一轮抓取（.github/workflows/crawl.yml）就把那个字段打回上游原值——
+     「改哪一层才不会被覆盖」从此由这条判据守着，不再靠人记。
+     基线实测：config 现有 10 条 link 声明，磁盘 10/10 逐字相等且每一条都命中得上的卡名。 */
+  it("config 声明的逐卡 link 即权威：磁盘 tokens/donots 必须逐字一致", () => {
+    const cfg = JSON.parse(read("config/site-config.json"));
+    const declared = Object.entries<any>(cfg.cards ?? {}).filter(([, o]) => typeof o?.link === "string");
+    expect(declared.length).toBeGreaterThan(0); // 前提：确有声明，否则下面两条判据都空转
+    const byName = new Map<string, string>([...tokens, ...donots].map((x: any) => [x.name, x.link]));
+    expect(declared.filter(([name]) => !byName.has(name)).map(([name]) => name)).toEqual([]); // 查无此卡＝静默失效
+    const bad = declared
+      .filter(([name, o]) => byName.get(name) !== o.link)
+      .map(([name, o]) => `${name}：磁盘 ${byName.get(name)} ≠ 声明 ${o.link}`);
+    expect(bad).toEqual([]);
+  });
+
   it("规则表可还原为 RegExp 且门槛标签齐全", () => {
     expect(rules.featured.map((r: any) => r.label)).toEqual([
       "DeepSeek V4", "GLM 5.2", "Kimi K3", "千问 3.8 Max", "Hy3", "LongCat 2.0",
