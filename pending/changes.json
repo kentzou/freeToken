@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "a5eab3d1e6d4892918992168380970f3a9fb7695",
-  "detectedAt": "2026-10-04T16:42:32.682Z",
+  "upstreamSha": "81cda1edaa7bcaba0803332a44c221603e602eec",
+  "detectedAt": "2026-10-06T00:09:47.743Z",
   "changes": [
     {
       "kind": "card",
@@ -102,6 +102,114 @@
           "field": "updated",
           "from": "2026-09-28",
           "to": "2026-10-02"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "腾讯元器",
+      "before": {
+        "name": "腾讯元器",
+        "type": "大模型",
+        "modality": "混元 Hunyuan · 元器 API 分发",
+        "quota": "新用户直送 1 亿 Token；个人 / 小微 10 万次/月免费 API 调用，不绑卡、长期有效。",
+        "link": "https://yuanqi.tencent.com",
+        "limited": null,
+        "updated": "2026-10-04"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "DeepSeek 开放平台",
+      "before": {
+        "name": "DeepSeek 开放平台",
+        "type": "大模型",
+        "modality": "DeepSeek V4 · V4.1-Flash",
+        "quota": "新开发者账号赠 500 万 Tokens（30 天）；网页 / App 对话长期免费。",
+        "link": "https://platform.deepseek.com",
+        "limited": null,
+        "updated": "2026-10-04"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "七牛云 AI 推理",
+      "before": {
+        "name": "七牛云 AI 推理",
+        "type": "大模型",
+        "modality": "千问 3.8 Max · DeepSeek V4 Flash · Kimi K3 · GLM-5.3-Flash",
+        "rating": 5,
+        "quota": "送 300 万 token，新用户再送 1000 万；长期有效、无截止时间。",
+        "effect": "直接调用千问 3.8 Max、DeepSeek V4 Flash、Kimi K3、智谱 GLM-5.3-Flash 等热门模型，免工具调用，注册登录即可拿 API；GLM-5.3-Flash 已上架，原生多模态、性价比高。⚠️ 注册与开 Key 请在浏览器操作，勿直接在微信内打开链接（会失败）",
+        "link": "https://portal.qiniu.com/ai-inference/api-key",
+        "updated": "2026-08-28",
+        "v2": true,
+        "limited": null
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "百度千帆（文心）",
+      "before": {
+        "name": "百度千帆（文心）",
+        "type": "大模型",
+        "modality": "文心 ERNIE-Speed · ERNIE-Lite · ERNIE 系列",
+        "quota": "ERNIE-Speed / Lite 长期免费（有 QPS 限制）；新用户每模型赠 100 万 Tokens（有效期 3 个月）。",
+        "link": "https://qianfan.cloud.baidu.com",
+        "limited": null,
+        "updated": "2026-10-04"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "讯飞星火（开放平台）",
+      "before": {
+        "name": "讯飞星火（开放平台）",
+        "type": "大模型",
+        "modality": "星火 Spark Lite · 星辰 MaaS 开源模型",
+        "quota": "Spark Lite 永久免费 API；星辰 MaaS 开源模型 0 元无限量。",
+        "link": "https://www.xfyun.cn",
+        "limited": null,
+        "updated": "2026-10-04"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
         }
       ]
     }
