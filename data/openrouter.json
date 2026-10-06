@@ -1,6 +1,6 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-09-30T08:01:56.822Z",
+  "fetchedAt": "2026-10-06T01:58:25.549Z",
   "totalModels": 464,
   "freeModelCount": 20,
   "quotaPolicy": {
@@ -20,6 +20,17 @@
     "verifiedAt": "2026-09-30"
   },
   "models": [
+    {
+      "id": "apodex/apodex-1.1-mini:free",
+      "name": "Apodex: Apodex 1.1 Mini (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 235929,
+      "modality": "text->text",
+      "moderated": false
+    },
     {
       "id": "cohere/north-mini-code:free",
       "name": "Cohere: North Mini Code (free)",
@@ -90,6 +101,17 @@
       "id": "inclusionai/ling-3.0-flash-sante:free",
       "name": "inclusionAI: Ling 3.0 Flash Sante (free)",
       "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 32768,
+      "modality": "text->text",
+      "moderated": false
+    },
+    {
+      "id": "inclusionai/ling-3.1-flash",
+      "name": "inclusionAI: Ling 3.1 Flash",
+      "freeVariant": false,
       "tokenPriceZero": true,
       "quotaRef": "quotaPolicy",
       "contextLength": 262144,
@@ -197,28 +219,6 @@
       "moderated": false
     },
     {
-      "id": "qwen/qwen3.8-27b:free",
-      "name": "Qwen: Qwen3.8 27B (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 262144,
-      "maxCompletionTokens": 235929,
-      "modality": "text+image+video->text",
-      "moderated": false
-    },
-    {
-      "id": "stealth/space-bunny-alpha",
-      "name": "Space Bunny Alpha",
-      "freeVariant": false,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 1000000,
-      "maxCompletionTokens": 524288,
-      "modality": "text+image+video->text",
-      "moderated": false
-    },
-    {
       "id": "thinkingmachines/inkling-small:free",
       "name": "Thinking Machines: Inkling Small (free)",
       "freeVariant": true,
@@ -241,5 +241,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "68a07139c45c8448"
+  "sourceFingerprint": "97a70de9bc83a00e"
 }
