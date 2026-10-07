@@ -1,7 +1,7 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-10-06T01:58:25.549Z",
-  "totalModels": 464,
+  "fetchedAt": "2026-10-07T01:06:02.119Z",
+  "totalModels": 466,
   "freeModelCount": 20,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
@@ -241,5 +241,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "97a70de9bc83a00e"
+  "sourceFingerprint": "d506cc0298f1ec22"
 }
