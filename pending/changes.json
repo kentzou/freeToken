@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "49bbed64e9f0b046993e558cac09956131e3ef1c",
-  "detectedAt": "2026-10-06T18:29:19.466Z",
+  "upstreamSha": "a9cc43e97d35a54c98da7ef660429ffafc082615",
+  "detectedAt": "2026-10-07T06:11:28.918Z",
   "changes": [
     {
       "kind": "card",
@@ -203,6 +203,132 @@
         "link": "https://www.xfyun.cn",
         "limited": null,
         "updated": "2026-10-04"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "APMIX",
+      "before": {
+        "name": "APMIX",
+        "type": "大模型",
+        "modality": "gpt-6-luna-free",
+        "quota": "限时共享活动池 100 亿加权 Tokens（模型 gpt-6-luna-free）；共享池先到先得，耗尽即止，不消耗账号常规额度。",
+        "link": "https://apmix.ai/event",
+        "limited": "2026-10-31",
+        "updated": "2026-10-05"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "智谱AI（Z.AI 开放平台）",
+      "before": {
+        "name": "智谱AI（Z.AI 开放平台）",
+        "type": "大模型",
+        "modality": "GLM-5 / GLM-5.1 / GLM-5.2 / GLM-4.7-Flash / GLM-4.5-Flash",
+        "quota": "新用户注册送 2000 万 Tokens（长期有效）；GLM-4.7-Flash / GLM-4.5-Flash / GLM-4.6V-Flash 等注册即免、不限 Token；并发上限 30。",
+        "link": "https://open.bigmodel.cn",
+        "limited": null,
+        "updated": "2026-10-05"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "Mistral La Plateforme",
+      "before": {
+        "name": "Mistral La Plateforme",
+        "type": "大模型",
+        "modality": "Mistral Large 3 · Mistral Small · Codestral · Pixtral",
+        "quota": "Experiment 实验计划：全模型免费用量（约 1B tokens/月/模型，~1–2 RPS、500K TPM），无需信用卡；需手机号验证。覆盖 Mistral Large 3 / Small / Medium、Codestral、Pixtral 等。",
+        "link": "https://console.mistral.ai",
+        "limited": null,
+        "updated": "2026-10-06"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "xAI Grok（console.x.ai）",
+      "before": {
+        "name": "xAI Grok（console.x.ai）",
+        "type": "大模型",
+        "modality": "Grok 4.x · Grok 4.1 Fast",
+        "quota": "新账号赠送 $25 试用额度（约 5000 万 input tokens @Grok 4.1 Fast），无需绑卡即可开始；额度自注册起 30 天有效、不结转。",
+        "link": "https://console.x.ai",
+        "limited": null,
+        "updated": "2026-10-06"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "Cohere Trial Key",
+      "before": {
+        "name": "Cohere Trial Key",
+        "type": "大模型",
+        "modality": "Command R · Command R+ · Embed v3 · Rerank v3",
+        "quota": "Trial Key：限频但无过期（约 5–20 req/min、1000 次/月），覆盖 Command R / R+ / Embed v3 / Rerank v3；无需信用卡。",
+        "link": "https://dashboard.cohere.com",
+        "limited": null,
+        "updated": "2026-10-06"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "腾讯云混元大模型",
+      "before": {
+        "name": "腾讯云混元大模型",
+        "type": "大模型",
+        "modality": "hunyuan-lite · hunyuan-pro · Hunyuan-T1 · Hunyuan-TurboS",
+        "quota": "hunyuan-lite 永久免费（通用，不限 Token）；新用户开通赠 100 万 Token（1 年有效期）；Embedding 另赠 100 万 Token。",
+        "link": "https://cloud.tencent.com/product/hunyuan",
+        "limited": null,
+        "updated": "2026-10-06"
       },
       "after": null,
       "fields": [
