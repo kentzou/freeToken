@@ -135,6 +135,9 @@ describe("mergeLocalCards：同名一律上游胜出（spec 裁决 #8）", () =>
     expect(cards[1]).toBe(upstream[1]);
     expect(cards[1].quota).toBe("上游额度");
     expect(cards[1].updated).toBe("2026-01-01");
+    // 「原样」还要钉住形态：上游卡不许被顺手归一化——归一化会补 origin/sourceUrl/checkedAt，
+    // 键数一变就不再是上游那张对象的内容了（引用相等拦不住这种就地改写）
+    expect(Object.keys(cards[1])).toHaveLength(7);
     // 追加的那张必须已归一化（不是文件里的裸对象）：origin/sourceUrl/checkedAt 齐、事实键序在前
     expect(Object.keys(cards[2]).slice(-3)).toEqual(["origin", "sourceUrl", "checkedAt"]);
     expect(cards[2].sourceUrl).toBe("https://mine.example/C#pricing");
@@ -144,6 +147,8 @@ describe("mergeLocalCards：同名一律上游胜出（spec 裁决 #8）", () =>
     const { cards, warn } = mergeLocalCards([], [loc("D"), { ...loc("D"), updated: "2026-10-10" }]);
     expect(cards).toHaveLength(1);
     expect(warn).toEqual(["D"]);
+    // 留下的必须是**前一条**（文件序）：last-wins 实现同样得「长度 1 ＋ warn ["D"]」，只有内容能分辨
+    expect(cards[0].updated).toBe("2026-10-09");
   });
 
   it("⑫ 空本地表 → 产物与上游逐字相同、warn 为空；两个容器传 null 也不抛", () => {
