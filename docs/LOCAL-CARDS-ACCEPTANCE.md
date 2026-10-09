@@ -1,7 +1,7 @@
 # 计划 6 · 本地增补卡数据面验收记录
 
 验收日期：2026-10-09（本机实测）｜仓库状态：token-fbi-next main @ `fe958b6`（五道闸实测时的仓库 HEAD；本验收记录随本次 docs 提交落库）
-后续推进登记（2026-10-10）：本文之后修复波继续推进——Wave A 代码提交 `0bebbbe`；Wave B 文档收口及其同波修正笔（不逐一编号，末态锚点按 §9 所述可核命令现查）。新末态读数登记见本文 §9，本文 §1–§8 各行历史读数一律不覆写。
+后续推进登记（2026-10-09）：本文之后修复波继续推进——Wave A 代码提交 `0bebbbe`；Wave B 文档收口及其同波修正笔（不逐一编号，末态锚点按 §9 所述可核命令现查）。新末态读数登记见本文 §9，本文 §1–§8 各行历史读数一律不覆写。
 原则：延续 `docs/PIPELINE-ACCEPTANCE.md`——凡本机亲测才写「已实测」；线上（crawl / deploy / 发布）只推演不执行。凡未亲测的格子一律写「未跑（原因）」，不留空、不写推测、不写「应该通过」。
 证据文件：本文引用的原始日志全部在外层工作区 `../.superpowers/sdd/2026-10-09-local-cards-data-plane/`（下称 `<工作区>`），文件名随行列出。母本计划里写的 `/tmp/f_*.out` 是占位名，实测一律落工作区，理由是 `/tmp` 在 Windows 侧不跨会话存活。
 
@@ -23,7 +23,7 @@
 | ① 重建前复现基线红（镜像 `out/` 是 08:55 的**唯一一份**镜像包，按外层 `../docs/PUBLISH-NOTES.md` 服务端重发被挡，所以这是最后一次能复现基线红的机会） | `npm run test:out > <工作区>/gate-t6-out-baseline.log 2>&1; echo OUT_BASE=$?` | **OUT_BASE=1**，`ℹ tests 14 / ℹ pass 11 / ℹ fail 3`。红的正是计划 §1 `test:out` 行点名的三条口径断言：`✖ 详情页也带台账入口：/intel/openrouter/ 的动作行里有指向台账页的按钮`、`✖ 站内页面链接形态随口径落地：镜像全带 index.html，主站全为 clean URL`、`✖ /admin 已进产物且带 noindex（§7-8）`（`gate-t6-out-baseline.log:11,12,18`）。与基线登记逐字一致，非本计划引入的回归 |
 | ② 备份镜像产物到**两仓之外** | `cp -r out "D:/Documents/code/_out-mirror-backup-$(date +%H%M)"`；`find … -type f \| wc -l`；`du -sb` | 备份路径 `D:/Documents/code/_out-mirror-backup-2017`；**149 个文件 / 4665854 字节**；`grep -c noindex out/index.html` = **1**；`out/index.html` 大小 65391、mtime `2026-10-09 08:55:40.292839300 +0800`（`t6-out-backup-stat.txt`） |
 | ③ 与 CI 同口径重建（不设 `NEXT_PUBLIC_SITE_ROLE` ⇒ `src/lib/siteRole.ts` 缺省 primary，与 `deploy.yml` 同口径；`npm run build` = `next build && node scripts/subset-fonts.mjs`） | `npm run build > … ; echo BUILD=$?`；`npm run seo > … ; echo SEO=$?`；`npm run test:out > … ; echo OUT=$?` | **BUILD=0**，末段 `✓ Generating static pages (40/40)` ⇒ **N=40**（`gate-t6-build.log:46`）；**SEO=0**，stdout 一行 `[seo] robots.txt 已出（primary）；无 NEXT_PUBLIC_SITE_URL，按本地口径跳过 sitemap`（`gate-t6-seo.log`）；**OUT=0**，`ℹ tests 14 / ℹ pass 14 / ℹ fail 0` ⇒ `pass == tests`、`fail 0`（`gate-t6-out.log:19-22`）。重建后的主站口径产物计数：**149 个文件 / 4647294 字节 / noindex 命中 0**、站内链接形态 `href="/about/"`（`t6-out-primary-stat.txt`）——与镜像口径的 4665854 字节 / noindex 1 形成对照，实证「口径差异而非代码回归」 |
-| ④ 还原镜像产物 | `rm -rf out && cp -r "D:/Documents/code/_out-mirror-backup-2017" out`；`diff -r out <备份>` | **RESTORE=0**；`diff -r` **输出 0 行**（`t6-out-restore-diff.log`，实测 0 字节）⇒ 无逐文件内容差异；**退出码当时未单独记录**——Wave B 复核（2026-10-10）：本应复跑 `diff -r out "D:/Documents/code/_out-mirror-backup-2017" > <工作区>/gate-B-diff-r.log; echo DIFF_R=$?` 留独立证据，但该备份目录在两仓之外，自动化会话的执行环境按工作区边界策略拒绝读取（两次尝试均被挡），**`DIFF_R` 读数未获得、`gate-B-diff-r.log` 未产出**。差异清单：无新增证据也无新增差异，「逐字节等价」的现存支撑仍是 ②/④ 的两组计数（149 文件 / 4665854 字节 / noindex=1 逐值相同）＋ `diff -r` 零输出；退出码复跑留给能在该目录同权限环境操作的人按上述命令逐字执行；还原后计数 **149 文件 / 4665854 字节**，与 ② 的两个计数器**逐值相同**（`t6-out-restore-stat.txt` vs `t6-out-backup-stat.txt`） |
+| ④ 还原镜像产物 | `rm -rf out && cp -r "D:/Documents/code/_out-mirror-backup-2017" out`；`diff -r out <备份>` | **RESTORE=0**；`diff -r` **输出 0 行**（`t6-out-restore-diff.log`，实测 0 字节）⇒ 无逐文件内容差异；**退出码当时未单独记录**——Wave B 复核（2026-10-09）：本应复跑 `diff -r out "D:/Documents/code/_out-mirror-backup-2017" > <工作区>/gate-B-diff-r.log; echo DIFF_R=$?` 留独立证据，但该备份目录在两仓之外，自动化会话的执行环境按工作区边界策略拒绝读取（两次尝试均被挡），**`DIFF_R` 读数未获得、`gate-B-diff-r.log` 未产出**。差异清单：无新增证据也无新增差异，「逐字节等价」的现存支撑仍是 ②/④ 的两组计数（149 文件 / 4665854 字节 / noindex=1 逐值相同）＋ `diff -r` 零输出；退出码复跑留给能在该目录同权限环境操作的人按上述命令逐字执行；还原后计数 **149 文件 / 4665854 字节**，与 ② 的两个计数器**逐值相同**（`t6-out-restore-stat.txt` vs `t6-out-backup-stat.txt`） |
 | ⑤ 工作树复核 | `git status --porcelain` | 仍只有 `?? dist/`；`git check-ignore -v out/index.html` → `.gitignore:3:out/` ⇒ `out/` 不入库 |
 
 **还原复核**：还原后 `out/index.html` 的 `grep -c noindex` = **1**（镜像口径标志回来）、文件大小 65391 与备份同值、`diff -r` 零差异；mtime 变为 `2026-10-09 20:18:58.169641400 +0800`（原 `08:55:40.292839300`）——`cp -r` 必然改写 mtime，mtime 变化不构成内容差异，内容等价由 `diff -r` 的零输出承担。**这份镜像包仍是待重发的唯一本地副本**（重发被上传通道挡住属服务端问题，见外层 `../docs/PUBLISH-NOTES.md`），本计划未消费、未改动它。
@@ -179,7 +179,7 @@ local 标记数= 0                                                            �
 1. **Step 3 的内存探针**：brief 的代码片段含 `seed.cards.filter((c:any)=>c.origin==='local')`，`:any` 是 TypeScript 语法，在 `node --input-type=module -e` 下必然 `SyntaxError`。实测时去掉类型注解写作 `(c) => c.origin === "local"`，其余逐字照抄。读数不受影响：`local 标记数= 0`。
 2. **Step 2 的汇总行取数形态**：brief 用 `grep -E "^# (tests|pass|fail)"`，本机 `node --test` 走 spec reporter，汇总行形态是 `ℹ tests 14` / `ℹ pass 14` / `ℹ fail 0`（无 `# ` 前缀），该 grep **零命中**（本次实跑该 grep 得 `No matches found`）。本次按 `ℹ` 形态取数并按判据本意核对 `pass == tests`、`fail 0`，不改变判定。
 
-## 9. 全分支评审修复波（Wave A + Wave B，2026-10-10 登记）
+## 9. 全分支评审修复波（Wave A + Wave B，2026-10-09 登记）
 
 评审对象是计划 6 全分支（`git rev-list --count 2bdc2f4..82d0d85` = 12 笔，本文 `82d0d85` 为其末笔；评审后叠加 Wave A `0bebbbe`，`2bdc2f4..0bebbbe` = 13 笔）。两波收口：
 
