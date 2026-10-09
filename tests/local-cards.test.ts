@@ -210,6 +210,8 @@ describe("reconcileLocalCards：产物与 config/local-cards.json 的来源对�
 describe("公开口径：本地增补卡的核验日与新增卡路径", () => {
   it("⑰ 「精选门槛与收录标准」页公示了本地增补卡的核验日来自本站（spec §6.4）", () => {
     const page = read("src/app/editorial-policy/page.tsx");
+    /* 首句是本站对「观望名单」的既有承诺，改稿时最容易被顺手带掉——R-17：Task 5 评审席实测原 ⑰ 只钉末句，首句无判据保护。 */
+    expect(page).toContain("「观望名单」是另一套判定：平台能用但性价比、速度或稳定性存在明确短板，我们会写明理由，不做推荐。");
     expect(page).toContain("每条情报的核验日期来自上游更新时间，本站不擅自改写。"); // 上游口径不许被顺手改掉
     expect(page).toContain("本地增补卡");
     expect(page).toMatch(/config\/local-cards\.json/);

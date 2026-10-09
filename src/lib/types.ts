@@ -23,7 +23,9 @@ export interface TokenCard {
   v2?: boolean;
   /* —— 本地增补卡（计划 6）：只出现在 config/local-cards.json 这一族来源的卡上 ——
      origin 恒为 "local"，缺省即「来自上游」；sourceUrl 是额度原文出在哪个页面，
-     checkedAt 是本站核验日（UTC+8，YYYY-MM-DD）。三个键都不进清洗面，也不被 site-config 覆盖。 */
+     checkedAt 是本站核验日（UTC+8，YYYY-MM-DD）；本地条目没单独填 checkedAt 时取本卡的 updated，
+     两者都是本站手写的同一口径（R-17 M1：不写清这层回落，读者会以为核验日另有来源）。
+     三个键都不进清洗面，也不被 site-config 覆盖——applySiteConfig 只白名单覆盖 link/type/码池。 */
   origin?: "local";
   sourceUrl?: string;
   checkedAt?: string;

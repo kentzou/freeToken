@@ -22,7 +22,7 @@ export default function EditorialPolicy() {
       <p>
         「观望名单」是另一套判定：平台能用但性价比、速度或稳定性存在明确短板，我们会写明理由，不做推荐。
         每条情报的核验日期来自上游更新时间，本站不擅自改写。
-        另有少数情报是本站一手核验的<strong>本地增补卡</strong>：这类条目的核验日期由本站逐条填写，
+        另有<strong>本地增补卡</strong>这一类来源：条目由本站一手核验，核验日期逐条填写，
         来源页面与额度原文登记在仓库的 <code>config/local-cards.json</code>。
       </p>
       <p>
