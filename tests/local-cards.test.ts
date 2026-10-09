@@ -61,10 +61,11 @@ describe("loadLocalCards / normalizeLocalCard：本地增补卡的解析与归�
   it("⑥ updated/checkedAt：updated 必填且要 YYYY-MM-DD；checkedAt 给了就要合法", () => {
     expect(() => normalizeLocalCard({ ...minimal, updated: "2026-10-9" }, 0)).toThrow(/updated 必须是 YYYY-MM-DD/);
     expect(() => normalizeLocalCard({ ...minimal, updated: "2026-10-09 12:00" }, 0)).toThrow(/updated 必须是 YYYY-MM-DD/);
-    /* 计划原文此处分输入为 "2026-10-09"，那是合法的 YYYY-MM-DD、实现按 spec 正确放行，
-       「to throw」恒不成立（实测 8 passed | 1 failed）。已核实属计划笔误：本行意图是
-       「checkedAt 给了就要合法」，改喂非法日期（与上一行 updated 的非法形态同源），断言强度不降。 */
-    expect(() => normalizeLocalCard({ ...minimal, checkedAt: "2026-10-9" }, 0)).toThrow(/checkedAt 必须是 YYYY-MM-DD/);
+    /* 本行 checkedAt 的字面量刻意写成斜杠分隔日期（见下行字符串，分隔符是斜杠而非连字符）：
+       DATE_RE 只认连字符形态的 YYYY-MM-DD，所以这条输入必定抛错，断言因此有牙。
+       ⚠ 本环境的读文件与终端显示层会把斜杠渲染成连字符，屏幕读数不作证据：改动本行必须按字节校验，
+       落地后该行应出现 54,47,49,48,47,48,57（即 2026/10/09）——这是上一轮转写踩过的坑。 */
+    expect(() => normalizeLocalCard({ ...minimal, checkedAt: "2026/10/09" }, 0)).toThrow(/checkedAt 必须是 YYYY-MM-DD/);
     expect(normalizeLocalCard({ ...minimal, checkedAt: "2026-10-08" }, 0).checkedAt).toBe("2026-10-08");
   });
 
@@ -74,13 +75,17 @@ describe("loadLocalCards / normalizeLocalCard：本地增补卡的解析与归�
     expect([...LOCAL_TYPE_VALUES].sort()).toEqual([...TYPE_VALUES].sort());
   });
 
-  it("⑧ 未知字段点名拒绝（hide 该写 site-config、码池与 poster 一律不入本地卡）", () => {
+  it("⑧ 未知字段点名拒绝（hide 该写 site-config、码池与 poster 一律不入本地卡）＋事实键写了就要是字符串", () => {
     expect(() => normalizeLocalCard({ ...minimal, hide: true }, 0)).toThrow(/未知字段 hide/);
     expect(() => normalizeLocalCard({ ...minimal, inviteCodes: ["x"] }, 0)).toThrow(/未知字段 inviteCodes/);
     expect(() => normalizeLocalCard({ ...minimal, ratg: 5, psotr: "p" }, 0)).toThrow(/未知字段 ratg, psotr/);
+    // R-3：类型不对的事实键不许被静默清成空串（手抄来源页最常把额度写成数字）
+    expect(() => normalizeLocalCard({ ...minimal, quota: 200000 }, 0)).toThrow(/字段 quota 必须是字符串/);
+    expect(() => normalizeLocalCard({ ...minimal, modality: ["chat"] }, 0)).toThrow(/字段 modality 必须是字符串/);
+    expect(() => normalizeLocalCard({ ...minimal, limited: 123 }, 0)).toThrow(/字段 limited 只能是字符串或 null/);
   });
 
-  it("⑨ 键序固定＝事实 7 键 → 观点键（按 FACT_FIELDS 同源顺序）→ origin/sourceUrl/checkedAt；同输入连跑两次逐字节相同", () => {
+  it("⑨ 键序固定＝事实 7 键 → 观点键（按 VIEW_KEYS 顺序）→ origin/sourceUrl/checkedAt；同输入连跑两次逐字节相同", () => {
     const card = normalizeLocalCard(
       { ...minimal, v2: true, rating: 5, effect: "写代码很快", quota: "每日 200 次", modality: "Probe-1" },
       0

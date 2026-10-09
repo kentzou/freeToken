@@ -29,7 +29,7 @@ const HTTPS_RE = /^https:\/\//i;
 
 /** 单条本地卡 → 落盘形态：必填校验 + 固定键序（沿用 adapt.mjs:40 factPatch 的思路，
  *  事实 7 键在最前，观点键次之，出处键置尾），保证「同一份文本 → 同一串字节」。
- *  link / sourceUrl 的协议这一关必须在这里把：linkRisk（clean.mjs:104）对空串与裸域名
+ *  link / sourceUrl 的协议这一关必须在这里把：linkRisk（`clean.mjs:linkRisk`，声明在 :103）对空串与裸域名
  *  一律返回 null 即放行，指望下游等于没指望（spec 复核记 8）。
  *  @param {Record<string, unknown>} card @param {number} i @returns {LocalCard} */
 export function normalizeLocalCard(card, i) {
@@ -61,8 +61,22 @@ export function normalizeLocalCard(card, i) {
 
   const out = {};
   for (const k of FACT_FIELDS) {
-    // 与 adaptItem 同源的缺省：limited 缺省 null，其余字符串键缺省空串（键必须齐，否则键序漂移）
-    out[k] = k === "limited" ? (card[k] ?? null) : (typeof card[k] === "string" ? card[k] : "");
+    // 与 adaptItem 同源的缺省：limited 缺省 null，其余字符串键缺省空串（键必须齐，否则键序漂移）。
+    // 但「缺省」只适用于**没写**这个键；写了却类型不对（quota: 200000 / modality: ["chat"] / limited: 123）
+    // 一律抛——把它静默清成空串＝丢读者的决策依据，与本模块立身的「绝不静默丢」自相矛盾（Task 1 评审 R-3）。
+    // 空串本身合法：那是归一化产物的缺省值，用例 ⑨ 的幂等（归一化结果再归一化）要求它必须过。
+    const v = card[k];
+    if (k === "limited") {
+      if (v !== undefined && v !== null && typeof v !== "string") {
+        throw new Error(`${label}：字段 limited 只能是字符串或 null，收到 ${JSON.stringify(v)}`);
+      }
+      out[k] = v ?? null;
+      continue;
+    }
+    if (v !== undefined && typeof v !== "string") {
+      throw new Error(`${label}：字段 ${k} 必须是字符串，收到 ${JSON.stringify(v)}`);
+    }
+    out[k] = typeof v === "string" ? v : "";
   }
   for (const k of VIEW_KEYS) {
     if (card[k] !== undefined) out[k] = card[k];
