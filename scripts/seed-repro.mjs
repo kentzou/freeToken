@@ -36,7 +36,9 @@ const sha = (o) => createHash("sha256").update(JSON.stringify(o)).digest("hex").
 const local = loadLocal();
 const a = buildSeed(src, cfg, local);
 const b = buildSeed(src, cfg, local);
-const c = buildSeed(src, cfg, { cards: a.cards, donots: a.donots, rules: a.rules });
+// 第三跑（幂等）：基底换成上一轮产物，但 localCards 必须仍来自 config 原文——
+// 本地卡不靠 prev 继承（下一轮 adaptItems 不会遍历它），漏传就等于「产物喂回自己」时整批蒸发。
+const c = buildSeed(src, cfg, { ...local, cards: a.cards, donots: a.donots, rules: a.rules });
 for (const k of ["cards", "donots", "rules"]) {
   if (sha(a[k]) !== sha(b[k])) {
     console.error(`复现失败：${k} 两次输出不一致（${sha(a[k])} vs ${sha(b[k])}）`);

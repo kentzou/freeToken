@@ -3,6 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { linkRisk } from "../crawler/clean.mjs";
 import { buildSeed, dropWarning, loadLocal } from "../scripts/export-seed.mjs";
+import { loadLocalCards } from "../crawler/local-cards.mjs";
 
 const read = (p: string) => readFileSync(path.resolve(process.cwd(), p), "utf8");
 const tokens = JSON.parse(read("data/tokens.json"));
@@ -161,6 +162,41 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
     const extra = tokens.filter((t: any) => !PIPELINE.cards.some((c: any) => c.name === t.name));
     expect(extra.length).toBeGreaterThan(0); // 样本量：③ 若无多出卡则该条空转，先钉住「确实有新增」这个前提
     expect(extra.filter((t: any) => upstreamNames.has(t.name)).map((t: any) => t.name)).toEqual([]);
+  });
+
+  it("本地增补卡经 buildSeed 合入：落在尾部、带 origin、原 33 张一字未改（spec §6.3）", () => {
+    const CONFIG = JSON.parse(read("config/site-config.json"));
+    const src = read("tests/fixtures/upstream-data.json");
+    // 测试专用合成卡：只在内存里过一遍 buildSeed，不落盘、不进 config（§3 红线）
+    const probe = {
+      name: "本站增补探针",
+      type: "工具",
+      quota: "每日 100 次",
+      link: "https://example.com/probe",
+      sourceUrl: "https://example.com/probe#pricing",
+      updated: "2026-10-09",
+    };
+    const seed = buildSeed(src, CONFIG, { ...loadLocal(), localCards: [probe] });
+    expect(seed.cards).toHaveLength(PIPELINE.cards.length + 1);
+    expect(seed.cards.slice(0, -1)).toEqual(PIPELINE.cards); // 上游那 33 张逐字段不变，也不被挤位
+    const tail: any = seed.cards[seed.cards.length - 1];
+    expect(tail.name).toBe("本站增补探针");
+    expect(tail.origin).toBe("local");
+    expect(tail.sourceUrl).toBe("https://example.com/probe#pricing");
+    expect(tail.checkedAt).toBe("2026-10-09");
+    expect(seed.meta.counts).toEqual({ tokens: seed.cards.length, donots: seed.donots.length });
+
+    // 合并点必须在 applySiteConfig **之前**：hide 才管得到本地卡（spec 复核记 5）
+    // 实测修正（偏离 brief 一处，见 task-3-report）：config 必须以真 CONFIG 展开为基底——
+    // 上游 WorkBuddy/七牛云/小米 3 张的推广短链只有 site-config 的逐卡 link 覆盖兜得住，
+    // 裸 { cards: {…} } 会先被 export-seed 的 linkRisk 守卫抛「清洗失败」，根本走不到 hide 断言。
+    const hidden = buildSeed(src, { ...CONFIG, cards: { ...CONFIG.cards, "本站增补探针": { hide: true } } }, { ...loadLocal(), localCards: [probe] });
+    expect(hidden.cards.some((c: any) => c.name === "本站增补探针")).toBe(false);
+
+    // 坏条目要在动笔前抛，并点名下标；loadLocal 读的是真文件（现在是空表）
+    expect(() => buildSeed(src, CONFIG, { ...loadLocal(), localCards: [{ name: "缺键卡" }] })).toThrow(/local-cards#0（缺键卡）/);
+    expect(loadLocalCards(read("config/local-cards.json"))).toEqual([]);
+    expect(loadLocal().localCards).toEqual([]);
   });
 
   it("四道 fail-stop 护栏：基底缺失或上游全被挡架都拒绝导出，绝不发布空壳", () => {

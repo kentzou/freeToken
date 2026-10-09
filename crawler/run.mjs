@@ -6,6 +6,7 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } fr
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { buildSeed } from "../scripts/export-seed.mjs";
+import { loadLocalCards } from "../crawler/local-cards.mjs";
 import { dump } from "./serialize.mjs";
 import { FIELD_LIMIT, diffAll, isRemoval, keyOf, kindLabel } from "./diff.mjs";
 import { validateCards, validateRulesJson } from "./validate.mjs";
@@ -198,6 +199,10 @@ const DATA_KEYS = ["data/tokens.json", "data/donots.json", "data/rules.json", "d
 async function main() {
   const root = process.cwd();
   const read = (rel) => JSON.parse(readFileSync(path.resolve(root, rel), "utf8"));
+  // 本地增补表：与 export-seed:loadLocal 同口径（缺文件＝空表），两处各读一次不合并，
+  // 因为爬虫侧的 root 与 seed 的 cwd 语义在这里一致，多一层共享工具反而把纯函数模块拖进 fs。
+  const localCardsPath = path.resolve(root, "config", "local-cards.json");
+  const localCards = loadLocalCards(existsSync(localCardsPath) ? readFileSync(localCardsPath, "utf8") : "");
   const meta = read("data/meta.json");
   const config = read("config/site-config.json");
   const existingPending = existsSync(path.resolve(root, "pending/changes.json")) ? read("pending/changes.json") : null;
@@ -208,7 +213,7 @@ async function main() {
   try {
     summary = await crawlOnce({
       meta, config, token, repo, existingPending, checkLinks: true,
-      prev: { cards: read("data/tokens.json"), donots: read("data/donots.json"), rules: read("data/rules.json") },
+      prev: { cards: read("data/tokens.json"), donots: read("data/donots.json"), rules: read("data/rules.json"), localCards },
     });
   } catch (e) {
     // spec §7.3「解析失败停下」：非 0 退出 + 可读原因；Issue 通知交给 workflow 的失败后续（本地只报错）

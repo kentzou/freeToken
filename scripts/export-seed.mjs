@@ -12,6 +12,7 @@ import { extractDataJson } from "../crawler/extract.mjs";
 import { adaptItems } from "../crawler/adapt.mjs";
 import { applySiteConfig, cleanCard, linkRisk } from "../crawler/clean.mjs";
 import { dump } from "../crawler/serialize.mjs";
+import { loadLocalCards, mergeLocalCards } from "../crawler/local-cards.mjs";
 
 const OUT = path.resolve(process.cwd(), "data");
 const CFG = path.resolve(process.cwd(), "config", "site-config.json");
@@ -19,13 +20,21 @@ const CFG = path.resolve(process.cwd(), "config", "site-config.json");
  *  CI 里既不联网，也不依赖 ../token-fbi 镜像（镜像已过期，上游 app.js 更已下线）。 */
 const SNAPSHOT = path.resolve(process.cwd(), "tests", "fixtures", "upstream-data.json");
 
-/** 读本地三件套（观点基底 + 两张透传表）。缺文件返回 null，由 buildSeed 决定如何报错。 */
+/** 读本地四件套（观点基底 + 两张透传表 + 本地增补卡原文）。
+ *  缺 data/*.json 返回 null，由 buildSeed 决定如何报错；缺 config/local-cards.json 视为空表
+ *  （本地增补是可选来源，不该因为没建文件就把整条管线停掉，spec §6.2）。 */
 export function loadLocal() {
   const read = (rel) => {
     const abs = path.resolve(process.cwd(), "data", rel);
     return existsSync(abs) ? JSON.parse(readFileSync(abs, "utf8")) : null;
   };
-  return { cards: read("tokens.json"), donots: read("donots.json"), rules: read("rules.json") };
+  const cardsAbs = path.resolve(process.cwd(), "config", "local-cards.json");
+  return {
+    cards: read("tokens.json"),
+    donots: read("donots.json"),
+    rules: read("rules.json"),
+    localCards: loadLocalCards(existsSync(cardsAbs) ? readFileSync(cardsAbs, "utf8") : ""),
+  };
 }
 
 /** 管线核心：上游 data.json 文本 + site-config（可为 null，表示无覆盖）+ 本地视图 → 四份出参。
@@ -51,6 +60,12 @@ export function buildSeed(sourceText, config, local) {
   }
 
   const cleaned = adaptItems(items, prevCards).map(cleanCard);
+  /* 本地增补卡（计划 6）：合在 applySiteConfig **之前**，好让 hide / link / type 覆盖
+     和 :69-79 那段逐卡 linkRisk 对两类卡一视同仁——不存在「本地卡不受后台与配置约束」的第二套语义。
+     本地卡不过 cleanCard：它已是本站手写终值，再过一次会误删 sourceUrl（D-2）。
+     同名一律本地让路（被上游接管，或被表内前一条接管，决策 #8）并出声；出声是给人看的，不是给 crawl 停的。 */
+  const { cards: withLocal, warn } = mergeLocalCards(cleaned, (local || {}).localCards || []);
+  if (warn.length) console.warn("[local-cards] 本地条目未落地（与上游卡或表内前一条同名）：", warn.join("、"));
   /* 收取下限：三条基底护栏只挡在 adapt 之前，挡不住「上游类目字段整体改名」。
      触发条件就是字面意义上的收取数归零（items 非空、解析成功，但 adaptItems 一条不收），
      没有这道闸就会把 32 张卡的评分/上手指南/pin 静默抹成空表落盘（seed:repro 的「管线=磁盘」
@@ -61,7 +76,7 @@ export function buildSeed(sourceText, config, local) {
       "上游 items 非空但适配层收取数为 0（决策 Q7 只认 tool/model、Q6 挡 sponsored）：疑似上游类目字段改名或形态漂移，拒绝导出空表（决策 Q1 基底保护）"
     );
   }
-  const merged = applySiteConfig(cleaned, prevDonots, config);
+  const merged = applySiteConfig(withLocal, prevDonots, config);
 
   /* 校验必须排在 applySiteConfig 之后：清洗器先剥参数，逐卡覆盖兜住路径型短链，两层都跑完
      再判定，才不会把「配置一改就干净」的卡误报（实测 LobsterAI 即属此类）。
