@@ -233,3 +233,56 @@ gitignored 主控留档、不在仓库内，仓库外的读者请按 ①②③ �
 
 审查 `data/tokens.json` 变更时的判据：**先看 seed 输出里有没有这行告警**。有告警而提交仍下架了一批卡，
 必须在提交信息或 Issue 里写明是哪几张、为什么；没有告警的删除才可能是静默漂移。
+
+## 11. 事故回填：台账天天抓成功、Pages 停在旧产物（2026-10-09）
+
+现象（线上可复验）：`https://kentzou.github.io/freeToken/openrouter/` 的 `fetchedAt` 停在
+`2026-09-30T08:01:56.822Z`，而 `crawl-openrouter` 每天调度成功——远端 main 上有
+`6ba6e55`（10-06 01:58 UTC）、`4f9d6e1`（10-07 01:06）、`1e84479`（10-08 01:25）三条
+`chore(crawl): OpenRouter 免费模型台账` bot 提交，`data/openrouter.json` 一路前进到
+`fetchedAt=2026-10-08T01:25:26Z / totalModels=467`。抓取与提交这一段没有毛病。
+
+断点在产品化的最后一环：**每次台账提交 dispatch 出去的 deploy 都在 quality 步骤红**，
+`lighthouse` 与 `deploy` 两个 job 因此 skipped，Pages 保留最后一次成功构建（run #19，10-06 08:09）。
+连红八次：deploy #20（10-06 09:58）、#21、#22、#23、#24、#25、#26（10-08 09:25）、#27。
+run 37712857267 的 annotation 原文即根因：
+
+    AssertionError: expected { …(9) } to match object { …(2) }
+    -   "id": "cohere/north-mini-code:free",
+    +   "id": "apodex/apodex-1.1-mini:free",
+      ❯ tests/openrouter-catalog.test.ts:33
+
+根因定性：`tests/openrouter-catalog.test.ts` 用 `loadCatalog()` 读**真实磁盘台账**，却把两个
+**快照值**（`freeModelCount=20`、`models[0].id=cohere/north-mini-code:free`）当常量钉。上游一次正常换代
+就把门禁永久钉红，且红在 CI，本机当时全绿——因为本地检出的还是 09-30 那份数据。
+
+修复原则：**读易变数据源的用例只允许钉不变量**（结构自洽、准入规则、字段指向），
+快照级断言归吃 fixture 的 `tests/openrouter.test.ts`（值不会自己漂）。据此改写该用例：
+`fetchedAt` 必须是时间戳格式（拦「退回空台账」），`totalModels>0`，`freeModelCount>0`，
+`models.length===freeModelCount`（拦计数与内容脱节），逐模型 `freeVariant === id.endsWith(":free")`
+且 `freeVariant || tokenPriceZero`（与 `crawler/openrouter.mjs:62,69-70` 同一条准入口径——
+注意不能写成 `every freeVariant===true`，实测 09-30 与 10-08 两份快照里都只有 16/20 条带 `:free`
+后缀，另外 4 条走的是「单价为 0」那条通道），`quotaRef==="quotaPolicy"`，
+`quotaPolicy.requestsPerMinute>0`（政策改版该由台账带着页面变，不该红在门禁里）。
+
+有牙检查（同一台机器、真实数据、逐场景还原）：09-30 台账 3 passed；10-08 台账 3 passed；
+把 `freeModelCount` 改成 `models.length+1` → 1 failed；把某条 `quotaRef` 改成 `inline` → 1 failed；
+移走 `data/openrouter.json` → 1 failed。三组变异各自点名为哪条断言而红，非泛红。
+
+修复后在 10-08 真实台账下的门禁读数：`tsc --noEmit` 0 错，`vitest` 50 files / 405 tests 全绿，
+本地口径与 Pages 口径各 `build`→`seo`→`test:out` 均 **pass 14 / fail 0**，
+产物 `out/openrouter/index.html` 里读到 `467`（新 `totalModels` 真的进了页面）。
+
+留档不修（属可发现性，不是本次修复范围）：`crawl-openrouter.yml` 的 dispatch 步骤用
+`--fail-with-body` 只验「GitHub 受理了这次 dispatch」（HTTP 204），不验那次 deploy 最终成不成——
+所以「数据每天在长、站点每天没变」这件事连续八天没有任何人收到通知。要闭环得让抓取 job 轮询
+自身 dispatch 出去的 run 结论，代价是引入 GH_TOKEN 配额与轮询等待；按最小改动原则先只登记，
+等下一次真需要盯新鲜度时再动。
+
+同一条链路上已有两种「假红/真红」形态，后来者按现象分辨，别混：
+① `docs/ONLINE-STEPS.md:120` 记的是**混口径**——按 A 口径生成、按 B 口径检查，`test:out` 的红是保护。
+本次修复过程中本机就又踩了一次（build 命令行带了 `NEXT_PUBLIC_BASE_PATH`，紧跟着的 `test:out` 忘了带），
+结果红在两条：`详情页也带台账入口…（期望 href="/openrouter/"）` 与 `robots.txt 随产物落地…`；
+补上口径变量重跑即 **pass 14 / fail 0**。注意那份台账文档写的「红在两条」如今要多算一条——
+自 `fdf53a4` 起详情页的副按钮 href 也随口径三态变化，它同样会参与这种假红。
+② 本节的红则是**真红**：生成与检查都按 CI 口径、口径没错，红在测试把上游快照值当成了常量。
