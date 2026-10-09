@@ -3,7 +3,7 @@
  *  这里当被测输入的是「机制」，不是交付给读者的情报）。 */
 import { describe, expect, it } from "vitest";
 import { FACT_FIELDS } from "../crawler/adapt.mjs";
-import { LOCAL_TYPE_VALUES, loadLocalCards, mergeLocalCards, normalizeLocalCard } from "../crawler/local-cards.mjs";
+import { LOCAL_TYPE_VALUES, loadLocalCards, mergeLocalCards, normalizeLocalCard, reconcileLocalCards } from "../crawler/local-cards.mjs";
 /* 静态导入而非 require：本仓测试是 ESM + vitest(node 环境)，require 在 .ts 里既过不了
    TS 检查也不会在运行时生效。tests/admin-type.test.ts 早已静态导入同一模块，node 环境可解析。 */
 import { TYPE_VALUES } from "@/lib/admin/config";
@@ -158,5 +158,46 @@ describe("mergeLocalCards：同名一律上游胜出（spec 裁决 #8）", () =>
     expect(merged.warn).toEqual([]);
     expect(merged.cards).not.toBe(upstream); // 不改动调用方数组（管线里 cleaned 还要被别处引用）
     expect(mergeLocalCards(null as any, null as any)).toEqual({ cards: [], warn: [] });
+  });
+});
+
+describe("reconcileLocalCards：产物与 config/local-cards.json 的来源对账（spec §8）", () => {
+  const localNames = ["探针A"];
+  const good = {
+    name: "探针A",
+    type: "工具",
+    modality: "",
+    quota: "",
+    link: "https://example.com/a",
+    limited: null,
+    updated: "2026-10-09",
+    origin: "local",
+    sourceUrl: "https://example.com/a#pricing",
+    checkedAt: "2026-10-09",
+  };
+
+  it("⑬ 干净形态零违规（本地卡与非本地卡混排都算对）", () => {
+    expect(reconcileLocalCards([good, { name: "上游卡", type: "工具", updated: "2026-01-01" }], localNames)).toEqual([]);
+    expect(reconcileLocalCards([], [])).toEqual([]);
+    expect(reconcileLocalCards(null as any, null as any)).toEqual([]);
+  });
+
+  it("⑭ 产物里贴了 origin=local 却在 config 里没登记 → 违规（手工贴标＝出处造假）", () => {
+    const bad = { ...good, name: "没登记的卡" };
+    const out = reconcileLocalCards([bad], localNames);
+    expect(out).toHaveLength(1);
+    expect(out[0]).toContain("没登记的卡");
+    expect(out[0]).toMatch(/config\/local-cards\.json 里没有这条/);
+  });
+
+  it("⑮ 标了 local 却没带 https 出处或核验日不可解析 → 违规（读者无从指认额度原文）", () => {
+    expect(reconcileLocalCards([{ ...good, sourceUrl: undefined } as any], localNames)[0]).toMatch(/sourceUrl/);
+    expect(reconcileLocalCards([{ ...good, sourceUrl: "example.com/a" }], localNames)[0]).toMatch(/sourceUrl/);
+    expect(reconcileLocalCards([{ ...good, checkedAt: "", updated: "" }], localNames)[0]).toMatch(/核验日/);
+  });
+
+  it("⑯ origin 只认 local；非 local 的 origin 值一律违规（防止出现第二套来源语义）", () => {
+    expect(reconcileLocalCards([{ ...good, origin: "upstream" }], localNames)[0]).toMatch(/origin="local" 之外的值/);
+    expect(reconcileLocalCards([{ ...good, origin: null }], localNames)[0]).toMatch(/origin="local" 之外的值/);
   });
 });

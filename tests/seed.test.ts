@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { linkRisk } from "../crawler/clean.mjs";
+import { NAME_ALIAS } from "../crawler/adapt.mjs";
 import { buildSeed, dropWarning, loadLocal } from "../scripts/export-seed.mjs";
-import { loadLocalCards } from "../crawler/local-cards.mjs";
+import { loadLocalCards, reconcileLocalCards } from "../crawler/local-cards.mjs";
 
 const read = (p: string) => readFileSync(path.resolve(process.cwd(), p), "utf8");
 const tokens = JSON.parse(read("data/tokens.json"));
@@ -15,11 +16,29 @@ const meta = JSON.parse(read("data/meta.json"));
    与 seed:repro 的 CLI 门禁互为备份（vitest 在 CI 里先跑，seed:repro 单独跑）。 */
 const PIPELINE = buildSeed(read("tests/fixtures/upstream-data.json"), JSON.parse(read("config/site-config.json")), loadLocal());
 
+/* 冻结 fixture 的卡名（经 NAME_ALIAS 归一到本站定名）：等价红线 ①②③ 与本地对账四处共用同一份口径，
+   否则「上游改名」会在不同用例里表现为不同的判定结果。别名映射与 adaptItem 完全同源。 */
+const FIXTURE_NAMES: Set<string> = new Set(
+  (() => {
+    const u = JSON.parse(read("tests/fixtures/upstream-data.json"));
+    return [...u.items, ...u.retired].map((i: any) =>
+      Object.hasOwn(NAME_ALIAS, i.name) ? (NAME_ALIAS as Record<string, string>)[i.name] : i.name
+    );
+  })()
+);
+/** config/local-cards.json 里登记的卡名（首批为 `[]`；加卡后不必等 crawl 也能被 ①② 认出来，见 D-4）。 */
+const LOCAL_NAMES: string[] = (JSON.parse(read("config/local-cards.json")) as any[]).map((c) => c.name);
+/* 真正由本地供给的卡名 ＝ 名单里「冻结上游没有」的那部分（决策 #8：与上游同名的一律由上游接管，
+   本地条目不落地）。豁免必须按这份集合开，不能按 LOCAL_NAMES 全量开——否则只要有人把本地卡登记成
+   与某张上游卡同名，那张上游卡就会从 ①「磁盘逐字相同」的镜子里溜出去，红线当场失牙。 */
+const LOCAL_SOURCE_NAMES: string[] = LOCAL_NAMES.filter((n) => !FIXTURE_NAMES.has(n));
+const EXPECTED_LOCAL_IN = LOCAL_SOURCE_NAMES.length;
+
 describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed 导出）", () => {
   it("条数与上游一致：管线收取数由冻结 fixture 决定，磁盘条数只增不减", () => {
     /* 期望值来自 tests/fixtures/upstream-data.json 的 items 长度（36）− 决策 Q6 挡掉的 sponsored 3。
        fixture 是冻结快照，这个数只会在「有意更新 fixture」时才变——那时才该显式改这里。 */
-    expect(PIPELINE.cards).toHaveLength(36 - 3);
+    expect(PIPELINE.cards).toHaveLength(36 - 3 + EXPECTED_LOCAL_IN);
     expect(donots).toHaveLength(22); // donots 是本地固定资产（决策 Q4），crawler 不改它
     /* 磁盘条数不能写死：crawler 会持续加卡，写死等于给流水线埋一颗每 6 小时响一次的雷。
        真正的不变式是「磁盘条数 ≥ 管线收取数」——磁盘只会比冻结 fixture 更全，不会更少。 */
@@ -139,29 +158,27 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
   });
 
   it("管线↔磁盘等价：管线产出的卡逐字在磁盘上，磁盘多出的卡来自冻结 fixture 之外的新上游", () => {
-    /* 这条替代了原来的「sha(PIPELINE.cards) 钉死 "64e26640c52d" + 与磁盘等长」。
-       钉哈希在有 crawler 的仓库里必然反复炸：buildSeed 以**实时** data/tokens.json 作观点基底
-       （loadLocal），磁盘每多一张卡基底就变、哈希就变，而 .github/workflows/crawl.yml 从不重签哈希
-       ——crawler 每 6 小时加一张卡，CI 的 quality job 就红一次。真正该守的不变式是下面三条，
-       都与「数据增长多少张」无关：
-         ① 管线看见的每一张卡，磁盘上必须存在且逐字段完全相同（观点层没被管线改坏）；
-         ② 管线产出的卡必须全部来自冻结 fixture 的 items/retired（没有跑飞造出幽灵卡）；
-         ③ 磁盘多出的卡必须不在冻结 fixture 里（它们是真实上游新增，不是管线污染）。
-       ①②③ 任一被破坏都会红；数据正常增长不会红。 */
-    const upstream = JSON.parse(read("tests/fixtures/upstream-data.json"));
-    const upstreamNames = new Set([...upstream.items, ...upstream.retired].map((i: any) => i.name));
+    /* 三条不变式（与数据增长无关）在计划 6 之后各加一条本地豁免，理由见 D-4：
+       crawl.yml 只有 schedule/dispatch/issue_comment 三种触发且只在 main 跑，
+       所以「config 里刚登记、磁盘还没落」是 PR 阶段的**正常中间态**，反向硬钉＝每个加卡的 PR 长红。
+       豁免只开给 FIXTURE_NAMES 之外的本地卡；上游卡那条逐字对账一分不松。 */
     const diskByName = new Map(tokens.map((t: any) => [t.name, t]));
     const diskNames = new Set(diskByName.keys());
+    const isLocal = (c: any) => LOCAL_SOURCE_NAMES.includes(c.name);
 
-    // ①
-    expect(PIPELINE.cards.filter((c: any) => !diskNames.has(c.name))).toEqual([]);
-    expect(PIPELINE.cards.map((c: any) => diskByName.get(c.name))).toEqual(PIPELINE.cards);
-    // ②
-    expect(PIPELINE.cards.filter((c: any) => !upstreamNames.has(c.name))).toEqual([]);
-    // ③
+    const upstreamPart = PIPELINE.cards.filter((c: any) => !isLocal(c));
+    // ① 上游来源的每一张，磁盘上必须存在且逐字段完全相同（观点层没被管线改坏）
+    expect(upstreamPart.filter((c: any) => !diskNames.has(c.name))).toEqual([]);
+    expect(upstreamPart.map((c: any) => diskByName.get(c.name))).toEqual(upstreamPart);
+    // ①′ 本地卡若已经落盘，同样必须逐字相同（crawl 与 seed 共用同一套 normalize＋合并，不该出现第三种形态）
+    const landed = PIPELINE.cards.filter((c: any) => isLocal(c) && diskNames.has(c.name));
+    expect(landed.map((c: any) => diskByName.get(c.name))).toEqual(landed);
+    // ② 管线产出的每张卡都要有来源：要么在冻结 fixture 里，要么在 local-cards.json 里
+    expect(PIPELINE.cards.filter((c: any) => !FIXTURE_NAMES.has(c.name) && !isLocal(c))).toEqual([]);
+    // ③ 磁盘多出的卡必须不在冻结 fixture 里（真实上游新增，不是管线污染）
     const extra = tokens.filter((t: any) => !PIPELINE.cards.some((c: any) => c.name === t.name));
-    expect(extra.length).toBeGreaterThan(0); // 样本量：③ 若无多出卡则该条空转，先钉住「确实有新增」这个前提
-    expect(extra.filter((t: any) => upstreamNames.has(t.name)).map((t: any) => t.name)).toEqual([]);
+    expect(extra.filter((t: any) => FIXTURE_NAMES.has(t.name)).map((t: any) => t.name)).toEqual([]);
+    expect(extra.length).toBeGreaterThan(0); // 样本量前提：实测磁盘比管线多 20 张（§1 基线）
   });
 
   it("本地增补卡经 buildSeed 合入：落在尾部、带 origin、原 33 张一字未改（spec §6.3）", () => {
@@ -201,6 +218,15 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
     expect(() => buildSeed(src, CONFIG, { ...loadLocal(), localCards: [{ name: "缺键卡" }] })).toThrow(/local-cards#0（缺键卡）/);
     expect(loadLocalCards(read("config/local-cards.json"))).toEqual([]);
     expect(loadLocal().localCards).toEqual([]);
+  });
+
+  it("本地增补来源双向对账：管线标 local 的集合 == 本地名单 − 冻结上游名单；磁盘只查『贴标必有出处』", () => {
+    // 管线侧双向：该标的都标了、标的都在名单里、被上游接管的不会残在本站标记里
+    const localInPipeline = PIPELINE.cards.filter((c: any) => c.origin === "local").map((c: any) => c.name);
+    expect(localInPipeline.slice().sort()).toEqual(LOCAL_SOURCE_NAMES.slice().sort());
+    // 磁盘侧单向 + 形态完备（D-4：反向要等 crawl，不该在这里咬人）
+    expect(reconcileLocalCards(tokens, LOCAL_NAMES)).toEqual([]);
+    expect(reconcileLocalCards(PIPELINE.cards, LOCAL_NAMES)).toEqual([]);
   });
 
   it("四道 fail-stop 护栏：基底缺失或上游全被挡架都拒绝导出，绝不发布空壳", () => {

@@ -126,3 +126,35 @@ export function loadLocalCards(text) {
   }
   return parsed;
 }
+
+/** 产物 ↔ config/local-cards.json 的来源对账；返回违规说明数组（空数组＝干净）。
+ *  守的是「绕过管线直接编辑 data/tokens.json」这条路：手工贴 origin＝出处造假（⑭），
+ *  手工卡缺 sourceUrl/核验日＝本站「每条情报都有核验日」的公开口径失去地基（⑮），
+ *  而出现第三种 origin 值＝有了第二套来源语义（⑯）。
+ *  刻意**不做**反向「config 里的每条都必须出现在产物」：本地卡落盘靠 CI 爬虫（D-4），
+ *  PR 阶段磁盘还没有它是正常中间态，反向硬钉会让每个加卡的 PR 长红。
+ *  不抛错：这里的结果是给断言用的数据，抛错会把「哪几张卡有问题」压成一条消息。 */
+export function reconcileLocalCards(cards, localNames) {
+  const list = Array.isArray(cards) ? cards : [];
+  const local = new Set(Array.isArray(localNames) ? localNames : []);
+  const bad = [];
+  for (const c of list) {
+    if (!c || typeof c !== "object") continue;
+    const isLocal = c.origin === "local";
+    if (c.origin !== undefined && !isLocal) {
+      bad.push(`${c.name}：origin="local" 之外的值 ${JSON.stringify(c.origin)}——本站只认 local 一种来源标记`);
+      continue;
+    }
+    if (!isLocal) continue;
+    if (!local.has(c.name)) {
+      bad.push(`${c.name}：产物里标了 origin=local，但 config/local-cards.json 里没有这条（手工贴标＝出处造假，下一轮 crawl 照样把它抹掉）`);
+    }
+    if (typeof c.sourceUrl !== "string" || !HTTPS_RE.test(c.sourceUrl)) {
+      bad.push(`${c.name}：origin=local 却没有 https 出处 sourceUrl，读者无从指认额度值出在哪个页面`);
+    }
+    if (!DATE_RE.test(String(c.checkedAt ?? "")) && !DATE_RE.test(String(c.updated ?? ""))) {
+      bad.push(`${c.name}：origin=local 却没有可解析的核验日（checkedAt/updated 至少一个是 YYYY-MM-DD）`);
+    }
+  }
+  return bad;
+}
