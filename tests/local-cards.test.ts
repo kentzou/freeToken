@@ -199,6 +199,10 @@ describe("reconcileLocalCards：产物与 config/local-cards.json 的来源对�
     expect(reconcileLocalCards([{ ...good, sourceUrl: undefined } as any], localNames)[0]).toMatch(/sourceUrl/);
     expect(reconcileLocalCards([{ ...good, sourceUrl: "example.com/a" }], localNames)[0]).toMatch(/sourceUrl/);
     expect(reconcileLocalCards([{ ...good, checkedAt: "", updated: "" }], localNames)[0]).toMatch(/核验日/);
+    /* A4（M-1）：出处页也过 linkRisk——公示口径「上游作者的邀请码池与推广短链一律不入库」必须
+       覆盖 sourceUrl，不能只防 link/extraAction.link。行为断言：带 userCode= 的出处必须被点名违规。 */
+    const promo = reconcileLocalCards([{ ...good, sourceUrl: "https://example.com/a?userCode=ygtxup80" }], localNames);
+    expect(promo.filter((v: string) => v.startsWith("探针A：") && v.includes("userCode"))).toHaveLength(1);
   });
 
   it("⑯ origin 只认 local；非 local 的 origin 值一律违规（防止出现第二套来源语义）", () => {

@@ -202,7 +202,6 @@ async function main() {
   // 本地增补表：与 export-seed:loadLocal 同口径（缺文件＝空表），两处各读一次不合并，
   // 因为爬虫侧的 root 与 seed 的 cwd 语义在这里一致，多一层共享工具反而把纯函数模块拖进 fs。
   const localCardsPath = path.resolve(root, "config", "local-cards.json");
-  const localCards = loadLocalCards(existsSync(localCardsPath) ? readFileSync(localCardsPath, "utf8") : "");
   const meta = read("data/meta.json");
   const config = read("config/site-config.json");
   const existingPending = existsSync(path.resolve(root, "pending/changes.json")) ? read("pending/changes.json") : null;
@@ -211,6 +210,9 @@ async function main() {
 
   let summary;
   try {
+    // 本地表读盘必须在 try 内（评审 M-2）：JSON 坏 / 顶层非数组时 loadLocalCards 会抛，
+    // 留在 try 外就绕过下面那句「crawl 中止：<原因>」的可读单行出口，只剩裸堆栈。
+    const localCards = loadLocalCards(existsSync(localCardsPath) ? readFileSync(localCardsPath, "utf8") : "");
     summary = await crawlOnce({
       meta, config, token, repo, existingPending, checkLinks: true,
       prev: { cards: read("data/tokens.json"), donots: read("data/donots.json"), rules: read("data/rules.json"), localCards },

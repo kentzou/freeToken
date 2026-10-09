@@ -1,18 +1,26 @@
 /** 本地增补卡：本站一手核验、上游却没收录的情报（设计 spec §6）。
- *  为什么必须有这一层：data/tokens.json 每 6 小时被上游全量覆写（crawl.yml 的 cron +
- *  adapt.mjs:adaptItems 只遍历上游 items），手工往库里加一张卡既不报红也不留痕，
- *  只会在下一个 6 小时静默蒸发（spec §2.1–§2.3）。本地卡必须是管线的一等来源，不是库外私货。
+ *  为什么必须有这一层：data/tokens.json 的正规更新通道是上游——crawl.yml 的 cron 每轮经
+ *  adapt.mjs:adaptItems 按上游 items 重铸整表；手工往 data/tokens.json 塞卡不算入库：
+ *  下一轮同步会把它判成「上游已删除」挂进 pending 待审队列，并持旧值留在库尾照常展示，
+ *  /approve 才出局、/reject 则长驻（决策 #7；spec §2.1–§2.3 早先「过 6 小时会不见」的
+ *  旧措辞不符实际，tests/run.test.ts「删除卡」用例钉的就是上述真实命运，据此更正）。
+ *  本地卡必须是管线的一等来源，不是库外私货。
  *  本文件是纯函数层：不 open 文件、不联网；读盘由 scripts/export-seed.mjs:loadLocal 与
  *  crawler/run.mjs 的 prev 各负责一处，把文本交给 loadLocalCards。 */
 import { createHash } from "node:crypto";
 import { FACT_FIELDS } from "./adapt.mjs";
+import { linkRisk } from "./clean.mjs"; // A4（M-1）：sourceUrl 的引流红线复用全站唯一实现；clean.mjs 无任何 import，不构成循环依赖
 
 /** 分类三档：与 src/lib/admin/config.ts 的 TYPE_VALUES 同集（跨语言两份实现由用例 ⑦ 逐字对账）。
  *  catOf（src/lib/catalog.ts:6-10）对未知 type 一律兜成「大模型」，不挡就会把工具卡排进模型栏。 */
 export const LOCAL_TYPE_VALUES = ["大模型", "工具", "项目"];
 
 /** 观点键：上游已无载体（决策 Q1），本地卡的手写点评只能从这张白名单过；
- *  名单外的键＝未知字段当场抛，绝不静默丢——丢字段等于丢读者的决策依据。 */
+ *  名单外的键＝未知字段当场抛，绝不静默丢——丢字段等于丢读者的决策依据。
+ *  跨文件约定（M-5）：观点键的知识分三处持有——本表 VIEW_KEYS、类型面 src/lib/types.ts 的
+ *  TokenCard（符号锚，勿记行号）、清洗面 crawler/clean.mjs 的 POOL_KEYS（码池键不入卡）。
+ *  给卡片加观点字段必须同时改这几处；漏登记的失败模式是响亮抛错（normalizeLocalCard
+ *  的「未知字段」闸），不是静默丢。目前只有分类三档有跨语言逐字对账（用例 ⑦）。 */
 const VIEW_KEYS = ["rating", "signup", "effect", "pin", "alwaysShow", "badge", "tone", "extraAction", "v2"];
 /** 出处三键：origin 恒为 local；sourceUrl 是「额度值出在哪个页面」；checkedAt 是本站核验日。 */
 const PROVENANCE_KEYS = ["origin", "sourceUrl", "checkedAt"];
@@ -110,7 +118,8 @@ export function mergeLocalCards(upstreamCards, localCards) {
 }
 
 /** 文本 → 原始条目数组。空文本 / 缺文件（上层传空串）→ []，不新增 fail-stop；
- *  但语法坏或顶层不是数组必须抛——这里出声的代价远小于让一张卡静默蒸发的代价。
+ *  但语法坏或顶层不是数组必须抛——这里出声的代价远小于把坏配置当空表放过、让下一轮产出
+ *  凭空少一整表增补卡的代价。
  *  单条校验交给 normalizeLocalCard（由 mergeLocalCards 统一调用，见 D-1），本函数不碰内容。 */
 export function loadLocalCards(text) {
   if (text === null || text === undefined || String(text).trim() === "") return [];
@@ -151,6 +160,12 @@ export function reconcileLocalCards(cards, localNames) {
     }
     if (typeof c.sourceUrl !== "string" || !HTTPS_RE.test(c.sourceUrl)) {
       bad.push(`${c.name}：origin=local 却没有 https 出处 sourceUrl，读者无从指认额度值出在哪个页面`);
+    } else {
+      // A4（M-1）：出处页同样受「上游作者的邀请码池与推广短链一律不入库」的公示口径约束；
+      // linkRisk 是全站唯一实现（clean.mjs），此处只在测试对账里出声，不做生产硬失败——
+      // 一条坏条目停摆整轮 crawl 的代价（评审 M-3）大于晚一轮修出处。
+      const risk = linkRisk(c.sourceUrl);
+      if (risk) bad.push(`${c.name}：origin=local 的出处 sourceUrl ${risk}，引流参数与推广短链不入库，出处页也不例外`);
     }
     if (!DATE_RE.test(String(c.checkedAt ?? "")) && !DATE_RE.test(String(c.updated ?? ""))) {
       bad.push(`${c.name}：origin=local 却没有可解析的核验日（checkedAt/updated 至少一个是 YYYY-MM-DD）`);

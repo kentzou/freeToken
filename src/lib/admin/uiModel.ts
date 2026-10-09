@@ -294,9 +294,11 @@ export const hideAriaLabel = (name: string) => `hide ${name} 卡（开为隐藏�
  *  crawler/clean.mjs:141 的 applySiteConfig 遍历的是 cfg.cards 的键、把它们打到**同名的已有卡**上；
  *  一个只存在于 config 里的新卡名没有任何渲染出口——点了保存会真的 commit，页面上却什么都不会出现。
  *  新增卡的正路：上游已收录的等 crawl；上游没有的写 config/local-cards.json（计划 6），
- *  由管线在 applySiteConfig 之前合入——直接改 data/tokens.json 加卡会被下一轮覆写静默抹掉（spec §2.1–§2.3）。 */
+ *  由管线在 applySiteConfig 之前合入。直接改 data/tokens.json 加卡不算入库：下一轮同步会把它
+ *  判成「上游已删除」挂进待审队列、持旧值留在库尾照常展示，/approve 才出局（决策 #7，
+ *  tests/run.test.ts「删除卡」用例钉的行为；spec §2.1–§2.3 早先「会被抹掉」的旧措辞据此更正）。 */
 export const ADD_CARD_NOTE =
-  "新增卡片不在这里做：这份配置只能覆盖已有卡片的展示字段，写一个库里没有的卡名会保存成功但页面上不出现。上游没有的情报请登记到 config/local-cards.json（本站一手核验的增补来源），由管线合入；直接改 data/tokens.json 加卡会被每 6 小时的同步静默覆盖。";
+  "新增卡片不在这里做：这份配置只能覆盖已有卡片的展示字段，写一个库里没有的卡名会保存成功但页面上不出现。上游没有的情报请登记到 config/local-cards.json（本站一手核验的增补来源），由管线合入；直接往 data/tokens.json 塞卡不算入库：下一轮同步会把它判成「上游已删除」挂进待审队列并持旧值留在库尾照常展示，/approve 即出局、/reject 则继续留着；且它没有出处与核验日，来源对账红线只防得住带 origin=local 的贴标。";
 
 export function configSaved(res: { kind: string }): Receipt {
   if (res.kind === "unchanged") return { tone: "info", text: `ℹ ${NO_CHANGE_NOTE}：远端内容与提交结果逐字相同，本次没有产生 commit`, lines: [] };

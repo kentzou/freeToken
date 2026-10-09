@@ -138,6 +138,43 @@ describe("crawlOnce：端到端（假 transport + fixture 文本）", () => {
     expect(s.pendingTotal).toBe(0);
   });
 
+  it("prev.localCards → 生产落盘全链路：本地增补卡进 added、落 data 尾部、带 origin=local（评审 I-3）", async () => {
+    /* 计划 §6 判据 7 原来只用 grep 数 run.mjs 里的 localCards 出现次数，链路本身零行为断言。
+       这条钉的是真实生产路径：crawlOnce → buildSeed(第三参 prev.localCards) → mergeLocalCards。
+       探针卡纯内存构造，不写 config/ 与 data/（§3 红线）；名字与冻结 fixture 的任何上游卡都不同名，
+       不会被决策 #8 的「同名上游合法让路」吞掉。 */
+    const probe = {
+      name: "落盘探针卡",
+      type: "工具",
+      modality: "",
+      quota: "每日 50 次",
+      link: "https://probe.example/",
+      limited: null,
+      updated: "2026-10-09",
+      origin: "local",
+      sourceUrl: "https://probe.example/pricing",
+      checkedAt: "2026-10-09",
+    };
+    const s = await crawlOnce({
+      prev: { ...PREV, localCards: [probe] },
+      meta: BASE_META,
+      config: CONFIG,
+      latestSha: "newsha4",
+      sourceText: FIXTURE,
+    });
+    expect(s.unchanged).toBe(false);
+    // ③ 新增命中探针卡名
+    expect(s.added).toContain("落盘探针卡");
+    // crawlOnce 返回值里没有 data 字段，落盘产物的断言锚是 s.files["data/tokens.json"]（已核对返回形态）
+    const disk: any[] = JSON.parse(s.files["data/tokens.json"]);
+    // ① 落盘文本含本地来源标记（dump 为 2 空格缩进，键值间有空格）
+    expect(s.files["data/tokens.json"]).toContain('"origin": "local"');
+    expect(disk[disk.length - 1].origin).toBe("local");
+    // ② 探针卡落在数组尾部（追加取文件序不排序）
+    expect(disk[disk.length - 1].name).toBe("落盘探针卡");
+    expect(disk[disk.length - 1].sourceUrl).toBe("https://probe.example/pricing");
+  });
+
   it("有新增且带 token → 只开 auto 标签的通知 Issue（标题含新增数）", async () => {
     const injected = injectUpstreamItem(FIXTURE, {
       name: "通知卡",

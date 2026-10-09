@@ -176,8 +176,16 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
     // ① 上游来源的每一张，磁盘上必须存在且逐字段完全相同（观点层没被管线改坏）
     expect(upstreamPart.filter((c: any) => !diskNames.has(c.name))).toEqual([]);
     expect(upstreamPart.map((c: any) => diskByName.get(c.name))).toEqual(upstreamPart);
-    // ①′ 本地卡若已经落盘，同样必须逐字相同（crawl 与 seed 共用同一套 normalize＋合并，不该出现第三种形态）
-    const landed = PIPELINE.cards.filter((c: any) => isLocal(c) && diskNames.has(c.name));
+    // ①′ 本地卡若已经落盘，同样必须逐字相同（crawl 与 seed 共用同一套 normalize＋合并，不该出现第三种形态）。
+    //    基准收窄（评审 I-5）：本测试的 fixture 是冻结切片，磁盘是实时上游代表，而生产侧 mergeLocalCards
+    //    的让路基准是当轮实时上游——若某本地条目与磁盘上「真实上游新增、冻结 fixture 里没有」的卡同名，
+    //    磁盘落的是上游卡（不带 origin），管线侧（按冻结切片）仍会把它标 local，强行逐字比会假红且无法自证。
+    //    所以只有当磁盘副本自身也是 origin=local 的本地供给形态时，才要求逐字相同；磁盘副本不带 origin
+    //    说明该名字已由上游合法接管。双向对账用例（「本地增补来源双向对账」）用的是管线基准 LOCAL_SOURCE_NAMES，
+    //    不受此处收窄影响。
+    const landed = PIPELINE.cards.filter(
+      (c: any) => isLocal(c) && (diskByName.get(c.name) as any)?.origin === "local"
+    );
     expect(landed.map((c: any) => diskByName.get(c.name))).toEqual(landed);
     // ② 管线产出的每张卡都要有来源：要么在冻结 fixture 里，要么在 local-cards.json 里
     expect(PIPELINE.cards.filter((c: any) => !FIXTURE_NAMES.has(c.name) && !isLocal(c))).toEqual([]);
@@ -225,10 +233,13 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
     // 写成 PIPELINE.cards.length 而非 33：将来本地表加了卡，这个等式仍成立（§1「基线＋增量」同一口径）。
     expect(hidden.cards).toHaveLength(PIPELINE.cards.length);
 
-    // 坏条目要在动笔前抛，并点名下标；loadLocal 读的是真文件（现在是空表）
+    // 坏条目要在动笔前抛，并点名下标；loadLocal 读的是真文件。
     expect(() => buildSeed(src, CONFIG, { ...loadLocal(), localCards: [{ name: "缺键卡" }] })).toThrow(/local-cards#0（缺键卡）/);
-    expect(loadLocalCards(read("config/local-cards.json"))).toEqual([]);
-    expect(loadLocal().localCards).toEqual([]);
+    // 与文件同源的自反断言（评审 I-4）：只验「解析成功、顶层是数组、逐条忠实原文」，不钉
+    // 「今日空表」的绝对快照——往 config/local-cards.json 追加条目是既定交接方向，长度快照届时当场转红。
+    const localTxt = read("config/local-cards.json");
+    expect(loadLocalCards(localTxt)).toEqual(JSON.parse(localTxt));
+    expect(Array.isArray(loadLocal().localCards)).toBe(true);
   });
 
   it("本地增补来源双向对账：管线标 local 的集合 == 本地名单 − 冻结上游名单；磁盘只查『贴标必有出处』", () => {
