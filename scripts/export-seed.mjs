@@ -61,7 +61,7 @@ export function buildSeed(sourceText, config, local) {
 
   const cleaned = adaptItems(items, prevCards).map(cleanCard);
   /* 本地增补卡（计划 6）：合在 applySiteConfig **之前**，好让 hide / link / type 覆盖
-     和 :69-79 那段逐卡 linkRisk 对两类卡一视同仁——不存在「本地卡不受后台与配置约束」的第二套语义。
+     和 applySiteConfig 之后那段逐卡 linkRisk 对两类卡一视同仁——不存在「本地卡不受后台与配置约束」的第二套语义。
      本地卡不过 cleanCard：它已是本站手写终值，再过一次会误删 sourceUrl（D-2）。
      同名一律本地让路（被上游接管，或被表内前一条接管，决策 #8）并出声；出声是给人看的，不是给 crawl 停的。 */
   const { cards: withLocal, warn } = mergeLocalCards(cleaned, (local || {}).localCards || []);

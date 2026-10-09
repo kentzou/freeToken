@@ -187,11 +187,15 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
     expect(seed.meta.counts).toEqual({ tokens: seed.cards.length, donots: seed.donots.length });
 
     // 合并点必须在 applySiteConfig **之前**：hide 才管得到本地卡（spec 复核记 5）
-    // 实测修正（偏离 brief 一处，见 task-3-report）：config 必须以真 CONFIG 展开为基底——
-    // 上游 WorkBuddy/七牛云/小米 3 张的推广短链只有 site-config 的逐卡 link 覆盖兜得住，
-    // 裸 { cards: {…} } 会先被 export-seed 的 linkRisk 守卫抛「清洗失败」，根本走不到 hide 断言。
+    // §3 勘误 4：config 必须以真 CONFIG 展开为基底——上游 WorkBuddy/七牛云/小米 3 张的推广短链
+    // 只有 site-config 的逐卡 link 覆盖兜得住，裸 { cards: {…} } 会先被 buildSeed 的 linkRisk
+    // 守卫抛「清洗失败」，根本走不到下面这行 hide 断言（不放松守卫，见裁决「确保质量」）。
     const hidden = buildSeed(src, { ...CONFIG, cards: { ...CONFIG.cards, "本站增补探针": { hide: true } } }, { ...loadLocal(), localCards: [probe] });
     expect(hidden.cards.some((c: any) => c.name === "本站增补探针")).toBe(false);
+    // 只钉「探针不在」有空转面：`hidden.cards` 若整批为空，`some()` 同样返回 false。
+    // 长度钉的是「合并后的 34 张里只被 hide 掉那 1 张」——空转与误删一并排除（执行期评审 Minor ⇒ R-9）。
+    // 写成 PIPELINE.cards.length 而非 33：将来本地表加了卡，这个等式仍成立（§1「基线＋增量」同一口径）。
+    expect(hidden.cards).toHaveLength(PIPELINE.cards.length);
 
     // 坏条目要在动笔前抛，并点名下标；loadLocal 读的是真文件（现在是空表）
     expect(() => buildSeed(src, CONFIG, { ...loadLocal(), localCards: [{ name: "缺键卡" }] })).toThrow(/local-cards#0（缺键卡）/);
