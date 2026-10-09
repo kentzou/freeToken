@@ -16,13 +16,18 @@ const meta = JSON.parse(read("data/meta.json"));
    与 seed:repro 的 CLI 门禁互为备份（vitest 在 CI 里先跑，seed:repro 单独跑）。 */
 const PIPELINE = buildSeed(read("tests/fixtures/upstream-data.json"), JSON.parse(read("config/site-config.json")), loadLocal());
 
-/* 冻结 fixture 的卡名（经 NAME_ALIAS 归一到本站定名）：等价红线 ①②③ 与本地对账四处共用同一份口径，
-   否则「上游改名」会在不同用例里表现为不同的判定结果。别名映射与 adaptItem 完全同源。 */
+/* 冻结 fixture 的卡名 ＝ **原名 ∪ 归一名**（并集；不是「只取归一后的那一个」）：等价红线 ①②③ 与本地对账四处共用同一份口径，
+   否则「上游改名」会在不同用例里表现为不同的判定结果。别名映射与 adaptItem 完全同源（同一个 NAME_ALIAS，不抄第二份）。
+   并集的必要性（R-14，Task 4 评审 Important-1）：一张上游卡在 adapt 前后有两个合法名字（`Qoder cn` → `阿里云 Qoder（灵码）`），
+   两个形态指向的是同一张卡，所以两个都算「冻结 fixture 里的卡」——
+   · ③ 由此能抓住「手工往 data/tokens.json 贴一张**原名**卡」：它不在管线产出里，又不是真实上游新增，而是同一情报挂两个名字的重复/污染源；
+   · ②′ 与条数增量由此认不出「把本地卡登记成原名」的绕过：原名已在并集里 → 不算本地供给 → 管线条数当场对不上。
+   口径变更前已实测：磁盘上没有以原名命名的卡（`Qoder cn` 精确命中 0，别名命中 1），并集只会让 ③ 更严，今日空表下零扰动。 */
 const FIXTURE_NAMES: Set<string> = new Set(
   (() => {
     const u = JSON.parse(read("tests/fixtures/upstream-data.json"));
-    return [...u.items, ...u.retired].map((i: any) =>
-      Object.hasOwn(NAME_ALIAS, i.name) ? (NAME_ALIAS as Record<string, string>)[i.name] : i.name
+    return [...u.items, ...u.retired].flatMap((i: any) =>
+      Object.hasOwn(NAME_ALIAS, i.name) ? [i.name, (NAME_ALIAS as Record<string, string>)[i.name]] : [i.name]
     );
   })()
 );
@@ -176,6 +181,11 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
     // ② 管线产出的每张卡都要有来源：要么在冻结 fixture 里，要么在 local-cards.json 里
     expect(PIPELINE.cards.filter((c: any) => !FIXTURE_NAMES.has(c.name) && !isLocal(c))).toEqual([]);
     // ③ 磁盘多出的卡必须不在冻结 fixture 里（真实上游新增，不是管线污染）
+    // ③′ 并集自检：NAME_ALIAS 两端的名字都必须在 FIXTURE_NAMES 里——少了原名那一端，③ 对「贴一张原名卡」当场失牙。
+    //     这条随别名表自动增长（不写死 `Qoder cn`），在「只取归一名」的写法下必然报红。
+    for (const [raw, aliased] of Object.entries(NAME_ALIAS)) {
+      if (FIXTURE_NAMES.has(aliased)) expect(FIXTURE_NAMES.has(raw), raw).toBe(true);
+    }
     const extra = tokens.filter((t: any) => !PIPELINE.cards.some((c: any) => c.name === t.name));
     expect(extra.filter((t: any) => FIXTURE_NAMES.has(t.name)).map((t: any) => t.name)).toEqual([]);
     expect(extra.length).toBeGreaterThan(0); // 样本量前提：实测磁盘比管线多 20 张（§1 基线）
