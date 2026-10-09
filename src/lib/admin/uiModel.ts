@@ -291,11 +291,12 @@ export const inviteAriaLabel = (name: string) => `${name} 邀请码`;
 export const hideAriaLabel = (name: string) => `hide ${name} 卡（开为隐藏）`;
 
 /** 原型 1028 那颗「+ 新增合作卡」按钮不在这里做，且必须说清为什么（执行期 D9：原写 1030 差两行）：
- *  crawler/clean.mjs:127 的 applySiteConfig 遍历的是 cfg.cards 的键、把它们打到**同名的受版卡**上；
+ *  crawler/clean.mjs:141 的 applySiteConfig 遍历的是 cfg.cards 的键、把它们打到**同名的已有卡**上；
  *  一个只存在于 config 里的新卡名没有任何渲染出口——点了保存会真的 commit，页面上却什么都不会出现。
- *  「新增卡」的正路是数据面（上游爬取或手工改 data/tokens.json 走审核）。 */
+ *  新增卡的正路：上游已收录的等 crawl；上游没有的写 config/local-cards.json（计划 6），
+ *  由管线在 applySiteConfig 之前合入——直接改 data/tokens.json 加卡会被下一轮覆写静默抹掉（spec §2.1–§2.3）。 */
 export const ADD_CARD_NOTE =
-  "新增卡片不在这里做：这份配置只能覆盖已有卡片的展示字段，写一个库里没有的卡名会保存成功但页面上不出现（卡片本体属于 data/ 数据面，走上游爬取或审核合入）。";
+  "新增卡片不在这里做：这份配置只能覆盖已有卡片的展示字段，写一个库里没有的卡名会保存成功但页面上不出现。上游没有的情报请登记到 config/local-cards.json（本站一手核验的增补来源），由管线合入；直接改 data/tokens.json 加卡会被每 6 小时的同步静默覆盖。";
 
 export function configSaved(res: { kind: string }): Receipt {
   if (res.kind === "unchanged") return { tone: "info", text: `ℹ ${NO_CHANGE_NOTE}：远端内容与提交结果逐字相同，本次没有产生 commit`, lines: [] };

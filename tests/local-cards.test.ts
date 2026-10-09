@@ -7,6 +7,11 @@ import { LOCAL_TYPE_VALUES, loadLocalCards, mergeLocalCards, normalizeLocalCard,
 /* 静态导入而非 require：本仓测试是 ESM + vitest(node 环境)，require 在 .ts 里既过不了
    TS 检查也不会在运行时生效。tests/admin-type.test.ts 早已静态导入同一模块，node 环境可解析。 */
 import { TYPE_VALUES } from "@/lib/admin/config";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { ADD_CARD_NOTE } from "@/lib/admin/uiModel";
+
+const read = (p: string) => readFileSync(path.resolve(process.cwd(), p), "utf8");
 
 /** 一条最小合法条目：必填四键齐、其余走缺省 */
 const minimal = { name: "探针A", type: "工具", updated: "2026-10-09", link: "https://example.com/a" };
@@ -199,5 +204,21 @@ describe("reconcileLocalCards：产物与 config/local-cards.json 的来源对�
   it("⑯ origin 只认 local；非 local 的 origin 值一律违规（防止出现第二套来源语义）", () => {
     expect(reconcileLocalCards([{ ...good, origin: "upstream" }], localNames)[0]).toMatch(/origin="local" 之外的值/);
     expect(reconcileLocalCards([{ ...good, origin: null }], localNames)[0]).toMatch(/origin="local" 之外的值/);
+  });
+});
+
+describe("公开口径：本地增补卡的核验日与新增卡路径", () => {
+  it("⑰ 「精选门槛与收录标准」页公示了本地增补卡的核验日来自本站（spec §6.4）", () => {
+    const page = read("src/app/editorial-policy/page.tsx");
+    expect(page).toContain("每条情报的核验日期来自上游更新时间，本站不擅自改写。"); // 上游口径不许被顺手改掉
+    expect(page).toContain("本地增补卡");
+    expect(page).toMatch(/config\/local-cards\.json/);
+  });
+
+  it("⑱ 后台的新增卡说明改指 config/local-cards.json，不再教人手工改 data/tokens.json", () => {
+    expect(ADD_CARD_NOTE).toContain("config/local-cards.json");
+    expect(ADD_CARD_NOTE).not.toContain("手工改 data/tokens.json");
+    // 「库里没有的卡名保存成功却不出现」这条既有事实必须留着——它仍是 hide 之外的真约束
+    expect(ADD_CARD_NOTE).toContain("保存成功但页面上不出现");
   });
 });

@@ -21,6 +21,12 @@ export interface TokenCard {
   inviteParam?: string;
   traeLinks?: string[];
   v2?: boolean;
+  /* —— 本地增补卡（计划 6）：只出现在 config/local-cards.json 这一族来源的卡上 ——
+     origin 恒为 "local"，缺省即「来自上游」；sourceUrl 是额度原文出在哪个页面，
+     checkedAt 是本站核验日（UTC+8，YYYY-MM-DD）。三个键都不进清洗面，也不被 site-config 覆盖。 */
+  origin?: "local";
+  sourceUrl?: string;
+  checkedAt?: string;
 }
 
 export interface WatchItem {
