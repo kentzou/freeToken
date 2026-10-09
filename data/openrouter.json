@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-10-08T01:25:26.082Z",
-  "totalModels": 467,
-  "freeModelCount": 20,
+  "fetchedAt": "2026-10-09T01:32:31.446Z",
+  "totalModels": 469,
+  "freeModelCount": 19,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -95,17 +95,6 @@
       "contextLength": 1048576,
       "maxCompletionTokens": 65536,
       "modality": "text+image->text+audio",
-      "moderated": false
-    },
-    {
-      "id": "inclusionai/ling-3.0-flash-sante:free",
-      "name": "inclusionAI: Ling 3.0 Flash Sante (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 262144,
-      "maxCompletionTokens": 32768,
-      "modality": "text->text",
       "moderated": false
     },
     {
@@ -241,5 +230,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "9e4cb0c86a594342"
+  "sourceFingerprint": "823efb291c6028af"
 }
