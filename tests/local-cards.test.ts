@@ -3,7 +3,7 @@
  *  这里当被测输入的是「机制」，不是交付给读者的情报）。 */
 import { describe, expect, it } from "vitest";
 import { FACT_FIELDS } from "../crawler/adapt.mjs";
-import { LOCAL_TYPE_VALUES, loadLocalCards, normalizeLocalCard } from "../crawler/local-cards.mjs";
+import { LOCAL_TYPE_VALUES, loadLocalCards, mergeLocalCards, normalizeLocalCard } from "../crawler/local-cards.mjs";
 /* 静态导入而非 require：本仓测试是 ESM + vitest(node 环境)，require 在 .ts 里既过不了
    TS 检查也不会在运行时生效。tests/admin-type.test.ts 早已静态导入同一模块，node 环境可解析。 */
 import { TYPE_VALUES } from "@/lib/admin/config";
@@ -105,5 +105,53 @@ describe("loadLocalCards / normalizeLocalCard：本地增补卡的解析与归�
     expect(card.limited).toBeNull();
     const again = normalizeLocalCard(card, 0); // 幂等：归一化结果再归一化必须一模一样
     expect(JSON.stringify(again)).toBe(JSON.stringify(card));
+  });
+});
+
+describe("mergeLocalCards：同名一律上游胜出（spec 裁决 #8）", () => {
+  const up = (name: string, quota: string) => ({
+    name,
+    type: "工具",
+    modality: "",
+    quota,
+    link: `https://up.example/${name}`,
+    limited: null,
+    updated: "2026-01-01",
+  });
+  const loc = (name: string) => ({
+    name,
+    type: "大模型",
+    updated: "2026-10-09",
+    link: `https://mine.example/${name}`,
+    sourceUrl: `https://mine.example/${name}#pricing`,
+  });
+
+  it("⑩ 与上游同名 → 上游对象原样留在原位，本地条目跳过并进 warn", () => {
+    const upstream = [up("A", "上游额度"), up("B", "上游额度")];
+    const { cards, warn } = mergeLocalCards(upstream, [loc("B"), loc("C")]);
+    expect(warn).toEqual(["B"]);
+    expect(cards.map((c: any) => c.name)).toEqual(["A", "B", "C"]);
+    // 赢的那张必须是上游对象本身：quota 与 updated 都走上游值，观点字段也没被本地覆盖
+    expect(cards[1]).toBe(upstream[1]);
+    expect(cards[1].quota).toBe("上游额度");
+    expect(cards[1].updated).toBe("2026-01-01");
+    // 追加的那张必须已归一化（不是文件里的裸对象）：origin/sourceUrl/checkedAt 齐、事实键序在前
+    expect(Object.keys(cards[2]).slice(-3)).toEqual(["origin", "sourceUrl", "checkedAt"]);
+    expect(cards[2].sourceUrl).toBe("https://mine.example/C#pricing");
+  });
+
+  it("⑪ 本地表内部同名不靠文件顺序侥幸：后一条同样被前面的本地条目挡住并进 warn", () => {
+    const { cards, warn } = mergeLocalCards([], [loc("D"), { ...loc("D"), updated: "2026-10-10" }]);
+    expect(cards).toHaveLength(1);
+    expect(warn).toEqual(["D"]);
+  });
+
+  it("⑫ 空本地表 → 产物与上游逐字相同、warn 为空；两个容器传 null 也不抛", () => {
+    const upstream = [up("A", "x"), up("B", "y")];
+    const merged = mergeLocalCards(upstream, []);
+    expect(merged.cards).toEqual(upstream);
+    expect(merged.warn).toEqual([]);
+    expect(merged.cards).not.toBe(upstream); // 不改动调用方数组（管线里 cleaned 还要被别处引用）
+    expect(mergeLocalCards(null as any, null as any)).toEqual({ cards: [], warn: [] });
   });
 });

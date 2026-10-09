@@ -87,6 +87,28 @@ export function normalizeLocalCard(card, i) {
   return out;
 }
 
+/** 上游卡数组 + 本地条目 → 合并结果。两条口径（spec §6.2 / 裁决 #8）：
+ *  ① 同名一律**上游胜出**，本地条目跳过并回传 warn——上游接管了就别再挂本站出处；
+ *  ② 上游没有的本地卡**追加尾部、取文件序不排序**：文件是人维护的唯一真源，
+ *     字节稳定即幂等（seed:repro 的「产物喂回自己不变」正靠这一点）。
+ *  归一化在这里逐条调用（D-1）：放在合并点而不是两个取数口，是为了让「忘记归一」这种写法无法出现。
+ *  上游数组只读不改，返回新数组。 */
+export function mergeLocalCards(upstreamCards, localCards) {
+  const out = Array.isArray(upstreamCards) ? upstreamCards.slice() : [];
+  const taken = new Set(out.map((c) => c && c.name));
+  const warn = [];
+  (Array.isArray(localCards) ? localCards : []).forEach((card, i) => {
+    const n = normalizeLocalCard(card, i);
+    if (taken.has(n.name)) {
+      warn.push(n.name);
+      return;
+    }
+    taken.add(n.name);
+    out.push(n);
+  });
+  return { cards: out, warn };
+}
+
 /** 文本 → 原始条目数组。空文本 / 缺文件（上层传空串）→ []，不新增 fail-stop；
  *  但语法坏或顶层不是数组必须抛——这里出声的代价远小于让一张卡静默蒸发的代价。
  *  单条校验交给 normalizeLocalCard（由 mergeLocalCards 统一调用，见 D-1），本函数不碰内容。 */
