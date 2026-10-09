@@ -116,6 +116,13 @@ export async function crawlOnce(deps) {
   } = deps;
 
   const sha = latestSha ?? (await latestCommitSha(UPSTREAM_REPO, { token, fetchImpl, sleep }));
+  // 评审 I-2 登记（纯注释，不改行为）：本短路只比较上游 commit sha。本地只改
+  // config/local-cards.json（增补条目）时，这一轮根本不会调用 buildSeed ⇒ 不落盘；
+  // workflow_dispatch 手工触发在上游 sha 未动时同样被短路。
+  // 后果：上游进入低频/停更期，增补卡会长期停在 config 里而站点看不到，
+  // 且该现象与「机制坏了」无法区分。处置：等上游产出新 commit；若需要强制落地的
+  // 机制（把 config/local-cards.json 的文本指纹纳入本比较，或给 workflow 加 force
+  // 输入），需用户另批——见母本计划 §7 交接清单。
   if (meta.lastSyncedSha && meta.lastSyncedSha === sha) {
     return { unchanged: true, sha, added: [], changedIds: [], removedIds: [], rulesChanged: 0, warn: [], pendingTotal: 0, pendingEntries: [], files: {}, issues: {} };
   }

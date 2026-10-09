@@ -129,3 +129,21 @@ NEXT_PUBLIC_SITE_ROLE=mirror NEXT_PUBLIC_SITE_URL=https://kentzou.github.io/free
   校验在 `scripts/gen-seo.mjs`（抓取面）与 `src/lib/siteRole.ts`（页面 meta）各有一份，
   用例分别钉在 `tests/seo.test.ts` 与 `tests/site-role.test.ts`，两处的判定表一致。
 - 上传动作本身仍是人工闸门，不在本文件范围内（见外层 `docs/PUBLISH-NOTES.md`）。
+
+## 12. 本地增补卡的运维口径（计划 6 全分支评审收口，Wave B 补）
+
+本节写给「加卡的人」与「值班的人」；机制与证据见 `docs/LOCAL-CARDS-ACCEPTANCE.md` §9 与外层母本计划 §3 勘误 5、§2 D-7。
+
+### 12.1 本地增补卡的三条时间线（每一环在哪跑）
+
+1. **写 `config/local-cards.json`**（本地 / PR，可红可绿）：条目的校验（`normalizeLocalCard`）与来源对账（`reconcileLocalCards`，`tests/seed.test.ts:250` 的 `reconcileLocalCards(tokens, LOCAL_NAMES)`）都在测试侧跑，PR 里红绿即时可见。
+2. **等 `crawl.yml` 那一轮把卡写进 `data/tokens.json`**——这一环受**上游 sha 门**约束（`crawler/run.mjs` 短路处注释，Wave B I-2 登记）：`meta.lastSyncedSha` 等于上游最新 commit 时整轮直接短路，**连 `buildSeed` 都不会调用**，`workflow_dispatch` 手工触发同样被短路。上游停更期增补卡会长期停在 config 里而站点看不到——这不是机制坏了，是设计口径（强制落地机制需用户另批，见母本 §7）。
+3. **站点重建**：bot 推 `data/` 的提交**不自动触发** `deploy.yml`（防循环规则，§4 方案 A/B 说的就是它），靠 `crawl.yml` 提交成功后的显式 dispatch。**关键差别**：D-5 说「对账只在测试里跑」，它在生产侧的真实防线就是 deploy 的 quality job（`npm run test`，`deploy.yml:43`）——它挡的是**部署**，不是**写盘**。若推上去的数据里有一张没在本地表登记的贴标卡（`origin=local` 但 `config/local-cards.json` 里没有，`reconcileLocalCards` 会报），红发生在 dispatch **之后**、`deploy` 红灯产物不更新，而 `data/` 已经在 main 上。别把「deploy 红」误读成「数据没落盘」，两级要分开查。
+
+### 12.2 crawl 变红先查本地表（一条坏条目会停摆整轮）
+
+`config/local-cards.json` 里一条坏条目（语法坏、顶层非数组、必填键缺失、协议不过…）会让 `normalizeLocalCard` 在 `buildSeed` 里抛，`crawler/run.mjs` 的 `main()` 捕获后打印 `crawl 中止：<原因>` 并置 `exitCode=1`——**本轮 `data/*.json` 一个都不写**（写盘发生在 `crawlOnce` 成功返回之后，抛在半路）。错误消息带 `local-cards#下标（卡名）` 前缀可直接定位是哪一条。值班排查顺序：先看失败日志里有没有 `local-cards#`，命中就按下标改本地表；没有命中再考虑上游形态问题（fail-stop 路径没写坏任何数据）。这层耦合与 D-5 的取舍不矛盾：D-5 拒的是把**对账**接进管线（陈旧配置噪音不该染红 cron 轮），保留的是**带病入库**的硬失败——一条会污染整库落盘的坏本地条目，宁可当场停。
+
+### 12.3 通知 Issue 的口径（已知失真，本次不改）
+
+本地卡落地的那一轮，`notifyIssueBody`（`crawler/run.mjs`）的首句是「上游 commit `<sha>` 新增 N 条，已按三层清洗自动发布…」——增补卡经 `syncOnce` 的 `diff.added` 被**算进「上游新增」**，Issue 会把本站一手核验的卡说成上游收的。如实登记为已知失真；建议修法是按 `c.origin === "local"` 分流，单列一行「本站增补 M 条（config/local-cards.json）」。**本次不改**的理由：`notifyIssueBody` 全仓零测试覆盖（`tests/` 下 grep 零命中），盲改等于留下一段未验证的生产文本；改动须与补测试同批请批。
