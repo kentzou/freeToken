@@ -18,14 +18,11 @@ const load = () => {
 };
 
 describe("精选门槛放行面（featured 规则改动会被这里拦住）", () => {
-  it("新点名的卡已放行：OpenRouter（另三张 2026-10-10 获批下架）", () => {
+  it("新点名的卡已放行：腾讯元器 / 百度千帆（文心）/ 讯飞星火（开放平台）/ OpenRouter", () => {
     const { names } = load();
-    /* 原名单是 腾讯元器 / 百度千帆（文心）/ 讯飞星火（开放平台）/ OpenRouter 四张存在性正钉。
-       2026-10-10 用户批准把「上游已整卡删除、因盖章通道死而滞留在站上」的卡下架（site-config 挂 hide
-       ＋ 手工等价落盘），前三张磁盘已无 ⇒ 存在性正钉失去被测对象，只能摘名。
-       规则面本身一分未松：featured 的 10 个标签仍由 tests/seed.test.ts「规则表可还原为 RegExp 且门槛
-       标签齐全」逐字钉着，零误伤面由下一条负钉守着。 */
-    expect(names, "OpenRouter").toContain("OpenRouter");
+    for (const n of ["腾讯元器", "百度千帆（文心）", "讯飞星火（开放平台）", "OpenRouter"]) {
+      expect(names, n).toContain(n);
+    }
   });
 
   it("新规则零误伤：这 8 张未点名卡仍被挡在门外", () => {

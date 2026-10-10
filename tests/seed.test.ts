@@ -43,10 +43,10 @@ const EXPECTED_LOCAL_IN = LOCAL_SOURCE_NAMES.length;
 describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed 导出）", () => {
   it("条数与上游一致：管线收取数由冻结 fixture 决定，磁盘条数只增不减", () => {
     /* 期望值来自 tests/fixtures/upstream-data.json 的 items 长度（36）− 决策 Q6 挡掉的 sponsored 3
-       − config/site-config.json 挂 hide 的 2 张（ZCode／七牛云 AI 推理，2026-10-10 用户批准下架）。
-       其余 17 张下架目标本就不在这份冻结 fixture 里，只减磁盘条数、不减管线收取数。
-       fixture 是冻结快照，这个数只会在「有意更新 fixture」或「逐卡 hide 面变化」时才变——那时才该显式改这里。 */
-    expect(PIPELINE.cards).toHaveLength(36 - 3 - 2 + EXPECTED_LOCAL_IN);
+       − config/site-config.json 挂 hide 的 1 张（ZCode：limited 2026-10-07 已过、官网无该活动）。
+       2026-10-10 同日纠正：七牛云 AI 推理属被误判的 17 张之一（上游只是移入观望区、并非过期），已恢复上架并复原 link 声明；
+       其余 15 张恢复卡本就不在这份冻结 fixture 里，只加磁盘条数、不动管线收取数。fixture 是冻结快照，这个数只在「有意更新 fixture」或「逐卡 hide 面变化」时才变。 */
+    expect(PIPELINE.cards).toHaveLength(36 - 3 - 1 + EXPECTED_LOCAL_IN);
     expect(donots).toHaveLength(22); // donots 是本地固定资产（决策 Q4），crawler 不改它
     /* 磁盘条数不能写死：crawler 会持续加卡，写死等于给流水线埋一颗每 6 小时响一次的雷。
        真正的不变式是「磁盘条数 ≥ 管线收取数」——磁盘只会比冻结 fixture 更全，不会更少。 */
