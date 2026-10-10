@@ -12,13 +12,15 @@ const canon = dump(base);
 const fileRes = (text: string, sha = "S-CFG") => res(200, { sha, encoding: "base64", content: encodeBase64Utf8(text), updated_at: "" });
 
 describe("变现配置读写：写入侧比读取侧更严（未知键直接拒，不给静默忽略的机会）", () => {
-  it("loadSiteConfig：URL 逐字、返回 sha 与原文，真配置就是 11 张卡 + 空名单", async () => {
+  it("loadSiteConfig：URL 逐字、返回 sha 与原文，真配置就是 29 个逐卡条目 + 空名单", async () => {
     const f = mkFetch(fileRes(canon));
     const got = await loadSiteConfig({ repo: "o/r", token: "ghu_x", fetchImpl: f.fn });
     expect(f.calls[0].url).toBe(`https://api.github.com/repos/o/r/contents/${CONFIG_PATH}`);
     expect(got.sha).toBe("S-CFG");
     expect(got.text).toBe(canon);
-    expect(Object.keys(got.config.cards ?? {})).toHaveLength(11);
+    /* 绝对快照（2026-10-10 由 11 改为 29：批准下架的 19 张卡各挂一条 hide）。
+       这条只能写成绝对数才有牙——got.config 与 base 同源，派生比较等于自证清白。 */
+    expect(Object.keys(got.config.cards ?? {})).toHaveLength(29);
     expect(got.config.adminLogins).toEqual([]);
     expect(got.config.githubRepo).toBe("");
   });
@@ -95,10 +97,15 @@ describe("变现配置读写：写入侧比读取侧更严（未知键直接拒�
     expect(full.inviteCodes).toEqual(["T1"]);
   });
 
-  it("configRows：11 行、2 行隐藏、逐卡邀请码以逗号串回显（Tab2 的渲染事实）", () => {
+  it("configRows：29 行、20 行隐藏、逐卡邀请码以逗号串回显（Tab2 的渲染事实）", () => {
     const rows = configRows(base);
-    expect(rows.length).toBe(11);
-    expect(rows.filter((r) => r.hidden).map((r) => r.name)).toEqual(["豆包拉新项目"]);
+    expect(rows.length).toBe(29);
+    /* 隐藏行改为「按 config 现算」而不是抄一份 20 个名字的数组：本用例真正钉的是派生关系
+       ——configRows 必须把 hide:true 的键、按 cfg.cards 的键序标成 hidden。绝对条数只在
+       loadSiteConfig 那条快照钉里守（每批下架都来改一遍字面数组等于自造维护债）。 */
+    expect(rows.filter((r) => r.hidden).map((r) => r.name)).toEqual(
+      Object.keys(base.cards).filter((n) => base.cards[n].hide === true)
+    );
     // 现值快照（2026-10-06：WorkBuddy 改挂本站活动邀请链接）。「磁盘 == 声明」那层守卫在 tests/seed.test.ts
     expect(rows.find((r) => r.name === "WorkBuddy")!.link).toBe("https://www.workbuddy.cn/events/invite?inviteCode=binccyhvk7bl");
     expect(rows.find((r) => r.name === "豆包拉新项目")!.overridden).toBe(false);

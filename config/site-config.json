@@ -30,13 +30,67 @@
       "link": "https://token.taiha.cn/sign-up"
     },
     "七牛云 AI 推理": {
-      "link": "https://portal.qiniu.com/ai-inference/api-key"
+      "hide": true
     },
     "硅基流动 SiliconFlow": {
       "link": "https://cloud.siliconflow.cn/"
     },
     "小米 MiMo（Xiaomi）": {
       "link": "https://mimo.xiaomi.com/"
+    },
+    "腾讯元器": {
+      "hide": true
+    },
+    "DeepSeek 开放平台": {
+      "hide": true
+    },
+    "百度千帆（文心）": {
+      "hide": true
+    },
+    "讯飞星火（开放平台）": {
+      "hide": true
+    },
+    "APMIX": {
+      "hide": true
+    },
+    "智谱AI（Z.AI 开放平台）": {
+      "hide": true
+    },
+    "Mistral La Plateforme": {
+      "hide": true
+    },
+    "xAI Grok（console.x.ai）": {
+      "hide": true
+    },
+    "Cohere Trial Key": {
+      "hide": true
+    },
+    "腾讯云混元大模型": {
+      "hide": true
+    },
+    "Token Harbor": {
+      "hide": true
+    },
+    "OrcaRouter": {
+      "hide": true
+    },
+    "UnoRouter": {
+      "hide": true
+    },
+    "Novita AI": {
+      "hide": true
+    },
+    "Fireworks AI": {
+      "hide": true
+    },
+    "MiniMax Code 国庆签到": {
+      "hide": true
+    },
+    "ZCode": {
+      "hide": true
+    },
+    "WorkBuddy 国际版": {
+      "hide": true
     }
   }
 }

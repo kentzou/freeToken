@@ -42,9 +42,11 @@ const EXPECTED_LOCAL_IN = LOCAL_SOURCE_NAMES.length;
 
 describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed 导出）", () => {
   it("条数与上游一致：管线收取数由冻结 fixture 决定，磁盘条数只增不减", () => {
-    /* 期望值来自 tests/fixtures/upstream-data.json 的 items 长度（36）− 决策 Q6 挡掉的 sponsored 3。
-       fixture 是冻结快照，这个数只会在「有意更新 fixture」时才变——那时才该显式改这里。 */
-    expect(PIPELINE.cards).toHaveLength(36 - 3 + EXPECTED_LOCAL_IN);
+    /* 期望值来自 tests/fixtures/upstream-data.json 的 items 长度（36）− 决策 Q6 挡掉的 sponsored 3
+       − config/site-config.json 挂 hide 的 2 张（ZCode／七牛云 AI 推理，2026-10-10 用户批准下架）。
+       其余 17 张下架目标本就不在这份冻结 fixture 里，只减磁盘条数、不减管线收取数。
+       fixture 是冻结快照，这个数只会在「有意更新 fixture」或「逐卡 hide 面变化」时才变——那时才该显式改这里。 */
+    expect(PIPELINE.cards).toHaveLength(36 - 3 - 2 + EXPECTED_LOCAL_IN);
     expect(donots).toHaveLength(22); // donots 是本地固定资产（决策 Q4），crawler 不改它
     /* 磁盘条数不能写死：crawler 会持续加卡，写死等于给流水线埋一颗每 6 小时响一次的雷。
        真正的不变式是「磁盘条数 ≥ 管线收取数」——磁盘只会比冻结 fixture 更全，不会更少。 */
@@ -148,8 +150,9 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
     ];
     expect(gone).toHaveLength(11);
     expect(tokens.filter((t: any) => gone.includes(t.name))).toEqual([]);
-    /* Q8：4 张新卡全收 */
-    for (const n of ["ZCode", "字节 TRAE（AI IDE）", "阿里云百炼（DashScope）", "书生·端砚 墨点计划（上海AI实验室）"]) {
+    /* Q8：4 张新卡全收——ZCode 于 2026-10-10 经用户批准下架（limited 2026-10-07 已过、官网全文无该活动），
+       从名单摘出的是「被测对象已不在库」的那一张，其余 3 张仍在库并照常钉存在性。 */
+    for (const n of ["字节 TRAE（AI IDE）", "阿里云百炼（DashScope）", "书生·端砚 墨点计划（上海AI实验室）"]) {
       expect(by(n)).toBeTruthy();
     }
   });
