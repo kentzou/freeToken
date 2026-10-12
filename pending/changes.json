@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "16aeae8b74484bbb92e2a9b9e4f2bfd4c4960421",
-  "detectedAt": "2026-10-11T06:00:24.161Z",
+  "upstreamSha": "1899d6dee31d596f54d8b75afeb685b0e89ac804",
+  "detectedAt": "2026-10-12T06:11:10.318Z",
   "changes": [
     {
       "kind": "card",
@@ -22,14 +22,14 @@
       "after": {
         "name": "WorkBuddy",
         "type": "工具",
-        "modality": "HY3 · HY4 preview · DeepSeek-V4.1-Flash",
+        "modality": "Step 5 Preview · HY3 · HY4 preview · DeepSeek-V4.1-Flash",
         "rating": 5,
-        "quota": "HY3 免费至 10 月 31 日；HY4 preview 按体验记录享免费额度。",
+        "quota": "Step 5 Preview 免费至 10 月 25 日；HY3 免费至 10 月 31 日；HY4 preview 按体验记录享免费额度。",
         "signup": "新用户注册送 2000 积分；HY4 preview 新用户（含此前没体验过的老用户）首次开启后享 14 天每日免费额度",
         "effect": "腾讯混元 AI 工作台，HY3（混元3）与 HY4 preview（混元4）均可直接调用，速度很快；写代码、查资料、做自动化都好用。HY3 限免至 2026-09-30；HY4 preview 分两档——新用户首开后 14 天每日免费，老用户仅夜间 23:00-次日 9:00 免费；DeepSeek-V4.1-Flash 国内独家合作，0.03x 为站内最低倍率，优惠持续到 2026-09-23；注意 HY4 为纯文本大模型、暂不具备多模态，调用其做视频/图像等生成会切到多模态模型并正常扣积分；免费体验高峰期可能排队",
         "link": "https://www.workbuddy.cn/events/invite?inviteCode=binccyhvk7bl",
         "limited": "2026-10-31",
-        "updated": "2026-10-02",
+        "updated": "2026-10-12",
         "v2": true
       },
       "fields": [
@@ -39,14 +39,19 @@
           "to": "2026-10-31"
         },
         {
+          "field": "modality",
+          "from": "HY3 · HY4 preview · DeepSeek-V4.1-Flash",
+          "to": "Step 5 Preview · HY3 · HY4 preview · DeepSeek-V4.1-Flash"
+        },
+        {
           "field": "quota",
           "from": "HY3 限免至 2026-09-30；HY4 preview 新用户首开对话起 14 天内免费。",
-          "to": "HY3 免费至 10 月 31 日；HY4 preview 按体验记录享免费额度。"
+          "to": "Step 5 Preview 免费至 10 月 25 日；HY3 免费至 10 月 31 日；HY4 preview 按体验记录享免费额度。"
         },
         {
           "field": "updated",
           "from": "2026-09-28",
-          "to": "2026-10-02"
+          "to": "2026-10-12"
         }
       ]
     },
@@ -75,7 +80,7 @@
         "type": "工具",
         "modality": "Qwen3.8-Flash · Qwen3.8-Max",
         "rating": 5,
-        "quota": "千问 Qwen3.8-Flash 限免至 10 月 31 日。",
+        "quota": "千问 Qwen3.8-Flash 限免至 10 月 31 日，且无隐藏的每日调用上限。",
         "effect": "阿里云官方编程助手（原灵码）。Qwen3.8-Flash 擅长代码编写、长文档处理、图像理解与工具调用，套餐额度可省给其他模型；100 Credits 计入 Add-on 资源包，桌面端 / IDE / JetBrains 插件 / CLI / 网页与移动端通用。⚠️ 免费期结束后按届时公示系数计费；每日奖励需在桌面端左下角「用量面板 → 🎁 礼物图标」手动领取",
         "link": "https://www.aliyun.com/product/lingma",
         "extraAction": {
@@ -84,7 +89,7 @@
         },
         "badge": "九月限定",
         "limited": "2026-10-31",
-        "updated": "2026-10-02",
+        "updated": "2026-10-12",
         "v2": true
       },
       "fields": [
@@ -96,12 +101,12 @@
         {
           "field": "quota",
           "from": "Qwen3.8-Flash 活动期调用不扣 Credits；活动 9 月 18 日–30 日，每天登录另赠 100 Credits（30 天有效）。",
-          "to": "千问 Qwen3.8-Flash 限免至 10 月 31 日。"
+          "to": "千问 Qwen3.8-Flash 限免至 10 月 31 日，且无隐藏的每日调用上限。"
         },
         {
           "field": "updated",
           "from": "2026-09-28",
-          "to": "2026-10-02"
+          "to": "2026-10-12"
         }
       ]
     },
@@ -455,6 +460,27 @@
         "link": "https://agent.minimax.cn/",
         "limited": "2026-10-07",
         "updated": "2026-10-02"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "库库 AI",
+      "before": {
+        "name": "库库 AI",
+        "type": "工具",
+        "modality": "DeepSeek V4.1 · GLM-5.3 / 5.2 / 5.1 · 文心 5.1 · Kimi-K3",
+        "quota": "每日登录 +50 积分、完成一次对话 +50 积分，合计每天可领 100 积分；DeepSeek V4.1 按 0.16 倍率消耗。",
+        "link": "https://kuku.baidu.com/genflowpro?action=download",
+        "limited": "每日额度以平台显示为准；免费领积分活动第 4 期至 2026-10-10",
+        "updated": "2026-10-08"
       },
       "after": null,
       "fields": [
