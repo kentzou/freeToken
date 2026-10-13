@@ -1,0 +1,118 @@
+/** 目录站清单（数据来源唯一登记处）。
+ *  新增来源站只改这里 + 加一个 adapter，编排与来源页自动感知。
+ *  listUrls：入口列表页（adapter 可自行扩展分页）。
+ *  enabled：是否参与默认抓取（false = 已确认跳过，仍会出现在来源页并标注原因）。 */
+
+export const NAV_SITES = [
+  {
+    id: "aibot",
+    name: "AI工具集",
+    home: "https://ai-bot.cn/",
+    listUrls: ["https://ai-bot.cn/"],
+    tier: 3,
+    enabled: true,
+    note: "静态 HTML，单页实测 476 条工具卡片，15+ 一级分类",
+  },
+  {
+    id: "aigc",
+    name: "AIGC导航",
+    home: "https://www.aigc.cn/",
+    listUrls: ["https://www.aigc.cn/"],
+    tier: 3,
+    enabled: true,
+    note: "含独立 /submit 收录页",
+  },
+  {
+    id: "aihub",
+    name: "AIHub",
+    home: "https://www.aihub.cn/",
+    listUrls: ["https://www.aihub.cn/"],
+    tier: 3,
+    enabled: false,
+    skipReason: "沙箱网络不可达（连接失败），需本机网络环境重试",
+  },
+  {
+    id: "openi",
+    name: "OpenI",
+    home: "https://openi.cn/",
+    listUrls: ["https://openi.cn/"],
+    tier: 3,
+    enabled: false,
+    skipReason: "沙箱网络不可达（连接失败）",
+  },
+  {
+    id: "aitop100",
+    name: "AITOP100",
+    home: "https://www.aitop100.cn/",
+    listUrls: ["https://www.aitop100.cn/"],
+    tier: 3,
+    enabled: false,
+    skipReason: "沙箱网络不可达（连接失败）",
+  },
+  {
+    id: "maomu",
+    name: "猫目",
+    home: "https://maomu.com/",
+    listUrls: ["https://maomu.com/"],
+    tier: 3,
+    enabled: false,
+    skipReason: "沙箱网络不可达（连接失败）；文档记录 /categories 返回 404",
+  },
+  {
+    id: "aibase",
+    name: "AIbase",
+    home: "https://www.aibase.com/",
+    listUrls: ["https://top.aibase.com/", "https://www.aibase.com/"],
+    tier: 3,
+    enabled: false,
+    skipReason: "沙箱网络不可达（连接失败）",
+  },
+  {
+    id: "rankmyai",
+    name: "RankmyAI",
+    home: "https://www.rankmyai.com/",
+    listUrls: ["https://www.rankmyai.com/"],
+    tier: 3,
+    enabled: false,
+    skipReason: "沙箱网络不可达（连接失败）",
+  },
+  {
+    id: "topai",
+    name: "TopAI.tools",
+    home: "https://topai.tools/",
+    listUrls: ["https://topai.tools/"],
+    tier: 3,
+    enabled: false,
+    skipReason: "沙箱网络不可达（连接失败）；文档记录 /zh 返回 404",
+  },
+  {
+    id: "aishenqi",
+    name: "AI神器大全",
+    home: "https://aishenqi.net/",
+    listUrls: ["https://aishenqi.net/"],
+    tier: 3,
+    enabled: false,
+    skipReason: "沙箱网络不可达（连接失败）",
+  },
+  {
+    id: "fly63",
+    name: "AI工具大全（fly63）",
+    home: "https://ai.fly63.com/",
+    listUrls: ["https://ai.fly63.com/"],
+    tier: 3,
+    enabled: false,
+    skipReason: "沙箱网络不可达（连接失败）",
+  },
+  {
+    id: "futurepedia",
+    name: "Futurepedia",
+    home: "https://www.futurepedia.io/",
+    listUrls: ["https://www.futurepedia.io/"],
+    tier: 3,
+    enabled: false,
+    skipReason: "沙箱网络不可达（连接失败）",
+  },
+];
+
+/** 只取启用站（默认抓取范围）。 */
+export const enabledSites = () => NAV_SITES.filter((s) => s.enabled);

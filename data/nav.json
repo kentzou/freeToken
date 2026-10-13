@@ -1,0 +1,238 @@
+{
+  "updated": "2026-10-10",
+  "note": "轻量数据源：聚合网站（AI 聚合平台）与编程工具为编辑精选；大模型栏由现有 tokens.json 管线在构建期注入。资讯流为编辑整理、构建期快照，非实时新闻。",
+  "aggregators": [
+    {
+      "name": "Poe",
+      "desc": "Quora 出品的聊天聚合平台，单一界面调用 Claude、GPT、Gemini 等数十种模型，每日赠送免费点数。",
+      "link": "https://poe.com/",
+      "tags": ["聊天聚合", "多模型", "免费额度"],
+      "freeTier": true,
+      "rating": 5,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "OpenRouter",
+      "desc": "统一 API 聚合数百个大语言模型，含可免费调用的开源模型，按 token 计费，开发者首选入口。",
+      "link": "https://openrouter.ai/",
+      "tags": ["API 聚合", "多模型", "免费额度"],
+      "freeTier": true,
+      "rating": 5,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "硅基流动 SiliconFlow",
+      "desc": "聚合多种开源大模型 API（DeepSeek、Qwen 等），提供免费额度档，适合低成本推理与体验。",
+      "link": "https://siliconflow.cn/",
+      "tags": ["API 聚合", "开源模型", "免费额度"],
+      "freeTier": true,
+      "rating": 4,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "扣子 Coze",
+      "desc": "字节推出的零代码 AI 智能体平台，可视化搭建 Bot 并接入多种大模型，含免费试用。",
+      "link": "https://www.coze.cn/",
+      "tags": ["智能体", "多模型", "零代码"],
+      "freeTier": true,
+      "rating": 4,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "Dify",
+      "desc": "开源 LLM 应用开发平台，聚合模型、知识库与 RAG 工作流，可自托管，社区活跃。",
+      "link": "https://dify.ai/",
+      "tags": ["LLMOps", "开源", "RAG"],
+      "freeTier": true,
+      "rating": 4,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "阿里云百炼",
+      "desc": "阿里云大模型聚合与 Agent 开发平台，接入通义及第三方模型，含免费额度与试用。",
+      "link": "https://bailian.console.aliyun.com/",
+      "tags": ["企业级", "多模型", "Agent"],
+      "freeTier": true,
+      "rating": 4,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "火山方舟",
+      "desc": "字节企业级模型聚合平台，统一接入豆包等多模型，提供 API 与评测能力。",
+      "link": "https://www.volcengine.com/product/ark",
+      "tags": ["企业级", "多模型", "API"],
+      "freeTier": false,
+      "rating": 4,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "腾讯云混元",
+      "desc": "腾讯多模态大模型与知识引擎，开放 API 与免费额度，适合企业应用接入。",
+      "link": "https://cloud.tencent.com/product/hunyuan",
+      "tags": ["企业级", "多模态", "API"],
+      "freeTier": true,
+      "rating": 4,
+      "updated": "2026-10-10"
+    }
+  ],
+  "devtools": [
+    {
+      "name": "MDN Web Docs",
+      "desc": "Mozilla 维护的 Web 技术权威参考：HTML、CSS、JavaScript 与 Web API 语法及浏览器兼容性。",
+      "link": "https://developer.mozilla.org/zh-CN/",
+      "tags": ["文档", "前端", "参考"],
+      "freeTier": true,
+      "rating": 5,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "GitHub",
+      "desc": "全球最大代码托管与开源协作平台，找源码、提 PR、跟踪 issue 与 Actions 工作流。",
+      "link": "https://github.com/",
+      "tags": ["代码托管", "开源", "协作"],
+      "freeTier": true,
+      "rating": 5,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "Gitee 码云",
+      "desc": "国内代码托管平台，访问更快，适合国内项目托管与企业私有仓库。",
+      "link": "https://gitee.com/",
+      "tags": ["代码托管", "国内", "开源"],
+      "freeTier": true,
+      "rating": 4,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "Stack Overflow",
+      "desc": "程序员问答社区，报错检索与疑难 bug 排查的首选，历史答案库极其丰富。",
+      "link": "https://stackoverflow.com/",
+      "tags": ["问答", "排错", "社区"],
+      "freeTier": true,
+      "rating": 5,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "Postman",
+      "desc": "接口调试与 API 协作神器，支持 GET/POST 请求、环境与批量自动化测试。",
+      "link": "https://www.postman.com/",
+      "tags": ["接口调试", "API", "测试"],
+      "freeTier": true,
+      "rating": 5,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "Docker Hub",
+      "desc": "容器镜像仓库，一键拉取 MySQL、Redis、Nginx 等官方镜像，容器化部署必备。",
+      "link": "https://hub.docker.com/",
+      "tags": ["容器", "部署", "镜像"],
+      "freeTier": true,
+      "rating": 4,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "力扣 LeetCode",
+      "desc": "算法刷题与面试训练平台，大厂笔试题库，日常提升算法与编码能力。",
+      "link": "https://leetcode.cn/",
+      "tags": ["算法", "面试", "刷题"],
+      "freeTier": true,
+      "rating": 4,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "regex101",
+      "desc": "正则表达式在线测试与逐步解释，支持 PCRE、JavaScript、Python、Go 等多种风味。",
+      "link": "https://regex101.com/",
+      "tags": ["正则", "测试", "工具"],
+      "freeTier": true,
+      "rating": 5,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "DevDocs",
+      "desc": "多语言 API 文档聚合器，MDN、React、Node、Python 等文档一处速查，可离线使用。",
+      "link": "https://devdocs.io/",
+      "tags": ["文档", "聚合", "离线"],
+      "freeTier": true,
+      "rating": 4,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "Can I Use",
+      "desc": "前端特性浏览器兼容性查询，写现代 API 前先确认支持度，避免兼容踩坑。",
+      "link": "https://caniuse.com/",
+      "tags": ["兼容性", "前端", "查询"],
+      "freeTier": true,
+      "rating": 4,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "roadmap.sh",
+      "desc": "按角色与技术栈的学习路线图（前端、后端、全栈等），规划成长路径一目了然。",
+      "link": "https://roadmap.sh/",
+      "tags": ["学习路线", "成长", "规划"],
+      "freeTier": true,
+      "rating": 5,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "freeCodeCamp",
+      "desc": "免费编程课程与实战练习，覆盖前端、后端、数据可视化等，适合系统入门。",
+      "link": "https://www.freecodecamp.org/",
+      "tags": ["课程", "免费", "学习"],
+      "freeTier": true,
+      "rating": 5,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "CodePen",
+      "desc": "前端代码演示与实验场，快速验证 UI 想法、复现 bug、分享可运行片段。",
+      "link": "https://codepen.io/",
+      "tags": ["前端", "演示", "实验"],
+      "freeTier": true,
+      "rating": 4,
+      "updated": "2026-10-10"
+    },
+    {
+      "name": "OWASP",
+      "desc": "开放式 Web 应用安全项目，提供安全最佳实践、Top 10 风险清单与免费指南。",
+      "link": "https://owasp.org/",
+      "tags": ["安全", "最佳实践", "参考"],
+      "freeTier": true,
+      "rating": 4,
+      "updated": "2026-10-10"
+    }
+  ],
+  "news": [
+    {
+      "title": "OpenRouter 持续扩充模型库，含可免费调用的开源模型",
+      "source": "OpenRouter",
+      "url": "https://openrouter.ai/",
+      "date": "2026-10-10"
+    },
+    {
+      "title": "硅基流动 SiliconFlow 提供多种开源大模型 API 与免费额度档",
+      "source": "SiliconFlow",
+      "url": "https://siliconflow.cn/",
+      "date": "2026-10-10"
+    },
+    {
+      "title": "Poe 每日赠送免费点数，单界面切换多种顶尖模型",
+      "source": "Poe",
+      "url": "https://poe.com/",
+      "date": "2026-10-10"
+    },
+    {
+      "title": "扣子 Coze 支持零代码搭建 AI 智能体并接入多模型",
+      "source": "Coze",
+      "url": "https://www.coze.cn/",
+      "date": "2026-10-10"
+    },
+    {
+      "title": "Dify 开源 LLM 应用开发平台，聚合模型与 RAG 能力",
+      "source": "Dify",
+      "url": "https://dify.ai/",
+      "date": "2026-10-10"
+    }
+  ]
+}

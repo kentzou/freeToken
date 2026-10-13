@@ -10,6 +10,7 @@ export default function SiteFooter() {
       </p>
       <nav className="footer-links" aria-label="站点信息">
         <a href={pageHref("/about/")}>关于</a>
+        <a href={pageHref("/nav/")}>导航</a>
         <a href={pageHref("/editorial-policy/")}>精选门槛</a>
         <a href={pageHref("/privacy/")}>隐私</a>
         <a href={pageHref("/contact/")}>联系</a>

@@ -243,7 +243,27 @@ test("robots.txt 随产物落地；有站点地址时 sitemap 与产物页集合
     return;
   } else {
     const locs = [...readFileSync(path.join(OUT, "sitemap.xml"), "utf8").matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-    assert.equal(locs.length, dirsOf("intel").length + 6, "sitemap 条数 = 首页 1 + 内容页 5（含 openrouter）+ 详情页 N");
+    /* 等值式按「可索引面」逐分量复算，绝不写总量绝对数（同第 36 行 intel 下界那条的教训：
+       crawler 每加一张卡、nav 每多收一条工具，绝对数就假红一次）。分量口径：
+         首页 1 + 内容页 5（about / editorial-policy / privacy / contact / openrouter 台账页）
+       + 情报详情页 N（= out/intel 目录数）
+       + 导航面 = 频道固定页 4（/nav/ · /nav/tools/ · /nav/rankings/ · /nav/sources/）
+                 + 分类页（= nav-index 里有计数的分类）
+                 + 工具详情页（= nav-index 的 items 数；设计方案 v2 路由表定的是「静态生成、进 SEO」）。
+       nav 侧按**数据**复算而不是按 out/ 目录数复算，这条才有牙：管线漏生成某一页、或某一页没进
+       sitemap，两边立刻对不上——只拿产物数自证等于没检（locsFromHtml 本身就是从产物数出来的）。
+       新增可索引路由必须在这里加分量，否则主站口径（有 SITE_URL）会假红。 */
+    const nav = JSON.parse(readFileSync(path.resolve(process.cwd(), "data", "nav-index.json"), "utf8"));
+    const navFixedPages = 4;
+    const navCategories = nav.categories.filter((c) => c.count > 0).length;
+    const navTools = nav.items.length;
+    const intelDirs = dirsOf("intel").length;
+    const expected = 1 + 5 + intelDirs + navFixedPages + navCategories + navTools;
+    assert.equal(
+      locs.length,
+      expected,
+      `sitemap 条数不等于可索引面：期望 首页1+内容页5+情报详情${intelDirs}+导航固定${navFixedPages}+分类${navCategories}+工具详情${navTools}`
+    );
     for (const l of locs) assert.ok(l.startsWith(`${SITE}/`), `loc 不是本站绝对地址：${l}`);
     assert.ok(!locs.some((l) => /\/(404|admin)\//.test(l)), "sitemap 混入了 404/admin 地址");
   }

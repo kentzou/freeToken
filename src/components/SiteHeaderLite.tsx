@@ -10,6 +10,7 @@ export default function SiteHeaderLite() {
       </a>
       <nav aria-label="站内导航">
         <a href={pageHref("/")}>首页</a>
+        <a href={pageHref("/nav/")}>导航</a>
         <a href={pageHref("/editorial-policy")}>编辑规则</a>
         <a href={pageHref("/contact")}>联系投稿</a>
       </nav>

@@ -1,12 +1,15 @@
-/** 记忆点：「已核验」双环邮戳。stamp=精选大卡（绝对定位右上），inline=情报卡卡脚（流式内联） */
+/** 记忆点：「已核验」双环邮戳。stamp=精选大卡（绝对定位右上），inline=情报卡卡脚（流式内联）
+ *  verb 只影响屏读文案：管线卡用默认的「核验」，编辑精选卡改传「整理」，避免把整理日期说成核验日期。 */
 export default function StampBadge({
   date,
   variant = "inline",
   tone = "brand",
+  verb = "核验",
 }: {
   date: string;
   variant?: "stamp" | "inline";
   tone?: "brand" | "warn";
+  verb?: string;
 }) {
   if (variant === "inline") {
     return (
@@ -16,7 +19,7 @@ export default function StampBadge({
           <circle cx="6.5" cy="6.5" r="3.2" fill="none" stroke="currentColor" strokeWidth="0.7" />
         </svg>
         <span className="verify-date">{date}</span>
-        <span className="visually-hidden">已于 {date} 核验</span>
+        <span className="visually-hidden">已于 {date} {verb}</span>
       </span>
     );
   }

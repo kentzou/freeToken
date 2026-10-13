@@ -1,6 +1,10 @@
 node_modules/
 .next/
+.export/
 out/
 *.tsbuildinfo
 next-env.d.ts
 .superpowers/
+# 导航层的抓取原文（data/raw/*.json + _report.json）：每次爬取都会重写，体积大且含来源站的
+# 推广参数原串。清洗后的入库面是 data/nav-index.json 与 data/nav-sites.json；原始地址只作本机溯源用。
+data/raw/

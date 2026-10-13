@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/subset-fonts.mjs",
+    "build": "next build && node scripts/build-export-fix.mjs && node scripts/subset-fonts.mjs",
     "seo": "node scripts/gen-seo.mjs",
     "start": "next dev",
     "seed": "node scripts/export-seed.mjs",
@@ -14,6 +14,9 @@
     "test:out": "node --test tests/build-output.test.mjs",
     "crawl": "node crawler/run.mjs",
     "crawl:or": "node crawler/openrouter.mjs",
+    "nav:crawl": "node crawler/nav/run.mjs",
+    "nav:pipeline": "node crawler/nav/pipeline.mjs",
+    "nav:all": "node crawler/nav/run.mjs && node crawler/nav/pipeline.mjs",
     "review": "node scripts/review-apply.mjs",
     "seed:repro": "node scripts/seed-repro.mjs"
   },
