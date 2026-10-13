@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import SiteHeaderLite from "@/components/SiteHeaderLite";
 import SiteFooter from "@/components/SiteFooter";
 import { loadNavTools } from "@/lib/nav-data";
-import { pageHref } from "@/lib/href";
+import { canonicalHref, pageHref } from "@/lib/href";
 
 /** 详情页静态生成：为全部收录条目生成页面（利于 SEO 长尾）。 */
 export function generateStaticParams() {
@@ -18,6 +18,7 @@ export function generateMetadata({ params }: { params: { id: string } }): Metada
   return {
     title: `${it.name} - ${it.categoryName}｜AI 工具导航`,
     description: it.desc || `${it.name} 的收录信息、来源站与访问入口。`,
+    alternates: { canonical: canonicalHref(`/nav/tool/${params.id}`) },
   };
 }
 

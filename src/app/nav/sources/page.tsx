@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import SiteHeaderLite from "@/components/SiteHeaderLite";
 import SiteFooter from "@/components/SiteFooter";
 import { loadNavTools } from "@/lib/nav-data";
-import { pageHref } from "@/lib/href";
+import { canonicalHref, pageHref } from "@/lib/href";
 
 export const metadata: Metadata = {
   title: "数据来源与透明度｜AI 工具导航",
   description: "本站 AI 工具数据的来源站清单、各站收录数、抓取时间，以及未收录站点的原因说明。",
+  alternates: { canonical: canonicalHref("/nav/sources") },
 };
 
 /** 来源页：透明度核心页。

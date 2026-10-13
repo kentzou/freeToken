@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import SiteHeaderLite from "@/components/SiteHeaderLite";
 import SiteFooter from "@/components/SiteFooter";
 import { loadNavTools } from "@/lib/nav-data";
-import { pageHref } from "@/lib/href";
+import { canonicalHref, pageHref } from "@/lib/href";
 
 export const metadata: Metadata = {
   title: "AI 工具榜单｜Token 情报局",
   description: "基于可证实信号的 AI 工具榜单：跨站收录热度榜、分类榜、最新收录榜。",
+  alternates: { canonical: canonicalHref("/nav/rankings") },
 };
 
 /** 榜单页：只用可证实信号（跨站收录数、首次收录时间），不编造访问量。 */

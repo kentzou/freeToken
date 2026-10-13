@@ -171,6 +171,29 @@ test("站内页面链接形态随口径落地：镜像全带 index.html，主站
   assert.deepEqual(bad.slice(0, 8), [], `${MIRROR ? "镜像" : "主站"}口径下的站内页面链接形态不符（共 ${bad.length} 处）`);
 });
 
+/* canonical 决定「谁来竞争排名」，是抓取面的一部分：/nav 频道初版六类页面（频道首页/目录/榜单/
+   来源/14 个分类/1928 个详情）全都没写 alternates.canonical，而既有自检只看首页那一条——
+   半边站的声明缺失靠人眼发现不算守住。这里按扫描面咬住：与 locsFromHtml 同一口径
+   （排除 404/admin/_next、只认 index.html），逐页点名，缺声明或指错主机当场红。 */
+test("每个可索引页都带 canonical，且线上口径下指本站", () => {
+  const NO_INDEX = ["404", "admin"];
+  const bad = [];
+  let checked = 0;
+  for (const f of htmlFiles) {
+    const rel = f.slice(OUT.length + 1).split("\\").join("/");
+    if (!rel.endsWith("index.html") || rel.startsWith("_next/")) continue;
+    const dir = rel.slice(0, -"index.html".length);
+    if (NO_INDEX.includes(dir.split("/")[0])) continue;
+    checked += 1;
+    const c = /rel="canonical" href="([^"]+)"/.exec(readFileSync(f, "utf8"))?.[1] || "";
+    if (!c) bad.push(`${dir || "（首页）"} → 缺 canonical`);
+    else if (SITE && !c.startsWith(`${SITE}/`)) bad.push(`${dir} → 指向别处：${c}`);
+    else if (BASE && c.includes(`${BASE}${BASE}`)) bad.push(`${dir} → 前缀叠了两次：${c}`);
+  }
+  assert.ok(checked > 0, "一个可索引页都没扫到——这条自检失去被测对象");
+  assert.deepEqual(bad.slice(0, 8), [], `${bad.length} 个可索引页的 canonical 不合口径（共扫 ${checked} 页）`);
+});
+
 test("暗色令牌已随产物落地", () => {
   const css = readdirSync(path.join(OUT, "_next", "static", "css"))
     .map((f) => readFileSync(path.join(OUT, "_next", "static", "css", f), "utf8"))

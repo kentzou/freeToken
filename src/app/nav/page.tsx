@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import SiteHeaderLite from "@/components/SiteHeaderLite";
 import SiteFooter from "@/components/SiteFooter";
 import { loadNavTools } from "@/lib/nav-data";
-import { pageHref } from "@/lib/href";
+import { canonicalHref, pageHref } from "@/lib/href";
 
 export const metadata: Metadata = {
   title: "AI 导航｜Token 情报局",
   description:
     "聚合 AI 工具目录站收录的工具，每条标注来源站与抓取时间；含编辑核验精选层，可搜索、按分类与来源筛选。",
+  alternates: { canonical: canonicalHref("/nav") },
 };
 
 /** 频道首页：数据概览 + 分类入口 + 编辑精选置顶 + 最新收录。
