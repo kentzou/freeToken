@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import SiteHeaderLite from "@/components/SiteHeaderLite";
 import SiteFooter from "@/components/SiteFooter";
 import { loadNavTools } from "@/lib/nav-data";
+import { pageHref } from "@/lib/href";
 
 export const metadata: Metadata = {
   title: "数据来源与透明度｜AI 工具导航",
@@ -22,7 +23,7 @@ export default function SourcesPage() {
       <main id="main">
         <div className="nav-channel">
           <header className="nav-hero">
-            <p className="crumb"><a href="/nav/">AI 导航</a> / 数据来源</p>
+            <p className="crumb"><a href={pageHref("/nav/")}>AI 导航</a> / 数据来源</p>
             <h1>数据来源与透明度</h1>
             <p className="deck">
               本站工具条目来自公开 AI 目录站的<strong>列表页聚合</strong>，只抓取名称、简介、链接、分类等公开信息，

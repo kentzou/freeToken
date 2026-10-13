@@ -6,6 +6,7 @@
  *  零请求：数据由服务端组件注入，纯前端交互。 */
 import { useMemo, useState } from "react";
 import type { NavCategory, NavSiteMeta, NavTool } from "@/lib/nav-data";
+import { pageHref } from "@/lib/href";
 import EmptyState from "./EmptyState";
 
 const PAGE = 60;
@@ -161,7 +162,9 @@ export default function NavDirectory({
         <ul className="tool-grid">
           {shown.map((it) => (
             <li key={it.id}>
-              <a className="tool-card" href={`/nav/tool/${it.id}/`}>
+              {/* pageHref 是站内链接唯一出口：镜像口径要落成 /nav/tool/x/index.html（Qoder Sites 关目录索引），
+                  Pages 口径要带 /freeToken 前缀——裸写 `/nav/tool/x/` 两面都错。 */}
+              <a className="tool-card" href={pageHref(`/nav/tool/${it.id}/`)}>
                 <div className="tool-head">
                   {it.logo ? (
                     // eslint-disable-next-line @next/next/no-img-element
