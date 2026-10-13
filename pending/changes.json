@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "1899d6dee31d596f54d8b75afeb685b0e89ac804",
-  "detectedAt": "2026-10-12T06:11:10.318Z",
+  "upstreamSha": "ac685ffdcef172078af7f425b2ee62ce710f8a05",
+  "detectedAt": "2026-10-13T14:23:59.468Z",
   "changes": [
     {
       "kind": "card",
@@ -482,12 +482,55 @@
         "limited": "每日额度以平台显示为准；免费领积分活动第 4 期至 2026-10-10",
         "updated": "2026-10-08"
       },
-      "after": null,
+      "after": {
+        "name": "库库 AI",
+        "type": "工具",
+        "modality": "DeepSeek V4.1 · GLM-5.3 / 5.2 / 5.1 · 文心 5.1 · Kimi-K3",
+        "quota": "每日登录 +50 积分、完成一次对话 +50 积分，合计每天可领 100 积分；DeepSeek V4.1 按 0.16 倍率消耗。",
+        "link": "https://kuku.baidu.com/genflowpro?action=download",
+        "limited": "每日额度以平台显示为准；免费领积分活动第 4 期至 2026-10-10",
+        "updated": "2026-10-13"
+      },
       "fields": [
         {
-          "field": "(整条)",
-          "from": "存在",
-          "to": null
+          "field": "updated",
+          "from": "2026-10-08",
+          "to": "2026-10-13"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "硅基流动 SiliconFlow",
+      "before": {
+        "name": "硅基流动 SiliconFlow",
+        "type": "大模型",
+        "modality": "DeepSeek V4 Pro · GLM-5.3 · Kimi K3 · 千问 3.8 等",
+        "rating": 4,
+        "quota": "9B 以下模型永久免费、不限量；新用户赠 2000 万 token（长期有效）；无截止时间。",
+        "effect": "聚合海量开源大模型，DeepSeek V4 / GLM-5.3 / Kimi / 千问 3.8 等门槛模型可直接调用，文本 / 图像多模态 API，兼容 OpenAI 格式",
+        "link": "https://cloud.siliconflow.cn/",
+        "updated": "2026-09-28",
+        "v2": true,
+        "limited": null
+      },
+      "after": {
+        "name": "硅基流动 SiliconFlow",
+        "type": "大模型",
+        "modality": "DeepSeek V4 Pro · GLM-5.3 · Kimi K3 · 千问 3.8 等",
+        "rating": 4,
+        "quota": "9B 以下模型永久免费、不限量；新用户赠 2000 万 token（长期有效）；无截止时间。",
+        "effect": "聚合海量开源大模型，DeepSeek V4 / GLM-5.3 / Kimi / 千问 3.8 等门槛模型可直接调用，文本 / 图像多模态 API，兼容 OpenAI 格式",
+        "link": "https://cloud.siliconflow.cn/",
+        "updated": "2026-10-13",
+        "v2": true,
+        "limited": null
+      },
+      "fields": [
+        {
+          "field": "updated",
+          "from": "2026-09-28",
+          "to": "2026-10-13"
         }
       ]
     }
