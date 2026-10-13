@@ -1,0 +1,969 @@
+{
+  "_comment": [
+    "分销跳转域 → 官方地址映射表（入库文件，管线 crawler/nav/pipeline.mjs 的 cleanUrl 会查它）。",
+    "为什么需要这张表：导航层那条「整串砍到 origin+pathname」的清洗只能剥掉查询串，",
+    "而 CakeGrowth 系短链把分销/渠道码写在**路径**里（https://<品牌>.cgref.cn/s/<码> 或 /aibot 一类渠道名），",
+    "砍完参数剩下的仍然是一枚活的推广入口——实测访问一次即种一次归因（见各条 landedWithParams）。",
+    "来源站（ai-bot.cn / aigc.cn）本身就挂的是这种短链，管线重爬多少次都会重新带回来，",
+    "所以清洗必须落在管线层（本表 + cleanUrl 改写），而不是改 data/raw/（未入库、每次抓取即覆盖）。",
+    "收录判据：tests/build-output.test.mjs「nav 面外链零推广跳转域」——产物里出现任何推广跳转域地址当场红。",
+    "新增跳转域时把域名加进那条自检的 AFFILIATE_HOSTS，并在这里补映射；无实证（200 + 官方页 title）不进本表。",
+    "取证：53 条短链逐条实测（2026-10-13），官方地址去重后 44 个（同品牌多短链会合并成一张卡）。"
+  ],
+  "entries": [
+    {
+      "id": "wawawriter-cgref-cn",
+      "name": "蛙蛙写作",
+      "affiliate": "https://wawawriter.cgref.cn/s/rpexm33k90",
+      "official": "https://wawawriter.com/app/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://wawawriter.com/app/?cg_click_id=bc5a392c-587d-4e24-8d37-e5e350ad728e&cgv=rpexm33k90&utm=cg&utm_source=aiweb",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 6317,
+        "officialTitle": "蛙蛙写作——美团小说投稿官网_小说投稿平台_AI漫剧_超级AI智能写作助手",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "laper-cgref-cn",
+      "name": "Laper",
+      "affiliate": "https://laper.cgref.cn/s/zdkjqq8n1r",
+      "official": "https://laper.ai/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://laper.ai/?cg_click_id=82e08282-4860-4b8d-a096-a3dbcc1942ab&cgv=zdkjqq8n1r&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 493329,
+        "officialTitle": "Free AI Screenwriting Software &amp; AI Script Writer | Laper",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "turbodesk-cgref-cn",
+      "name": "讯飞绘文",
+      "affiliate": "https://turbodesk.cgref.cn/s/1le05l8noq",
+      "official": "https://turbodesk.xfyun.cn/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://turbodesk.xfyun.cn/?cg_click_id=69c54a3f-54ba-467a-987d-3cd94e8d0c58&cgv=1le05l8noq&channelid=cakegrowth&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 3397,
+        "officialTitle": "讯飞绘文",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "jucloud-cgref-cn",
+      "name": "剧云",
+      "affiliate": "https://jucloud.cgref.cn/s/zdkj0xoe1r",
+      "official": "https://www.jucloud.com/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.jucloud.com/?cg_click_id=c650913e-6567-4780-9066-6922725f41f3&cgv=zdkj0xoe1r&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 92505,
+        "officialTitle": "剧云 - 免费专业中文剧本创作平台|AI智能编剧|智能改编|剧本医生",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "liblib-cgref-cn",
+      "name": "LiblibAI电商营销",
+      "affiliate": "https://liblib.cgref.cn/s/dqndpmwn2z",
+      "official": "https://www.liblib.art/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.liblib.art/?cg_click_id=706e829c-2cc6-4b41-a2af-09dfeeaa1c05&cgv=dqndpmwn2z&sourceid=005904&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 26904,
+        "officialTitle": "LiblibAI-哩布哩布AI - 国内极具影响力的AI创作平台",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "pixpix-cgref-cn",
+      "name": "PixPix",
+      "affiliate": "https://pixpix.cgref.cn/s/5ln1zx5erw",
+      "official": "https://www.pixpix.art/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.pixpix.art/?cg_click_id=35604e33-6846-45a7-93d7-2bd6a95785e1&cgv=5ln1zx5erw&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 794882,
+        "officialTitle": "帧象创意 - PixPix — AI Product Image &amp; Video Generator for E-commerce",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "chaojihaomai-cgref-cn",
+      "name": "潮际好麦",
+      "affiliate": "https://chaojihaomai.cgref.cn/s/ogeww9vep2",
+      "official": "https://marketing.k-fashionshop.com/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://marketing.k-fashionshop.com/?cg_click_id=ceac57ca-ce45-4de6-821f-99bd0967851f&cgv=ogeww9vep2&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 78050,
+        "officialTitle": "潮际好麦-虚拟试衣|换背景|电商模特图制作|AI模特|虚拟试鞋|高质量电商模特图生成|AICG电商营销|潮际主设",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "skildart-cgref-cn",
+      "name": "SkildArt",
+      "affiliate": "https://skildart.cgref.cn/s/rpexor3e90",
+      "official": "https://www.skildart.cn/workbench",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.skildart.cn/workbench?cg_click_id=dca206a2-5a8c-4410-91d9-a8b649f0943d&cgv=rpexor3e90&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 3415,
+        "officialTitle": "SkildArt 思可达 - 全球电商商家的AI视觉增长引擎",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "updream-cgref-cn",
+      "name": "updream",
+      "affiliate": "https://updream.cgref.cn/s/1oe71vme23",
+      "official": "https://www.updream.cn/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.updream.cn/?cg_click_id=81d46f00-8711-4a67-8987-6ab64e7a3ffb&cgv=1oe71vme23&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 2941,
+        "officialTitle": "updream官网-AI视频创作助手",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "pixtv-cgref-cn",
+      "name": "PixTV",
+      "affiliate": "https://pixtv.cgref.cn/s/2znrdr6er7",
+      "official": "https://www.pixtv.ai/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.pixtv.ai/?cg_click_id=a163c731-0418-4d49-82cc-3f378ee95fe0&cgv=2znrdr6er7&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 1159139,
+        "officialTitle": "PixTV | All-in-One AI Video Generation &amp; Infinite Canvas Platform",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "anishort-cgref-cn",
+      "name": "AniShort",
+      "affiliate": "https://anishort.cgref.cn/s/2znrlqynr7",
+      "official": "https://app.anishort.cn/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://app.anishort.cn/?cg_click_id=37a6cdf4-d6d3-4f79-985e-15dd69d7c66f&cgv=2znrlqynr7&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 1988,
+        "officialTitle": "AniShort - AI Film & TV Drama Collaboration Platform",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "lickmv-cgref-cn",
+      "name": "立刻MV",
+      "affiliate": "https://lickmv.cgref.cn/s/qmnoyy3e29",
+      "official": "https://www.lickmv.com/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.lickmv.com/?cg_click_id=ca3a4aae-f11d-47c2-9421-160cd9ec57e0&cgv=qmnoyy3e29&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 37161,
+        "officialTitle": "LickMV | AI Music Video Studio",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "vibeknow-cgref-cn",
+      "name": "VibeKnow",
+      "affiliate": "https://vibeknow.cgref.cn/s/3mnz07jeo1",
+      "official": "https://vibeknow.com/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://vibeknow.com/?cg_click_id=7c645fa6-3c3b-4f78-8461-1a88ae369e52&cgv=3mnz07jeo1&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 501863,
+        "officialTitle": "首页 | Vibeknow – 全球首个AI知识视频创作平台",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "cappt-cgref-cn",
+      "name": "咔片PPT",
+      "affiliate": "https://cappt.cgref.cn/s/ogewxgrkp2",
+      "official": "https://www.cappt.cc/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.cappt.cc/?cg_click_id=a5a3ed41-cadd-4247-a9fc-aad719de20f5&cgv=ogewxgrkp2&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 165293,
+        "officialTitle": "咔片PPT-AI一键生成PPT-PPT在线智能制作网站",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "2dogppt-cgref-cn",
+      "name": "二狗PPT",
+      "affiliate": "https://2dogppt.cgref.cn/s/2znrpzoer7",
+      "official": "https://www.2dogppt.com/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.2dogppt.com/?cg_click_id=b5b6758a-6182-4e06-b1c8-7e633877e476&cgv=2znrpzoer7&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 87437,
+        "officialTitle": "二狗PPT - DeepSeek 驱动的 AI PPT 生成器｜Word&#x2F;PDF 转 PPT",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "aionclaw-cgref-cn",
+      "name": "AionClaw",
+      "affiliate": "https://aionclaw.cgref.cn/s/20ep3zjnw1",
+      "official": "https://prom.aionclaw.com/tool/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://prom.aionclaw.com/tool/?cg_click_id=e611994d-3e41-4798-b63b-3cf8e7513025&cgv=20ep3zjnw1&channel=001&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 69397,
+        "officialTitle": "AionClaw-真正能做事的AI龙虾-基于OpenClaw深度升级",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "agentspace-cgref-cn",
+      "name": "Agent.Space",
+      "affiliate": "https://agentspace.cgref.cn/s/omkl2mve4d",
+      "official": "https://agent.space/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://agent.space/?cg_click_id=43681f56-8e12-4040-808a-745f9c0424df&cgv=omkl2mve4d&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 161063,
+        "officialTitle": "AI Agent Workspace for Codex &amp; Claude Code | Agent.Space",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "lovart-cgref-cn",
+      "name": "星流AI",
+      "affiliate": "https://lovart.cgref.cn/s/j7n6jwme1g",
+      "official": "https://www.lovart.art/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.lovart.art/?cg_click_id=dda34d54-5273-4a2a-bc01-f15eb1bc4561&cgv=j7n6jwme1g&sourceid=999998&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 455437,
+        "officialTitle": "Lovart - 新一代设计 Agent",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "turbodesk-cgref-cn-2",
+      "name": "讯飞绘文",
+      "affiliate": "https://turbodesk.cgref.cn/s/20ep6ldnw1",
+      "official": "https://turbodesk.xfyun.cn/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://turbodesk.xfyun.cn/?cg_click_id=a0c66f60-79d4-4649-a708-ab07a05796f5&cgv=20ep6ldnw1&channelid=cakegrowth&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 3397,
+        "officialTitle": "讯飞绘文",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "updream-cgref-cn-2",
+      "name": "updream",
+      "affiliate": "https://updream.cgref.cn/s/dqndm0wn2z",
+      "official": "https://www.updream.cn/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.updream.cn/?cg_click_id=0fc19edc-c166-456c-9f02-41b9be2290b7&cgv=dqndm0wn2z&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 2941,
+        "officialTitle": "updream官网-AI视频创作助手",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "liblib-cgref-cn-4",
+      "name": "Liblib AI – 视频",
+      "affiliate": "https://liblib.cgref.cn/s/omklvdzn4d",
+      "official": "https://www.liblib.art/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.liblib.art/?cg_click_id=8c4541e3-70db-4921-8b4c-dc674125de39&cgv=omklvdzn4d&sourceid=005904&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 26904,
+        "officialTitle": "LiblibAI-哩布哩布AI - 国内极具影响力的AI创作平台",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "libtv-cgref-cn-2",
+      "name": "LibTV – SeeDance2.0",
+      "affiliate": "https://libtv.cgref.cn/s/54onyomkjx",
+      "official": "https://www.liblib.tv/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.liblib.tv/?cg_click_id=80af0feb-1c30-48ef-a38f-7b1844d8f649&cgv=54onyomkjx&sourceid=005902&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 1037033,
+        "officialTitle": "LibTV - 专业视频创作工具",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "seko-cgref-cn",
+      "name": "商汤Seko",
+      "affiliate": "https://seko.cgref.cn/s/59ngw7jer2",
+      "official": "https://seko.sensetime.com/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://seko.sensetime.com/?cg_click_id=4b30cb70-4ed4-4c1f-9847-47f12d1c8ed3&cgv=59ngw7jer2&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 520055,
+        "officialTitle": "Seko · 一站式 AI 视频创作，从灵感到成片",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "aibrm-cgref-cn-2",
+      "name": "白日梦AI",
+      "affiliate": "https://aibrm.cgref.cn/s/7xpn892ezw",
+      "official": "https://aibrm.com/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://aibrm.com/?cg_click_id=f4d962f9-ef48-4eff-aede-7b2159c3a4c5&cgv=7xpn892ezw&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 5469,
+        "officialTitle": "白日梦AI-领先的AI视频创作类AIGC创作平台",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "xfzhizuo-cgref-cn-2",
+      "name": "讯飞智作-创意视频",
+      "affiliate": "https://xfzhizuo.cgref.cn/s/1le06vweoq",
+      "official": "https://www.xfzhizuo.cn/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.xfzhizuo.cn/?cg_click_id=4b2d9dea-2a6b-4376-9924-bb840d45859f&cgv=1le06vweoq&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 241672,
+        "officialTitle": "讯飞智作-AI虚拟数字人视频制作-一键创作口播视频-文字转视频-数字分身定制",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "lovart-cgref-cn-2",
+      "name": "Lovart",
+      "affiliate": "https://lovart.cgref.cn/s/5ln1lqmkrw",
+      "official": "https://www.lovart.art/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.lovart.art/?cg_click_id=36100b05-af0d-4be1-bc41-f95c0fe145bd&cgv=5ln1lqmkrw&sourceid=999998&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 455437,
+        "officialTitle": "Lovart - 新一代设计 Agent",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "codeflying-cgref-cn",
+      "name": "码上飞-AI生成小程序",
+      "affiliate": "https://codeflying.cgref.cn/s/q50k9y7ng6",
+      "official": "https://www.codeflying.net/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.codeflying.net/?cg_click_id=d90d50ee-bfda-40e4-8c03-8071badb62a3&cgv=q50k9y7ng6&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 2675,
+        "officialTitle": "码上飞 - 说中文，做应用 | AI生成微信小程序/鸿蒙/APP/H5网站",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "yinshu-cgref-cn-2",
+      "name": "音述AI",
+      "affiliate": "https://yinshu.cgref.cn/s/3rpe38jn05",
+      "official": "https://www.yinshu.me/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.yinshu.me/?ad_channel=cakegrowth&cg_click_id=8634e140-26ea-48f5-92a5-003d95031674&cgv=3rpe38jn05&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 316098,
+        "officialTitle": "音述 AI 音乐创作体验 | 音述",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "loomy-cgref-cn",
+      "name": "Loomy AI工作搭子",
+      "affiliate": "https://loomy.cgref.cn/s/jgem0jgnmy",
+      "official": "https://loomy.xunfei.cn/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://loomy.xunfei.cn/?cg_click_id=63abe592-b589-4329-a4c6-122206a52ede&cgv=jgem0jgnmy&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 137427,
+        "officialTitle": "Loomy-你的AI工作搭子",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "laper-cgref-cn-2",
+      "name": "Laper",
+      "affiliate": "https://laper.cgref.cn/s/dqndyr3n2z",
+      "official": "https://laper.ai/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://laper.ai/?cg_click_id=03a48c11-1645-4097-a86a-11b5041f64ab&cgv=dqndyr3n2z&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 493329,
+        "officialTitle": "Free AI Screenwriting Software &amp; AI Script Writer | Laper",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "aibrm-cgref-cn",
+      "name": "白日梦",
+      "affiliate": "https://aibrm.cgref.cn/aibot",
+      "official": "https://aibrm.com/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://aibrm.com/?cg_click_id=492fb7c7-0605-4289-acf2-0a96298d7461&cgv=09we2wjego&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 5469,
+        "officialTitle": "白日梦AI-领先的AI视频创作类AIGC创作平台",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "aippt-plugin-cgref-cn",
+      "name": "AiPPT插件",
+      "affiliate": "https://aippt-plugin.cgref.cn/aibot",
+      "official": "https://www.aippt.cn/plugin",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.aippt.cn/plugin?cg_click_id=2a6f6fcb-c839-48c7-bf17-66f13f991229&cgv=3ogewdrnp2&utm=cg&utm_keyword=40515276&utm_page=home&utm_plan=dhzfx&utm_source=cakegrowth&utm_type=CJDHZ&utm_unit=c1",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 50743,
+        "officialTitle": "AiPPT 插件-AI智能PPT制作软件，一键生成/美化/排版，高效PPT工具",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "aipyaipy-cgref-cn",
+      "name": "爱派AiPy",
+      "affiliate": "https://aipyaipy.cgref.cn/aibot",
+      "official": "https://promo.aipyaipy.com/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://promo.aipyaipy.com/?cg_click_id=d069781a-65a1-433b-8164-297986b0b397&cgv=7xpn8zonzw&referral=BJ5OOSP&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 52148,
+        "officialTitle": "爱派AiPy - 超级AI办工智能体工厂，AiPy Pro智能桌面助手",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "astron-claw-cgref-cn",
+      "name": "AstronClaw",
+      "affiliate": "https://astron-claw.cgref.cn/aibot",
+      "official": "https://agent.xfyun.cn/overview/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 5,
+        "landedWithParams": "https://agent.xfyun.cn:443/overview/?cg_click_id=120e38a2-8c70-42a2-8f0a-76c12b8ba9be&cgv=9omkl2ze4d&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 64135,
+        "officialTitle": "AStudio 官网 - 新一代全场景 AI 生产力工作台",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "atoms-cgref-cn",
+      "name": "Atoms",
+      "affiliate": "https://atoms.cgref.cn/aibot",
+      "official": "https://atoms.dev/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://atoms.dev/?cg_click_id=ed72ca4a-ef20-4c13-8a9a-354e152c91a8&cgv=rpexyr9k90&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 394632,
+        "officialTitle": "Atoms: Build websites &amp; apps with AI, no code needed",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "islide-cgref-cn",
+      "name": "iSlide AIPPT",
+      "affiliate": "https://islide.cgref.cn/aibot",
+      "official": "https://www.islide.cc/landing",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.islide.cc/landing?cg_click_id=76a83952-f54a-42ad-8fc7-9427b3e0e558&cgv=6j7n6j7e1g&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 170209,
+        "officialTitle": "iSlide- 让PPT设计简单起来 | PPT模板下载平台",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "liblib-cgref-cn-2",
+      "name": "LiblibAI抠图",
+      "affiliate": "https://liblib.cgref.cn/aibot",
+      "official": "https://www.liblib.art/workflows",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.liblib.art/workflows?cg_click_id=228e995b-7092-4c90-875a-ef07a68fa48d&cgv=p3kqrrwnol&sourceid=005904&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 26904,
+        "officialTitle": "LiblibAI-哩布哩布AI - 国内极具影响力的AI创作平台",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "liblib-cgref-cn-3",
+      "name": "LiblibAI·哩布哩布AI",
+      "affiliate": "https://liblib.cgref.cn/aibotimage",
+      "official": "https://www.liblib.art/ai-tool/image-generator",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.liblib.art/ai-tool/image-generator?cg_click_id=8cf38d85-c7bd-4fd0-89f1-001346af7db3&cgv=1le0rr8eoq&sourceid=005904&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 27921,
+        "officialTitle": "图片视频生成器 - LiblibAI",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "libtv-cgref-cn",
+      "name": "LibTV",
+      "affiliate": "https://libtv.cgref.cn/aibot",
+      "official": "https://www.liblib.tv/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.liblib.tv/?cg_click_id=78fe9fed-cca7-4bff-ad98-2835b14173be&cgv=09we26gkgo&sourceid=005902&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 1037034,
+        "officialTitle": "LibTV - 专业视频创作工具",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "modao-cgref-cn",
+      "name": "墨刀AI",
+      "affiliate": "https://modao.cgref.cn/aibot",
+      "official": "https://modao.cc/feature/ai",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://modao.cc/feature/ai?cg_click_id=7d2888b0-ac87-4f65-963e-e6a0539b79b4&cgv=54ony06kjx&utm=cg&utm_channel=wl&utm_keyword=cakegrowth&utm_source=referrals",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 500090,
+        "officialTitle": "AI原型生成工具｜文字、截图生成可编辑原型 - 墨刀AI",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "qinyanai-cgref-cn",
+      "name": "沁言学术",
+      "affiliate": "https://qinyanai.cgref.cn/aibot",
+      "official": "https://app.qinyanai.com/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 2,
+        "landedWithParams": "https://app.qinyanai.com/?utm_source=cakegrowth&utm_medium=3rpe30xe05&sourceCode=MEZ7I0R6",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 35075,
+        "officialTitle": "AI写作与文献助手一站式平台 - 沁言学术官方",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "seko-cgref-cn-2",
+      "name": "Seko AI数字人",
+      "affiliate": "https://seko.cgref.cn/aigc-seko-szr",
+      "official": "https://seko.sensetime.com/avatar-video",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://seko.sensetime.com/avatar-video?cg_click_id=d092b05c-2056-4900-ad1e-40bbead1e19f&cgv=zdkjr5oe1r&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 252596,
+        "officialTitle": "Seko · AI 数字人，让形象拥有声音与表达",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "speedai-cgref-cn",
+      "name": "SpeedAI",
+      "affiliate": "https://speedai.cgref.cn/aibot",
+      "official": "https://speedai.com/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://speedai.com/?cg_click_id=2cae8ae0-5662-42ba-8358-cb86a37a1b92&cgv=j1oe7m9e23&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 6564,
+        "officialTitle": "SpeedAI - AI Humanizer & AI Detector | 降重降AI率 | 科研小助手",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "upcv-cgref-cn",
+      "name": "UP求职",
+      "affiliate": "https://upcv.cgref.cn/aibot",
+      "official": "https://www.upcv.tech/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 2,
+        "landedWithParams": "https://www.upcv.tech/?cg_click_id=5303045f-0d22-45f6-9d1e-4b75982a36a3&cgv=xpn8386ezw&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 236650,
+        "officialTitle": "UP 求职官网（原 UP 简历）- AI简历制作、AI找工作与模拟面试求职平台",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "volcengine-cgref-cn",
+      "name": "Seedance",
+      "affiliate": "https://volcengine.cgref.cn/aibot",
+      "official": "https://ai.volcengine.com/activity/seedance2",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://ai.volcengine.com/activity/seedance2?cg_click_id=a9daff8e-1990-488b-b3d2-81cac3ae90c9&cgv=dqndppwn2z&utm=cg&utm_campaign=CG&utm_content=CG&utm_medium=CakeGrowth&utm_source=OWO&utm_term=CG",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 641056,
+        "officialTitle": "Seedance2.0强势启售-火山引擎",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "volcengine-cgref-cn-2",
+      "name": "ArkClaw",
+      "affiliate": "https://volcengine.cgref.cn/aibottt",
+      "official": "https://www.volcengine.com/product/arkclaw",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.volcengine.com/product/arkclaw?cg_click_id=46366c0d-bcb6-49ae-980f-35e0d324699a&cgv=2znrw39kr7&utm=cg&utm_campaign=CG&utm_content=CG&utm_medium=CakeGrowth&utm_source=OWO&utm_term=CG",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 170905,
+        "officialTitle": null,
+        "titleNote": "官方页为纯客户端渲染，静态 HTML 里没有 <title>；官方性由同主机兄弟条目（方舟 Coding-Plan / Agent Plan / AI Hub 均带 title）与落地路径 slug 互证",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "volcengine-cgref-cn-3",
+      "name": "方舟 Coding Plan",
+      "affiliate": "https://volcengine.cgref.cn/codingplan",
+      "official": "https://www.volcengine.com/activity/codingplan",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.volcengine.com/activity/codingplan?cg_click_id=6cbf22e8-d77f-4b3c-8d95-b9183c7383ed&cgv=50k9glgng6&utm=cg&utm_campaign=CG&utm_content=CG&utm_medium=CakeGrowth&utm_source=OWO&utm_term=CG",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 646944,
+        "officialTitle": "方舟Coding-Plan",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "volcengine-cgref-cn-4",
+      "name": "方舟 Agent Plan",
+      "affiliate": "https://volcengine.cgref.cn/aibott",
+      "official": "https://www.volcengine.com/activity/agentplan",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.volcengine.com/activity/agentplan?cg_click_id=bfdd3c18-7db6-4fc4-82ca-de6446b49c18&cgv=jgemoognmy&utm=cg&utm_campaign=CG&utm_content=CG&utm_medium=CakeGrowth&utm_source=OWO&utm_term=CG",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 666788,
+        "officialTitle": "方舟 Agent Plan",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "volcengine-cgref-cn-5",
+      "name": "豆包大模型",
+      "affiliate": "https://volcengine.cgref.cn/aibotttt",
+      "official": "https://ai.volcengine.com/model",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://ai.volcengine.com/model?cg_click_id=5de9fb1f-c8ad-4869-9405-509c48cdba26&cgv=1le062veoq&utm=cg&utm_campaign=CG&utm_content=CG&utm_medium=CakeGrowth&utm_source=OWO&utm_term=CG",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 259945,
+        "officialTitle": "AI Hub-豆包大模型API服务平台-火山引擎",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "wawawriter-cgref-cn-2",
+      "name": "蛙蛙漫剧",
+      "affiliate": "https://wawawriter.cgref.cn/aibot",
+      "official": "https://wawawriter.com/app/video-create/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://wawawriter.com/app/video-create/?cg_click_id=6c119f5f-595b-497b-ab1d-e9ee4e962bac&cgv=1oe7lqrn23&utm=cg&utm_source=aiweb",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 6317,
+        "officialTitle": "蛙蛙写作——美团小说投稿官网_小说投稿平台_AI漫剧_超级AI智能写作助手",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "wondercv-cgref-cn",
+      "name": "超级简历",
+      "affiliate": "https://wondercv.cgref.cn/aibot",
+      "official": "https://www.wondercv.com/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.wondercv.com/?cg_click_id=34a98e09-3b3b-4fa9-a1b4-828c19ef37e2&cgv=6jgemwjkmy&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 254270,
+        "officialTitle": "超级简历WonderCV - AI智能简历制作工具,HR推荐专业中英文简历模板免费下载",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "xfzhizuo-cgref-cn",
+      "name": "讯飞智作",
+      "affiliate": "https://xfzhizuo.cgref.cn/aibot",
+      "official": "https://www.xfzhizuo.cn/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.xfzhizuo.cn/?cg_click_id=21e1ed56-8a04-4bc2-a71a-dc538310745d&cgv=l3mnzl7eo1&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 241672,
+        "officialTitle": "讯飞智作-AI虚拟数字人视频制作-一键创作口播视频-文字转视频-数字分身定制",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    },
+    {
+      "id": "yinshu-cgref-cn",
+      "name": "音述AI",
+      "affiliate": "https://yinshu.cgref.cn/aibot",
+      "official": "https://www.yinshu.me/",
+      "evidence": {
+        "jumpStatus": 200,
+        "jumpRedirects": 1,
+        "landedWithParams": "https://www.yinshu.me/?ad_channel=cakegrowth&cg_click_id=1acac381-89e3-4ad7-9c8b-111165a22d8e&cgv=j1oe7z9k23&utm=cg",
+        "officialStatus": 200,
+        "officialRedirects": 0,
+        "officialBytes": 316099,
+        "officialTitle": "音述 AI 音乐创作体验 | 音述",
+        "titleNote": "",
+        "resolvedAt": "2026-10-13",
+        "method": "curl -sL 跟跳转取落地地址 → 剥掉归因参数得官方 origin+pathname → 同一 UA 直读官方页取 <title> 与字节数（本机实测，两份 TSV 留档）"
+      }
+    }
+  ]
+}

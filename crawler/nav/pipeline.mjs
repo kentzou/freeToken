@@ -4,7 +4,7 @@
  *  用法：node crawler/nav/pipeline.mjs */
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
+import { pathToFileURL, fileURLToPath } from "node:url";
 import { CATEGORIES, classify, extractTags, inferPricing } from "./lib/classify.mjs";
 import { NAV_SITES } from "./sites.mjs";
 
@@ -25,6 +25,30 @@ const DATA_DIR = path.join(ROOT, "data");
  *  「上游作者的邀请码池与推广短链一律不入库」，也会被 tests/build-output.test.mjs
  *  的产物零引流红线当场判红。目录卡的职责是「走到这个工具的官网」，砍到 origin+pathname 不损伤职责。
  *  原始完整地址仍在 data/raw/（本地抓取产物，未入库），需要复查溯源时由它兜底。 */
+/* 分销跳转域改写表：这类短链把分销码写在**路径**里（https://<品牌>.cgref.cn/s/<码>），
+   上面那条「整串砍到 origin+pathname」对它无效——砍掉查询串后剩下的仍是一枚活的分销入口
+   （实测访问一次即种一次归因）。所以按 host+pathname 命中后整条换成逐条取证过的官方地址。
+   表入库（crawler/nav/link-overrides.json，30 条各带 landedWithParams / officialTitle 等实证字段）；
+   清洗落在管线层而不是改 data/raw/：raw 是未入库的抓取产物，每次重爬都会把短链原样带回来。
+   缺表直接抛错而不是静默放行：表一旦被删，产物会原样带出分销入口，而产物红线
+   tests/build-output.test.mjs「nav 面外链零推广跳转域」扫的正是这个。 */
+const OVERRIDE_FILE = path.join(path.dirname(fileURLToPath(import.meta.url)), "link-overrides.json");
+if (!existsSync(OVERRIDE_FILE)) throw new Error(`缺外链改写表：${OVERRIDE_FILE}`);
+/** 改写键：host + pathname（小写、去尾斜杠）——与 cleanUrl 的输出形态同构，两边才可能对得上。 */
+function overrideKey(u) {
+  const t = String(u || "").trim();
+  if (!t) return "";
+  try {
+    const url = new URL(t);
+    return `${url.host}${url.pathname}`.replace(/\/+$/, "").toLowerCase();
+  } catch {
+    return t.replace(/^https?:\/\//, "").replace(/\/+$/, "").toLowerCase();
+  }
+}
+const LINK_OVERRIDES = new Map(
+  JSON.parse(readFileSync(OVERRIDE_FILE, "utf8")).entries.map((e) => [overrideKey(e.affiliate), e.official])
+);
+
 function cleanUrl(u) {
   const t = String(u || "").trim();
   if (!t) return "";
@@ -32,7 +56,8 @@ function cleanUrl(u) {
     const url = new URL(t);
     url.search = "";
     url.hash = "";
-    return url.toString();
+    /* 先砍参数得到可比对的 host+path，再查改写表；命中则整条换成官方地址 */
+    return LINK_OVERRIDES.get(overrideKey(url)) || url.toString();
   } catch {
     /* 裸域名/相对形态 new URL 必失败，按字符切掉 ? 与 # 兜底 */
     return t.split(/[?#]/)[0];

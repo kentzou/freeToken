@@ -172,7 +172,7 @@ test("站内页面链接形态随口径落地：镜像全带 index.html，主站
 });
 
 /* canonical 决定「谁来竞争排名」，是抓取面的一部分：/nav 频道初版六类页面（频道首页/目录/榜单/
-   来源/14 个分类/1928 个详情）全都没写 alternates.canonical，而既有自检只看首页那一条——
+   来源/14 个分类/全部工具详情）全都没写 alternates.canonical，而既有自检只看首页那一条——
    半边站的声明缺失靠人眼发现不算守住。这里按扫描面咬住：与 locsFromHtml 同一口径
    （排除 404/admin/_next、只认 index.html），逐页点名，缺声明或指错主机当场红。 */
 test("每个可索引页都带 canonical，且线上口径下指本站", () => {
@@ -192,6 +192,31 @@ test("每个可索引页都带 canonical，且线上口径下指本站", () => {
   }
   assert.ok(checked > 0, "一个可索引页都没扫到——这条自检失去被测对象");
   assert.deepEqual(bad.slice(0, 8), [], `${bad.length} 个可索引页的 canonical 不合口径（共扫 ${checked} 页）`);
+});
+
+test("nav 面外链零推广跳转域（分销码写在路径里，砍参数拦不住）", () => {
+  /** 目录站的推广跳转域：同一跳板域实测并存两种形态——https://<品牌>.cgref.cn/s/<码>（一跳码）
+   *  与 https://<品牌>.cgref.cn/<渠道名>（/aibot、/aibott、/codingplan 这类，10-13 补证时新发现的 23 条）。
+   *  跳转时才把 cg_click_id / cgv / utm=cg 拼到官方地址上，所以管线那条「整串砍到 origin+pathname」
+   *  对它无效：码写在**路径**里，砍完参数剩下的仍是一枚活的推广入口（实测点一次即种一次归因）。
+   *  口径按**域名**咬死，不按路径形态——本仓首版只写了 /s/<码>，当场放过 23 条 /aibot 形态，
+   *  形态匹配必漏；新增跳转域往 AFFILIATE_HOSTS 加一行域名即可，不必枚举参数名或路径。
+   *  反斜杠先剥掉再匹配：产物里外链理论上有 `//` 与 `\/\/`（RSC payload 转义）两种形态，
+   *  10-13 在修前产物上实测差值 0（185 处对 185 处），剥一次不改变当前读数，只堵未来的转义形态漏检。
+   *  清洗落点：crawler/nav/pipeline.mjs 查 crawler/nav/link-overrides.json 改写为官方地址。 */
+  const AFFILIATE_HOSTS = ["cgref.cn"];
+  const navFiles = htmlFiles.filter((f) => path.relative(OUT, f).split(path.sep)[0] === "nav");
+  assert.ok(navFiles.length > 100, `只扫到 ${navFiles.length} 个 nav 产物——这条自检已失去被测对象`);
+  const bad = [];
+  for (const f of navFiles) {
+    const s = flat(readFileSync(f, "utf8")).split("\\").join("");
+    for (const h of AFFILIATE_HOSTS) {
+      const re = new RegExp(`https?:\\/\\/[^"'<>\\s]*${h.replace(/\./g, "\\.")}`, "g");
+      const hits = s.match(re);
+      if (hits) bad.push(`${path.relative(OUT, f)} → ${h} ×${hits.length}`);
+    }
+  }
+  assert.deepEqual(bad.slice(0, 6), [], `${bad.length} 个 nav 产物内嵌推广跳转链（共 ${bad.length} 页）`);
 });
 
 test("暗色令牌已随产物落地", () => {

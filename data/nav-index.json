@@ -1,11 +1,11 @@
 {
   "updated": "2026-10-13",
-  "generatedAt": "2026-10-13T02:41:26.548Z",
+  "generatedAt": "2026-10-13T04:52:42.647Z",
   "sourceFetchedAt": "2026-10-10T08:07:37.977Z",
   "stats": {
-    "total": 1928,
+    "total": 1913,
     "rawTotal": 2140,
-    "dedupRemoved": 212,
+    "dedupRemoved": 227,
     "siteCount": 2,
     "skippedCount": 10
   },
@@ -18,7 +18,7 @@
     {
       "slug": "writing",
       "name": "AI 写作",
-      "count": 194
+      "count": 191
     },
     {
       "slug": "image",
@@ -28,12 +28,12 @@
     {
       "slug": "video",
       "name": "AI 视频",
-      "count": 250
+      "count": 243
     },
     {
       "slug": "audio",
       "name": "AI 音频",
-      "count": 191
+      "count": 190
     },
     {
       "slug": "code",
@@ -43,7 +43,7 @@
     {
       "slug": "agent",
       "name": "AI 智能体",
-      "count": 103
+      "count": 102
     },
     {
       "slug": "office",
@@ -53,7 +53,7 @@
     {
       "slug": "design",
       "name": "AI 设计",
-      "count": 148
+      "count": 146
     },
     {
       "slug": "search",
@@ -82,9 +82,9 @@
     }
   ],
   "tagCounts": {
-    "免费额度": 170,
-    "中文友好": 39,
+    "免费额度": 169,
     "多模型": 30,
+    "中文友好": 37,
     "移动端": 22,
     "企业级": 58,
     "本地部署": 25,
@@ -221,22 +221,24 @@
   ],
   "items": [
     {
-      "id": "wawawriter-cgref-cn",
+      "id": "wawawriter-com",
       "name": "蛙蛙写作",
-      "desc": "AI小说和内容创作工具",
-      "url": "https://wawawriter.cgref.cn/s/rpexm33k90",
+      "desc": "AI写小说，一键成文，AI漫剧",
+      "url": "https://wawawriter.com/app/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2025/07/wawa-logo.png",
       "category": "writing",
       "categoryName": "AI 写作",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI写作工具"
+        "AI写作工具",
+        "AI写作",
+        "新收录"
       ],
       "sources": [
         {
@@ -245,6 +247,13 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI写作工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://wawawriter.com/app/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI写作",
+          "directLink": true
         }
       ]
     },
@@ -277,22 +286,23 @@
       ]
     },
     {
-      "id": "laper-cgref-cn",
+      "id": "laper-ai",
       "name": "Laper",
-      "desc": "AI 原生剧本创作工具",
-      "url": "https://laper.cgref.cn/s/zdkjqq8n1r",
+      "desc": "通过人工智能辅助编剧从创意构思到结构化剧本输出",
+      "url": "https://laper.ai/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/07/Laper-logo1.png",
       "category": "writing",
       "categoryName": "AI 写作",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI写作工具"
+        "AI写作工具",
+        "新收录"
       ],
       "sources": [
         {
@@ -301,6 +311,13 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI写作工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://laper.ai/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "新收录",
+          "directLink": true
         }
       ]
     },
@@ -442,22 +459,23 @@
       ]
     },
     {
-      "id": "turbodesk-cgref-cn",
+      "id": "turbodesk-xfyun-cn",
       "name": "讯飞绘文",
-      "desc": "AI批量原创，多平台矩阵号管理",
-      "url": "https://turbodesk.cgref.cn/s/1le05l8noq",
+      "desc": "选题、配图、成文，一站式创作，让内容运营更高效",
+      "url": "https://turbodesk.xfyun.cn/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2024/08/turbodesk-logo.png",
       "category": "writing",
       "categoryName": "AI 写作",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI写作工具"
+        "AI写作工具",
+        "AI写作"
       ],
       "sources": [
         {
@@ -466,14 +484,21 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI写作工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://turbodesk.xfyun.cn/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI写作",
+          "directLink": true
         }
       ]
     },
     {
-      "id": "qinyanai-cgref-cn",
+      "id": "app-qinyanai-com",
       "name": "沁言学术",
       "desc": "AI科研写作平台，一站式文献管理",
-      "url": "https://qinyanai.cgref.cn/aibot",
+      "url": "https://app.qinyanai.com/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/09/qinyanai-logo.png",
       "category": "writing",
       "categoryName": "AI 写作",
@@ -592,25 +617,23 @@
       ]
     },
     {
-      "id": "jucloud-cgref-cn",
+      "id": "jucloud-com",
       "name": "剧云",
-      "desc": "免费 AI 智能中文剧本创作平台",
-      "url": "https://jucloud.cgref.cn/s/zdkj0xoe1r",
+      "desc": "专业的剧本创作工具从灵感迸发到专业排版，全流程AI创作方案。让灵感落地，让创作更专注。",
+      "url": "https://www.jucloud.com/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/06/jucloud-icon.png",
       "category": "writing",
       "categoryName": "AI 写作",
-      "tags": [
-        "免费额度",
-        "中文友好"
-      ],
-      "pricing": "free",
+      "tags": [],
+      "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI写作工具"
+        "AI写作工具",
+        "AI小说"
       ],
       "sources": [
         {
@@ -619,6 +642,13 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI写作工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://www.jucloud.com/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI小说",
+          "directLink": true
         }
       ]
     },
@@ -3306,23 +3336,24 @@
       ]
     },
     {
-      "id": "liblib-cgref-cn",
+      "id": "liblib-art",
       "name": "LiblibAI电商营销",
       "desc": "LiblibAI电商营销场景模型工具，丰富的LoRA模型",
-      "url": "https://liblib.cgref.cn/s/dqndpmwn2z",
+      "url": "https://www.liblib.art/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2025/10/liblib.art-logo.png",
       "category": "image",
       "categoryName": "AI 图像",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
         "AI图像工具",
-        "AI视频工具"
+        "AI视频工具",
+        "AI视频"
       ],
       "sources": [
         {
@@ -3331,6 +3362,13 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI图像工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://www.liblib.art/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI视频",
+          "directLink": true
         }
       ]
     },
@@ -3391,10 +3429,10 @@
       ]
     },
     {
-      "id": "pixpix-cgref-cn",
+      "id": "pixpix-art",
       "name": "PixPix",
       "desc": "聚合全球顶级 AI 模型的跨境电商图视频创作平台",
-      "url": "https://pixpix.cgref.cn/s/5ln1zx5erw",
+      "url": "https://www.pixpix.art/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/07/PixPix-icon.png",
       "category": "image",
       "categoryName": "AI 图像",
@@ -3421,10 +3459,10 @@
       ]
     },
     {
-      "id": "chaojihaomai-cgref-cn",
+      "id": "marketing-k-fashionshop-com",
       "name": "潮际好麦",
       "desc": "AI赋能电商视觉革命，一站式智能商拍平台",
-      "url": "https://chaojihaomai.cgref.cn/s/ogeww9vep2",
+      "url": "https://marketing.k-fashionshop.com/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/01/chaojihaomai-icon-1.png",
       "category": "image",
       "categoryName": "AI 图像",
@@ -3685,10 +3723,10 @@
       ]
     },
     {
-      "id": "skildart-cgref-cn",
+      "id": "skildart-cn",
       "name": "SkildArt",
       "desc": "一站式 AI 视觉创作平台，为商业营销而生",
-      "url": "https://skildart.cgref.cn/s/rpexor3e90",
+      "url": "https://www.skildart.cn/workbench",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/07/skildart-logo.png",
       "category": "image",
       "categoryName": "AI 图像",
@@ -4582,10 +4620,10 @@
       ]
     },
     {
-      "id": "liblib-cgref-cn-2",
+      "id": "liblib-art-2",
       "name": "LiblibAI抠图",
       "desc": "LiblibAI推出的AI高清放大工作流",
-      "url": "https://liblib.cgref.cn/aibot",
+      "url": "https://www.liblib.art/workflows",
       "logo": "https://ai-bot.cn/wp-content/uploads/2025/10/liblib.art-logo.png",
       "category": "image",
       "categoryName": "AI 图像",
@@ -5484,10 +5522,10 @@
       ]
     },
     {
-      "id": "liblib-cgref-cn-3",
+      "id": "liblib-art-3",
       "name": "LiblibAI·哩布哩布AI",
       "desc": "国内领先的AI图像创作平台和模型分享社区",
-      "url": "https://liblib.cgref.cn/aibotimage",
+      "url": "https://www.liblib.art/ai-tool/image-generator",
       "logo": "https://ai-bot.cn/wp-content/uploads/2025/10/liblib.art-logo.png",
       "category": "image",
       "categoryName": "AI 图像",
@@ -8349,22 +8387,23 @@
       ]
     },
     {
-      "id": "libtv-cgref-cn",
+      "id": "liblib-tv",
       "name": "LibTV",
-      "desc": "专业AI视频创作平台，最便宜的 Seedance 2.5 ！",
-      "url": "https://libtv.cgref.cn/aibot",
+      "desc": "从脚本到成片全闭环，LLM、音视频 SOTA 模型全驱动，AI 拉片、剧情推演、多帧生成一气呵成！ 专业镜头控制，视频创作更高效!",
+      "url": "https://www.liblib.tv/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/04/libtv-icon.png",
       "category": "video",
       "categoryName": "AI 视频",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI视频工具"
+        "AI视频工具",
+        "AI视频"
       ],
       "sources": [
         {
@@ -8373,6 +8412,13 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI视频工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://www.liblib.tv/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI视频",
+          "directLink": true
         }
       ]
     },
@@ -8405,22 +8451,23 @@
       ]
     },
     {
-      "id": "updream-cgref-cn",
+      "id": "updream-cn",
       "name": "updream",
-      "desc": "专业级一站式 AI 视频创作平台",
-      "url": "https://updream.cgref.cn/s/1oe71vme23",
+      "desc": "专业级一站式AI视频创作平台，面向专业内容创作者，主打长记忆agent、技能库、无界画布三大核心能力，定位为创作工作台而非单纯生成器，区别于轻量化「一键出片」工具，更适合高频创作、团队协作、风格统一的专业场景。",
+      "url": "https://www.updream.cn/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/06/updream-logo1.png",
       "category": "video",
       "categoryName": "AI 视频",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI视频工具"
+        "AI视频工具",
+        "AI视频"
       ],
       "sources": [
         {
@@ -8429,6 +8476,13 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI视频工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://www.updream.cn/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI视频",
+          "directLink": true
         }
       ]
     },
@@ -8499,22 +8553,23 @@
       ]
     },
     {
-      "id": "wawawriter-cgref-cn-2",
+      "id": "wawawriter-com-2",
       "name": "蛙蛙漫剧",
       "desc": "AI小说-剧本-漫剧视频全链路生产",
-      "url": "https://wawawriter.cgref.cn/aibot",
+      "url": "https://wawawriter.com/app/video-create/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/06/wawa-video-create-website2.png",
       "category": "video",
       "categoryName": "AI 视频",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI视频工具"
+        "AI视频工具",
+        "AI漫剧"
       ],
       "sources": [
         {
@@ -8523,14 +8578,21 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI视频工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://wawawriter.com/app/video-create",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI漫剧",
+          "directLink": true
         }
       ]
     },
     {
-      "id": "pixtv-cgref-cn",
+      "id": "pixtv-ai",
       "name": "PixTV",
       "desc": "一站式 AI 多模态创作工具",
-      "url": "https://pixtv.cgref.cn/s/2znrdr6er7",
+      "url": "https://www.pixtv.ai/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/09/PixTV-logo-2.png",
       "category": "video",
       "categoryName": "AI 视频",
@@ -8555,22 +8617,23 @@
       ]
     },
     {
-      "id": "anishort-cgref-cn",
+      "id": "app-anishort-cn",
       "name": "AniShort",
-      "desc": "AI短剧协同创作平台，重构短剧生产流程",
-      "url": "https://anishort.cgref.cn/s/2znrlqynr7",
+      "desc": "为AI影视剧协作而生，重构AI影视剧生产流程",
+      "url": "https://app.anishort.cn/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/03/AniShort-logo.png",
       "category": "video",
       "categoryName": "AI 视频",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI视频工具"
+        "AI视频工具",
+        "AI视频"
       ],
       "sources": [
         {
@@ -8579,26 +8642,34 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI视频工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://app.anishort.cn/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI视频",
+          "directLink": true
         }
       ]
     },
     {
-      "id": "aibrm-cgref-cn",
+      "id": "aibrm-com",
       "name": "白日梦",
-      "desc": "领先AI创作平台，可生成最长50分钟的视频",
-      "url": "https://aibrm.cgref.cn/aibot",
+      "desc": "领先AI创作平台，可生成最长50分钟的视频。人物一致性强，支持最新的Nano Banana。",
+      "url": "https://aibrm.com/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2024/07/aibrm-icon.png",
       "category": "video",
       "categoryName": "AI 视频",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI视频工具"
+        "AI视频工具",
+        "AI视频"
       ],
       "sources": [
         {
@@ -8607,6 +8678,13 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI视频工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://aibrm.com/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI视频",
+          "directLink": true
         }
       ]
     },
@@ -8677,10 +8755,10 @@
       ]
     },
     {
-      "id": "lickmv-cgref-cn",
+      "id": "lickmv-com",
       "name": "立刻MV",
       "desc": "一站式 AI 音乐视频（MV）创作工具",
-      "url": "https://lickmv.cgref.cn/s/qmnoyy3e29",
+      "url": "https://www.lickmv.com/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/06/LickMV-website.png",
       "category": "video",
       "categoryName": "AI 视频",
@@ -8705,10 +8783,10 @@
       ]
     },
     {
-      "id": "vibeknow-cgref-cn",
+      "id": "vibeknow-com",
       "name": "VibeKnow",
       "desc": "全球首个 AI 知识视频创作平台",
-      "url": "https://vibeknow.cgref.cn/s/3mnz07jeo1",
+      "url": "https://vibeknow.com/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/05/VibeKnow-logo.png",
       "category": "video",
       "categoryName": "AI 视频",
@@ -8761,10 +8839,10 @@
       ]
     },
     {
-      "id": "volcengine-cgref-cn",
+      "id": "ai-volcengine-com",
       "name": "Seedance",
       "desc": "字节跳动 Seed 团队推出的多模态 AI 视频生成模型",
-      "url": "https://volcengine.cgref.cn/aibot",
+      "url": "https://ai.volcengine.com/activity/seedance2",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/04/Seed-icon.jpg",
       "category": "video",
       "categoryName": "AI 视频",
@@ -11445,10 +11523,10 @@
       ]
     },
     {
-      "id": "cappt-cgref-cn",
+      "id": "cappt-cc",
       "name": "咔片PPT",
       "desc": "AI PPT制作工具，设计美化全流程自动化",
-      "url": "https://cappt.cgref.cn/s/ogewxgrkp2",
+      "url": "https://www.cappt.cc/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2025/03/cappt-logo-1.png",
       "category": "office",
       "categoryName": "AI 办公效率",
@@ -11501,10 +11579,10 @@
       ]
     },
     {
-      "id": "islide-cgref-cn",
+      "id": "islide-cc",
       "name": "iSlide AIPPT",
       "desc": "AI一键设计精美PPT，只需一句标题",
-      "url": "https://islide.cgref.cn/aibot",
+      "url": "https://www.islide.cc/landing",
       "logo": "https://ai-bot.cn/wp-content/uploads/2024/02/islide-icon.png",
       "category": "office",
       "categoryName": "AI 办公效率",
@@ -11529,10 +11607,10 @@
       ]
     },
     {
-      "id": "2dogppt-cgref-cn",
+      "id": "2dogppt-com",
       "name": "二狗PPT",
       "desc": "去 AI 味中式职场 PPT 生成工具",
-      "url": "https://2dogppt.cgref.cn/s/2znrpzoer7",
+      "url": "https://www.2dogppt.com/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/04/2dogppt-logo.png",
       "category": "office",
       "categoryName": "AI 办公效率",
@@ -11769,10 +11847,10 @@
       ]
     },
     {
-      "id": "aippt-plugin-cgref-cn",
+      "id": "aippt-cn-2",
       "name": "AiPPT插件",
       "desc": "AiPPT推出的AI PPT制作工具（插件版）",
-      "url": "https://aippt-plugin.cgref.cn/aibot",
+      "url": "https://www.aippt.cn/plugin",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/04/aippt.plugin-logo.png",
       "category": "office",
       "categoryName": "AI 办公效率",
@@ -14715,10 +14793,10 @@
       ]
     },
     {
-      "id": "upcv-cgref-cn",
+      "id": "upcv-tech",
       "name": "UP求职",
       "desc": "AI聊天搞定简历",
-      "url": "https://upcv.cgref.cn/aibot",
+      "url": "https://www.upcv.tech/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2025/07/upcv-logo.png",
       "category": "office",
       "categoryName": "AI 办公效率",
@@ -14743,10 +14821,10 @@
       ]
     },
     {
-      "id": "wondercv-cgref-cn",
+      "id": "wondercv-com",
       "name": "超级简历",
       "desc": "3分钟生成简历超千万人使用",
-      "url": "https://wondercv.cgref.cn/aibot",
+      "url": "https://www.wondercv.com/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2025/07/WonderCV-logo.png",
       "category": "office",
       "categoryName": "AI 办公效率",
@@ -17577,10 +17655,10 @@
       ]
     },
     {
-      "id": "aipyaipy-cgref-cn",
+      "id": "promo-aipyaipy-com",
       "name": "爱派AiPy",
       "desc": "本地Manus、国内能用、内网能用，开源免费",
-      "url": "https://aipyaipy.cgref.cn/aibot",
+      "url": "https://promo.aipyaipy.com/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2025/09/AiPy-website-2-1.png",
       "category": "agent",
       "categoryName": "AI 智能体",
@@ -17712,10 +17790,10 @@
       ]
     },
     {
-      "id": "atoms-cgref-cn",
+      "id": "atoms-dev",
       "name": "Atoms",
       "desc": "第一支自动构建真实业务的 AI 团队",
-      "url": "https://atoms.cgref.cn/aibot",
+      "url": "https://atoms.dev/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/01/Atoms-icon.png",
       "category": "agent",
       "categoryName": "AI 智能体",
@@ -17740,10 +17818,10 @@
       ]
     },
     {
-      "id": "volcengine-cgref-cn-2",
+      "id": "volcengine-com",
       "name": "ArkClaw",
       "desc": "火山引擎推出的云端托管版OpenClaw服务",
-      "url": "https://volcengine.cgref.cn/aibottt",
+      "url": "https://www.volcengine.com/product/arkclaw",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/03/ArkClaw-icon.png",
       "category": "agent",
       "categoryName": "AI 智能体",
@@ -18879,22 +18957,23 @@
       ]
     },
     {
-      "id": "aionclaw-cgref-cn",
+      "id": "prom-aionclaw-com",
       "name": "AionClaw",
       "desc": "真正能动手交付成品的桌面 AI 智能体，每日登录送积分",
-      "url": "https://aionclaw.cgref.cn/s/20ep3zjnw1",
+      "url": "https://prom.aionclaw.com/tool/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/09/AionClaw-logo.png",
       "category": "agent",
       "categoryName": "AI 智能体",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI智能体"
+        "AI智能体",
+        "新收录"
       ],
       "sources": [
         {
@@ -18903,6 +18982,13 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI智能体",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://prom.aionclaw.com/tool/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "新收录",
+          "directLink": true
         }
       ]
     },
@@ -19505,10 +19591,10 @@
       ]
     },
     {
-      "id": "astron-claw-cgref-cn",
+      "id": "agent-xfyun-cn-3",
       "name": "AstronClaw",
       "desc": "科大讯飞推出的云端部署OpenClaw",
-      "url": "https://astron-claw.cgref.cn/aibot",
+      "url": "https://agent.xfyun.cn/overview/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/03/AstronClaw-icon.png",
       "category": "agent",
       "categoryName": "AI 智能体",
@@ -22514,10 +22600,10 @@
       ]
     },
     {
-      "id": "agentspace-cgref-cn",
+      "id": "agent-space",
       "name": "Agent.Space",
       "desc": "面向 AI 编程 Agent 的云端工作空间",
-      "url": "https://agentspace.cgref.cn/s/omkl2mve4d",
+      "url": "https://agent.space/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/08/Agent.Space-logo.png",
       "category": "code",
       "categoryName": "AI 编程",
@@ -25075,22 +25161,23 @@
       ]
     },
     {
-      "id": "modao-cgref-cn",
+      "id": "modao-cc",
       "name": "墨刀AI",
       "desc": "AI秒生原型稿",
-      "url": "https://modao.cgref.cn/aibot",
+      "url": "https://modao.cc/feature/ai",
       "logo": "https://ai-bot.cn/wp-content/uploads/2023/05/modao-icon.png",
       "category": "design",
       "categoryName": "AI 设计",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI设计工具"
+        "AI设计工具",
+        "AI设计"
       ],
       "sources": [
         {
@@ -25099,6 +25186,13 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI设计工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://modao.cc/feature/ai",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI设计",
+          "directLink": true
         }
       ]
     },
@@ -25345,22 +25439,23 @@
       ]
     },
     {
-      "id": "lovart-cgref-cn",
+      "id": "lovart-art",
       "name": "星流AI",
-      "desc": "一站式 AI 设计与创作工具",
-      "url": "https://lovart.cgref.cn/s/j7n6jwme1g",
+      "desc": "全球首个专注于设计领域的 AI 智能体（Agent）",
+      "url": "https://www.lovart.art/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2025/09/xingliu.art-logo.png",
       "category": "design",
       "categoryName": "AI 设计",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI设计工具"
+        "AI设计工具",
+        "AI设计"
       ],
       "sources": [
         {
@@ -25369,6 +25464,13 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI设计工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://www.lovart.art/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI设计",
+          "directLink": true
         }
       ]
     },
@@ -27860,22 +27962,23 @@
       ]
     },
     {
-      "id": "xfzhizuo-cgref-cn",
+      "id": "xfzhizuo-cn",
       "name": "讯飞智作",
-      "desc": "AI文本配音工具，数字人课程、营销视频制作",
-      "url": "https://xfzhizuo.cgref.cn/aibot",
+      "desc": "语音合成、人脸建模、唇形预测、图形处理等，为用户提供的一个音视频生产平台。它旨在通过AI技术解决用户在音视频制作中遇到的主播难找、成本高、生产效率低等问题，使内容创作更加灵活、高效和便捷。",
+      "url": "https://www.xfzhizuo.cn/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/02/peiyin-xunfei-icon.png",
       "category": "audio",
       "categoryName": "AI 音频",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI音频工具"
+        "AI音频工具",
+        "AI视频"
       ],
       "sources": [
         {
@@ -27884,6 +27987,13 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI音频工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://www.xfzhizuo.cn/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI视频",
+          "directLink": true
         }
       ]
     },
@@ -27974,22 +28084,23 @@
       ]
     },
     {
-      "id": "yinshu-cgref-cn",
+      "id": "yinshu-me",
       "name": "音述AI",
-      "desc": "全球首个AI音乐社区",
-      "url": "https://yinshu.cgref.cn/aibot",
+      "desc": "以“用声音述说故事”为核心的 AI 音乐创作与声音分享社区。",
+      "url": "https://www.yinshu.me/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/03/yinshu-logo.png",
       "category": "audio",
       "categoryName": "AI 音频",
       "tags": [],
       "pricing": "unknown",
       "pricingInferred": true,
-      "sourceCount": 1,
+      "sourceCount": 2,
       "firstSeen": "2026-10-10T08:07:37.977Z",
       "lastSeen": "2026-10-10T08:07:37.977Z",
       "tier": "crawled",
       "rawCategories": [
-        "AI音频工具"
+        "AI音频工具",
+        "AI音乐"
       ],
       "sources": [
         {
@@ -27998,6 +28109,13 @@
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI音频工具",
           "directLink": false
+        },
+        {
+          "siteId": "aigc",
+          "detailUrl": "https://www.yinshu.me/",
+          "fetchedAt": "2026-10-10T08:07:37.977Z",
+          "rawCategory": "AI音乐",
+          "directLink": true
         }
       ]
     },
@@ -31879,10 +31997,10 @@
       ]
     },
     {
-      "id": "volcengine-cgref-cn-3",
+      "id": "volcengine-com-2",
       "name": "方舟 Coding Plan",
       "desc": "火山引擎推出的大模型 API 套餐订阅服务",
-      "url": "https://volcengine.cgref.cn/codingplan",
+      "url": "https://www.volcengine.com/activity/codingplan",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/03/volcengine-codingplan-logo.png",
       "category": "model",
       "categoryName": "模型与开发平台",
@@ -32986,10 +33104,10 @@
       ]
     },
     {
-      "id": "volcengine-cgref-cn-4",
+      "id": "volcengine-com-3",
       "name": "方舟 Agent Plan",
       "desc": "火山引擎推出的业界首个 Agent 套餐",
-      "url": "https://volcengine.cgref.cn/aibott",
+      "url": "https://www.volcengine.com/activity/agentplan",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/03/volcengine-codingplan-logo.png",
       "category": "model",
       "categoryName": "模型与开发平台",
@@ -35222,10 +35340,10 @@
       ]
     },
     {
-      "id": "volcengine-cgref-cn-5",
+      "id": "ai-volcengine-com-2",
       "name": "豆包大模型",
       "desc": "字节跳动推出的AI大模型家族，包括视频生成、语音视觉、通用语言模型等",
-      "url": "https://volcengine.cgref.cn/aibotttt",
+      "url": "https://ai.volcengine.com/model",
       "logo": "https://ai-bot.cn/wp-content/uploads/2024/09/doubao-llm-logo1.png",
       "category": "model",
       "categoryName": "模型与开发平台",
@@ -37012,10 +37130,10 @@
       ]
     },
     {
-      "id": "speedai-cgref-cn",
+      "id": "speedai-com",
       "name": "SpeedAI",
       "desc": "AI科研助手，AIGC检测、降重降AI率",
-      "url": "https://speedai.cgref.cn/aibot",
+      "url": "https://speedai.com/",
       "logo": "https://ai-bot.cn/wp-content/uploads/2026/01/SpeedAI-logo.png",
       "category": "detect",
       "categoryName": "AI 检测与优化",
@@ -38071,35 +38189,6 @@
       ]
     },
     {
-      "id": "wawawriter-com",
-      "name": "蛙蛙写作",
-      "desc": "AI写小说，一键成文，AI漫剧",
-      "url": "https://wawawriter.com/app/",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2024/11/aa58aae8459fb600d794e42093f714eb.png",
-      "category": "writing",
-      "categoryName": "AI 写作",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI写作",
-        "新收录"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://wawawriter.com/app/",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI写作",
-          "directLink": true
-        }
-      ]
-    },
-    {
       "id": "aigc-cn",
       "name": "豆包AI写作助手",
       "desc": "一键提取精华，秒懂全文大意",
@@ -38290,34 +38379,6 @@
         {
           "siteId": "aigc",
           "detailUrl": "https://qiewenpaper.com/zh",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI写作",
-          "directLink": true
-        }
-      ]
-    },
-    {
-      "id": "turbodesk-cgref-cn-2",
-      "name": "讯飞绘文",
-      "desc": "选题、配图、成文，一站式创作，让内容运营更高效",
-      "url": "https://turbodesk.cgref.cn/s/20ep6ldnw1",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2025/04/xunfeihuiwen-logo.jpg",
-      "category": "writing",
-      "categoryName": "AI 写作",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI写作"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://turbodesk.cgref.cn/s/20ep6ldnw1",
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI写作",
           "directLink": true
@@ -39762,94 +39823,10 @@
       ]
     },
     {
-      "id": "updream-cgref-cn-2",
-      "name": "updream",
-      "desc": "专业级一站式AI视频创作平台，面向专业内容创作者，主打长记忆agent、技能库、无界画布三大核心能力，定位为创作工作台而非单纯生成器，区别于轻量化「一键出片」工具，更适合高频创作、团队协作、风格统一的专业场景。",
-      "url": "https://updream.cgref.cn/s/dqndm0wn2z",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2026/06/updream-logo.jpg",
-      "category": "video",
-      "categoryName": "AI 视频",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI视频"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://updream.cgref.cn/s/dqndm0wn2z",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI视频",
-          "directLink": true
-        }
-      ]
-    },
-    {
-      "id": "liblib-cgref-cn-4",
-      "name": "Liblib AI – 视频",
-      "desc": "一键使用顶尖视频生成模型",
-      "url": "https://liblib.cgref.cn/s/omklvdzn4d",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2025/10/liblib-new-logo.jpg",
-      "category": "video",
-      "categoryName": "AI 视频",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI视频"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://liblib.cgref.cn/s/omklvdzn4d",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI视频",
-          "directLink": true
-        }
-      ]
-    },
-    {
-      "id": "libtv-cgref-cn-2",
-      "name": "LibTV – SeeDance2.0",
-      "desc": "从脚本到成片全闭环，LLM、音视频 SOTA 模型全驱动，AI 拉片、剧情推演、多帧生成一气呵成！ 专业镜头控制，视频创作更高效!",
-      "url": "https://libtv.cgref.cn/s/54onyomkjx",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2026/04/libtv-logo.jpg",
-      "category": "video",
-      "categoryName": "AI 视频",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI视频"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://libtv.cgref.cn/s/54onyomkjx",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI视频",
-          "directLink": true
-        }
-      ]
-    },
-    {
-      "id": "seko-cgref-cn",
+      "id": "seko-sensetime-com",
       "name": "商汤Seko",
       "desc": "帮助创作者和小型工作室实现“一人剧组”的工业化生产模式。",
-      "url": "https://seko.cgref.cn/s/59ngw7jer2",
+      "url": "https://seko.sensetime.com/",
       "logo": "https://www.aigc.cn/wp-content/uploads/2026/06/seko-logo.jpg",
       "category": "video",
       "categoryName": "AI 视频",
@@ -39866,35 +39843,7 @@
       "sources": [
         {
           "siteId": "aigc",
-          "detailUrl": "https://seko.cgref.cn/s/59ngw7jer2",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI视频",
-          "directLink": true
-        }
-      ]
-    },
-    {
-      "id": "aibrm-cgref-cn-2",
-      "name": "白日梦AI",
-      "desc": "领先AI创作平台，可生成最长50分钟的视频。人物一致性强，支持最新的Nano Banana。",
-      "url": "https://aibrm.cgref.cn/s/7xpn892ezw",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2024/07/白日梦AI.jpg",
-      "category": "video",
-      "categoryName": "AI 视频",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI视频"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://aibrm.cgref.cn/s/7xpn892ezw",
+          "detailUrl": "https://seko.sensetime.com/",
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI视频",
           "directLink": true
@@ -39923,62 +39872,6 @@
         {
           "siteId": "aigc",
           "detailUrl": "https://workrally.qq.com/",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI视频",
-          "directLink": true
-        }
-      ]
-    },
-    {
-      "id": "app-anishort-cn",
-      "name": "AniShort-AI影视剧",
-      "desc": "为AI影视剧协作而生，重构AI影视剧生产流程",
-      "url": "https://app.anishort.cn/",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2026/06/AniShort-Logo.jpg",
-      "category": "video",
-      "categoryName": "AI 视频",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI视频"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://app.anishort.cn/",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI视频",
-          "directLink": true
-        }
-      ]
-    },
-    {
-      "id": "xfzhizuo-cgref-cn-2",
-      "name": "讯飞智作-创意视频",
-      "desc": "语音合成、人脸建模、唇形预测、图形处理等，为用户提供的一个音视频生产平台。它旨在通过AI技术解决用户在音视频制作中遇到的主播难找、成本高、生产效率低等问题，使内容创作更加灵活、高效和便捷。",
-      "url": "https://xfzhizuo.cgref.cn/s/1le06vweoq",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2025/01/xunfeizhizuo-logo.jpg",
-      "category": "video",
-      "categoryName": "AI 视频",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI视频"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://xfzhizuo.cgref.cn/s/1le06vweoq",
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI视频",
           "directLink": true
@@ -43125,34 +43018,6 @@
       ]
     },
     {
-      "id": "lovart-cgref-cn-2",
-      "name": "Lovart",
-      "desc": "全球首个专注于设计领域的 AI 智能体（Agent）",
-      "url": "https://lovart.cgref.cn/s/5ln1lqmkrw",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2025/05/lovart-logo.jpg",
-      "category": "design",
-      "categoryName": "AI 设计",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI设计"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://lovart.cgref.cn/s/5ln1lqmkrw",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI设计",
-          "directLink": true
-        }
-      ]
-    },
-    {
       "id": "gaoding-com-8",
       "name": "稿定AI设计",
       "desc": "国内知名在线AI设计作图工具&amp;新媒体人必备素材库，它通过AI设计，AI绘画，AI抠图，在线PS，图片编辑/延展等功能，将AI能力逐步渗透到灵感获取，创作，作品优化等环节，降低设计门槛，累计使用用户1亿+！",
@@ -43204,34 +43069,6 @@
         {
           "siteId": "aigc",
           "detailUrl": "https://xfun.design/",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI设计",
-          "directLink": true
-        }
-      ]
-    },
-    {
-      "id": "modao-cc",
-      "name": "墨刀AI",
-      "desc": "AI秒生原型稿",
-      "url": "https://modao.cc/feature/ai",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2025/08/modao-logo.jpg",
-      "category": "design",
-      "categoryName": "AI 设计",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI设计"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://modao.cc/feature/ai",
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI设计",
           "directLink": true
@@ -44455,10 +44292,10 @@
       ]
     },
     {
-      "id": "codeflying-cgref-cn",
+      "id": "codeflying-net",
       "name": "码上飞-AI生成小程序",
       "desc": "免费生成小程序/app/网站等各类应用",
-      "url": "https://codeflying.cgref.cn/s/q50k9y7ng6",
+      "url": "https://www.codeflying.net/",
       "logo": "https://www.aigc.cn/wp-content/uploads/2025/12/mashangfei-logo.jpg",
       "category": "code",
       "categoryName": "AI 编程",
@@ -44478,7 +44315,7 @@
       "sources": [
         {
           "siteId": "aigc",
-          "detailUrl": "https://codeflying.cgref.cn/s/q50k9y7ng6",
+          "detailUrl": "https://www.codeflying.net/",
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI编程",
           "directLink": true
@@ -45261,10 +45098,10 @@
       ]
     },
     {
-      "id": "seko-cgref-cn-2",
+      "id": "seko-sensetime-com-2",
       "name": "Seko AI数字人",
       "desc": "仅需上传一张人物照片并输入文本或音频，即可生成动作自然、情绪表达丰富且长达数分钟的拟真动态视频。",
-      "url": "https://seko.cgref.cn/aigc-seko-szr",
+      "url": "https://seko.sensetime.com/avatar-video",
       "logo": "https://www.aigc.cn/wp-content/uploads/2026/06/seko-logo.jpg",
       "category": "video",
       "categoryName": "AI 视频",
@@ -45281,7 +45118,7 @@
       "sources": [
         {
           "siteId": "aigc",
-          "detailUrl": "https://seko.cgref.cn/aigc-seko-szr",
+          "detailUrl": "https://seko.sensetime.com/avatar-video",
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "AI数字人",
           "directLink": true
@@ -47876,34 +47713,6 @@
       ]
     },
     {
-      "id": "yinshu-cgref-cn-2",
-      "name": "音述AI",
-      "desc": "以“用声音述说故事”为核心的 AI 音乐创作与声音分享社区。",
-      "url": "https://yinshu.cgref.cn/s/3rpe38jn05",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2026/05/yinshu-ai.webp",
-      "category": "audio",
-      "categoryName": "AI 音频",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI音乐"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://yinshu.cgref.cn/s/3rpe38jn05",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI音乐",
-          "directLink": true
-        }
-      ]
-    },
-    {
       "id": "vemus-tencentmusic-com",
       "name": "Vemus未音",
       "desc": "让音乐创作、演唱与分享的门槛变得极低。",
@@ -49917,34 +49726,6 @@
       ]
     },
     {
-      "id": "wawawriter-com-2",
-      "name": "蛙蛙AI漫剧",
-      "desc": "小说转漫剧全流程闭环",
-      "url": "https://wawawriter.com/app/video-create",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2024/11/aa58aae8459fb600d794e42093f714eb.png",
-      "category": "video",
-      "categoryName": "AI 视频",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI漫剧"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://wawawriter.com/app/video-create",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI漫剧",
-          "directLink": true
-        }
-      ]
-    },
-    {
       "id": "daoying-studio",
       "name": "道影AI",
       "desc": "每一个好创意，都让人惊喜",
@@ -51820,34 +51601,6 @@
       ]
     },
     {
-      "id": "jucloud-com",
-      "name": "剧云",
-      "desc": "专业的剧本创作工具从灵感迸发到专业排版，全流程AI创作方案。让灵感落地，让创作更专注。",
-      "url": "https://www.jucloud.com/",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2026/05/juyun-logo-white.jpg",
-      "category": "writing",
-      "categoryName": "AI 写作",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "AI小说"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://www.jucloud.com/",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "AI小说",
-          "directLink": true
-        }
-      ]
-    },
-    {
       "id": "xingyuexiezuo-com",
       "name": "星月写作",
       "desc": "以 “中文网文流量逻辑” 为底层设计，覆盖 “玄幻、都市、古言、悬疑” 等 18 类主流网文流派，通过 “AI 扫榜 + 专属模板 + 全链路适配”，实现 “新人快速上手出爆款、资深作者效率倍增、团队创作流程标准化”，是目前唯一通过 “构思效率、内容质量、平台适配、流量获取、多元变现、安全保障” 六大维度 “9 分 +” 测评的 AI 小说工具。",
@@ -53202,10 +52955,10 @@
       ]
     },
     {
-      "id": "loomy-cgref-cn",
+      "id": "loomy-xunfei-cn",
       "name": "Loomy AI工作搭子",
       "desc": "聚焦“低门槛、高安全、强适配、主动协作”四个核心方向，帮助用户把复杂、重复、跨工具的工作流程真正落到执行层。",
-      "url": "https://loomy.cgref.cn/s/jgem0jgnmy",
+      "url": "https://loomy.xunfei.cn/",
       "logo": "https://www.aigc.cn/wp-content/uploads/2026/07/loomy-avatar.jpg",
       "category": "chat",
       "categoryName": "AI 对话助手",
@@ -53222,7 +52975,7 @@
       "sources": [
         {
           "siteId": "aigc",
-          "detailUrl": "https://loomy.cgref.cn/s/jgem0jgnmy",
+          "detailUrl": "https://loomy.xunfei.cn/",
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "桌面助理",
           "directLink": true
@@ -54723,36 +54476,6 @@
       ]
     },
     {
-      "id": "prom-aionclaw-com",
-      "name": "AionClaw",
-      "desc": "面向个人的国产桌面执行型AI Agent平台",
-      "url": "https://prom.aionclaw.com/tool/",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2026/09/AionClaw-CXaC12F4.png",
-      "category": "agent",
-      "categoryName": "AI 智能体",
-      "tags": [
-        "中文友好"
-      ],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "新收录"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://prom.aionclaw.com/tool/",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "新收录",
-          "directLink": true
-        }
-      ]
-    },
-    {
       "id": "huishengkoudai-cn",
       "name": "回声口袋",
       "desc": "音频记忆与语音素材AI工作台",
@@ -54865,7 +54588,7 @@
       ]
     },
     {
-      "id": "lickmv-com",
+      "id": "lickmv-com-2",
       "name": "立刻MV",
       "desc": "中漫智声推出AI音乐MV垂直创作平台",
       "url": "https://www.lickmv.com/cn",
@@ -55805,7 +55528,7 @@
       ]
     },
     {
-      "id": "volcengine-com",
+      "id": "volcengine-com-4",
       "name": "Kickart",
       "desc": "一站式营销创作平台",
       "url": "https://www.volcengine.com/product/kickart",
@@ -55910,34 +55633,6 @@
         {
           "siteId": "aigc",
           "detailUrl": "https://agent.minimaxi.com/download",
-          "fetchedAt": "2026-10-10T08:07:37.977Z",
-          "rawCategory": "新收录",
-          "directLink": true
-        }
-      ]
-    },
-    {
-      "id": "laper-cgref-cn-2",
-      "name": "Laper",
-      "desc": "通过人工智能辅助编剧从创意构思到结构化剧本输出",
-      "url": "https://laper.cgref.cn/s/dqndyr3n2z",
-      "logo": "https://www.aigc.cn/wp-content/uploads/2026/08/Snipaste_2026-08-24_17-04-57.jpg",
-      "category": "other",
-      "categoryName": "其他",
-      "tags": [],
-      "pricing": "unknown",
-      "pricingInferred": true,
-      "sourceCount": 1,
-      "firstSeen": "2026-10-10T08:07:37.977Z",
-      "lastSeen": "2026-10-10T08:07:37.977Z",
-      "tier": "crawled",
-      "rawCategories": [
-        "新收录"
-      ],
-      "sources": [
-        {
-          "siteId": "aigc",
-          "detailUrl": "https://laper.cgref.cn/s/dqndyr3n2z",
           "fetchedAt": "2026-10-10T08:07:37.977Z",
           "rawCategory": "新收录",
           "directLink": true
