@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-10-13T02:45:42.138Z",
-  "totalModels": 459,
-  "freeModelCount": 19,
+  "fetchedAt": "2026-10-14T00:43:32.453Z",
+  "totalModels": 462,
+  "freeModelCount": 17,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -20,17 +20,6 @@
     "verifiedAt": "2026-09-30"
   },
   "models": [
-    {
-      "id": "apodex/apodex-1.1-mini:free",
-      "name": "Apodex: Apodex 1.1 Mini (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 262144,
-      "maxCompletionTokens": 235929,
-      "modality": "text->text",
-      "moderated": false
-    },
     {
       "id": "cohere/north-mini-code:free",
       "name": "Cohere: North Mini Code (free)",
@@ -95,17 +84,6 @@
       "contextLength": 1048576,
       "maxCompletionTokens": 65536,
       "modality": "text+image->text+audio",
-      "moderated": false
-    },
-    {
-      "id": "inclusionai/ling-3.1-flash",
-      "name": "inclusionAI: Ling 3.1 Flash",
-      "freeVariant": false,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 262144,
-      "maxCompletionTokens": 235929,
-      "modality": "text->text",
       "moderated": false
     },
     {
@@ -230,5 +208,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "da7b9daf6c5be0fa"
+  "sourceFingerprint": "9556a414863f4380"
 }
