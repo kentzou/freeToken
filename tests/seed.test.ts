@@ -215,7 +215,12 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
       sourceUrl: "https://example.com/probe#pricing",
       updated: "2026-10-09",
     };
-    const seed = buildSeed(src, CONFIG, { ...loadLocal(), localCards: [probe] });
+    // 本地表非空是既定状态（config/local-cards.json 现有 8 枚）：整表替换成裸 [probe] 会让
+    // :219 的长度等式只在空表时成立。改成「真表 + 探针」，等式对任意本地表规模都成立。
+    // 本地增补轮的 CI 缺陷（10-14 登记，见外层 50-ledger §9.9 Ruling-15c）。
+    const local = loadLocal();
+    const withProbe = { ...local, localCards: [...local.localCards, probe] };
+    const seed = buildSeed(src, CONFIG, withProbe);
     expect(seed.cards).toHaveLength(PIPELINE.cards.length + 1);
     expect(seed.cards.slice(0, -1)).toEqual(PIPELINE.cards); // 上游那 33 张逐字段不变，也不被挤位
     const tail: any = seed.cards[seed.cards.length - 1];
@@ -229,7 +234,7 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
     // §3 勘误 4：config 必须以真 CONFIG 展开为基底——上游 WorkBuddy/七牛云/小米 3 张的推广短链
     // 只有 site-config 的逐卡 link 覆盖兜得住，裸 { cards: {…} } 会先被 buildSeed 的 linkRisk
     // 守卫抛「清洗失败」，根本走不到下面这行 hide 断言（不放松守卫，见裁决「确保质量」）。
-    const hidden = buildSeed(src, { ...CONFIG, cards: { ...CONFIG.cards, "本站增补探针": { hide: true } } }, { ...loadLocal(), localCards: [probe] });
+    const hidden = buildSeed(src, { ...CONFIG, cards: { ...CONFIG.cards, "本站增补探针": { hide: true } } }, withProbe);
     expect(hidden.cards.some((c: any) => c.name === "本站增补探针")).toBe(false);
     // 只钉「探针不在」有空转面：`hidden.cards` 若整批为空，`some()` 同样返回 false。
     // 长度钉的是「合并后的 34 张里只被 hide 掉那 1 张」——空转与误删一并排除（执行期评审 Minor ⇒ R-9）。
