@@ -72,7 +72,7 @@ describe("iGetoken 快讯台账（三栏目跳转索引，只登记标题+链接
       expect.stringMatching(/^perks-[0-9a-f]{10}$/),
       expect.stringMatching(/^perks-[0-9a-f]{10}$/),
     ]);
-    const older = doc.items.find((i: any) => i.id === "2026-10-a-b-free");
+    const older = doc.items.find((i: any) => i.id === "2026-10-a-b-free")!; // ! 只在类型层，未命中会抛 TypeError 让本例照样红
     expect(older.title).toBe("A & B 限免 '5 天'");
     expect(older.date).toBe("2026-10-01");
     expect(sections(doc).filter((s: string) => s === "blog")).toHaveLength(0);
