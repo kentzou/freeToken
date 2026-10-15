@@ -45,15 +45,15 @@ test("产物数量合理（首页 + 详情页 + 4 内容页）", () => {
   for (const d of intelDirs) {
     assert.ok(existsSync(path.join(OUT, "intel", d, "index.html")), `详情页 /intel/${d}/ 缺 index.html`);
   }
-  for (const p of ["about", "editorial-policy", "privacy", "contact", "openrouter"]) {
+  for (const p of ["about", "editorial-policy", "privacy", "contact", "openrouter", "igetoken"]) {
     assert.ok(existsSync(path.join(OUT, p, "index.html")), `缺内容页 /${p}/`);
   }
   /* 总量用「详情页 + 固定页」的相对式而不是绝对数：crawler 每加一张卡绝对数就腐一次。
-     固定面实测 9 = 首页 1 + 内容页 5（about / editorial-policy / privacy / contact / openrouter 台账页）
-     + /admin/ 1 + 404 两份（404.html 与 404/index.html）。 */
+     固定面实测 10 = 首页 1 + 内容页 6（about / editorial-policy / privacy / contact / openrouter 台账页
+     / igetoken 快讯页） + /admin/ 1 + 404 两份（404.html 与 404/index.html）。 */
   assert.ok(
-    htmlFiles.length >= intelDirs.length + 9,
-    `HTML 共 ${htmlFiles.length} 个，少于「详情页 ${intelDirs.length} + 固定页 9」，疑似路由未生成`
+    htmlFiles.length >= intelDirs.length + 10,
+    `HTML 共 ${htmlFiles.length} 个，少于「详情页 ${intelDirs.length} + 固定页 10」，疑似路由未生成`
   );
 });
 

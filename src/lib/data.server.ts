@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { compiledRules, type CompiledRules } from "./rules";
-import type { MetaJson, OpenRouterLedger, RulesJson, SiteConfig, TokenCard, WatchItem } from "./types";
+import type { IgetokenLedger, MetaJson, OpenRouterLedger, RulesJson, SiteConfig, TokenCard, WatchItem } from "./types";
 
 /** 构建期一次性读取 JSON（静态导出，无运行时请求） */
 function readJson<T>(rel: string): T {
@@ -52,6 +52,30 @@ export function readOpenRouterLedger(cwd: string = process.cwd()): OpenRouterLed
   }
 }
 
+/** iGetoken 快讯台账缺席时的最小空台账：与 openrouter 同一宽容语义——
+ *  第三数据源缺席不得染红构建（首份台账入库前的 quality job 照样能过）。 */
+export const EMPTY_IGETOKEN_LEDGER: IgetokenLedger = {
+  source: "",
+  sourceName: "iGetoken 活动快讯",
+  rightsNote: "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
+  fetchedAt: "",
+  itemCount: 0,
+  items: [],
+};
+
+/** 宽容读取（与 readOpenRouterLedger 同律）：缺失/损坏/形态不合 → 空台账，其它数据源照常严格。 */
+export function readIgetokenLedger(cwd: string = process.cwd()): IgetokenLedger {
+  try {
+    const ledger = JSON.parse(readFileSync(path.resolve(cwd, "data/igetoken-deals.json"), "utf8")) as IgetokenLedger;
+    if (!ledger || !Array.isArray(ledger.items) || typeof ledger.itemCount !== "number") {
+      return EMPTY_IGETOKEN_LEDGER;
+    }
+    return ledger;
+  } catch {
+    return EMPTY_IGETOKEN_LEDGER;
+  }
+}
+
 export interface Catalog {
   cards: TokenCard[];
   donots: WatchItem[];
@@ -60,6 +84,7 @@ export interface Catalog {
   meta: MetaJson;
   config: SiteConfig;
   openrouter: OpenRouterLedger;
+  igetoken: IgetokenLedger;
 }
 
 let cache: Catalog | null = null;
@@ -74,6 +99,7 @@ export function loadCatalog(): Catalog {
     meta: readJson<MetaJson>("data/meta.json"),
     config: readJson<SiteConfig>("config/site-config.json"),
     openrouter: readOpenRouterLedger(),
+    igetoken: readIgetokenLedger(),
   };
   return cache;
 }

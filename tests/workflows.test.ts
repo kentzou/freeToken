@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 const crawl = load(readFileSync(".github/workflows/crawl.yml", "utf8")) as Record<string, any>;
 const deploy = load(readFileSync(".github/workflows/deploy.yml", "utf8")) as Record<string, any>;
 const orCrawl = load(readFileSync(".github/workflows/crawl-openrouter.yml", "utf8")) as Record<string, any>;
+const igCrawl = load(readFileSync(".github/workflows/crawl-igetoken-deals.yml", "utf8")) as Record<string, any>;
 const lhrc = JSON.parse(readFileSync(".lighthouserc.json", "utf8"));
 
 /* 反向断言只查「会被执行的那行」：yml 注释里刻意引用了旧命令原文作说明（如 crawl.yml 的
@@ -112,6 +113,36 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     /* API key 只作为可选增强传入（缺 key 时 accountQuota 整个缺席，不影响台账主体） */
     const keyStep = job.steps.find((s: { run?: string }) => (s.run || "").includes("npm run crawl:or"));
     expect(keyStep.env.OPENROUTER_API_KEY).toBe("${{ secrets.OPENROUTER_API_KEY }}");
+  });
+
+  it("crawl-igetoken-deals.yml：06:30 CST 换算成 UTC cron（分钟位 30 避开整点与相邻两条的推送窗口）；零依赖；只提交 data/igetoken-deals.json", () => {
+    expect(igCrawl.on.schedule).toEqual([{ cron: "30 22 * * *" }]);
+    expect(Object.keys(igCrawl.on)).toEqual(["schedule", "workflow_dispatch"]);
+    expect(igCrawl.permissions).toEqual({ "contents": "write", "actions": "write" });
+    const all = cmds(runs(igCrawl.jobs.crawl));
+    expect(all).toContain("npm run crawl:deals");
+    expect(cmds(all)).not.toContain("npm ci");
+    expect(cmds(all)).not.toContain("npm install");
+    /* 提交面只有一份台账：接进 pending/tokens 审核管道就是踩决策 #7 红线 */
+    expect(all).toContain("git add data/igetoken-deals.json");
+    expect(all).not.toContain("git add pending");
+    expect(all).not.toMatch(/git add data(?!\/igetoken-deals\.json)/);
+    expect(all).toContain("if [ ! -f data/igetoken-deals.json ]");
+    expect(all).toContain("git diff --cached --quiet");
+    expect(all).toContain("${{ github.run_id }}");
+    expect(all).not.toMatch(/\$\{github\./);
+    /* 上线链五条红线复刻 or 视角：dispatch 端点、ref、判败、顺序 */
+    expect(all).toContain("actions/workflows/deploy.yml/dispatches");
+    expect(all).toContain('{"ref":"main"}');
+    expect(all).toContain("--fail-with-body");
+    expect(all).toContain("git push ||");
+    expect(all.indexOf("git diff --cached --quiet")).toBeLessThan(all.indexOf("dispatches"));
+    /* 分钟位不为 0：官方点名整点高负载（同 crawl 病根）。这条是每日 1 档，但 iGetoken 改版窗口未知、
+       抓取时刻无对外承诺，没有 or 那条「读者友好整点」的理由，所以按 crawl 口径避开整点——
+       若将来改成整点，必须连本断言与注释理由一起改，别悄悄「对齐」。 */
+    const fields = String(igCrawl.on.schedule[0].cron).trim().split(/\s+/);
+    expect(fields).toHaveLength(5);
+    expect(fields[0]).not.toBe("0");
   });
 
   it(".lighthouserc.json：三项门槛值 = spec §9 承诺值（LCP 2500ms / CLS 0.1 / A11y 0.95），URL 打本地根路径", () => {

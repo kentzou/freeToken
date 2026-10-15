@@ -1,0 +1,76 @@
+name: crawl-igetoken-deals
+# 每日 06:30（Asia/Shanghai）抓 iGetoken 活动快讯（/deals/ 栏目的官方 RSS）→ data/igetoken-deals.json。
+# Actions 的 schedule 只认 UTC：06:30 CST = 前一日 22:30 UTC。
+# 分钟位取 30 是刻意选择，双重避让：① 官方点名的整点高负载时段（crawl.yml 注释里实测过被挤档）；
+# ② 同域三条 job 的既有档位——openrouter 22:00 UTC、竞品线索 23:00 UTC，本条 22:30 与两边都隔半小时，
+# 免得同分钟触发撞 main 分支的 push/rebase 窗口（数据 job 共用 main，见 crawl.yml 的 non-fast-forward 病根）。
+# 与 crawl-igetoken.yml（线索台账，不渲染不部署）的分工：这条产的 data/igetoken-deals.json 会被
+# 站点 /igetoken/ 页渲染（跳转索引），所以推完必须显式 dispatch deploy，与 crawl-openrouter.yml 同链条。
+# 版权口径见 crawler/igetoken-deals.mjs 文件头红线：只登记标题+链接+日期，正文不转载。
+on:
+  schedule:
+    - cron: "30 22 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  # dispatch deploy.yml 要用：与 crawl.yml/crawl-openrouter.yml 同一病根——GITHUB_TOKEN 推的提交
+  # 不触发 deploy.yml，必须显式 workflow_dispatch，而该端点要求 actions: write，缺了会 403。
+  actions: write
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # 刻意不跑 npm ci：crawler/igetoken-deals.mjs 只用 node:fs/node:path/node:url + 仓内
+      # nav/lib/http.mjs（内置 fetch 的包装），零 npm 依赖，装包只会把 CI 绑在 node_modules 上。
+      - name: 抓取 iGetoken 活动快讯
+        run: npm run crawl:deals --silent
+      # fetchedAt 每次抓取都前进 ⇒ 抓成功必有差异，每天落一条提交（与 crawl-openrouter.yml 同口径）。
+      # 下面两道判断防的是：抓取 fail-stop 没产出文件时不提空文件；手工重跑内容没变时不产生空提交。
+      # 推 main 的 GITHUB_TOKEN 不触发 deploy.yml（防循环规则），台账上线靠显式 dispatch。
+      - name: 提交（缺产出不提交 · 无差异不空提交）
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ ! -f data/igetoken-deals.json ]; then
+            echo "data/igetoken-deals.json 不存在（抓取未产出），跳过提交"
+            exit 0
+          fi
+          git add data/igetoken-deals.json
+          if git diff --cached --quiet; then
+            echo "台账未变，跳过提交"
+          else
+            git commit -m "chore(crawl): iGetoken 活动快讯台账（run ${{ github.run_id }}）"
+            # 必须先 rebase 再推：定时抓取与人工推送共用 main 且互不同步，裸 push 撞上
+            # non-fast-forward 就红（crawl.yml 实测过）。冲突只能由人裁决，绝不静默吞掉。
+            if ! git pull --rebase origin main; then
+              echo "::error::同步远端失败（rebase 冲突或网络/权限问题），本次不提交。"
+              git rebase --abort 2>/dev/null || true
+              exit 1
+            fi
+            # push 判败即止：推不上去还 dispatch 就会部署一份没有新数据的产物（与 crawl.yml 同一病）。
+            git push || {
+              echo "::error::推送台账到 main 失败：本次不触发部署。"
+              exit 1
+            }
+            # --fail-with-body：dispatch 403 必须让本步变红，否则「提交了但没上线且没人知道」。
+            code=$(curl --fail-with-body -sS -o /tmp/deals-dispatch.out -w '%{http_code}' \
+              -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/vnd.github+json" \
+              --data-binary '{"ref":"main"}' \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/deploy.yml/dispatches") || {
+                echo "::error::触发 deploy 失败（HTTP ${code:-未知}）：台账已提交但不会上线。$(cat /tmp/deals-dispatch.out 2>/dev/null)"
+                exit 1
+              }
+            echo "dispatch 返回 HTTP ${code}（204 为受理成功）"
+          fi

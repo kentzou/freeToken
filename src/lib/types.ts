@@ -127,3 +127,22 @@ export interface OpenRouterLedger {
   accountQuota?: { used: number | null; limit: number | null; remaining: number | null };
   accountQuotaError?: string;
 }
+
+/** iGetoken 活动快讯台账：只登记「标题+原文链接+日期」三项事实元数据（跳转索引），
+ *  不含上游正文——版权红线见 crawler/igetoken-deals.mjs 文件头。 */
+export interface IgetokenFlashItem {
+  id: string;
+  /** YYYY-MM-DD（UTC），由 RSS pubDate 归一化 */
+  date: string;
+  title: string;
+  link: string;
+}
+
+export interface IgetokenLedger {
+  source: string;
+  sourceName: string;
+  rightsNote: string;
+  fetchedAt: string;
+  itemCount: number;
+  items: IgetokenFlashItem[];
+}

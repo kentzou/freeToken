@@ -1,0 +1,357 @@
+{
+  "source": "https://igetoken.com/rss.xml",
+  "sourceName": "iGetoken 活动快讯",
+  "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
+  "fetchedAt": "2026-10-15T06:12:42.341Z",
+  "itemCount": 58,
+  "items": [
+    {
+      "id": "2026-10-stepfun-step5-preview-free-week",
+      "date": "2026-10-09",
+      "title": "阶跃星辰 Step 5 Preview 旗舰模型免费一周：经 OpenCode/Cline/Kilo Code/Nous Research 等平台滚动开放（600B MoE · 1M 上下文 · 10/15 开源权重）",
+      "link": "https://igetoken.com/deals/2026-10-stepfun-step5-preview-free-week/"
+    },
+    {
+      "id": "2026-10-cloudflare-workers-ai-free",
+      "date": "2026-10-01",
+      "title": "Cloudflare Workers AI：每天 10,000 Neurons 免费，无需信用卡，~80 模型 OpenAI 兼容",
+      "link": "https://igetoken.com/deals/2026-10-cloudflare-workers-ai-free/"
+    },
+    {
+      "id": "2026-10-deepseek-newuser-5m",
+      "date": "2026-10-01",
+      "title": "DeepSeek 官方 API：新用户注册送 500 万 Tokens（30 天有效，无需绑卡）",
+      "link": "https://igetoken.com/deals/2026-10-deepseek-newuser-5m/"
+    },
+    {
+      "id": "2026-10-groq-free-api",
+      "date": "2026-10-01",
+      "title": "Groq 永久免费 API：无需信用卡，30 RPM / 1000 RPD（每模型），OpenAI 兼容",
+      "link": "https://igetoken.com/deals/2026-10-groq-free-api/"
+    },
+    {
+      "id": "2026-10-mistral-experiment-free",
+      "date": "2026-10-01",
+      "title": "Mistral La Plateforme Experiment：每月约 10 亿 Token 免费，无需信用卡（验证邮箱+手机）",
+      "link": "https://igetoken.com/deals/2026-10-mistral-experiment-free/"
+    },
+    {
+      "id": "2026-10-sambanova-free-tier",
+      "date": "2026-10-01",
+      "title": "SambaNova Cloud 持久免费层：Llama 3.1 405B / 70B / Qwen 2.5 72B，加 $5 新户额度",
+      "link": "https://igetoken.com/deals/2026-10-sambanova-free-tier/"
+    },
+    {
+      "id": "2026-09-opencode-space-bunny-free",
+      "date": "2026-09-30",
+      "title": "OpenCode 匿名模型 Space Bunny（太空兔）限时免费延长至 10/5：1M 上下文 · 多模态 · ZDR（已结束）",
+      "link": "https://igetoken.com/deals/2026-09-opencode-space-bunny-free/"
+    },
+    {
+      "id": "2026-09-opencode-longcat-25-free",
+      "date": "2026-09-28",
+      "title": "OpenCode x 美团 LongCat 2.5 Preview 限时免费开放（1M 上下文 · 多模态 · ZDR）",
+      "link": "https://igetoken.com/deals/2026-09-opencode-longcat-25-free/"
+    },
+    {
+      "id": "2026-09-zcode-trust-build-100m",
+      "date": "2026-09-28",
+      "title": "智谱 ZCode Trust Build：9/28–10/7 每天可领 1 亿 GLM-5.3-Flash Token（当天用完、不延续，每日限量 10 万份）（已结束）",
+      "link": "https://igetoken.com/deals/2026-09-zcode-trust-build-100m/"
+    },
+    {
+      "id": "2026-09-zcode-dual-festival-ride",
+      "date": "2026-09-25",
+      "title": "智谱 ZCode 双节畅享：GLM-5.3-Flash 夜间畅蹬延续至 10/7，9/25–10/7 取消高峰期、全天按非高峰倍率消耗（已结束）",
+      "link": "https://igetoken.com/deals/2026-09-zcode-dual-festival-ride/"
+    },
+    {
+      "id": "2026-09-opencode-mimo-v26-free",
+      "date": "2026-09-22",
+      "title": "OpenCode x 小米 MiMo-V2.6 Flash 限时免费开放，Pro 同步上线 Go 订阅",
+      "link": "https://igetoken.com/deals/2026-09-opencode-mimo-v26-free/"
+    },
+    {
+      "id": "2026-09-xiaomi-mimo-platform-launch",
+      "date": "2026-09-22",
+      "title": "小米 MiMo 开放平台上线：新客赠 API 体验金、邀请有礼双方各得 ¥10，MiMo-V2.6 系列 MIT 全开源",
+      "link": "https://igetoken.com/deals/2026-09-xiaomi-mimo-platform-launch/"
+    },
+    {
+      "id": "2026-09-step-step-plan-free-trial",
+      "date": "2026-09-20",
+      "title": "阶跃星辰 Step Plan 限时免费：登录即得 15 天，首次调用再得 15 天，邀友最高累计 75 天",
+      "link": "https://igetoken.com/deals/2026-09-step-step-plan-free-trial/"
+    },
+    {
+      "id": "2026-09-qoder-qwen38-flash-free",
+      "date": "2026-09-18",
+      "title": "Qoder Qwen3.8-Flash 限时免费已延期：调用不扣 Credits（计费系数 0.1× → 0.0×，10/1 起继续免费、结束时间待官方公告）",
+      "link": "https://igetoken.com/deals/2026-09-qoder-qwen38-flash-free/"
+    },
+    {
+      "id": "2026-09-zhipu-weekend-build-vi",
+      "date": "2026-09-18",
+      "title": "智谱 ZCode WEEKEND BUILD VI：3 亿 GLM-5.3-Flash Token（第六轮，9/20 09:00 已到期清零，已结束）",
+      "link": "https://igetoken.com/deals/2026-09-zhipu-weekend-build-vi/"
+    },
+    {
+      "id": "2026-09-opencode-union-alpha-free",
+      "date": "2026-09-16",
+      "title": "OpenCode 匿名模型 Union Alpha 限时免费（已结束，模型已下线）：262K 上下文 / 图像输入 / 零数据保留",
+      "link": "https://igetoken.com/deals/2026-09-opencode-union-alpha-free/"
+    },
+    {
+      "id": "2026-09-atria-dawn-preview",
+      "date": "2026-09-15",
+      "title": "Atria Dawn Preview 上线：注册赠 1 亿 Tokens 免费额度（744B MoE、256K 上下文、MIT 开源）",
+      "link": "https://igetoken.com/deals/2026-09-atria-dawn-preview/"
+    },
+    {
+      "id": "2026-09-bai-free-models",
+      "date": "2026-09-11",
+      "title": "B.AI 限时免费：4 款大模型 0 成本调用（GLM-5.3-Flash / Qwen3.8-Flash / Hy3 / MiMo-V2.5）⚠️ 需 Google 登录",
+      "link": "https://igetoken.com/deals/2026-09-bai-free-models/"
+    },
+    {
+      "id": "2026-09-workbuddy-ai-deepseek-free",
+      "date": "2026-09-11",
+      "title": "WorkBuddy 海外版免费使用 DeepSeek-V4.1-Flash：1M 上下文 / 原生多模态（限免期）",
+      "link": "https://igetoken.com/deals/2026-09-workbuddy-ai-deepseek-free/"
+    },
+    {
+      "id": "2026-09-zhipu-weekend-build-v",
+      "date": "2026-09-11",
+      "title": "智谱 ZCode WEEKEND BUILD V：3 亿 GLM-5.3-Flash Token 继续领（9/11 23:00–9/14 09:00，覆盖周末全天）",
+      "link": "https://igetoken.com/deals/2026-09-zhipu-weekend-build-v/"
+    },
+    {
+      "id": "2026-09-flatkey-free-promo",
+      "date": "2026-09-10",
+      "title": "Flatkey AI 限时免费：DeepSeek V4 Flash 免费调用 + 新户 $5 额度（⚠️ 注册有邮箱域名限制，Outlook/Foxmail 被拦）",
+      "link": "https://igetoken.com/deals/2026-09-flatkey-free-promo/"
+    },
+    {
+      "id": "2026-09-workbuddy-deepseek-v4-1-flash-promo",
+      "date": "2026-09-10",
+      "title": "WorkBuddy 独家特惠：DeepSeek-V4.1-Flash 限时折扣，积分倍率 0.03 倍（9/10–9/23，已结束）",
+      "link": "https://igetoken.com/deals/2026-09-workbuddy-deepseek-v4-1-flash-promo/"
+    },
+    {
+      "id": "2026-09-hunyuan-hy4-preview-free",
+      "date": "2026-09-09",
+      "title": "混元 Hy4 preview 限免延期至 10/31：新用户首开 14 天免费（10/10 23:59 前首开）/ 老用户夜间(23:00-8:00)免费",
+      "link": "https://igetoken.com/deals/2026-09-hunyuan-hy4-preview-free/"
+    },
+    {
+      "id": "2026-09-amd-token-factory-launch",
+      "date": "2026-09-08",
+      "title": "AMD 中国开发者云 Token Factory：免费 DeepSeek-V4-Flash / Qwen3.8 多模态 API（OpenAI 兼容，免绑卡）",
+      "link": "https://igetoken.com/deals/2026-09-amd-token-factory-launch/"
+    },
+    {
+      "id": "2026-09-nvidia-nim-free-tier",
+      "date": "2026-09-05",
+      "title": "NVIDIA NIM 免费原型开发：150+ 开源模型不限次调用、无 Token 计费（40 RPM）",
+      "link": "https://igetoken.com/deals/2026-09-nvidia-nim-free-tier/"
+    },
+    {
+      "id": "2026-09-streamlake-kat-coder-free",
+      "date": "2026-09-05",
+      "title": "快手万擎 StreamLake：KAT-Coder-Air 永久免费 API + Pro 新客送 2000 万 Tokens",
+      "link": "https://igetoken.com/deals/2026-09-streamlake-kat-coder-free/"
+    },
+    {
+      "id": "2026-09-tokenrhythm-signup-68",
+      "date": "2026-09-05",
+      "title": "基元律动 TokenRhythm 注册送 ¥68：一个入口调 14 个国产模型",
+      "link": "https://igetoken.com/deals/2026-09-tokenrhythm-signup-68/"
+    },
+    {
+      "id": "2026-09-xai-grok-signup-25",
+      "date": "2026-09-05",
+      "title": "xAI Grok 新账户注册送 $25 API 额度（30 天内有效）",
+      "link": "https://igetoken.com/deals/2026-09-xai-grok-signup-25/"
+    },
+    {
+      "id": "2026-09-zhipu-weekend-build-iv",
+      "date": "2026-09-05",
+      "title": "智谱 ZCode WEEKEND BUILD IV：3 亿 GLM-5.3-Flash Token 放量 3 万份（先到先得，9/7 截止，已结束）",
+      "link": "https://igetoken.com/deals/2026-09-zhipu-weekend-build-iv/"
+    },
+    {
+      "id": "2026-08-zcode-weekend-300m",
+      "date": "2026-09-04",
+      "title": "智谱 ZCode 周末活动：所有用户免费领 3 亿 GLM-5.3-Flash Token（2026-09-04-2026-09-07 新一轮，已结束）",
+      "link": "https://igetoken.com/deals/2026-08-zcode-weekend-300m/"
+    },
+    {
+      "id": "2026-09-zhipu-weekend-flash-300m",
+      "date": "2026-09-04",
+      "title": "智谱 ZCode 周末畅用：3 亿 GLM-5.3-Flash Token 限时开放（9/5 9:00–9/6 有效）（已结束）",
+      "link": "https://igetoken.com/deals/2026-09-zhipu-weekend-flash-300m/"
+    },
+    {
+      "id": "2026-09-opencode-muse-spark-1-3-free",
+      "date": "2026-09-03",
+      "title": "OpenCode x Muse Spark 1.3 限时免费开放",
+      "link": "https://igetoken.com/deals/2026-09-opencode-muse-spark-1-3-free/"
+    },
+    {
+      "id": "2026-09-zcode-flash-100m-round2",
+      "date": "2026-09-03",
+      "title": "智谱 ZCode 惊喜发放第二弹：1 亿 GLM-5.3-Flash 代币（已结束）",
+      "link": "https://igetoken.com/deals/2026-09-zcode-flash-100m-round2/"
+    },
+    {
+      "id": "2026-09-zcode-night-flash-ride",
+      "date": "2026-09-03",
+      "title": "智谱 ZCode「Flash × ZCode」夜间畅蹬（9/20 已结束）：每晚 23:00–09:00 GLM-5.3-Flash 额度消耗为 0",
+      "link": "https://igetoken.com/deals/2026-09-zcode-night-flash-ride/"
+    },
+    {
+      "id": "2026-09-longcat-2-0-preview-free",
+      "date": "2026-09-01",
+      "title": "美团 LongCat：每日最高 1.2 亿 Token 免费额度（需抢内测名额）",
+      "link": "https://igetoken.com/deals/2026-09-longcat-2-0-preview-free/"
+    },
+    {
+      "id": "2026-09-zcode-flash-100m",
+      "date": "2026-09-01",
+      "title": "智谱 ZCode 惊喜发放：1 亿 GLM-5.3-Flash 代币（限时，已结束）",
+      "link": "https://igetoken.com/deals/2026-09-zcode-flash-100m/"
+    },
+    {
+      "id": "2026-08-hunyuan-tokenhub-signup",
+      "date": "2026-08-31",
+      "title": "混元 TokenHub 新人包：每主账号领最高 100 万免费 Token（至 2026-12-31）",
+      "link": "https://igetoken.com/deals/2026-08-hunyuan-tokenhub-signup/"
+    },
+    {
+      "id": "2026-08-tokenrouter-glm-5-3-free",
+      "date": "2026-08-31",
+      "title": "TokenRouter：GLM-5.3 限时免费调用（LIMITED OFFER）",
+      "link": "https://igetoken.com/deals/2026-08-tokenrouter-glm-5-3-free/"
+    },
+    {
+      "id": "2026-08-minimax-design-h3-launch",
+      "date": "2026-08-30",
+      "title": "MiniMax H3 正式上线：新用户下载 MiniMax Design 立领 3000 免费积分，9/2 前年卡 H3 永久 -20%",
+      "link": "https://igetoken.com/deals/2026-08-minimax-design-h3-launch/"
+    },
+    {
+      "id": "2026-08-minimax-week-free",
+      "date": "2026-08-30",
+      "title": "MiniMax Week：M3、M2.7、Speech 2.8、Music 3.0 免费调用 14 天（至 9 月 6 日）",
+      "link": "https://igetoken.com/deals/2026-08-minimax-week-free/"
+    },
+    {
+      "id": "2026-08-scnet-maas-promo",
+      "date": "2026-08-30",
+      "title": "超算互联网 MaaS 特惠：新客免费领 1000 万 Token（活动至 9 月 13 日）",
+      "link": "https://igetoken.com/deals/2026-08-scnet-maas-promo/"
+    },
+    {
+      "id": "2026-08-volcengine-doubao-seed-2-1-pro",
+      "date": "2026-08-30",
+      "title": "火山引擎方舟 Q3 普惠：Doubao-Seed-2.1-pro 新用户每日领最高 500 万 Tokens",
+      "link": "https://igetoken.com/deals/2026-08-volcengine-doubao-seed-2-1-pro/"
+    },
+    {
+      "id": "2026-07-hunyuan-hy3-trial",
+      "date": "2026-08-29",
+      "title": "混元 Hy3 限免延期至 10/31：WorkBuddy 每日送免费额度",
+      "link": "https://igetoken.com/deals/2026-07-hunyuan-hy3-trial/"
+    },
+    {
+      "id": "2026-08-opencode-zen-free",
+      "date": "2026-08-29",
+      "title": "OpenCode Zen 多个编程模型限时免费，每日最高 100 万 Token",
+      "link": "https://igetoken.com/deals/2026-08-opencode-zen-free/"
+    },
+    {
+      "id": "2026-08-sensenova-beta-free",
+      "date": "2026-08-29",
+      "title": "商汤日日新公测期完全免费：每周最高 120 万积分，新增 Flash-Lite 返赠",
+      "link": "https://igetoken.com/deals/2026-08-sensenova-beta-free/"
+    },
+    {
+      "id": "2026-08-workbuddy-5000-credits",
+      "date": "2026-08-29",
+      "title": "WorkBuddy 注册送 5000 Credits（约几千万 Token 量级），每日签到可续",
+      "link": "https://igetoken.com/deals/2026-08-workbuddy-5000-credits/"
+    },
+    {
+      "id": "2026-08-workbuddy-growth-plan",
+      "date": "2026-08-29",
+      "title": "WorkBuddy 成长计划：做任务领 1000+ Credits，限量任务送一个月轻量云服务器",
+      "link": "https://igetoken.com/deals/2026-08-workbuddy-growth-plan/"
+    },
+    {
+      "id": "2026-08-zhipu-trial-card",
+      "date": "2026-08-29",
+      "title": "智谱 GLM Coding 体验卡：免费领 7 天编程套餐（2000 积分）",
+      "link": "https://igetoken.com/deals/2026-08-zhipu-trial-card/"
+    },
+    {
+      "id": "2026-08-siliconflow-price-peak",
+      "date": "2026-08-20",
+      "title": "价格变动提醒：DeepSeek 系列模型分时段定价调整",
+      "link": "https://igetoken.com/deals/2026-08-siliconflow-price-peak/"
+    },
+    {
+      "id": "2026-08-aliyun-token-promo",
+      "date": "2026-08-18",
+      "title": "阿里云推出六大 Token 优惠活动，折扣券最低可至 5.3 折",
+      "link": "https://igetoken.com/deals/2026-08-aliyun-token-promo/"
+    },
+    {
+      "id": "2026-08-minimax-signup-10m",
+      "date": "2026-08-15",
+      "title": "MiniMax 新用户注册即送 1000 万 Token",
+      "link": "https://igetoken.com/deals/2026-08-minimax-signup-10m/"
+    },
+    {
+      "id": "2026-08-qiniu-gift-3m",
+      "date": "2026-08-14",
+      "title": "七牛云新手礼包：300 万 Token 调 50+ 全球模型",
+      "link": "https://igetoken.com/deals/2026-08-qiniu-gift-3m/"
+    },
+    {
+      "id": "2026-08-siliconflow-signup-14",
+      "date": "2026-08-12",
+      "title": "硅基流动注册送 ¥14 赠金，免费模型长期可用",
+      "link": "https://igetoken.com/deals/2026-08-siliconflow-signup-14/"
+    },
+    {
+      "id": "2026-08-zhipu-signup-20m",
+      "date": "2026-08-10",
+      "title": "智谱 AI 新用户注册送 2000 万 Token 体验包",
+      "link": "https://igetoken.com/deals/2026-08-zhipu-signup-20m/"
+    },
+    {
+      "id": "2026-08-bailian-signup-1m",
+      "date": "2026-08-08",
+      "title": "百炼新用户：每款模型 100 万 Token 免费（90 天）",
+      "link": "https://igetoken.com/deals/2026-08-bailian-signup-1m/"
+    },
+    {
+      "id": "2026-08-xunfei-verify-500k",
+      "date": "2026-08-06",
+      "title": "讯飞星火：实名认证加赠 50 万 Token（30 天有效）",
+      "link": "https://igetoken.com/deals/2026-08-xunfei-verify-500k/"
+    },
+    {
+      "id": "2026-08-openrouter-free-50",
+      "date": "2026-08-05",
+      "title": "OpenRouter 免费模型每日 50 次，充值 $10 升至 1000 次/天",
+      "link": "https://igetoken.com/deals/2026-08-openrouter-free-50/"
+    },
+    {
+      "id": "2026-07-zhipu-100m-event",
+      "date": "2026-07-15",
+      "title": "智谱限时活动回顾：每人赠送 1 亿 Token + API 低至 1 折",
+      "link": "https://igetoken.com/deals/2026-07-zhipu-100m-event/"
+    }
+  ]
+}
