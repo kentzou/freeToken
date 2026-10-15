@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-10-15T00:10:42.097Z",
-  "totalModels": 462,
-  "freeModelCount": 17,
+  "fetchedAt": "2026-10-15T23:57:32.297Z",
+  "totalModels": 465,
+  "freeModelCount": 18,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -153,6 +153,17 @@
       "moderated": false
     },
     {
+      "id": "nvidia/nemotron-3.5-super-vl:free",
+      "name": "NVIDIA: Nemotron 3.5 Super VL (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 1000000,
+      "maxCompletionTokens": 131072,
+      "modality": "text+image+video->text",
+      "moderated": false
+    },
+    {
       "id": "openrouter/free",
       "name": "Free Models Router",
       "freeVariant": false,
@@ -208,5 +219,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "5ef2cc861214fdce"
+  "sourceFingerprint": "25184a54707d7f8e"
 }
