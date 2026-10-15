@@ -1,0 +1,193 @@
+{
+  "source": "https://igetoken.com/perks/",
+  "sourceName": "iGetoken Agent 福利社",
+  "scopeNote": "共 12 个产品的积分 / 福利。这是 产品内积分 ，与本站「免费 API Token」是两类东西——积分 不能导出为 API Key ，只能在对应产品内使用（对话 / 生成 / 技能）。",
+  "rightsNote": "本站仅登记条目原文与厂商链接，文案版权归原作者；进主卡片区前须逐条回打厂商官方页取证。",
+  "fetchedAt": "2026-10-15T07:39:07.518Z",
+  "declaredCount": 12,
+  "itemCount": 12,
+  "items": [
+    {
+      "id": "AtomCode|signin",
+      "name": "AtomCode",
+      "category": "signin",
+      "categoryLabel": "每日签到",
+      "title": "CodingPlan 免费编码权益（5 小时滚动窗口，终端 Agent 内可用）",
+      "quota": "Lite 档限时免费：最多约 200 次调用/5 小时滚动窗口；支持模型由系统动态发放当前最高权益（已知出现过 qwen3.8-27b、glm5.3-flash、deepseek-v4-flash、Qwen3-VL-8B、GLM-5.2 等），以登录后客户端内实际可用模型为准；Pro 档额度更高、额外支持 GLM-5.2",
+      "summary": "下载 AtomCode 客户端（macOS / Linux / Windows / HarmonyOS PC）→ 登录 AtomGit 账号（免费注册、无信用卡）→ 客户端内执行 /login，系统自动完成 OAuth 授权并申领当前最高 CodingPlan 权益、自动配好 provider 与模型",
+      "terms": "每日 · 长期可领 · 额度按 5 小时滚动窗口计量（非每日重置，窗口滑动刷新）；领取后有效期约 7–30 天（权益档位动态调整，以领取时页面为准）；每日限量发放（约 500–1000 人/日），名额次日刷新",
+      "disclaimer": "🔴 产品内权益，不可导出为 API Key：CodingPlan 免费额度仅在 AtomCode 终端 Agent 客户端内消耗，无法接你自己的 agent 或站外 API 调用。官方文档明确区分 CodingPlan（产品内）与「传统 API Key」（用户自有 Key）——想站外调用请 BYOK 填自己的模型 Key。⚠️ 权益体系动态调整：档位 / 模型列表 / 限量人数频繁变化（如 glm5.3-flash 在最新文档已变 GLM-5.2），以领取时客户端内实际可用模型为准；5 小时滚动窗口非每日重置。",
+      "checkedAt": "09/11 已核实",
+      "links": [
+        "https://ai.atomgit.com/serverless-api",
+        "https://atomcode.atomgit.com/docs/zh/login.html"
+      ]
+    },
+    {
+      "id": "Cline|signin",
+      "name": "Cline",
+      "category": "signin",
+      "categoryLabel": "每日签到",
+      "title": "客户端内免费模型轮换池（下拉 FREE 即用，无 Key/信用卡）",
+      "quota": "Cline CLI / IDE 内免费模型（代表：GLM-5.3-Flash / DeepSeek V4 Flash / LongCat-2.0 等），模型选择器选带 FREE 标签即用，无需 API Key、无需信用卡",
+      "summary": "安装 Cline（VS Code / Cursor 等 IDE 插件或 Cline CLI）并登录账号；在模型选择器下拉选带 FREE 标签的模型即用",
+      "terms": "每日 · 长期可领 · 免费模型为官方轮换促销池，会更换、会过期（如 GLM-5.3-Flash 官方标注 free through this week），以客户端 FREE 标签实时为准，不承诺长期",
+      "disclaimer": "产品内福利，不可导出为 API Key：免费模型仅限 Cline 自身 CLI / IDE 内使用，无法接你自己的 agent。所谓「API 端能接 agent 的 20 余款」是 BYOK 或 OpenRouter 等聚合器接的你自己的 Key，与 Cline 免费额度无关；站外调用请走 BYOK 填你自己的模型 Key。模型轮换，以客户端 FREE 标签为准。",
+      "checkedAt": "09/08 已核实",
+      "links": [
+        "https://docs.cline.bot"
+      ]
+    },
+    {
+      "id": "MiniMax Code|signin",
+      "name": "MiniMax Code",
+      "category": "signin",
+      "categoryLabel": "每日签到",
+      "title": "每日签到领 400 积分，连签第 4/7 天加码至 1000",
+      "quota": "400 积分/天；连续签到第 4 天、第 7 天单日加码至 1000；一周累计可领 4000 积分",
+      "summary": "打开 MiniMax Code 完成每日签到（用量页签到入口；CLI 可用 /checkin 命令）",
+      "terms": "每日 · 长期可领 · 积分可累计使用，自到账之日起 30 天内有效",
+      "disclaimer": "积分适用于 MiniMax Code 各类任务场景（办公 / Coding / 深度调研 / 多模态创作），产品内积分，不可导出为 API Key。签到功能于 v3.0.58（2026-08-05）上线。",
+      "checkedAt": "09/02 已核实",
+      "links": [
+        "https://agent.minimaxi.com/docs/code/account/usage"
+      ]
+    },
+    {
+      "id": "MonkeyCode|signin",
+      "name": "MonkeyCode",
+      "category": "signin",
+      "categoryLabel": "每日签到",
+      "title": "基础会员长期每日 10M Token + 签到/邀请/分享赢积分",
+      "quota": "基础会员每日 10M Token（长期，滚动不累积）+ 每日签到 100 积分 + 邀请成功 5000 积分 + 分享原创心得审核通过赢 10,000 或 100,000 积分；客户端 6 款基础模型免费（Qwen3.8-Flash / DeepSeek-V4-Flash / GLM-5.3-Flash / Kimi-2.5 / MiniMax-M2.5 / Qwen3.5-Plus）",
+      "summary": "注册即为基础会员（¥0 永久免费）；每日 10M Token 为滚动额度（当日刷新，非累积）；每日签到 +100 积分；邀请好友成功 +5000 积分；在主流社区发布原创使用心得并提交官方审核秒到账 10,000 或 100,000 积分，可用于调用更高级模型或 MCP 服务",
+      "terms": "每日 · 长期可领 · 每日 10M Token 滚动刷新、不累积；积分用于客户端内高级模型 / MCP 服务 / 额度耗尽后续用；征文积分审核通过秒到账",
+      "disclaimer": "长亭科技开源云端 AI 编程 Agent 平台（AGPL-3.0）。产品内 Token 与积分，不可导出为 API Key，仅限客户端 / 云端 Agent 任务消耗。⚠️ 额度冲突：官方定价页标 3000 万/天、社区旧文 1000 万，本条目按实测记 10M，以账号页面为准。",
+      "checkedAt": "09/08 已核实",
+      "links": [
+        "https://monkeycode.cn"
+      ]
+    },
+    {
+      "id": "WorkBuddy 海外版|invite",
+      "name": "WorkBuddy 海外版",
+      "category": "invite",
+      "categoryLabel": "邀请有礼",
+      "title": "邀请好友各得积分：你 +100 / 好友 +350，注册再送 250 Credits",
+      "quota": "邀请人 +100 Credits（好友注册并完成首次提问后到账）；好友 +350 Credits（100 邀请奖励 + 250 注册礼）；Free 档 $0：每月 100 Credits + 每日活跃 30 Credits（限免期全模型可选）",
+      "summary": "打开 workbuddy.ai 登录 → 复制专属邀请链接分享给好友；好友经链接注册并提交首次提问，双方奖励生效。新用户注册即送 250 Credits，符合条件另可领 7 天 Pro 试用 + 500 Credits。",
+      "terms": "一次性 · 长期可领 · 邀请奖励实时到账；Free 档额度按月发放、活跃奖励每日结算；注册礼 250 Credits 即时到账；Credits 有效期以产品内展示为准",
+      "disclaimer": "🔴 产品内 Credits，不可导出为 API Key：仅限 WorkBuddy 海外版客户端 / 网页内消耗（对话 / Agent 任务），无法接站外 API。⚠️ 海外版为独立体系：账号与积分与国内版（workbuddy.cn）互不相通、不可混用。海外版已支持 DeepSeek-V4.1-Flash（1M 上下文、原生多模态，官方合作方），免费档额度内可调用，具体以产品内实际展示为准。",
+      "checkedAt": "09/11 已核实",
+      "links": [
+        "https://www.workbuddy.ai/"
+      ]
+    },
+    {
+      "id": "WorkBuddy|signin",
+      "name": "WorkBuddy",
+      "category": "signin",
+      "categoryLabel": "每日签到",
+      "title": "每日签到送 100 平台积分",
+      "quota": "100 平台积分/天（连续签满 7 天额外 +1000）",
+      "summary": "WorkBuddy 个人中心「Buddy 加油站」每日签到（PC 客户端 / 小程序，积分互通）",
+      "terms": "每日 · 截止 2026-10-15 · 当期有效（按期滚动，积分为通用积分、有效期以产品内积分详情为准）",
+      "disclaimer": "产品内积分，不可导出为 API Key，仅限 WorkBuddy 产品内使用。签到按「期」滚动：在「Buddy 加油站」每日领 100 积分，连续签满 7 天额外 +1000（一轮 7 天合计 1700），断签会清零连续天数；一期结束后入口暂时下线、等下一期开启，期次与截止以客户端显示为准。当前为第 10 期，至 2026-10-15 结束。",
+      "checkedAt": "10/08 已核实",
+      "links": [
+        "https://www.workbuddy.cn/"
+      ]
+    },
+    {
+      "id": "WorkBuddy|student",
+      "name": "WorkBuddy",
+      "category": "student",
+      "categoryLabel": "学生认证",
+      "title": "开学季送 1000 平台积分",
+      "quota": "1000 平台积分",
+      "summary": "高校在读学生 + 微信学生身份认证（扫码小程序 + 手机号授权）",
+      "terms": "一次性 · 截止 2026-10-31 · 领取之日起 3 个月内有效",
+      "disclaimer": "产品内积分，不可导出为 API Key，仅限 WorkBuddy 产品内使用（对话 / 生成 / 技能）。",
+      "checkedAt": "09/02 已核实",
+      "links": [
+        "https://www.workbuddy.cn/events/campus-freshman/"
+      ]
+    },
+    {
+      "id": "万有无界（阿里云）|limited",
+      "name": "万有无界（阿里云）",
+      "category": "limited",
+      "categoryLabel": "限时活动",
+      "title": "公测免费体验：注册送 3000 积分 + 每日登录 2000 积分",
+      "quota": "注册 3000 积分（30 天有效）+ 每日登录 2000 积分（当日有效，不可累积）",
+      "summary": "通过官网 qianwenai.com/agents/wanyou 注册并登录即可领取；目前公测开放（部分报道称仍限量名额，以官网实时为准）",
+      "terms": "每日 · 长期可领 · 注册体验金 30 天有效；每日积分 24 小时后过期、不可累积；100 积分 ≈ 1 元 Token 额度",
+      "disclaimer": "阿里云企业级多 Agent 协作工作台（非 API 平台）。积分仅平台内消耗，用于调用 Qwen3.8-Max / Deepseek-V4-Pro / GLM-5.2 等模型跑 Agent 任务，不可导出为 API Key。免费额度为公开测期活动，后续可能转为收费，以官方为准。",
+      "checkedAt": "09/03 已核实",
+      "links": [
+        "https://www.qianwenai.com/agents/wanyou"
+      ]
+    },
+    {
+      "id": "千问办公|signin",
+      "name": "千问办公",
+      "category": "signin",
+      "categoryLabel": "每日签到",
+      "title": "新用户注册赠 2000 积分 + 每日登录赠 100 积分",
+      "quota": "新用户 2000 积分（90 天有效）+ 每日登录 100 积分/天（当日有效）",
+      "summary": "个人用户注册即送 2000 积分（90 天限时）；每日登录签到续送 100 积分（当日有效）",
+      "terms": "每日 · 长期可领 · 注册积分 90 天内有效；每日登录积分当日有效，不可累积",
+      "disclaimer": "产品内积分，不可导出为 API Key，仅限千问办公产品内使用（文档 / 对话 / 智能体等），以官方页面为准。",
+      "checkedAt": "09/07 已核实",
+      "links": [
+        "https://qwenwork.cn/subscribe?scope=personal"
+      ]
+    },
+    {
+      "id": "扣子 Coze|signin",
+      "name": "扣子 Coze",
+      "category": "signin",
+      "categoryLabel": "每日签到",
+      "title": "每日登录领 1500 活动积分 + 新用户注册赠 1500",
+      "quota": "1500 积分/日（当日有效）+ 新用户 1500 积分（30 天）",
+      "summary": "个人版用户每日登录即自动到账；新用户首次注册并登录发放",
+      "terms": "每日 · 长期可领 · 每日登录积分有效期 1 天；新用户积分 30 天",
+      "disclaimer": "扣子积分用于 AI 对话、智能体运行、视频生成等算力消耗，不可导出为 API。",
+      "checkedAt": "09/02 已核实",
+      "links": [
+        "https://docs.coze.cn/guides_coze_points_activity_rules"
+      ]
+    },
+    {
+      "id": "文心一言 / 文小言|signin",
+      "name": "文心一言 / 文小言",
+      "category": "signin",
+      "categoryLabel": "每日签到",
+      "title": "每日签到领积分（连续签到有阶梯奖励）",
+      "quota": "约 50 积分/天起，第 7 天 60、第 30 天 150 点",
+      "summary": "App「我的 — 每日签到」点击打卡，每月可补签 1 次",
+      "terms": "每日 · 长期可领 · 签到积分计入主账户余额，无使用限制（以活动页为准）",
+      "disclaimer": "文心产品内积分（充电值），用于抵扣生成消耗，不可导出为 API。",
+      "checkedAt": "09/02 已核实",
+      "links": [
+        "https://developer.baidu.com/article/detail.html?id=5567282"
+      ]
+    },
+    {
+      "id": "星辰超级智能体 TeleAgent|signin",
+      "name": "星辰超级智能体 TeleAgent",
+      "category": "signin",
+      "categoryLabel": "每日签到",
+      "title": "首登赠 3000 + 每月赠 3000 积分 + 每日签到 100 积分",
+      "quota": "首登 3000（3 个月）+ 月度赠 3000（当月）+ 签到 100/天（当日）+ 邀请人 500 / 被邀请人 3000；每月上限 30000 积分",
+      "summary": "下载 TeleAgent 桌面客户端（Windows / Mac）注册登录；签到在客户端内打卡；邀请通过产品内分享链接",
+      "terms": "每日 · 长期可领 · 首登积分 3 个月有效；月度积分当月有效；签到积分当日有效；邀请人积分 1 年、被邀请人积分 1 个月",
+      "disclaimer": "中国电信 · 天翼 AI 桌面办公智能体，积分仅抵扣客户端内模型调用消耗，不可导出为 API Key。每日登录可领、当日有效，官方未标注活动截止日期（2026-10-08 复核暂无截止），后续以官方公告为准。注意：与星辰 TokenHub（API Token 平台）是两个不同产品。",
+      "checkedAt": "10/08 已核实",
+      "links": [
+        "https://www.teleai.com.cn/"
+      ]
+    }
+  ],
+  "sourceFingerprint": "f87936899da19405"
+}

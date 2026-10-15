@@ -1,0 +1,70 @@
+name: crawl-igetoken-perks
+# 每日抓 igetoken.com/perks 的「Agent 福利社」积分台账（data/igetoken-perks.json）。
+# Actions 的 schedule 只认 UTC：07:30 Asia/Shanghai = 前一日 23:30 UTC。
+# 档位取 23:30 是双重避让：① 官方点名的整点高负载时段；② 同域其余三条数据 job 的既有档位
+# （openrouter 22:00、deals 22:30、models 线索 23:00），本条与最近的 23:00 隔半小时，
+# 与 crawl.yml 的 00:23 档隔 53 分钟——共用 main 分支的 job 挤同一分钟会撞 push/rebase 窗口。
+# 与 crawl-igetoken.yml（抓 /models/ 的免费额度线索）的分工：同域名、两类东西，刻意分文件分数据分 workflow。
+# /perks/ 是产品内积分，出处页自己声明「与本站『免费 API Token』是两类东西——积分不能导出为 API Key」，
+# 所以这本账只进线索池，见 crawler/igetoken-perks.mjs 文件头红线与下面最后一步。
+on:
+  schedule:
+    - cron: "30 23 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  # 刻意不要 actions: write：本 job 不 dispatch deploy.yml，少一项权限就少一条能推上线的通道。
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # 刻意不跑 npm ci：crawler/igetoken-perks.mjs 只 import node:crypto|fs|path|url +
+      # crawler/nav/lib/http.mjs 与 crawler/igetoken-deals.mjs 的实体解码，那两个 lib 零 npm 依赖。
+      # 抓不到 / 解析形态异常时爬虫非 0 退出（fail-stop），旧台账原样保留，job 直接红——
+      # 不允许用空清单覆盖真实台账（与 crawl-openrouter.yml 同一条纪律）。
+      - name: 抓取 iGetoken 积分福利台账
+        run: npm run crawl:perks --silent
+      # fetchedAt 每次抓取都前进 ⇒ 抓成功必有差异，每天落一条提交（与 openrouter/deals 同口径）。
+      # 下面两道判断防的是：抓取 fail-stop 没产出文件时不提空文件；手工重跑内容没变时不产生空提交。
+      - name: 提交（缺产出不提交 · 无差异不空提交）
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ ! -f data/igetoken-perks.json ]; then
+            echo "data/igetoken-perks.json 不存在（抓取未产出），跳过提交"
+            exit 0
+          fi
+          # 具名 pathspec：只提这一份文件，绝不 `git add -A` 把别人在途的改动一起带走。
+          git add data/igetoken-perks.json
+          if git diff --cached --quiet; then
+            echo "台账未变，跳过提交"
+          else
+            git commit -m "chore(crawl): iGetoken 积分福利台账（run ${{ github.run_id }}）"
+            # 必须先 rebase 再推（与其余三条同一处置）：定时抓取与人工推送共用 main 且互不同步，
+            # 裸 push 撞上 non-fast-forward 就红。冲突只能由人裁决，绝不静默吞掉、绝不强推。
+            if ! git pull --rebase origin main; then
+              echo "::error::同步远端失败（rebase 冲突或网络/权限问题），本次不提交。"
+              git rebase --abort 2>/dev/null || true
+              exit 1
+            fi
+            # push 判败即止：推不上去也就算了——本 job 后面没有部署步骤，不会部署半成品数据。
+            git push || {
+              echo "::error::推送台账到 main 失败，本次数据留在 runner 上未入库。"
+              exit 1
+            }
+            # 这里刻意**不** dispatch deploy.yml，也不碰镜像站（与 crawl-igetoken.yml 同一裁决）：
+            # ① 站点没有任何页面读 data/igetoken-perks.json，dispatch 只会白跑 3-4 分钟门禁；
+            # ② 更重要：这本账是第三方聚合站的编辑文案、且出处页自述「产品内积分不可导出为 API Key」，
+            #    既未过本站红线②（官方页逐字实证），也与主卡片区的额度口径不同类，
+            #    它进仓只当线索池，绝不能因为一次自动抓取就变成线上内容。
+            # 要让它上线，得逐条回打厂商官方页取证、写 config/local-cards.json（直写 data/tokens.json
+            # 的条目会被下一轮 crawl 重铸判成「上游已删除」，见 crawler/local-cards.mjs 文件头），
+            # 再走 crawl.yml + 两面一体发布（skill 红线 4）。
+            echo "台账已入库（线索文件，不触发部署）"
+          fi
