@@ -56,9 +56,10 @@ export function readOpenRouterLedger(cwd: string = process.cwd()): OpenRouterLed
  *  第三数据源缺席不得染红构建（首份台账入库前的 quality job 照样能过）。 */
 export const EMPTY_IGETOKEN_LEDGER: IgetokenLedger = {
   source: "",
-  sourceName: "iGetoken 活动快讯",
+  sourceName: "iGetoken 快讯（活动／新平台／积分福利）",
   rightsNote: "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
   fetchedAt: "",
+  sections: { deals: 0, models: 0, perks: 0 },
   itemCount: 0,
   items: [],
 };

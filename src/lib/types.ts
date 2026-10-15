@@ -128,10 +128,12 @@ export interface OpenRouterLedger {
   accountQuotaError?: string;
 }
 
-/** iGetoken 活动快讯台账：只登记「标题+原文链接+日期」三项事实元数据（跳转索引），
+/** iGetoken 快讯台账：只登记「标题+原文链接+日期」三项事实元数据（跳转索引），
  *  不含上游正文——版权红线见 crawler/igetoken-deals.mjs 文件头。 */
 export interface IgetokenFlashItem {
   id: string;
+  /** 上游栏目：deals＝活动快讯，models＝新平台上线，perks＝积分福利 */
+  section: "deals" | "models" | "perks";
   /** YYYY-MM-DD（UTC），由 RSS pubDate 归一化 */
   date: string;
   title: string;
@@ -143,6 +145,8 @@ export interface IgetokenLedger {
   sourceName: string;
   rightsNote: string;
   fetchedAt: string;
+  /** 逐栏目条数（deals/models/perks），用于展示与「某栏目被上游撤掉」的 diff 信号 */
+  sections: Record<string, number>;
   itemCount: number;
   items: IgetokenFlashItem[];
 }
