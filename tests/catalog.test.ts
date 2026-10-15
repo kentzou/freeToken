@@ -86,10 +86,28 @@ describe("目录逻辑（真实种子数据基准）", () => {
     expect(editorial.length + partners.length).toBe(vis.length);
     expect(editorial.every((c) => catOf(c) !== "项目")).toBe(true);
   });
-  it("优先级排序：工具区 WorkBuddy→Qoder→kilo→cline→verdent 在前", () => {
+  /* 原断言「工具区 WorkBuddy→Qoder→kilo→cline→verdent 在前」是旧口径（优先级表第一键）的产物，
+     2026-10-15 用户裁决把键序翻成「核验日期新→旧 → 优先级表 → 名称」后必然红，故换成两条按新口径现场推导的钉：
+     不写死卡名与日期，避免 crawler 加卡后变成定时炸弹（本文件顶部口径声明）。 */
+  it("板块排序：工具区首位必属最新核验日，同一天内才由优先级表与名称决定先后", () => {
     const tools = toolsFor(splitByCategory(visibleCards(cards, donots, rules)).editorial, { type: "all", query: "" });
-    expect(tools.slice(0, 2).map((t) => catOf(t))).toEqual(["工具", "工具"]);
-    expect(tools[0].name).toContain("WorkBuddy");
+    expect(tools.length).toBeGreaterThan(1); // 不足 2 张时下面的推导空转＝无牙，先钉住样本量
+    const maxDay = tools.reduce((m, c) => ((c.updated || "") > m ? c.updated || "" : m), "");
+    // ① 首位日期＝全集最大日期：旧口径下表内卡（WorkBuddy 命中 PRIORITY_TOOLS[0]）会占首位而此项失配
+    expect(tools[0].updated, `首位 ${tools[0].name} 的核验日不是最新日 ${maxDay}`).toBe(maxDay);
+    const sameDay = tools.filter((c) => (c.updated || "") === maxDay);
+    /* ② 最新日那一段的顺序＝「优先级表位次 → 名称升序」——正则镜像 catalog.ts 的 PRIORITY_TOOLS（未导出），
+          与下一条用例镜像 PRIORITY_MODELS 同一手法 */
+    const pick = (n: string) => {
+      const i = [/workbuddy/i, /qoder|灵码/i, /kilo/i, /cline/i, /verdent/i].findIndex((re) => re.test(n));
+      return i < 0 ? 999 : i;
+    };
+    expect(tools.slice(0, sameDay.length).map((c) => c.name)).toEqual(
+      sameDay
+        .slice()
+        .sort((a, b) => pick(a.name) - pick(b.name) || a.name.localeCompare(b.name, "zh-Hans-CN"))
+        .map((c) => c.name),
+    );
   });
   it("OpenRouter 归类：以普通卡进「大模型」区块列表，卡数据自带台账副按钮", () => {
     const editorial = splitByCategory(visibleCards(cards, donots, rules)).editorial;
@@ -172,5 +190,57 @@ describe("目录逻辑（真实种子数据基准）", () => {
     const slugs = vis.map((c) => detailSlug(c.name, rules));
     expect(slugs.every((s) => typeof s === "string" && s.length > 0)).toBe(true);
     expect(new Set(slugs).size).toBe(slugs.length);
+  });
+});
+
+/* 板块排序口径（2026-10-15 用户裁决：「大模型、编程工具板块，默认按时间排序，最新更新的排在前面」）。
+   输入全部合成，不读 data/*.json——这条口径要守的是比较器本身，用真数据就会被 crawl 每 6 小时
+   推进的日期带着漂（同文件 :16 注释里那 4 条假红就是这么来的）。 */
+describe("板块排序：核验日期优先，人工优先级表降级为同日内 tie-break", () => {
+  const all = { type: "all", query: "" } as const;
+  const mk = (over: Partial<TokenCard>): TokenCard => ({ name: "X", type: "大模型", updated: "2026-10-10", ...over });
+
+  it("日期更新的表外卡必须压过优先级表内的卡", () => {
+    /* GLM-5.3 是 PRIORITY_MODELS 第 1 位；它的 updated 更旧 ⇒ 让位给「新来的模型」。
+       这条是整个改动的实质：旧口径下表内卡永远钉在首屏。 */
+    const list = modelsFor([
+      mk({ name: "GLM-5.3-Flash", updated: "2026-10-01" }),
+      mk({ name: "新来的模型", updated: "2026-10-14" }),
+    ], all);
+    expect(list.map((c) => c.name)).toEqual(["新来的模型", "GLM-5.3-Flash"]);
+  });
+
+  it("工具区同理：WorkBuddy 不再因为命中表就占首屏", () => {
+    const list = toolsFor([
+      mk({ name: "WorkBuddy", type: "工具", updated: "2026-10-02" }),
+      mk({ name: "新编程工具", type: "工具", updated: "2026-10-15" }),
+    ], all);
+    expect(list[0].name).toBe("新编程工具");
+  });
+
+  it("同一天的多张卡仍由优先级表决定先后", () => {
+    // 表内序号：stepfun/阶跃=1、siliconflow/硅基=2，表外=999
+    const list = modelsFor([
+      mk({ name: "阿凡提模型", updated: "2026-10-14" }),
+      mk({ name: "硅基流动", updated: "2026-10-14" }),
+      mk({ name: "阶跃 StepFun", updated: "2026-10-14" }),
+    ], all);
+    expect(list.map((c) => c.name)).toEqual(["阶跃 StepFun", "硅基流动", "阿凡提模型"]);
+  });
+
+  it("同日且同表位（都在表外）按名称升序，保证版面可复现", () => {
+    const list = modelsFor([
+      mk({ name: "Beta 模型", updated: "2026-10-14" }),
+      mk({ name: "Alpha 模型", updated: "2026-10-14" }),
+    ], all);
+    expect(list.map((c) => c.name)).toEqual(["Alpha 模型", "Beta 模型"]);
+  });
+
+  it("缺 updated 的卡沉到末尾而不是抛错，也不得挤到最新位", () => {
+    const list = modelsFor([
+      mk({ name: "无日期卡", updated: "" }),
+      mk({ name: "有日期卡", updated: "2026-01-01" }),
+    ], all);
+    expect(list.map((c) => c.name)).toEqual(["有日期卡", "无日期卡"]);
   });
 });

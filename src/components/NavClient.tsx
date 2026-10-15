@@ -41,7 +41,9 @@ export default function NavClient({ items, news }: { items: NavItem[]; news: Nav
   const [category, setCategory] = useState<"all" | NavItem["category"]>("all");
   const [tag, setTag] = useState<string | null>(null);
   const [freeOnly, setFreeOnly] = useState(false);
-  const [sort, setSort] = useState<"rating" | "updated">("rating");
+  /* 默认按「最近更新」而非评级：2026-10-15 用户裁决，与首页大模型／编程工具板块同一口径
+     （rank() 亦改成日期优先）。评级仍是可选项，不删控件。 */
+  const [sort, setSort] = useState<"rating" | "updated">("updated");
 
   const categoryCounts = useMemo(() => {
     const c: Record<string, number> = { all: items.length };

@@ -44,6 +44,18 @@ it("屏读文案区分来源：管线卡＝核验，编辑精选卡＝整理", (
   expect(html.match(/已于 [\d-]+ 核验/g)?.length).toBe(1);
 });
 
+it("默认排序＝最近更新在前（2026-10-15 用户裁决，板块两面同口径）", () => {
+  /* 评级故意与日期反着给：旧默认按 rating 排会把「老而高分」的卡钉在前面。
+     renderToStaticMarkup 取的是初始 state，所以这条测的就是「默认值」本身。 */
+  const mixed: NavItem[] = [
+    mk({ name: "老牌高分", category: "llm", rating: 5, updated: "2026-09-01" }),
+    mk({ name: "刚核验的新卡", category: "llm", rating: 1, updated: "2026-10-14" }),
+  ];
+  const html = renderToStaticMarkup(<NavClient items={mixed} news={news} />);
+  expect(html.indexOf("刚核验的新卡")).toBeLessThan(html.indexOf("老牌高分"));
+  expect(html).toContain('value="updated"');
+});
+
 it("外链都声明 noopener noreferrer，且限时免费卡走 warn 色", () => {
   const html = renderToStaticMarkup(<NavClient items={items} news={news} />);
   const hrefs = html.match(/<a [^>]*href="https:\/\/example\.com[^"]*"[^>]*>/g) ?? [];

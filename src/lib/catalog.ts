@@ -59,10 +59,12 @@ export function matchesFilter(card: TokenCard, filter: FilterState): boolean {
 const PRIORITY_MODELS = [/glm-5\.3/i, /stepfun|阶跃/i, /siliconflow|硅基/i];
 const PRIORITY_TOOLS = [/workbuddy/i, /qoder|灵码/i, /kilo/i, /cline/i, /verdent/i];
 
-/** 区块排序：先人工优先级表（未命中=999），同权重内按核验日期新→旧，再按名称升序。
- *  补两级 tie-break 的依据是审查 L3 + H2′：镜像里 sort 按钮声称「最新优先」而实按优先级表排，
- *  本站不做这个控件，但顺序必须可声明、可复现——只靠 Array.sort 稳定性等于把排序语义
- *  外包给 tokens.json 的书写顺序，上游一次重排就悄悄改变版面。 */
+/** 区块排序：先按核验日期新→旧，同一天内再按人工优先级表（未命中=999），最后按名称升序。
+ *  键序 2026-10-15 由用户裁决翻转（「大模型、编程工具板块，默认按时间排序，最新更新的排在前面」）：
+ *  旧口径把优先级表放在第一键，表内五张卡无论多旧都钉死首屏 4 个坑位，「最新优先」名不副实。
+ *  表没作废，只降级成同日内 tie-break——同一天核验的多张卡仍按运营顺序排。
+ *  两级 tie-break 的依据仍是审查 L3 + H2′：顺序必须可声明、可复现，不能把排序语义
+ *  外包给 tokens.json 的书写顺序（上游一次重排就会悄悄改变版面）。 */
 function rank(items: TokenCard[], patterns: RegExp[], kind: "大模型" | "工具", filter: FilterState): TokenCard[] {
   const pick = (c: TokenCard) => {
     const i = patterns.findIndex((re) => re.test(c.name));
@@ -70,7 +72,7 @@ function rank(items: TokenCard[], patterns: RegExp[], kind: "大模型" | "工�
   };
   return items
     .filter((c) => catOf(c) === kind && matchesFilter(c, filter))
-    .sort((a, b) => pick(a) - pick(b) || (b.updated || "").localeCompare(a.updated || "") || a.name.localeCompare(b.name, "zh-Hans-CN"));
+    .sort((a, b) => (b.updated || "").localeCompare(a.updated || "") || pick(a) - pick(b) || a.name.localeCompare(b.name, "zh-Hans-CN"));
 }
 
 export function modelsFor(items: TokenCard[], filter: FilterState): TokenCard[] {
