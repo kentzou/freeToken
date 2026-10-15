@@ -1,0 +1,744 @@
+{
+  "source": "https://igetoken.com/models/",
+  "sourceName": "iGetoken 免费资源库",
+  "scopeNote": "共 47 个平台。每条都标注最后核实日期，额度以官方页面为准；发现失效欢迎反馈。",
+  "usageNote": "线索台账，非发布内容。卡片文案来自同赛道第三方聚合站，未过本站红线②（额度原句须厂商官方页逐字在场）；要入库须逐条回官方页取证后手写 config/local-cards.json。",
+  "rightsNote": "本站仅登记条目原文与出处链接，文案版权归原作者；本页不替代厂商官方页。",
+  "evidence": "third-party-aggregator",
+  "fetchedAt": "2026-10-15T08:41:38.010Z",
+  "declaredCount": 47,
+  "platformCount": 47,
+  "platforms": [
+    {
+      "slug": "agnes",
+      "name": "Agnes AI（Sapiens AI）",
+      "category": "overseas",
+      "url": "https://igetoken.com/models/agnes/",
+      "summary": "新加坡 Sapiens AI 全模态免费 API，Agent 执行优先",
+      "quota": "agnes-3.0-flash 免费档三项计费现价均 $0（限免促销期），OpenAI / Anthropic 双协议兼容",
+      "tags": [
+        "免费档",
+        "无需绑卡",
+        "OpenAI兼容",
+        "Agent"
+      ],
+      "checkedAt": "09/14 已核实",
+      "rating": null
+    },
+    {
+      "slug": "ai360",
+      "name": "360智脑",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/ai360/",
+      "summary": "360 自研大模型，开放平台送新用户免费试用额度",
+      "quota": "新用户实名认证后获免费试用额度（约 100 万 Token / 30 天），OpenAI 兼容",
+      "tags": [
+        "注册送",
+        "免费试用",
+        "OpenAI兼容",
+        "国内直连"
+      ],
+      "checkedAt": "09/03 已核实",
+      "rating": null
+    },
+    {
+      "slug": "amd-radeon-cloud",
+      "name": "AMD Radeon Cloud Token Factory",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/amd-radeon-cloud/",
+      "summary": "AMD 官方开发者云免费大模型 API 网关（BETA）：DeepSeek-V4-Flash / Qwen3.8 多模态免费用",
+      "quota": "官方标注 Free to use，账户验证后自动签发 rc- 开头 Key，免绑卡、国内直连；OpenAI + Anthropic 双协议兼容；DeepSeek-V4-Flash 1M 上下文",
+      "tags": [
+        "免费API",
+        "多模态",
+        "长上下文",
+        "国内直连",
+        "双协议"
+      ],
+      "checkedAt": "09/09 已核实",
+      "rating": "4"
+    },
+    {
+      "slug": "antdigital",
+      "name": "蚂蚁数科 DTMaaS",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/antdigital/",
+      "summary": "蚂蚁数科企业级大模型服务平台，按调用次数计费，免费版不绑卡",
+      "quota": "免费版 0 元/月：100 次/5 小时、每周上限 1000 次、每月上限 2000 次",
+      "tags": [
+        "免费版",
+        "按次计费",
+        "多模型",
+        "无需绑卡"
+      ],
+      "checkedAt": "09/01 已核实",
+      "rating": null
+    },
+    {
+      "slug": "antling",
+      "name": "蚂蚁灵 Ling API",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/antling/",
+      "summary": "蚂蚁百灵面向开发者的 API 平台，每日赠送 50 万 Token，OpenAI 兼容",
+      "quota": "每日免费 50 万 Token（输入+输出共享），次日 02:00（UTC+8）重置、不滚存",
+      "tags": [
+        "每日免费",
+        "OpenAI 兼容",
+        "按 Token 计费",
+        "需绑支付宝"
+      ],
+      "checkedAt": "09/11 已核实",
+      "rating": null
+    },
+    {
+      "slug": "atria",
+      "name": "Atria Dawn Preview（上海人工智能实验室）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/atria/",
+      "summary": "上海人工智能实验室智能体基础模型，注册送 1 亿 Token 免费额度",
+      "quota": "新注册赠 1 亿 Tokens 免费额度（控制台实测确认）；OpenAI 兼容（Chat Completions / Messages / Responses）；744B MoE、256K 上下文、MIT 开源权重",
+      "tags": [
+        "智能体",
+        "开源",
+        "免费额度",
+        "OpenAI兼容"
+      ],
+      "checkedAt": "09/15 已核实",
+      "rating": null
+    },
+    {
+      "slug": "baidu",
+      "name": "百度智能云千帆（文心）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/baidu/",
+      "summary": "百度官方大模型平台，ERNIE-Speed/Lite/Tiny 长期免费，新用户送额度",
+      "quota": "ERNIE-Speed/Lite/Tiny 永久免费；AI Studio 星河送 100 万 Token",
+      "tags": [
+        "永久免费",
+        "注册送",
+        "大厂"
+      ],
+      "checkedAt": "09/11 已核实",
+      "rating": null
+    },
+    {
+      "slug": "bailian",
+      "name": "阿里云百炼",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/bailian/",
+      "summary": "阿里官方大模型平台，Qwen 系列第一入口",
+      "quota": "新用户每款模型 100 万 Token 免费额度（90 天）",
+      "tags": [
+        "注册送",
+        "大厂",
+        "模型多"
+      ],
+      "checkedAt": "08/28 已核实",
+      "rating": null
+    },
+    {
+      "slug": "baishan",
+      "name": "白山云 白山智算",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/baishan/",
+      "summary": "边缘算力云平台，新用户送 450 元大模型 API 体验金",
+      "quota": "注册实名送 150 元、首调用再送 300 元（限前 500 名），多款模型永久免费 API",
+      "tags": [
+        "注册送",
+        "体验金",
+        "永久免费",
+        "国内直连"
+      ],
+      "checkedAt": "09/03 已核实",
+      "rating": null
+    },
+    {
+      "slug": "cloudflare",
+      "name": "Cloudflare Workers AI",
+      "category": "overseas",
+      "url": "https://igetoken.com/models/cloudflare/",
+      "summary": "边缘推理平台，免费计划每天 1 万 Neurons，40+ 开源模型随便调",
+      "quota": "每天 10,000 Neurons 免费额度，无需付费计划、无需绑卡，每日 00:00 UTC 重置",
+      "tags": [
+        "每日刷新",
+        "免绑卡",
+        "模型多"
+      ],
+      "checkedAt": "08/30 已核实",
+      "rating": "1"
+    },
+    {
+      "slug": "cohere",
+      "name": "Cohere",
+      "category": "overseas",
+      "url": "https://igetoken.com/models/cohere/",
+      "summary": "企业级 NLP 老牌厂商，免费 trial key 每月 1000 次调用，按次数不按 token",
+      "quota": "注册即得免费 trial key：每月 1000 次 API 调用，Chat 20 req/min",
+      "tags": [
+        "永久免费",
+        "免绑卡",
+        "RAG友好"
+      ],
+      "checkedAt": "08/30 已核实",
+      "rating": null
+    },
+    {
+      "slug": "deepseek",
+      "name": "DeepSeek 深度求索（开放平台）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/deepseek/",
+      "summary": "推理与代码能力见长，新用户送 API 免费额度",
+      "quota": "新用户注册送 500 万 tokens（30 天有效），无需绑卡",
+      "tags": [
+        "注册送",
+        "无需绑卡",
+        "OpenAI 兼容"
+      ],
+      "checkedAt": "08/31 已核实",
+      "rating": null
+    },
+    {
+      "slug": "dots",
+      "name": "Dots Studio（小红书 dots3-note）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/dots/",
+      "summary": "小红书开源多模态大模型，512K 上下文 + MoE 280B/16B",
+      "quota": "预览期免费开放 API（OpenRouter 免费档 9/30 下线）；512K 上下文、文本/图像/视频/音频四模态输入",
+      "tags": [
+        "开源",
+        "多模态",
+        "长上下文",
+        "限时免费"
+      ],
+      "checkedAt": "09/07 已核实",
+      "rating": null
+    },
+    {
+      "slug": "gemini",
+      "name": "Google Gemini API",
+      "category": "overseas",
+      "url": "https://igetoken.com/models/gemini/",
+      "summary": "多模态能力强，免费层不需要信用卡",
+      "quota": "免费层无需绑卡，Flash 系列模型免费用",
+      "tags": [
+        "免费层",
+        "无需绑卡",
+        "多模态"
+      ],
+      "checkedAt": "09/11 已核实",
+      "rating": null
+    },
+    {
+      "slug": "groq",
+      "name": "Groq",
+      "category": "overseas",
+      "url": "https://igetoken.com/models/groq/",
+      "summary": "全球最快的推理速度，开源模型免费层",
+      "quota": "每日免费请求额度，无需信用卡",
+      "tags": [
+        "免费层",
+        "无需绑卡",
+        "速度极快"
+      ],
+      "checkedAt": "08/28 已核实",
+      "rating": null
+    },
+    {
+      "slug": "hunyuan",
+      "name": "腾讯混元（腾讯云）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/hunyuan/",
+      "summary": "腾讯官方大模型，混元-lite 永久免费，生态福利多",
+      "quota": "混元-lite 永久免费；TokenHub 新人最高领 100 万 Token",
+      "tags": [
+        "永久免费",
+        "注册送",
+        "大厂"
+      ],
+      "checkedAt": "08/29 已核实",
+      "rating": null
+    },
+    {
+      "slug": "intern-ai",
+      "name": "书生·浦语 InternLM",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/intern-ai/",
+      "summary": "上海 AI 实验室开源大模型，注册送每月百万级免费 Token",
+      "quota": "新用户每月 100 万 Input + 300 万 Output Token 免费额度，10 RPM",
+      "tags": [
+        "开源",
+        "免费商用",
+        "多模态",
+        "OpenAI兼容"
+      ],
+      "checkedAt": "09/02 已核实",
+      "rating": null
+    },
+    {
+      "slug": "kimi",
+      "name": "月之暗面 Kimi（Moonshot）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/kimi/",
+      "summary": "长文本见长的国产模型，API 平台送现金额度",
+      "quota": "注册认证送 15 元平台额度",
+      "tags": [
+        "注册送",
+        "长文本"
+      ],
+      "checkedAt": "08/28 已核实",
+      "rating": null
+    },
+    {
+      "slug": "longcat",
+      "name": "美团 LongCat（龙猫）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/longcat/",
+      "summary": "美团官方大模型平台，LongCat-2.0-Preview 内测每日免费额度，额度体量不小",
+      "quota": "内测每日 500 万~1.2 亿 Token（需抢每日限量内测名额），1M 上下文 / 128K 输出",
+      "tags": [
+        "内测免费",
+        "抢名额",
+        "大厂",
+        "OpenAI 兼容"
+      ],
+      "checkedAt": "09/01 已核实",
+      "rating": null
+    },
+    {
+      "slug": "mistral",
+      "name": "Mistral AI（La Plateforme）",
+      "category": "overseas",
+      "url": "https://igetoken.com/models/mistral/",
+      "summary": "欧洲头部开源模型厂商，免费计划每月送 $10 API credits",
+      "quota": "Free 计划每月 $10 API credits，可调用 Mistral 全系模型，无需绑定支付方式",
+      "tags": [
+        "每月赠送",
+        "免绑卡",
+        "开源模型"
+      ],
+      "checkedAt": "08/30 已核实",
+      "rating": null
+    },
+    {
+      "slug": "moark",
+      "name": "模力方舟 Gitee AI",
+      "category": "aggregator",
+      "url": "https://igetoken.com/models/moark/",
+      "summary": "Gitee 官方开源大模型平台，每日 100 次免费 API 调用",
+      "quota": "70+ 开源模型统一 OpenAI 兼容接口，免费体验令牌每日 100 次",
+      "tags": [
+        "开源聚合",
+        "每日免费",
+        "OpenAI兼容"
+      ],
+      "checkedAt": "09/02 已核实",
+      "rating": null
+    },
+    {
+      "slug": "modelscope",
+      "name": "魔搭社区 ModelScope",
+      "category": "aggregator",
+      "url": "https://igetoken.com/models/modelscope/",
+      "summary": "阿里达摩院开源模型社区，注册送每日 2000 次免费推理 API",
+      "quota": "每位注册用户每日 2000 次免费调用，单模型最高 500 次/天，OpenAI 兼容",
+      "tags": [
+        "开源聚合",
+        "每日免费",
+        "OpenAI兼容"
+      ],
+      "checkedAt": "09/02 已核实",
+      "rating": null
+    },
+    {
+      "slug": "moma",
+      "name": "移动云 MoMA",
+      "category": "aggregator",
+      "url": "https://igetoken.com/models/moma/",
+      "summary": "中国移动官方大模型聚合平台，新用户送 2500 万 Token 免费体验",
+      "quota": "300+ 主流模型统一 API 网关，新认证用户领 2500 万 Token（30 天）",
+      "tags": [
+        "官方聚合",
+        "300+模型",
+        "免费体验",
+        "OpenAI兼容"
+      ],
+      "checkedAt": "09/02 已核实",
+      "rating": null
+    },
+    {
+      "slug": "nvidia-nim",
+      "name": "NVIDIA NIM",
+      "category": "overseas",
+      "url": "https://igetoken.com/models/nvidia-nim/",
+      "summary": "NVIDIA 官方推理微服务，150+ 开源模型免费原型开发",
+      "quota": "40 RPM 不限次调用、无 Token 计费；API Key 最长 12 个月",
+      "tags": [
+        "海外",
+        "模型多",
+        "永久免费",
+        "OpenAI兼容"
+      ],
+      "checkedAt": "09/05 已核实",
+      "rating": null
+    },
+    {
+      "slug": "ollama",
+      "name": "Ollama Cloud（云端推理）",
+      "category": "overseas",
+      "url": "https://igetoken.com/models/ollama/",
+      "summary": "本地开源运行器的官方云端推理，注册即用免费额度",
+      "quota": "注册即送免费云端额度，7 款模型常驻免费（须选 :cloud 模型）",
+      "tags": [
+        "注册送",
+        "无需信用卡",
+        "OpenAI 兼容",
+        "免费模型"
+      ],
+      "checkedAt": "09/01 已核实",
+      "rating": null
+    },
+    {
+      "slug": "opencode",
+      "name": "OpenCode（Zen 网关）",
+      "category": "aggregator",
+      "url": "https://igetoken.com/models/opencode/",
+      "summary": "开源编程代理官方模型网关，多个编程模型限时免费",
+      "quota": "Zen 免费模型限时开放，当前 11 款（step-5-preview-free、space-bunny-free、longcat-2.5-preview-free、mimo-v2.6-flash-free、jev-1.13-free、big-pickle、ling-3.0-flash-fin-free 等），名单按周轮换，专为编程场景优化",
+      "tags": [
+        "免费层",
+        "编程场景",
+        "免费模型轮换"
+      ],
+      "checkedAt": "10/09 已核实",
+      "rating": "4"
+    },
+    {
+      "slug": "openrouter",
+      "name": "OpenRouter",
+      "category": "aggregator",
+      "url": "https://igetoken.com/models/openrouter/",
+      "summary": "全球最大的模型聚合平台，一个 Key 调数百个模型",
+      "quota": "免费模型每天 50 次调用，充 $10 升到 1000 次/天",
+      "tags": [
+        "聚合",
+        "免费模型多",
+        "英文站"
+      ],
+      "checkedAt": "08/28 已核实",
+      "rating": null
+    },
+    {
+      "slug": "ppio",
+      "name": "PPIO 派欧云",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/ppio/",
+      "summary": "一站式 AIGC 云，新用户送大模型 API 代金券",
+      "quota": "新用户注册送 ¥5 免费额度（无门槛）；用邀请码注册额外得 ¥15 无门槛代金券",
+      "tags": [
+        "注册送",
+        "代金券",
+        "开源模型",
+        "OpenAI兼容"
+      ],
+      "checkedAt": "09/11 已核实",
+      "rating": null
+    },
+    {
+      "slug": "qiniu",
+      "name": "七牛云 AI 大模型推理",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/qiniu/",
+      "summary": "一个 Key 调 50+ 国内外模型，OpenAI / Anthropic 双协议兼容，国内直连",
+      "quota": "新用户送 300 万 Token 全模型免费额度，覆盖 DeepSeek / GLM / Qwen / Kimi / 豆包等",
+      "tags": [
+        "注册送",
+        "模型多",
+        "国内直连"
+      ],
+      "checkedAt": "08/30 已核实",
+      "rating": null
+    },
+    {
+      "slug": "qoder",
+      "name": "Qoder（阿里 AI 编程平台）",
+      "category": "aggregator",
+      "url": "https://igetoken.com/models/qoder/",
+      "summary": "阿里 AI 编程平台，Qwen3.8-Flash 限时免费（已延期，10/1 起继续免费、结束时间待官方公告），官方提供 REST API 与 Agent SDK",
+      "quota": "Qwen3.8-Flash 活动期调用不计费（计费系数 0.1× 降至 0.0×，已延长、10/1 起继续免费、结束时间待官方公告，多模态 / 工具调用 / 长文档）；叠加「每日登录领 100 通用 Credits」（30 天有效、可累积）；官方 PAT（pt- 前缀）+ REST API / Agent SDK 可站外程序化调用",
+      "tags": [
+        "限时免费",
+        "编程场景",
+        "官方API",
+        "国内直连"
+      ],
+      "checkedAt": "09/18 已核实",
+      "rating": null
+    },
+    {
+      "slug": "sambanova",
+      "name": "SambaNova Cloud",
+      "category": "overseas",
+      "url": "https://igetoken.com/models/sambanova/",
+      "summary": "自研 RDU 芯片的超快推理，须绑卡后调用（免费层限流仍可用）",
+      "quota": "Free Tier 须先绑卡：20 万 Token/天，可跑 DeepSeek-V3.1、Llama 3.3 70B、gpt-oss-120b",
+      "tags": [
+        "永久免费",
+        "免绑卡",
+        "速度快"
+      ],
+      "checkedAt": "09/11 已核实",
+      "rating": null
+    },
+    {
+      "slug": "scnet",
+      "name": "超算互联网（SCNet）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/scnet/",
+      "summary": "国家超算互联网官方 MaaS 平台，新客免费领 1000 万 Token",
+      "quota": "新客注册领 1000 万 Token（GLM-5-Base，128K 上下文）",
+      "tags": [
+        "注册送",
+        "国家背景",
+        "速度一般"
+      ],
+      "checkedAt": "09/03 已核实",
+      "rating": "1"
+    },
+    {
+      "slug": "sensenova",
+      "name": "商汤日日新（SenseNova）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/sensenova/",
+      "summary": "商汤大模型开放平台，公测期完全免费开放",
+      "quota": "公测期免费：通用池 + Flash-Lite 池各 60 万积分/周（合计 120 万/周），每池独立 5h 窗口配额 6 万（双池对称、滚动重置）",
+      "tags": [
+        "公测免费",
+        "多模态",
+        "每周刷新"
+      ],
+      "checkedAt": "09/08 已核实",
+      "rating": "3"
+    },
+    {
+      "slug": "siliconflow",
+      "name": "硅基流动 SiliconFlow",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/siliconflow/",
+      "summary": "开源模型聚合平台，100+ 开源模型一个 Key 调用",
+      "quota": "注册送 ¥14 赠金，实名认证再领 ¥16 代金券，邀请好友每人 ¥16",
+      "tags": [
+        "注册送",
+        "永久免费",
+        "开源模型全"
+      ],
+      "checkedAt": "09/07 已核实",
+      "rating": "2"
+    },
+    {
+      "slug": "stepfun",
+      "name": "阶跃星辰（StepFun）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/stepfun/",
+      "summary": "Step Plan 订阅制套餐限时免费：登录得 15 天、首次调用再得 15 天，邀友最高累计 75 天；另有限免语音模型",
+      "quota": "Step Plan 订阅后提供专用 Step API Key 与可自定义 Base URL，OpenAI / Anthropic 双协议，官方明示「不限制使用平台」（Claude Code / Cursor / Trae / OpenClaw 等）；套餐额度以 Credit 月池发放（1M Credit = ¥1，月末清零不结转），免费体验档为 Flash Mini（官方价 ¥49/月 = 400M Credit），可调用 step-5-preview（1M 上下文旗舰）等全部旗舰模型；普通 API 通道另有 4 个 stepaudio-3 语音模型限时免费",
+      "tags": [
+        "限时免费",
+        "订阅制",
+        "官方API",
+        "国内直连"
+      ],
+      "checkedAt": "09/22 已核实",
+      "rating": null
+    },
+    {
+      "slug": "streamlake",
+      "name": "快手万擎 StreamLake",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/streamlake/",
+      "summary": "快手官方企业级大模型服务平台，自研 KAT-Coder 编程模型矩阵",
+      "quota": "KAT-Coder-Air（V1）永久免费 API；Pro 新客额度以控制台为准",
+      "tags": [
+        "国内大厂",
+        "编程模型",
+        "永久免费",
+        "注册送",
+        "OpenAI兼容"
+      ],
+      "checkedAt": "09/11 已核实",
+      "rating": null
+    },
+    {
+      "slug": "tokenharbor",
+      "name": "TokenHarbor",
+      "category": "aggregator",
+      "url": "https://igetoken.com/models/tokenharbor/",
+      "summary": "统一 API 网关，OpenAI 兼容，DeepSeek V4.1 Flash 等免费档",
+      "quota": "OpenAI 兼容（base URL tokenharbor.ai/v1），DeepSeek V4.1 Flash 免费档，无需订阅",
+      "tags": [
+        "聚合",
+        "免费档",
+        "OpenAI兼容"
+      ],
+      "checkedAt": "09/12 已核实",
+      "rating": null
+    },
+    {
+      "slug": "tokenrhythm",
+      "name": "基元律动 TokenRhythm",
+      "category": "aggregator",
+      "url": "https://igetoken.com/models/tokenrhythm/",
+      "summary": "多模型聚合路由平台，前华为盘古大模型负责人创立",
+      "quota": "注册送 ¥68 免费额度（约 4000 万 Token 量级）",
+      "tags": [
+        "聚合平台",
+        "注册送",
+        "国产模型",
+        "OpenAI兼容"
+      ],
+      "checkedAt": "09/05 已核实",
+      "rating": null
+    },
+    {
+      "slug": "tokenrouter",
+      "name": "TokenRouter",
+      "category": "aggregator",
+      "url": "https://igetoken.com/models/tokenrouter/",
+      "summary": "多供应商模型路由/聚合网关，单 Key 调用数百个模型",
+      "quota": "GLM-5.3 等模型限时免费（标 LIMITED OFFER），单 Key 统一计费",
+      "tags": [
+        "聚合",
+        "限时免费",
+        "单Key多模型"
+      ],
+      "checkedAt": "08/31 已核实",
+      "rating": null
+    },
+    {
+      "slug": "volcengine",
+      "name": "火山引擎方舟（豆包）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/volcengine/",
+      "summary": "字节跳动大模型平台，豆包系列每模型送 50 万免费额度，协作计划每日再送",
+      "quota": "安心体验每模型 50 万 Token；协作奖励计划每日 200 万（企业 500 万）",
+      "tags": [
+        "注册送",
+        "每日刷新",
+        "大厂"
+      ],
+      "checkedAt": "08/30 已核实",
+      "rating": null
+    },
+    {
+      "slug": "workbuddy",
+      "name": "WorkBuddy（腾讯云）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/workbuddy/",
+      "summary": "腾讯桌面 AI 智能体办公产品，注册即送海量 Credits",
+      "quota": "注册送 5000 Credits（约几千万 Token 量级），每日签到可续",
+      "tags": [
+        "注册送",
+        "签到续额度",
+        "Agent 办公"
+      ],
+      "checkedAt": "08/29 已核实",
+      "rating": null
+    },
+    {
+      "slug": "xai",
+      "name": "xAI Grok",
+      "category": "overseas",
+      "url": "https://igetoken.com/models/xai/",
+      "summary": "马斯克 xAI 官方 API，Grok 系列模型（4.1 Fast 支持 2M 上下文）",
+      "quota": "新账户注册送 $25 API 额度（30 天内有效）",
+      "tags": [
+        "海外",
+        "注册送",
+        "OpenAI兼容",
+        "需网络环境"
+      ],
+      "checkedAt": "09/05 已核实",
+      "rating": null
+    },
+    {
+      "slug": "xiaomi-mimo",
+      "name": "小米 MiMo 开放平台",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/xiaomi-mimo/",
+      "summary": "小米官方大模型开放平台：MiMo-V2.6 系列（Pro / Flash，MIT 全开源权重）兼容 OpenAI 与 Anthropic 双协议；新客赠 API 体验金、邀请有礼双方各得 ¥10",
+      "quota": "MiMo-V2.6 系列为小米自研原生全模态模型（1M 上下文）：Pro 为 1.02T 总参 / 42B 激活，Flash 为 309B 总参 / 15B 激活，权重按 MIT 许可完全开源（技术报告、RL 环境与训练账本一并公开）。平台同时兼容 OpenAI 与 Anthropic 两套协议 —— 编码工具只需改 Base URL 与模型名即可接入。免费项三类：新客注册赠 API 体验金（金额官方未公示，以控制台为准）、邀请有礼（绑定成功后双方各得 ¥10、好友首单 9 折）、mimo-v2.5-tts 系列三款语音合成模型限时免费。缓存写入限时免费；赠金 40 天有效、仅可抵扣按量计费。",
+      "tags": [
+        "新客福利",
+        "邀请奖励",
+        "官方API",
+        "国内直连",
+        "双协议兼容"
+      ],
+      "checkedAt": "09/22 已核实",
+      "rating": null
+    },
+    {
+      "slug": "xingchen-tokenhub",
+      "name": "中国电信 星辰TokenHub",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/xingchen-tokenhub/",
+      "summary": "天翼云息壤官方模型服务平台，国模+国芯+国云底座",
+      "quota": "新用户 2500 万 Tokens 免费额度（2 周）",
+      "tags": [
+        "注册送",
+        "大厂",
+        "模型多",
+        "OpenAI兼容"
+      ],
+      "checkedAt": "09/04 已核实",
+      "rating": null
+    },
+    {
+      "slug": "xunfei",
+      "name": "讯飞星火（Spark）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/xunfei/",
+      "summary": "科大讯飞自研大模型，Spark Lite 官方标注为免费模型，中文与语音能力见长",
+      "quota": "Spark Lite 免费模型；注册后可领取免费额度用于 Pro / Ultra / X2 等付费模型",
+      "tags": [
+        "永久免费",
+        "注册送",
+        "大厂",
+        "国产"
+      ],
+      "checkedAt": "08/30 已核实",
+      "rating": null
+    },
+    {
+      "slug": "zenmux",
+      "name": "ZenMux",
+      "category": "aggregator",
+      "url": "https://igetoken.com/models/zenmux/",
+      "summary": "聚合 192 个模型的官方渠道路由网关，7 个 $0 免费模型（需先充值解锁）",
+      "quota": "7 个模型输入输出双 $0（含 GLM 两个长期 free SKU），但需账户余额 > 0 才可调用 —— 官方定性为反滥用门槛、非使用收费，等于要先充 $5 才能解锁；注册仅需邮箱/GitHub；国内可直连",
+      "tags": [
+        "聚合平台",
+        "免费模型",
+        "OpenAI兼容",
+        "国内直连"
+      ],
+      "checkedAt": "09/16 已核实",
+      "rating": "2"
+    },
+    {
+      "slug": "zhipu",
+      "name": "智谱AI（BigModel）",
+      "category": "domestic",
+      "url": "https://igetoken.com/models/zhipu/",
+      "summary": "GLM 系列模型官方开放平台，免费力度国内第一梯队",
+      "quota": "新用户注册送 2000 万 Token，GLM-4-Flash 永久免费",
+      "tags": [
+        "注册送",
+        "永久免费",
+        "国内直连"
+      ],
+      "checkedAt": "09/22 已核实",
+      "rating": "4"
+    }
+  ],
+  "sourceFingerprint": "dd03a570ce15c59e"
+}

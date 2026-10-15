@@ -6,6 +6,7 @@ const crawl = load(readFileSync(".github/workflows/crawl.yml", "utf8")) as Recor
 const deploy = load(readFileSync(".github/workflows/deploy.yml", "utf8")) as Record<string, any>;
 const orCrawl = load(readFileSync(".github/workflows/crawl-openrouter.yml", "utf8")) as Record<string, any>;
 const igCrawl = load(readFileSync(".github/workflows/crawl-igetoken-deals.yml", "utf8")) as Record<string, any>;
+const modelsCrawl = load(readFileSync(".github/workflows/crawl-igetoken.yml", "utf8")) as Record<string, any>;
 const lhrc = JSON.parse(readFileSync(".lighthouserc.json", "utf8"));
 
 /* 反向断言只查「会被执行的那行」：yml 注释里刻意引用了旧命令原文作说明（如 crawl.yml 的
@@ -143,6 +144,37 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     const fields = String(igCrawl.on.schedule[0].cron).trim().split(/\s+/);
     expect(fields).toHaveLength(5);
     expect(fields[0]).not.toBe("0");
+  });
+
+  it("crawl-igetoken.yml（/models/ 线索台账）：家族档位 23:00；只 contents:write；产 data/igetoken.json 但绝不 dispatch 部署", () => {
+    /* 档位是家族排位（openrouter 22:00 / deals 22:30 / 本条 23:00 / perks 23:30），
+       两条 igetoken 与 crawl.yml 的 00:23 都隔半小时，避的是「同分钟两 job 抢 main 的 rebase 窗口」。
+       分钟位取 0 在这里不破 crawl.yml 的规矩：本条与左右邻居不同分钟，而 23:00 是
+       crawl-igetoken-perks.yml 文件头替本条预留的档位，改它要连那份注释一起改。 */
+    expect(modelsCrawl.on.schedule).toEqual([{ cron: "0 23 * * *" }]);
+    expect(Object.keys(modelsCrawl.on)).toEqual(["schedule", "workflow_dispatch"]);
+    /* 权限面是这条链的命门，方向与 deals/or 相反：它们要 dispatch deploy.yml 所以带 actions: write，
+       本条只产线索台账（站点不读它），少一项权限就少一条能把未过红线②的竞品文案推上线的通道。 */
+    expect(modelsCrawl.permissions).toEqual({ contents: "write" });
+    const all = cmds(runs(modelsCrawl.jobs.crawl));
+    expect(all).toContain("npm run crawl:models");
+    expect(all).not.toContain("npm ci");
+    expect(all).not.toContain("npm install");
+    expect(all).toContain("git add data/igetoken.json");
+    expect(all).not.toMatch(/git add data(?!\/igetoken\.json)/);
+    expect(all).toContain("if [ ! -f data/igetoken.json ]");
+    expect(all).toContain("git diff --cached --quiet");
+    expect(all).toContain("${{ github.run_id }}");
+    expect(all).not.toMatch(/\$\{github\./);
+    /* 反向钉「不发部署」：判据是整段执行命令里既没有 dispatch 端点也没有 curl——
+       将来谁要上线这份台账，必须先过红线②取证并同步改本断言，不能悄悄加一行。 */
+    expect(all).not.toContain("dispatches");
+    expect(all).not.toContain("curl");
+    /* rebase 先于 push、且排在变更判定之后；强推一律视为回归 */
+    expect(all).toContain("git pull --rebase origin main");
+    expect(all.indexOf("git diff --cached --quiet")).toBeLessThan(all.indexOf("git pull --rebase origin main"));
+    expect(all.indexOf("git pull --rebase origin main")).toBeLessThan(all.indexOf("git push"));
+    expect(all).not.toMatch(/push[^\n]*(-f |--force)/);
   });
 
   it(".lighthouserc.json：三项门槛值 = spec §9 承诺值（LCP 2500ms / CLS 0.1 / A11y 0.95），URL 打本地根路径", () => {

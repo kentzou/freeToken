@@ -14,7 +14,7 @@
     "test:out": "node --test tests/build-output.test.mjs",
     "crawl": "node crawler/run.mjs",
     "crawl:or": "node crawler/openrouter.mjs",
-    "crawl:ig": "node crawler/igetoken.mjs",
+    "crawl:models": "node crawler/igetoken.mjs",
     "crawl:deals": "node crawler/igetoken-deals.mjs",
     "crawl:perks": "node crawler/igetoken-perks.mjs",
     "nav:crawl": "node crawler/nav/run.mjs",
