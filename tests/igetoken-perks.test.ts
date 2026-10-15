@@ -75,6 +75,14 @@ describe("iGetoken 积分福利台账（线索文件，出处页自述不可导�
     await expect(crawlIgetokenPerks({ grab: fakeGrab({ ok: false, status: 403, text: "", error: "HTTP 403" }), now: NOW })).rejects.toThrow(/HTTP 403/);
   });
 
+  it("内容指纹认内容不认页面噪声：CF 邮箱混淆那类每请求随机的字节不许改指纹，改一条额度必须改指纹", () => {
+    const base = parsePerks(FIXTURE, { now: NOW }).sourceFingerprint;
+    // 实测上游页面两处内嵌 Cloudflare 邮箱混淆，串里的十六进制是每请求随机编码的
+    const noisy = `${FIXTURE}<a href="/cdn-cgi/l/email-protection#721b1517061d19171c321d07061e1d1d195c111d1f" class="__cf_email__">x</a>`;
+    expect(parsePerks(noisy, { now: NOW }).sourceFingerprint).toBe(base);
+    expect(parsePerks(FIXTURE.replace("每日 100 <strong>积分</strong>", "每日 120 <strong>积分</strong>"), { now: NOW }).sourceFingerprint).not.toBe(base);
+  });
+
   it("真实台账（本机 2026-10-15 首跑产物）只钉结构不变量，不钉快照值", () => {
     const p = "data/igetoken-perks.json";
     if (!existsSync(p)) return; // 未落盘时不染红（workflow 首跑会产）

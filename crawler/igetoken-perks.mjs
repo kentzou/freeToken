@@ -99,6 +99,12 @@ export function parsePerks(html, { now }) {
     declaredCount: Number(declared[1]),
     itemCount: items.length,
     items,
+    // 内容指纹：只对「台账真正收录的那部分」（定位声明 + 定序后的卡片）取 sha256(16)。
+    // 刻意不 hash 整页字节——实测同一批 12 条内容连抓两次整页 sha 就不同：页面里有 Cloudflare
+    // 邮箱混淆（/cdn-cgi/l/email-protection#… 与 data-cfemail=…），那串是每请求随机编码的，
+    // hash 整页会天天假报警。改对内容取指纹后，这个值变化才等于「上游真改了东西」。
+    // 键必须写在返回体内而不是编排层补：补出来的键 tsc 看不到，deploy 的 npx tsc --noEmit 会因此红灯。
+    sourceFingerprint: createHash("sha256").update(JSON.stringify({ scopeNote, items })).digest("hex").slice(0, 16),
   };
 }
 
@@ -107,8 +113,6 @@ export async function crawlIgetokenPerks({ grab = grabText, now = new Date().toI
   const r = await grab(IGETOKEN_PERKS_URL);
   if (!r.ok) throw new Error(`igetoken /perks HTTP 失败：${r.error || `HTTP ${r.status}`}`);
   const doc = parsePerks(r.text, { now });
-  // 整份响应指纹：认 sha 不认字节，判「本轮读的是哪一份页面」用
-  doc.sourceFingerprint = createHash("sha256").update(r.text).digest("hex").slice(0, 16);
   return { doc, files: { "data/igetoken-perks.json": JSON.stringify(doc, null, 2) + "\n" } };
 }
 
