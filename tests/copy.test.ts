@@ -1,10 +1,11 @@
-import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { compiledRules } from "@/lib/rules";
 import {
   brandName, cleanText, compactCardCopy, ctaHref, ctaRel, detailSlug, displayName,
-  fmtMd, freeLabel, heroTitle, logoFor, shortText, splitNumbers, stars,
+  fmtMd, freeLabel, heroTitle, logoFor, OFFICIAL_LOGOS, shortText, splitNumbers, stars,
 } from "@/lib/copy";
 import type { TokenCard } from "@/lib/types";
 
@@ -41,15 +42,47 @@ describe("文案纯函数（对齐镜像行为）", () => {
     expect(logoFor({ name: "Kilo Code" } as TokenCard, rules)).toBe("assets/logos/kilo.png");
     /* 腾讯系命中规则表仍用 tencent.png：那是合法归属，不是兜底。判据是「这张卡确实提到腾讯」 */
     expect(logoFor({ name: "腾讯云混元" } as TokenCard, rules)).toContain("tencent.png");
-    /* 实测 4 张入库卡今天走兜底：让它们逐一钉死，下一次爬取新增品牌时不会偷偷显示腾讯标 */
-    for (const name of ["商汤 Token Plan（sensenova）", "BazaarLink", "TeleAgent（星辰超级智能体）", "字节 TRAE（AI IDE）"]) {
+    /* 2026-10-16「使用官方logo」轮：这四张原先走兜底，现已各自取到官方图并钉死归属 */
+    for (const [name, file] of [
+      ["商汤 Token Plan（sensenova）", "sensenova.png"],
+      ["BazaarLink", "bazaarlink.svg"],
+      ["TeleAgent（星辰超级智能体）", "teleai.png"],
+      ["字节 TRAE（AI IDE）", "trae.png"],
+    ] as const) {
+      expect(logoFor({ name } as TokenCard, rules)).toBe(`assets/logos/${file}`);
+    }
+    /* 三轮抓取仍取不到官方标的品牌继续走兜底（宁可素，不冒用） */
+    for (const name of ["TArk元舟", "Loomy（科大讯飞）"]) {
       expect(logoFor({ name } as TokenCard, rules)).toBe("assets/logos/generic.svg");
     }
+    expect(logoFor({ name: "xAI Grok（console.x.ai）" } as TokenCard, rules)).toBe("assets/logos/xai.ico");
+    /* 牙：官方表两条 书生 系正则分属不同主体，端砚走 OpenXLab、Intern AI 走实验室 own 标 */
+    expect(logoFor({ name: "书生·端砚 墨点计划（上海AI实验室）" } as TokenCard, rules)).toBe("assets/logos/openxlab.svg");
+    expect(logoFor({ name: "书生 Intern AI（上海 AI 实验室）" } as TokenCard, rules)).toBe("assets/logos/internlm.png");
     /* 牙（2026-10-16 用户截图「这几个活动的图标为啥完全一样」）：旧实现还会拿 modality/effect 兜底匹配，
        于是「额度里含 GLM 模型」的聚合平台全被画成智谱标（实测 18 张，其中 10 张显示 zhipu.png）。
        卡名不含品牌词 ⇒ 必须走中性兜底，绝不因文案里的模型名冒用他人品牌。 */
-    expect(logoFor({ name: "Morph", modality: "morph-v3-large · glm-5.2" } as TokenCard, rules)).toBe("assets/logos/generic.svg");
+    expect(logoFor({ name: "某中转站", modality: "morph-v3-large · glm-5.2" } as TokenCard, rules)).toBe("assets/logos/generic.svg");
     expect(logoFor({ name: "某聚合平台", effect: "一站式接入 GLM / 智谱 / DeepSeek" } as TokenCard, rules)).toBe("assets/logos/generic.svg");
+    /* 牙：官方表正则必须锚定卡名开头。实测卡名「UOS AI（deepin）免费 DeepSeek 账号」里写着别家的模型名，
+       不锚就会把 DeepSeek 标披到 deepin 卡上——正是本轮要消灭的那类错标 */
+    expect(logoFor({ name: "UOS AI（deepin）免费 DeepSeek 账号" } as TokenCard, rules)).toBe("assets/logos/deepin.png");
+    expect(logoFor({ name: "DeepSeek 开放平台" } as TokenCard, rules)).toBe("assets/logos/deepseek.svg");
+  });
+  it("OFFICIAL_LOGOS 指向的文件必须真在 public/assets/logos 里（断图＝线上破图）", () => {
+    const dir = path.resolve(process.cwd(), "public/assets/logos");
+    const onDisk = new Set(readdirSync(dir));
+    for (const [re, file] of OFFICIAL_LOGOS) {
+      expect(onDisk.has(file), `${re.source} → ${file} 不存在`).toBe(true);
+    }
+    /* 同一张图不许同时挂两个不同 slug（复制粘贴出错的品牌表最容易犯这条） */
+    const byContent = new Map<string, string>();
+    for (const [, file] of OFFICIAL_LOGOS) {
+      const sum = createHash("sha256").update(readFileSync(path.join(dir, file))).digest("hex");
+      const first = byContent.get(sum);
+      if (first && first !== file) throw new Error(`${file} 与 ${first} 字节相同，归属可疑`);
+      byContent.set(sum, file);
+    }
   });
   it("freeLabel：limited > 长期 > 默认", () => {
     expect(freeLabel({ limited: "2026-09-30" } as TokenCard)).toBe("限时 9/30");

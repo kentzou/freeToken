@@ -41,21 +41,66 @@ export function brandName(item: Pick<TokenCard, "name">): string {
   return displayName(item);
 }
 
-/** logo：4 个官方特例优先，其次上游规则表；未收录品牌走中性 generic.svg。
- *  兜底绝不冒用他人品牌——2026-09-30 审查裁决（REVIEW_REPORT M2）：
- *  旧实现兜底 tencent.png 会让「字节 TRAE」显示腾讯标，属虚假信息。 */
+/** 官方品牌标：`[匹配卡名的正则, public/assets/logos/ 下的文件名]`，按序取第一个命中。
+ *  入库门槛只有一条——文件必须是**从该卡自己的 link 域（或该域自家 CDN）取回的官方图**（2026-10-16 三轮抓取，
+ *  取不到的品牌一律不进表、继续走中性兜底）。兜底绝不冒用他人品牌：2026-09-30 审查裁决 REVIEW_REPORT M2
+ *  （旧实现兜底 tencent.png 让「字节 TRAE」显示腾讯标＝虚假信息）、2026-10-16 用户裁决「不能错乱使用图标」。
+ *  正则一律**锚定卡名开头**（除前 4 条历史特例）：卡名里出现别家模型名是常态，
+ *  例如「UOS AI（deepin）免费 DeepSeek 账号」，不锚就会把 DeepSeek 标披到 deepin 卡上。 */
+export const OFFICIAL_LOGOS: readonly [RegExp, string][] = [
+  [/workbuddy/i, "workbuddy-official.png"],
+  [/qoder|灵码/i, "qoder-ui.svg"],
+  [/glm|智谱|z\.ai/i, "zhipu-ui.svg"],
+  [/stepfun|阶跃/i, "stepfun-ui.svg"],
+  [/^库库\s*AI/, "baidu.png"],
+  [/^商汤|sensenova/i, "sensenova.png"],
+  [/^agnes\s*ai/i, "agnes-ai.svg"],
+  [/^openrouter/i, "openrouter.png"],
+  [/^bazaarlink/i, "bazaarlink.svg"],
+  [/^天翼云/, "ctyun.ico"],
+  [/^monkeycode/i, "monkeycode.png"],
+  [/^点点\s*ai/i, "dots.svg"],
+  [/^teleagent/i, "teleai.png"],
+  [/^字节\s*trae/i, "trae.png"],
+  [/^书生·端砚/, "openxlab.svg"],
+  [/^华为云/, "huaweicloud.ico"],
+  [/^联通云/, "cucloud.ico"],
+  [/^uos\s*ai/i, "deepin.png"],
+  [/^移动云/, "10086.ico"],
+  [/^百川智能/, "baichuan-ai.ico"],
+  [/^快手万擎/, "streamlake.ico"],
+  [/^fastgpt/i, "fastgpt.ico"],
+  [/^tokendance/i, "tokendance.svg"],
+  [/^aicraft/i, "aicraft.svg"],
+  [/^morph/i, "morphllm.ico"],
+  [/^ofox/i, "ofox.ico"],
+  [/^token\s*harbor/i, "tokenharbor.png"],
+  [/^orcarouter/i, "orcarouter.ico"],
+  [/^unorouter/i, "unorouter.png"],
+  [/^novita/i, "novita.ico"],
+  [/^fireworks/i, "fireworks.ico"],
+  [/^apmix/i, "apmix.ico"],
+  [/^deepseek/i, "deepseek.svg"],
+  [/^讯飞星火/, "xfyun.ico"],
+  [/^cohere/i, "cohere.ico"],
+  [/^ovhcloud/i, "ovhcloud.ico"],
+  [/^蚂蚁百灵/, "bailing.png"],
+  [/^atomgit/i, "atomgit.ico"],
+  [/^书生\s*intern/i, "internlm.png"],
+  [/^mistral/i, "mistral.svg"],
+  [/^xai/i, "xai.ico"],
+];
+
 export function logoFor(item: TokenCard, rules: CompiledRules): string {
   const name = item.name || "";
-  if (/workbuddy/i.test(name)) return "assets/logos/workbuddy-official.png";
-  if (/qoder|灵码/i.test(name)) return "assets/logos/qoder-ui.svg";
-  if (/glm|智谱|z\.ai/i.test(name)) return "assets/logos/zhipu-ui.svg";
-  if (/stepfun|阶跃/i.test(name)) return "assets/logos/stepfun-ui.svg";
-  /* 只按**卡名**找品牌：modality/effect 写的是「这家免费额度含哪些模型」，拿它匹配规则表会让
-     任何列了 GLM 的聚合平台披上智谱标（2026-10-16 实测 18 张卡因此错标，其中 10 张显示 zhipu.png；
-     用户裁决「不能错乱使用图标」）。认不出品牌一律走中性兜底，宁可素也不冒用。 */
+  const official = OFFICIAL_LOGOS.find(([re]) => re.test(name));
+  if (official) return `assets/logos/${official[1]}`;
+  /* 其次才轮到上游规则表（CI 拥有 data/rules.json，本地不可编辑）。
+     只按**卡名**找品牌：modality/effect 写的是「这家免费额度含哪些模型」，拿它匹配规则表会让
+     任何列了 GLM 的聚合平台披上智谱标（2026-10-16 实测 18 张卡因此错标，其中 10 张显示 zhipu.png）。
+     注意 hit[1] 是**无扩展名的 slug**（实测 data/rules.json：`"slug": "kilo"`），所以命中分支自己补 `.png`；
+     认不出品牌的兜底换成带扩展名的中性 generic.svg。 */
   const hit = rules.logo.find(([re]) => re.test(name));
-  /* 注意 hit[1] 是**无扩展名的 slug**（实测 data/rules.json：`"slug": "kilo"`、`"slug": "tencent"`），
-     所以命中分支必须自己补 `.png`；只有兜底分支换成带扩展名的 generic.svg。 */
   return hit ? `assets/logos/${hit[1]}.png` : "assets/logos/generic.svg";
 }
 
