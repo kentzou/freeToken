@@ -2,14 +2,28 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-10-15T08:21:19.489Z",
+  "fetchedAt": "2026-10-16T00:31:45.717Z",
   "sections": {
-    "deals": 58,
+    "deals": 60,
     "models": 21,
     "perks": 8
   },
-  "itemCount": 87,
+  "itemCount": 89,
   "items": [
+    {
+      "id": "2026-10-opencode-deepseek-v41-flash-free",
+      "section": "deals",
+      "date": "2026-10-15",
+      "title": "OpenCode Zen 免费档新增 DeepSeek V4.1 Flash：1M 上下文 · 原生多模态 · 网关侧 ZDR 零留存（限时免费）",
+      "link": "https://igetoken.com/deals/2026-10-opencode-deepseek-v41-flash-free/"
+    },
+    {
+      "id": "2026-10-workbuddy-step5-preview-exclusive-free",
+      "section": "deals",
+      "date": "2026-10-15",
+      "title": "腾讯 WorkBuddy 独家限时免费 Step 5 Preview 两周（10/12–10/25）：阶跃旗舰 600B MoE 接入办公工作台",
+      "link": "https://igetoken.com/deals/2026-10-workbuddy-step5-preview-exclusive-free/"
+    },
     {
       "id": "2026-10-stepfun-step5-preview-free-week",
       "section": "deals",
