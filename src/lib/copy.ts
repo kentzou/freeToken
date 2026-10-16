@@ -50,8 +50,10 @@ export function logoFor(item: TokenCard, rules: CompiledRules): string {
   if (/qoder|灵码/i.test(name)) return "assets/logos/qoder-ui.svg";
   if (/glm|智谱|z\.ai/i.test(name)) return "assets/logos/zhipu-ui.svg";
   if (/stepfun|阶跃/i.test(name)) return "assets/logos/stepfun-ui.svg";
-  const details = `${item.modality || ""} ${item.effect || ""}`;
-  const hit = rules.logo.find(([re]) => re.test(name)) || rules.logo.find(([re]) => re.test(details));
+  /* 只按**卡名**找品牌：modality/effect 写的是「这家免费额度含哪些模型」，拿它匹配规则表会让
+     任何列了 GLM 的聚合平台披上智谱标（2026-10-16 实测 18 张卡因此错标，其中 10 张显示 zhipu.png；
+     用户裁决「不能错乱使用图标」）。认不出品牌一律走中性兜底，宁可素也不冒用。 */
+  const hit = rules.logo.find(([re]) => re.test(name));
   /* 注意 hit[1] 是**无扩展名的 slug**（实测 data/rules.json：`"slug": "kilo"`、`"slug": "tencent"`），
      所以命中分支必须自己补 `.png`；只有兜底分支换成带扩展名的 generic.svg。 */
   return hit ? `assets/logos/${hit[1]}.png` : "assets/logos/generic.svg";

@@ -45,6 +45,11 @@ describe("文案纯函数（对齐镜像行为）", () => {
     for (const name of ["商汤 Token Plan（sensenova）", "BazaarLink", "TeleAgent（星辰超级智能体）", "字节 TRAE（AI IDE）"]) {
       expect(logoFor({ name } as TokenCard, rules)).toBe("assets/logos/generic.svg");
     }
+    /* 牙（2026-10-16 用户截图「这几个活动的图标为啥完全一样」）：旧实现还会拿 modality/effect 兜底匹配，
+       于是「额度里含 GLM 模型」的聚合平台全被画成智谱标（实测 18 张，其中 10 张显示 zhipu.png）。
+       卡名不含品牌词 ⇒ 必须走中性兜底，绝不因文案里的模型名冒用他人品牌。 */
+    expect(logoFor({ name: "Morph", modality: "morph-v3-large · glm-5.2" } as TokenCard, rules)).toBe("assets/logos/generic.svg");
+    expect(logoFor({ name: "某聚合平台", effect: "一站式接入 GLM / 智谱 / DeepSeek" } as TokenCard, rules)).toBe("assets/logos/generic.svg");
   });
   it("freeLabel：limited > 长期 > 默认", () => {
     expect(freeLabel({ limited: "2026-09-30" } as TokenCard)).toBe("限时 9/30");
