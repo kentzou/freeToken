@@ -16,7 +16,7 @@ const PROMO_KEYS = [
   "source",
   "ic", // MonkeyCode：?ic=019fe…（实测上游在用）
   "clubtaskbiz", // 云工开物：?clubTaskBiz=subTask..（活动任务追踪）
-  "cps_key", // 七牛云 AI 推广大使：?cps_key=…（CPS 返现归因码；10-17 实测带它与不带它服务端字节完全相同，属纯归因尾码）
+  "cps_key", // 七牛云 AI 邀请活动（用户 10-17 给的活动链接带 ?cps_key=…）：CPS 返现归因码，实测带它与不带它服务端字节完全相同，属纯归因尾码
   "utm_source",
   "utm_medium",
   "utm_campaign",
