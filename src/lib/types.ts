@@ -76,6 +76,8 @@ export interface MetaJson {
   lastSyncedSha: string | null;
   lastSyncedAt: string;
   sourceFingerprint?: string;
+  /** 本地增补表（config/local-cards.json）的文本指纹，由 CI crawl 落盘时写入；爬虫短路的双条件之一 */
+  localFingerprint?: string;
   counts: { tokens: number; donots: number };
 }
 

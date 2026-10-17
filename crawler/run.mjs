@@ -15,6 +15,13 @@ import { UPSTREAM_REPO, createIssue, fetchRawText, headStatus, latestCommitSha }
 /** 上游已从 app.js（源码里嵌结构体）迁到纯数据 data.json；旧地址 404 且不再含任何可提取结构 */
 export const UPSTREAM_RAW = `https://raw.githubusercontent.com/${UPSTREAM_REPO}/main/data.json`;
 
+/** 本地增补表（config/local-cards.json 解析结果）的内容指纹：只吃解析后的值，
+ *  纯排版差异（缩进/空行/键间空格）不改指纹，任何字段增删改都改。sha256 前 16 位，
+ *  与 data/meta.json 的 sourceFingerprint 同体制，便于同一个 grep 认出来。 */
+export function localCardsFingerprint(localCards) {
+  return createHash("sha256").update(JSON.stringify(localCards ?? [])).digest("hex").slice(0, 16);
+}
+
 /** 两队列分流：新增即发布；修改/删除持旧值待审（spec §7.6 互不阻塞） */
 export function syncOnce({ prev, next, existingPending, upstreamSha, detectedAt }) {
   const diff = diffAll(prev, next);
@@ -116,14 +123,16 @@ export async function crawlOnce(deps) {
   } = deps;
 
   const sha = latestSha ?? (await latestCommitSha(UPSTREAM_REPO, { token, fetchImpl, sleep }));
-  // 评审 I-2 登记（纯注释，不改行为）：本短路只比较上游 commit sha。本地只改
-  // config/local-cards.json（增补条目）时，这一轮根本不会调用 buildSeed ⇒ 不落盘；
-  // workflow_dispatch 手工触发在上游 sha 未动时同样被短路。
-  // 后果：上游进入低频/停更期，增补卡会长期停在 config 里而站点看不到，
-  // 且该现象与「机制坏了」无法区分。处置：等上游产出新 commit；若需要强制落地的
-  // 机制（把 config/local-cards.json 的文本指纹纳入本比较，或给 workflow 加 force
-  // 输入），需用户另批——见母本计划 §7 交接清单。
-  if (meta.lastSyncedSha && meta.lastSyncedSha === sha) {
+  /* 短路双条件（2026-10-17 用户裁决落地「出路 C」，补掉评审 I-2 登记的缺口）：
+     旧写法只比上游 commit sha ⇒ 本地增补 config/local-cards.json 那一轮根本不会调 buildSeed，
+     卡会长期停在 config 里而站点看不到，且该现象与「机制坏了」不可区分（10-13～10-17 连续撞的就是它，
+     workflow_dispatch 手工触发同样挡在这里）。现在本地增补表的文本指纹进比较：两个值都没变才早退，
+     本地表一变——哪怕上游 sha 一动不动——也照常跑 buildSeed 落盘，并把新指纹记进 meta.localFingerprint。
+     指纹取解析后的 prev.localCards（CLI 读 config/local-cards.json 的结果）⇒ 纯排版改动不误触发；
+     meta 里该字段缺失（机制上线首跑，或误跑 npm run seed 把它抹掉）一律判「变了」：宁可多跑一轮，
+     也不让增补卡静默停在 config 里。 */
+  const localFingerprint = localCardsFingerprint(prev.localCards);
+  if (meta.lastSyncedSha && meta.lastSyncedSha === sha && meta.localFingerprint === localFingerprint) {
     return { unchanged: true, sha, added: [], changedIds: [], removedIds: [], rulesChanged: 0, warn: [], pendingTotal: 0, pendingEntries: [], files: {}, issues: {} };
   }
 
@@ -160,6 +169,7 @@ export async function crawlOnce(deps) {
       lastSyncedSha: sha,
       lastSyncedAt: now,
       sourceFingerprint: createHash("sha256").update(src).digest("hex").slice(0, 16),
+      localFingerprint, // 本轮落盘时的本地增补表指纹，下一轮短路拿它对账（见上面双条件注释）
       counts: { tokens: data.cards.length, donots: data.donots.length },
     }),
   };

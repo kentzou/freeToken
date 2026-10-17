@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { buildSeed } from "../scripts/export-seed.mjs";
-import { crawlOnce, mergePending, notifyIssueTitle, syncOnce } from "../crawler/run.mjs";
+import { crawlOnce, localCardsFingerprint, mergePending, notifyIssueTitle, syncOnce } from "../crawler/run.mjs";
 import { injectUpstreamItem } from "./helpers/upstream";
 
 const FIXTURE = readFileSync("tests/fixtures/upstream-data.json", "utf8");
@@ -102,7 +102,54 @@ describe("syncOnce：两队列互不阻塞（spec §7.6）", () => {
 });
 
 describe("crawlOnce：端到端（假 transport + fixture 文本）", () => {
-  it("无变化早退：latest sha 与 meta 相同 → 零文件产出", async () => {
+  it("无变化早退：上游 sha 与本地增补表指纹都没变 → 零文件产出", async () => {
+    const s = await crawlOnce({
+      prev: PREV,
+      meta: {
+        ...BASE_META, lastSyncedSha: "abc123",
+        localFingerprint: localCardsFingerprint(PREV.localCards),
+      },
+      config: CONFIG,
+      latestSha: "abc123",
+      sourceText: FIXTURE,
+    });
+    expect(s.unchanged).toBe(true);
+    expect(s.files).toEqual({});
+  });
+
+  it("上游 sha 一动不动、本地增补表变了 → 不短路：新本地卡落盘并写回新指纹（2026-10-17 出路 C 的承重钉）", async () => {
+    /* 这条钉的是用户三轮撞上的那个现象本身：卡写进 config/local-cards.json 后，
+       上游不前进 ⇒ 旧短路让 buildSeed 一次都不调 ⇒ 站点永远看不到。判据取「同 sha 仍落盘」，
+       不是取「产物对不对」——产物形态由上一条 localCards 全链路用例（评审 I-3）钉住。 */
+    const probe = {
+      name: "指纹探针卡",
+      type: "大模型",
+      modality: "",
+      quota: "注册赠 100 万 Token",
+      link: "https://fp.example/",
+      limited: null,
+      updated: "2026-10-17",
+      origin: "local",
+      sourceUrl: "https://fp.example/pricing",
+      checkedAt: "2026-10-17",
+    };
+    const s = await crawlOnce({
+      prev: { ...PREV, localCards: [probe] },
+      meta: {
+        ...BASE_META, lastSyncedSha: "abc123",
+        localFingerprint: localCardsFingerprint(PREV.localCards), // 上一轮记的是「没有这张卡」的指纹
+      },
+      config: CONFIG,
+      latestSha: "abc123", // 上游 sha 与 meta 逐字相同
+      sourceText: FIXTURE,
+    });
+    expect(s.unchanged).toBe(false);
+    expect(s.added).toContain("指纹探针卡");
+    expect(s.files["data/tokens.json"]).toContain("指纹探针卡");
+    expect(JSON.parse(s.files["data/meta.json"]).localFingerprint).toBe(localCardsFingerprint([probe]));
+  });
+
+  it("meta 里还没有 localFingerprint（机制上线首跑）→ 同 sha 也不短路，并把指纹补上", async () => {
     const s = await crawlOnce({
       prev: PREV,
       meta: { ...BASE_META, lastSyncedSha: "abc123" },
@@ -110,8 +157,8 @@ describe("crawlOnce：端到端（假 transport + fixture 文本）", () => {
       latestSha: "abc123",
       sourceText: FIXTURE,
     });
-    expect(s.unchanged).toBe(true);
-    expect(s.files).toEqual({});
+    expect(s.unchanged).toBe(false);
+    expect(s.files["data/meta.json"]).toContain("localFingerprint");
   });
 
   it("fixture 注入脏链接新卡 → 自动清洗入库，files 里无 userCode，pending 为空", async () => {
@@ -229,5 +276,22 @@ describe("crawlOnce：端到端（假 transport + fixture 文本）", () => {
     expect(s2.pendingTotal).toBe(s.pendingTotal);
     // notify 标题纯函数（终审 #7 场景：新增自动上线时只列新增，不含改删）
     expect(notifyIssueTitle({ added: [{ name: "x" }], sha: "s" })).toContain("新增 1");
+  });
+});
+
+describe("localCardsFingerprint：短路第二个条件的取数口径", () => {
+  const card = { name: "甲", quota: "每日 5 次", link: "https://a.example/" };
+
+  it("16 位十六进制；解析结果原样往返不改指纹（排版差异不会误触发落盘）", () => {
+    const fp = localCardsFingerprint([card]);
+    expect(fp).toMatch(/^[0-9a-f]{16}$/);
+    expect(localCardsFingerprint(JSON.parse(JSON.stringify([card])))).toBe(fp);
+  });
+
+  it("任一字段变值即换指纹；空表与缺省同指纹（都视为「本地没有增补」）", () => {
+    const fp = localCardsFingerprint([card]);
+    expect(localCardsFingerprint([{ ...card, quota: "每日 6 次" }])).not.toBe(fp);
+    expect(localCardsFingerprint([])).not.toBe(fp);
+    expect(localCardsFingerprint(undefined)).toBe(localCardsFingerprint([]));
   });
 });
