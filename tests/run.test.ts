@@ -107,7 +107,7 @@ describe("crawlOnce：端到端（假 transport + fixture 文本）", () => {
       prev: PREV,
       meta: {
         ...BASE_META, lastSyncedSha: "abc123",
-        localFingerprint: localCardsFingerprint(PREV.localCards),
+        localFingerprint: localCardsFingerprint([]), // PREV 不带 localCards ⇒ 与空表同指纹（helper 用例钉着）
       },
       config: CONFIG,
       latestSha: "abc123",
@@ -137,7 +137,7 @@ describe("crawlOnce：端到端（假 transport + fixture 文本）", () => {
       prev: { ...PREV, localCards: [probe] },
       meta: {
         ...BASE_META, lastSyncedSha: "abc123",
-        localFingerprint: localCardsFingerprint(PREV.localCards), // 上一轮记的是「没有这张卡」的指纹
+        localFingerprint: localCardsFingerprint([]), // 上一轮记的是「没有这张卡」的指纹
       },
       config: CONFIG,
       latestSha: "abc123", // 上游 sha 与 meta 逐字相同
