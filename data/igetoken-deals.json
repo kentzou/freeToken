@@ -2,14 +2,21 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-10-16T00:31:45.717Z",
+  "fetchedAt": "2026-10-17T00:38:46.387Z",
   "sections": {
-    "deals": 60,
+    "deals": 61,
     "models": 21,
     "perks": 8
   },
-  "itemCount": 89,
+  "itemCount": 90,
   "items": [
+    {
+      "id": "2026-10-opencode-glm-53-flash-free",
+      "section": "deals",
+      "date": "2026-10-16",
+      "title": "OpenCode Zen 免费档新增 GLM 5.3 Flash：1M 上下文 · 原生多模态 · 智谱旗舰编码模型限时免费",
+      "link": "https://igetoken.com/deals/2026-10-opencode-glm-53-flash-free/"
+    },
     {
       "id": "2026-10-opencode-deepseek-v41-flash-free",
       "section": "deals",
@@ -28,7 +35,7 @@
       "id": "2026-10-stepfun-step5-preview-free-week",
       "section": "deals",
       "date": "2026-10-09",
-      "title": "阶跃星辰 Step 5 Preview 旗舰模型免费一周：经 OpenCode/Cline/Kilo Code/Nous Research 等平台滚动开放（600B MoE · 1M 上下文 · 10/15 开源权重）",
+      "title": "阶跃星辰 Step 5 Preview 旗舰模型免费一周：经 OpenCode/Cline/Kilo Code/Nous Research 等平台滚动开放（600B MoE · 1M 上下文 · 10/15 开源权重）（已结束）",
       "link": "https://igetoken.com/deals/2026-10-stepfun-step5-preview-free-week/"
     },
     {
