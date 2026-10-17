@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-10-15T23:57:32.297Z",
-  "totalModels": 465,
-  "freeModelCount": 18,
+  "fetchedAt": "2026-10-17T00:01:46.823Z",
+  "totalModels": 467,
+  "freeModelCount": 19,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -217,7 +217,18 @@
       "maxCompletionTokens": 262144,
       "modality": "text+image+audio->text",
       "moderated": false
+    },
+    {
+      "id": "xingchen-agi/xing4.0-29b-a4b:free",
+      "name": "XingChen: Xing4.0 29B A4B (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 235929,
+      "modality": "text->text",
+      "moderated": false
     }
   ],
-  "sourceFingerprint": "25184a54707d7f8e"
+  "sourceFingerprint": "d67ed0037b4ee81a"
 }
