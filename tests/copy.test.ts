@@ -116,6 +116,11 @@ describe("文案纯函数（对齐镜像行为）", () => {
     expect(ctaHref({ link: "https://a.test" } as TokenCard)).toBe("https://a.test");
     expect(ctaRel({ link: "https://a.test" } as TokenCard)).toBe("noopener noreferrer");
     expect(ctaRel({ link: "https://work-fission.x/1" } as TokenCard)).toContain("sponsored");
+    /* 本站登记的自有推广短链：入库闸按 OWN_SHORT_LINKS 放行，但对搜索引擎仍算推广链，
+       sponsored 那一支读同一份名单（ctaRel 里没有第二份域名表）。 */
+    expect(ctaRel({ link: "https://s.qiniu.com/3ueuEr" } as TokenCard)).toContain("sponsored");
+    // 反例有牙：同品牌的官方页不许被顺带标成推广链
+    expect(ctaRel({ link: "https://portal.qiniu.com/home/maas-onboarding" } as TokenCard)).toBe("noopener noreferrer");
   });
   it("stars 五颗、splitNumbers 把「数字+单位」整段切出（供荧光笔渲染）", () => {
     expect(stars(4)).toBe("★★★★☆");

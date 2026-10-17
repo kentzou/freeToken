@@ -29,6 +29,9 @@ export default function EditorialPolicy() {
         链接清洗规则：剥除 <code>userCode</code>、<code>invite_code</code>、<code>aff</code>、<code>keyfrom</code>、<code>utm_*</code> 等推广与追踪参数；
         上游作者的邀请码池与推广短链一律不入库。少数条目指向本站参与的活动页、带上本站的活动码，
         这类链接一律标 <code>sponsored</code>（向搜索引擎声明非自然链），码值公开登记在仓库的清洗器里。
+        短链走同一条红线，只是放行判据换成整枚链接：域名命中清洗器的短链名单即拦，
+        只有<strong>本站自己参与的活动短链</strong>按「域名＋路径」逐枚登记后才放行（名单同样公开在清洗器里），
+        放行后一样标 <code>sponsored</code>；当前登记的只有「七牛云 AI 新用户礼包」一张。
       </p>
     </PageShell>
   );

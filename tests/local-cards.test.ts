@@ -219,6 +219,9 @@ describe("公开口径：本地增补卡的核验日与新增卡路径", () => {
     expect(page).toContain("每条情报的核验日期来自上游更新时间，本站不擅自改写。"); // 上游口径不许被顺手改掉
     expect(page).toContain("本地增补卡");
     expect(page).toMatch(/config\/local-cards\.json/);
+    /* 2026-10-17 用户裁决：本站自有推广短链按「域名＋路径」逐枚登记入库，公示口径必须同步写清这条例外——
+       只改清洗器不改这一页，页面会继续宣称「推广短链一律不入库」而与站内实际出链自相矛盾。 */
+    expect(page).toContain("本站自己参与的活动短链");
   });
 
   it("⑱ 后台的新增卡说明改指 config/local-cards.json，不再教人手工改 data/tokens.json", () => {

@@ -33,12 +33,19 @@ export const SHORT_LINK_HOSTS: string[];
 /** 本站自有邀请码（linkRisk 按码值放行；写他人码不豁免） */
 export const OWN_INVITE_CODES: string[];
 
+/** 本站自有推广短链，元素形态为 "host+pathname"（linkRisk 按完整路径逐枚放行；同域名他人链不豁免） */
+export const OWN_SHORT_LINKS: string[];
+
+/** 是否命中 OWN_SHORT_LINKS：要求 https:// 完整形态且 host+pathname 逐字相等；解析不了返回 false */
+export function isOwnShortLink(url: string | null | undefined): boolean;
+
 /** 剥掉 search 与 hash 内的推广/追踪参数；无参数可洗时逐字节原样返回；解析失败返回原值 */
 export function stripPromoParams(url: string): string;
 
 /**
  * 清洗后残余风险判定：残留引流参数（search 与 hash 两处）/ SHORT_LINK_HOSTS 短链域名。
- * 码值命中 OWN_INVITE_CODES 的引流参数不计入「残留」（本站自荐链接）。
+ * 码值命中 OWN_INVITE_CODES 的引流参数不计入「残留」（本站自荐链接）；
+ * host+pathname 命中 OWN_SHORT_LINKS 的短链同样放行（本站登记的自有短链）。
  * 运行时对非字符串（如缺 link 字段的观望条目）安全返回 null，故签名放宽为可选。
  */
 export function linkRisk(url: string | null | undefined): string | null;

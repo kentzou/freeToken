@@ -26,7 +26,8 @@ const PROMO_KEYS = [
 
 /**
  * 推广短链域名：邀请码写在路径里（s.mi.cn/NNI4kZp9），剥参数清不掉。
- * 命中即判定为风险链接，必须在 config/site-config.json 逐卡换成官方地址。
+ * 命中即判定为风险链接，必须在 config/site-config.json 逐卡换成官方地址；
+ * 唯一例外是下面 OWN_SHORT_LINKS 里逐枚登记的本站自有短链（按完整路径放行，不按域名）。
  */
 export const SHORT_LINK_HOSTS = ["curl.qcloud.com", "s.qiniu.com", "s.mi.cn", "url.cn", "t.cn"];
 
@@ -41,6 +42,25 @@ export const SHORT_LINK_HOSTS = ["curl.qcloud.com", "s.qiniu.com", "s.mi.cn", "u
  * 只改 config/site-config.json 的 link 而不登记码值，会在入库闸上得到一条指名报错，不会静默放行。
  */
 export const OWN_INVITE_CODES = ["binccyhvk7bl"];
+
+/**
+ * 本站自有推广短链：短链把返现/邀请码写在**路径**里，OWN_INVITE_CODES 那支按码值豁免够不着它，
+ * 只能另建一份按「host+pathname 完整匹配」的登记名单。
+ * 2026-10-17 用户裁决：「七牛云 AI 新用户礼包」卡面链接一律走本站的七牛推广短链 s.qiniu.com/3ueuEr
+ * （实测 3 跳落点 www.qiniu.com/ai/promotion/invited?cps_key=1hcw846crfu4y，被邀请人页）。
+ * 放行判据是**完整路径逐枚登记**而不是域名：同域名的他人短链（上游那枚 s.qiniu.com/VV7Zfa、
+ * 审批台探针 s.qiniu.com/XXXX）、前缀变体、缺协议的裸形态一律照旧报「推广短链域名」。
+ * 登记过的自有链对搜索引擎仍算推广链：ctaRel（src/lib/copy.ts）读 isOwnShortLink 同一份名单补
+ * `sponsored nofollow`，并在「精选门槛与收录标准」页公开说明——入库与标注两个消费点不分叉。
+ * 新增自有短链只改这一处（linkRisk 是全站唯一实现，seed / validate / 后台写面 / 测试共用）。
+ */
+export const OWN_SHORT_LINKS = ["s.qiniu.com/3ueuEr"];
+
+/** 是否命中 OWN_SHORT_LINKS：要求写成 https:// 完整形态且 host+pathname 逐字相等；解析不了返回 false */
+export function isOwnShortLink(url) {
+  const p = parse(url); // 故意用严格 parse：裸域名 s.qiniu.com/3ueuEr 不豁免，缺协议那一支的理由更强
+  return !!p && p.protocol === "https:" && OWN_SHORT_LINKS.includes(`${p.hostname}${p.pathname}`);
+}
 
 function isPromoKey(key) {
   const k = key.toLowerCase();
@@ -100,7 +120,8 @@ export function stripPromoParams(url) {
 }
 
 /** 清洗后残余风险检测；返回 null 表示干净，否则返回可读原因（seed 与阶段 D 爬虫共用）。
- *  引流参数一支按码值豁免 OWN_INVITE_CODES（本站自有活动码），其余判定不受影响。 */
+ *  两支按本站登记放行：引流参数一支按码值豁免 OWN_INVITE_CODES，短链一支按完整路径豁免 OWN_SHORT_LINKS；
+ *  裸域名缺协议那支对两类豁免都不放行（豁免只认 https:// 完整形态）。 */
 export function linkRisk(url) {
   if (typeof url !== "string" || !url) return null;
   const loose = parseLoose(url);
@@ -116,7 +137,7 @@ export function linkRisk(url) {
   const cut = parsed.hash.indexOf("?");
   if (cut > -1) collect(parsed.hash.slice(cut + 1));
   if (hits.length) return `残留引流参数 ${hits.join(", ")}`;
-  if (SHORT_LINK_HOSTS.includes(parsed.hostname)) return `推广短链域名 ${parsed.hostname}`;
+  if (SHORT_LINK_HOSTS.includes(parsed.hostname) && !isOwnShortLink(url)) return `推广短链域名 ${parsed.hostname}`;
   if (loose.bare) return "缺少协议前缀（裸域名），必须写成 https:// 开头的完整地址";
   return null;
 }

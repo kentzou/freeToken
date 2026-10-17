@@ -1,3 +1,4 @@
+import { isOwnShortLink } from "../../crawler/clean.mjs";
 import type { CompiledRules } from "./rules";
 import type { TokenCard } from "./types";
 
@@ -149,9 +150,12 @@ export function ctaHref(card: TokenCard): string {
   return card.link || "#";
 }
 
-/** 带推广特征的链接加 sponsored，向搜索引擎声明非自然链（镜像 cardLink 的正则） */
+/** 带推广特征的链接加 sponsored，向搜索引擎声明非自然链（镜像 cardLink 的正则）。
+ *  另加一支本站自有短链：它按 OWN_SHORT_LINKS 过了入库闸，但对搜索引擎仍是推广链，
+ *  判据读 crawler/clean.mjs 的同一份名单，不在这里另立第二份。 */
 export function ctaRel(card: TokenCard): string {
-  const referral = /invite|usercode|[?&]aff=|qcloud\.com|work-fission|s\.mi\.cn/i.test(card.link || "");
+  const link = card.link || "";
+  const referral = /invite|usercode|[?&]aff=|qcloud\.com|work-fission|s\.mi\.cn/i.test(link) || isOwnShortLink(link);
   return referral ? "sponsored nofollow noopener noreferrer" : "noopener noreferrer";
 }
 

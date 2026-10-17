@@ -1,5 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
-import { applySiteConfig, cleanCard, linkRisk, OWN_INVITE_CODES, stripPromoParams } from "../crawler/clean.mjs";
+import {
+  applySiteConfig,
+  cleanCard,
+  isOwnShortLink,
+  linkRisk,
+  OWN_INVITE_CODES,
+  OWN_SHORT_LINKS,
+  stripPromoParams,
+} from "../crawler/clean.mjs";
 
 describe("stripPromoParams（期望值 = 对真实镜像跑出的实测结果）", () => {
   it.each([
@@ -55,6 +63,23 @@ describe("linkRisk", () => {
       "残留引流参数 inviteCode"
     );
     expect(linkRisk(`https://s.mi.cn/x?inviteCode=${OWN_INVITE_CODES[0]}`)).toBe("推广短链域名 s.mi.cn");
+  });
+
+  /* 2026-10-17 用户裁决：「七牛云 AI 新用户礼包」卡面一律走本站推广短链 s.qiniu.com/3ueuEr，
+     短链一支因此按 OWN_SHORT_LINKS 逐枚登记放行。放行判据是**完整 host+pathname 相等**而非域名，
+     下面四例就是有牙检查：同域名他人链（上游那枚 VV7Zfa）、前缀变体、尾斜杠、缺协议裸形态一律照旧拦。 */
+  it("自有短链按完整路径放行，同域他人链/前缀变体/裸形态仍拦", () => {
+    expect(OWN_SHORT_LINKS).toContain("s.qiniu.com/3ueuEr"); // 前提空转防御：名单空则下面全例无牙
+    expect(linkRisk("https://s.qiniu.com/3ueuEr")).toBeNull();
+    expect(isOwnShortLink("https://s.qiniu.com/3ueuEr")).toBe(true);
+    expect(linkRisk("https://s.qiniu.com/VV7Zfa")).toBe("推广短链域名 s.qiniu.com");
+    expect(linkRisk("https://s.qiniu.com/3ueuErX")).toBe("推广短链域名 s.qiniu.com");
+    expect(linkRisk("https://s.qiniu.com/3ueuEr/")).toBe("推广短链域名 s.qiniu.com"); // 尾斜杠不算同一枚
+    expect(linkRisk("s.qiniu.com/3ueuEr")).toBe("推广短链域名 s.qiniu.com"); // 裸域名不豁免，宿主判定先于缺协议
+    // 豁免只免掉短链那支：路径登记了，尾巴上挂别人的返现码照样点名
+    expect(linkRisk("https://s.qiniu.com/3ueuEr?cps_key=abc")).toContain("残留引流参数 cps_key");
+    expect(isOwnShortLink("#")).toBe(false);
+    expect(isOwnShortLink(undefined)).toBe(false);
   });
 });
 
