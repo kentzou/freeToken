@@ -5,7 +5,7 @@
   "usageNote": "线索台账，非发布内容。卡片文案来自同赛道第三方聚合站，未过本站红线②（额度原句须厂商官方页逐字在场）；要入库须逐条回官方页取证后手写 config/local-cards.json。",
   "rightsNote": "本站仅登记条目原文与出处链接，文案版权归原作者；本页不替代厂商官方页。",
   "evidence": "third-party-aggregator",
-  "fetchedAt": "2026-10-16T01:07:51.275Z",
+  "fetchedAt": "2026-10-17T01:13:11.288Z",
   "declaredCount": 47,
   "platformCount": 47,
   "platforms": [
@@ -403,13 +403,13 @@
       "category": "aggregator",
       "url": "https://igetoken.com/models/opencode/",
       "summary": "开源编程代理官方模型网关，多个编程模型限时免费",
-      "quota": "Zen 免费模型限时开放，当前 10 款（deepseek-v4.1-flash-free、step-5-preview-free、space-bunny-free、longcat-2.5-preview-free、mimo-v2.6-flash-free、cat-jam-free 等），名单按周轮换，专为编程场景优化",
+      "quota": "Zen 免费模型限时开放，当前 11 款（glm-5.3-flash-free、deepseek-v4.1-flash-free、longcat-2.5-preview-free、space-bunny-free、mimo-v2.6-flash-free、ll-alpha-free、cat-jam-free 等），名单按周轮换，专为编程场景优化",
       "tags": [
         "免费层",
         "编程场景",
         "免费模型轮换"
       ],
-      "checkedAt": "10/15 已核实",
+      "checkedAt": "10/16 已核实",
       "rating": "4"
     },
     {
@@ -740,5 +740,5 @@
       "rating": "4"
     }
   ],
-  "sourceFingerprint": "138f5301f5be215d"
+  "sourceFingerprint": "8785e55db71930a8"
 }
