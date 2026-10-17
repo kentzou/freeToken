@@ -9,6 +9,8 @@ describe("stripPromoParams（期望值 = 对真实镜像跑出的实测结果）
     ["https://monkeycode-ai.com/?ic=019fe974-4b9e-7186-b8a6-2901baec7c2e", "https://monkeycode-ai.com/"],
     ["https://x.com/a?invite_code_v2=ABC&utm_source=y", "https://x.com/a"],
     ["https://x.com/a?aff=123&keyfrom=wap", "https://x.com/a"],
+    // 七牛云 AI 推广大使的 CPS 归因尾码：10-17 实测带它与不带它服务端返回字节完全相同，纯归因、无业务含义
+    ["https://www.qiniu.com/ai/promotion/invite?cps_key=1hk4r34h5d1ea", "https://www.qiniu.com/ai/promotion/invite"],
     // hash 内参数：SPA 把邀请码放在 #/index?keyfrom=…，只清 search 会漏
     ["https://lobsterai.youdao.com/#/index?keyfrom=invitation", "https://lobsterai.youdao.com/#/index"],
     // 业务参数必须留下
@@ -35,6 +37,7 @@ describe("linkRisk", () => {
   it("抓到漏洗的引流参数（含 hash 内）", () => {
     expect(linkRisk("https://a.test/p?userCode=x")).toContain("残留引流参数 userCode");
     expect(linkRisk("https://a.test/#/index?keyfrom=invitation")).toContain("残留引流参数 keyfrom");
+    expect(linkRisk("https://www.qiniu.com/ai/promotion/invite?cps_key=1hk4r34h5d1ea")).toContain("残留引流参数 cps_key");
   });
   it("干净链接与占位符返回 null", () => {
     expect(linkRisk("https://cline.bot")).toBeNull();
