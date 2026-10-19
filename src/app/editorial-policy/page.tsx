@@ -20,6 +20,11 @@ export default function EditorialPolicy() {
         ))}
       </ul>
       <p>
+        门槛表之外还有<strong>少数直接展示的卡</strong>：卡片带上 <code>alwaysShow</code> 标记就跳过型号门槛进入首页，
+        这是编辑判断，<em>不代表</em>该平台的型号过了门槛。这类卡的名字在首页与仓库 <code>data/tokens.json</code> 里都查得到；
+        自营的推广卡如果也上首页，走的正是这一条例外，出链照旧标 <code>sponsored</code>——读者据此可自行判断立场。
+      </p>
+      <p>
         「观望名单」是另一套判定：平台能用但性价比、速度或稳定性存在明确短板，我们会写明理由，不做推荐。
         每条情报的核验日期来自上游更新时间，本站不擅自改写。
         另有<strong>本地增补卡</strong>这一类来源：条目由本站一手核验，核验日期逐条填写，
