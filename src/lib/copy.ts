@@ -150,13 +150,17 @@ export function ctaHref(card: TokenCard): string {
   return card.link || "#";
 }
 
-/** 带推广特征的链接加 sponsored，向搜索引擎声明非自然链（镜像 cardLink 的正则）。
- *  另加一支本站自有短链：它按 OWN_SHORT_LINKS 过了入库闸，但对搜索引擎仍是推广链，
- *  判据读 crawler/clean.mjs 的同一份名单，不在这里另立第二份。 */
-export function ctaRel(card: TokenCard): string {
-  const link = card.link || "";
+/** 一枚外链对搜索引擎该挂什么 rel：带推广特征的加 sponsored，向搜索引擎声明非自然链。
+ *  判据两处来源合一：正则镜像 cardLink，本站自有短链读 crawler/clean.mjs 的 OWN_SHORT_LINKS 同一份名单，
+ *  这里不立第二份名单。ctaRel 与 SubAction 都只走这一处，副按钮不得自成一套。 */
+export function linkRel(link: string): string {
   const referral = /invite|usercode|[?&]aff=|qcloud\.com|work-fission|s\.mi\.cn/i.test(link) || isOwnShortLink(link);
   return referral ? "sponsored nofollow noopener noreferrer" : "noopener noreferrer";
+}
+
+/** 主按钮（领取链接）的 rel ＝ 该卡 link 走 linkRel */
+export function ctaRel(card: TokenCard): string {
+  return linkRel(card.link || "");
 }
 
 export function stars(rating: number = 0): string {
