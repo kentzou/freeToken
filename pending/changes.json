@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "87be37d72ed92066c80202d8b4a46f4a3fb49d68",
-  "detectedAt": "2026-10-19T04:54:54.421Z",
+  "upstreamSha": "b287dc36b1c9b13fb2e61b0192871dbcdadb73e8",
+  "detectedAt": "2026-10-19T13:40:32.874Z",
   "changes": [
     {
       "kind": "card",
@@ -531,6 +531,69 @@
           "field": "updated",
           "from": "2026-09-28",
           "to": "2026-10-13"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "字节 TRAE（AI IDE）",
+      "before": {
+        "name": "字节 TRAE（AI IDE）",
+        "type": "工具",
+        "modality": "GPT-4o · Doubao-1.5-pro · DeepSeek",
+        "quota": "基础版免费（覆盖约 90% 个人开发场景）；SOLO 模式 0 元使用；无截止时间。",
+        "link": "https://www.trae.cn",
+        "limited": null,
+        "updated": "2026-09-28"
+      },
+      "after": {
+        "name": "字节 TRAE（AI IDE）",
+        "type": "工具",
+        "modality": "GPT-4o · Doubao-1.5-pro · DeepSeek",
+        "quota": "基础版长期免费（覆盖约 90% 个人开发场景），SOLO 模式 0 元使用；新用户通过分享链接注册并登录桌面端，可一次性获得 5,000 积分（500 积分注册奖励 + 4,500 积分新人福利）。",
+        "link": "https://www.trae.cn",
+        "limited": null,
+        "updated": "2026-10-19"
+      },
+      "fields": [
+        {
+          "field": "quota",
+          "from": "基础版免费（覆盖约 90% 个人开发场景）；SOLO 模式 0 元使用；无截止时间。",
+          "to": "基础版长期免费（覆盖约 90% 个人开发场景），SOLO 模式 0 元使用；新用户通过分享链接注册并登录桌面端，可一次性获得 5,000 积分（500 积分注册奖励 + 4,500 积分新人福利）。"
+        },
+        {
+          "field": "updated",
+          "from": "2026-09-28",
+          "to": "2026-10-19"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "华为云码道",
+      "before": {
+        "name": "华为云码道",
+        "type": "工具",
+        "modality": "GLM-5.3 Flash · DeepSeek V4 系列",
+        "quota": "每天赠送 1000 万 Token，当天有效，支持三款福利模型。",
+        "link": "https://edu.huaweicloud.com/signup/00ce9d4a32584039a9741d8488d16711?channelCode=edu&medium=share_kfzlb&invitation=ae0390096b6645e1825b6b01e4cb04ec",
+        "limited": "每日额度当天有效；活动截止时间未注明",
+        "updated": "2026-10-02"
+      },
+      "after": {
+        "name": "华为云码道",
+        "type": "工具",
+        "modality": "GLM-5.3 Flash · DeepSeek V4 系列",
+        "quota": "每天赠送 1000 万 Token，当天有效，支持三款福利模型。",
+        "link": "https://edu.huaweicloud.com/signup/00ce9d4a32584039a9741d8488d16711?channelCode=edu&medium=share_kfzlb&invitation=ae0390096b6645e1825b6b01e4cb04ec",
+        "limited": "每日额度当天有效；活动截止时间未注明",
+        "updated": "2026-10-19"
+      },
+      "fields": [
+        {
+          "field": "updated",
+          "from": "2026-10-02",
+          "to": "2026-10-19"
         }
       ]
     }
