@@ -2,14 +2,21 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-10-19T00:19:25.348Z",
+  "fetchedAt": "2026-10-20T01:08:18.600Z",
   "sections": {
-    "deals": 61,
+    "deals": 62,
     "models": 21,
     "perks": 8
   },
-  "itemCount": 90,
+  "itemCount": 91,
   "items": [
+    {
+      "id": "2026-10-minimax-m31-flash-free",
+      "section": "deals",
+      "date": "2026-10-19",
+      "title": "MiniMax M3.1 Flash 官方认领 Space Bunny（太空兔）：OpenCode 免费档限时开放，1M 上下文 · 200+ TPS · Agentic 编程",
+      "link": "https://igetoken.com/deals/2026-10-minimax-m31-flash-free/"
+    },
     {
       "id": "2026-10-opencode-glm-53-flash-free",
       "section": "deals",
@@ -385,7 +392,7 @@
       "id": "2026-09-opencode-muse-spark-1-3-free",
       "section": "deals",
       "date": "2026-09-03",
-      "title": "OpenCode x Muse Spark 1.3 限时免费开放",
+      "title": "OpenCode x Muse Spark 1.3 限时免费开放（已结束 · 10/19 从免费档移除）",
       "link": "https://igetoken.com/deals/2026-09-opencode-muse-spark-1-3-free/"
     },
     {
