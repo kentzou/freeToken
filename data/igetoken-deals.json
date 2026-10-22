@@ -2,14 +2,21 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-10-21T00:42:50.344Z",
+  "fetchedAt": "2026-10-22T00:46:20.696Z",
   "sections": {
-    "deals": 62,
+    "deals": 63,
     "models": 21,
     "perks": 8
   },
-  "itemCount": 91,
+  "itemCount": 92,
   "items": [
+    {
+      "id": "2026-10-qoder-deepseek-v41-flash-free",
+      "section": "deals",
+      "date": "2026-10-21",
+      "title": "Qoder x DeepSeek-V4.1-Flash-1017 限时 0 元购：计费系数 0.1× → 0×，个人版免费至 10/25 00:00（UTC+8）",
+      "link": "https://igetoken.com/deals/2026-10-qoder-deepseek-v41-flash-free/"
+    },
     {
       "id": "2026-10-minimax-m31-flash-free",
       "section": "deals",
