@@ -141,6 +141,7 @@
   "rating": 4,
   "signup": "免费档 CTA「Start your free trial」（该句可见层 3 命中／整份字节 4 命中）；本班实测的这份字节里没有「免信用卡／无需绑卡」的表述，是否需付款方式请在开通页自查。",
   "effect": "取证：https://www.ibm.com/products/watsonx-ai/pricing curl 200／344,801 B。「Up to 300,000 tokens per month」在剥标签后的可见正文与原始字节里各 1 命中＝可见层，人眼点开看得到。带产品标签的整串「Foundation Models: Up to 300,000 tokens per month」在原始字节里不连续（raw 0 命中，因「Foundation Models」单独成标签），故本站只引短句子、不加码。⚠️ 300,000 是「Up to」上限且按月，页面未写限速／并发／商用条款；付费档标「Starting at USD 0/month」并加注「Prices shown are indicative, may vary by country」。⚠️ 社区情报库流传的「Lite 免信用卡」本班未在该页取到原句，不写进额度口径。",
+  "alwaysShow": true,
   "sourceUrl": "https://www.ibm.com/products/watsonx-ai/pricing",
   "checkedAt": "2026-10-21"
 },
@@ -155,6 +156,7 @@
   "rating": 3,
   "signup": "邮箱注册即可获取 API Key，页面明确 No credit card needed；免费档 CTA 为「Start Now for FREE」。",
   "effect": "取证：curl 200／38,382 B，落点带尾斜杠 https://www.ai21.com/pricing/，卡面直接留该地址不留跳转。「$10 credits for 7 days. No credit card needed」在剥标签后的可见正文里 1 命中，但在未剥标签的原始字节里不连续（raw 0 命中——该句跨若干内联标签），属可见层文案。⚠️ $10 是 credits 而非 token 数，页面未给 Jamba 各档的 token 换算，也未写 7 天到期后能否续领；同页另两档为 Pay As You Go 与 Custom Plan。",
+  "alwaysShow": true,
   "sourceUrl": "https://www.ai21.com/pricing/",
   "checkedAt": "2026-10-21"
 },
@@ -169,6 +171,7 @@
   "rating": 3,
   "signup": "注册平台账号即入账，积分余额在账户页查看（原句即此）；用尽后在同一页购买。",
   "effect": "取证：https://platform.stability.ai/pricing 跳转落 https://docs.stability.ai/pricing（curl 200／298,565 B），卡面用落点地址。原句在可见正文层 1 命中／整份字节 2 命中，另一处在页面内嵌的 MDX 源码串里，人眼看到的是前者。⚠️ 积分按调用次数消耗、用完即止，页面未给截止日；图像与音频产品不按 token 计量，本站不折算成 tokens。",
+  "alwaysShow": true,
   "sourceUrl": "https://docs.stability.ai/pricing",
   "checkedAt": "2026-10-21"
 },
@@ -183,6 +186,7 @@
   "rating": 3,
   "signup": "登录取 Key 即用；用尽后在控制台「Buy tokens」页按量购买（原句 Once the free tokens are consumed, you can purchase additional tokens for the key in the 'Buy tokens' tab.）。",
   "effect": "取证分两处：首页 https://jina.ai/ 200／279,908 B 但这份字节里搜不到那句问答，该 FAQ 在场于 https://jina.ai/embeddings/ 的服务端 HTML（curl 200／391,467 B，原始字节 2 命中）＝可见层。⚠️ 社区情报库流传的「每个新 Key 含 10M tokens」在本班实测的这两份字节里没有依据——「10M」只出现在模型参数描述里（EuroBERT-210M），与免费额度无关，故本站按「有额度描述、无具体数字」档收录，不写 10M。",
+  "alwaysShow": true,
   "sourceUrl": "https://jina.ai/embeddings/",
   "checkedAt": "2026-10-21"
 },
@@ -197,6 +201,7 @@
   "rating": 3,
   "signup": "手机号或微信注册并绑定手机号后领取；卡面链接是官方价格页裸地址，不含邀请码与推广参数。",
   "effect": "取证：curl 200／89,492 B，三句中文原句在原始字节层各 1 命中（「50 万」整页 3 命中），落在可见正文而非脚本载荷，人眼点开可见。⚠️ 本站是非模型厂商的第三方聚合中转，50 万额度的兑现与稳定性都不属厂商承诺，模型清单随上游调整，只建议放低敏测试流量。⚠️「邀请用户可再次获得 50 万 Tokens」属拉新返额，不计入注册即得的那 50 万；页面未写免费额度的有效期与截止日（FAQ 里的「更长有效期」说的是 VIP／MAX 会员档）。",
+  "alwaysShow": true,
   "sourceUrl": "https://www.shuyanai.com/price",
   "checkedAt": "2026-10-21"
 },
@@ -211,6 +216,7 @@
   "rating": 4,
   "signup": "下载即用 Personal 档；Pro 试用免信用卡，用满 $5 用量或过 14 天即止（原句 The trial ends when you use the $5 balance or 14 days pass, whichever comes first）。",
   "effect": "取证：curl 200／550,580 B。「$0 forever」跨内联标签（可见层 1 命中／原始字节 0 命中），其余原句在原始字节层 1–2 命中，都在可见层。⚠️ 内置对话／Agent 的托管用量不在 Personal 免费档里：该页把「Unlimited edit predictions」「$5 of tokens included」列在 Pro 档下，免费档文案只有「Free forever」与「自带 Key／外部 Agent 不限次」。⚠️ 社区情报库流传的「2,000 accepted edit predictions」在本班实测字节里零命中（可见层 0／整份字节 0），本站不采信这个数字。",
+  "alwaysShow": true,
   "sourceUrl": "https://zed.dev/pricing",
   "checkedAt": "2026-10-21"
 },
@@ -225,6 +231,7 @@
   "rating": 3,
   "signup": "官网注册取 API Key（页面三语言示例读的环境变量名即 POOLSIDE_API_KEY），走 OpenAI 兼容端点，示例主机 inference.poolside.ai。",
   "effect": "取证：curl 200／451,255 B，两句原句与主机名、变量名在原始字节层各 1 命中，属可见层。⚠️「a limited time」没有任何日期，随时可能转收费，接入前先看这页公告；因只有额度描述没有数字，本站按「有额度描述、无具体数字」档收录。",
+  "alwaysShow": true,
   "sourceUrl": "https://poolside.ai/models",
   "checkedAt": "2026-10-21"
 },
@@ -239,6 +246,7 @@
   "rating": 3,
   "signup": "注册 360 账号并完成个人认证或企业认证，体验金在认证通过后自动到账；个人与企业各认证一次，同一企业主体最多认证 3 个账号。",
   "effect": "载荷类取证，读者点开看不见那句话，形态必须写清：curl 200／277,242 B，「新用户首次认证赠送20元体验金」只在场于 Next.js RSC 载荷的 homeCards.personal.features 数组（\"features\":[\"账号归属于个人\",\"认证后可开具个人抬头发票\",\"支持支付宝个人刷脸认证\",\"新用户首次认证赠送20元体验金\"]），整份字节 2 命中、剥掉 <script> 后的可见层 0 命中；本班同日真浏览器复测可见层同样 0 命中。⚠️ 20 元是代金券口径、不是 token 数，页面未给折算比例与有效期。⚠️ 社区情报库称「新用户注册赠送测试资源，具体数额未公示」并否决旧的「1000 万 tokens/30 天」——数额这句在载荷里确实在场，但可见层公示不到，本站按 10-14 载荷口径收录并逐字披露。",
+  "alwaysShow": true,
   "sourceUrl": "https://ai.360.com/open/zh",
   "checkedAt": "2026-10-21"
 }
