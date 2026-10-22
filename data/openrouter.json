@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-10-21T00:13:20.508Z",
+  "fetchedAt": "2026-10-22T00:17:45.338Z",
   "totalModels": 468,
-  "freeModelCount": 20,
+  "freeModelCount": 21,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -208,6 +208,17 @@
       "moderated": false
     },
     {
+      "id": "recursive/flint-v1.0:free",
+      "name": "Recursive: Flint (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 235929,
+      "modality": "text->text",
+      "moderated": false
+    },
+    {
       "id": "thinkingmachines/inkling-small:free",
       "name": "Thinking Machines: Inkling Small (free)",
       "freeVariant": true,
@@ -241,5 +252,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "d9a0323c3bf5e98b"
+  "sourceFingerprint": "76b9671e9ccafeee"
 }
