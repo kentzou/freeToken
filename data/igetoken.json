@@ -5,7 +5,7 @@
   "usageNote": "线索台账，非发布内容。卡片文案来自同赛道第三方聚合站，未过本站红线②（额度原句须厂商官方页逐字在场）；要入库须逐条回官方页取证后手写 config/local-cards.json。",
   "rightsNote": "本站仅登记条目原文与出处链接，文案版权归原作者；本页不替代厂商官方页。",
   "evidence": "third-party-aggregator",
-  "fetchedAt": "2026-10-20T01:40:29.604Z",
+  "fetchedAt": "2026-10-22T01:24:15.354Z",
   "declaredCount": 47,
   "platformCount": 47,
   "platforms": [
@@ -463,15 +463,15 @@
       "name": "Qoder（阿里 AI 编程平台）",
       "category": "aggregator",
       "url": "https://igetoken.com/models/qoder/",
-      "summary": "阿里 AI 编程平台，Qwen3.8-Flash 限时免费（已延期，10/1 起继续免费、结束时间待官方公告），官方提供 REST API 与 Agent SDK",
-      "quota": "Qwen3.8-Flash 活动期调用不计费（计费系数 0.1× 降至 0.0×，已延长、10/1 起继续免费、结束时间待官方公告，多模态 / 工具调用 / 长文档）；叠加「每日登录领 100 通用 Credits」（30 天有效、可累积）；官方 PAT（pt- 前缀）+ REST API / Agent SDK 可站外程序化调用",
+      "summary": "阿里 AI 编程平台，DeepSeek-V4.1-Flash-1017 限时 0× 系数免费（至 10/25）、Qwen3.8-Flash 限时免费，官方提供 REST API 与 Agent SDK",
+      "quota": "DeepSeek-Flash（DeepSeek-V4.1-Flash-1017）计费系数 0.1× → **0×**，个人版免费至 10/25 00:00（UTC+8）、国际版与 CN 版同步、免费与付费账号均可用；另有 Qwen3.8-Flash 限时免费（已延长，多模态 / 工具调用 / 长文档）+「每日登录领 100 通用 Credits」（30 天有效、可累积）；官方 PAT（pt- 前缀）+ REST API / Agent SDK 可站外程序化调用",
       "tags": [
         "限时免费",
         "编程场景",
         "官方API",
         "国内直连"
       ],
-      "checkedAt": "09/18 已核实",
+      "checkedAt": "10/21 已核实",
       "rating": null
     },
     {
@@ -740,5 +740,5 @@
       "rating": "4"
     }
   ],
-  "sourceFingerprint": "1328c0f45b0fd65c"
+  "sourceFingerprint": "36360be751855cd3"
 }
