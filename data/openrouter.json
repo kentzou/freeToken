@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-10-22T00:17:45.338Z",
+  "fetchedAt": "2026-10-23T00:14:29.031Z",
   "totalModels": 468,
-  "freeModelCount": 21,
+  "freeModelCount": 20,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -95,17 +95,6 @@
       "contextLength": 65536,
       "maxCompletionTokens": 8192,
       "modality": "text->text",
-      "moderated": false
-    },
-    {
-      "id": "minimax/minimax-m3.1-flash:free",
-      "name": "MiniMax: MiniMax M3.1 Flash (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 1000000,
-      "maxCompletionTokens": 524288,
-      "modality": "text+image+video->text",
       "moderated": false
     },
     {
@@ -252,5 +241,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "76b9671e9ccafeee"
+  "sourceFingerprint": "790aa843fd2f6d64"
 }
