@@ -1,5 +1,5 @@
 import {
-  brandName, cleanText, compactCardCopy, ctaHref, ctaRel, displayName, fmtMd, freeLabel, logoFor,
+  brandName, cleanText, compactCardCopy, ctaHref, ctaRel, displayName, freeLabel, limitLabel, logoFor,
 } from "@/lib/copy";
 import { catOf } from "@/lib/catalog";
 import { assetPath, intelHref } from "@/lib/href";
@@ -39,7 +39,7 @@ export default function IntelCard({
           <Highlight color={limited ? "y" : "g"}>{copy.summary}</Highlight>
         </p>
         <p className="card-meta">
-          <b>{limited ? `限时 ${fmtMd(card.limited as string)}` : "长期有效"}</b>
+          <b>{limited ? limitLabel(card.limited as string) : "长期有效"}</b>
           <span className="dot">·</span>
           <span>{card.modality ? cleanText(card.modality).slice(0, 40) : "AI 模型"}</span>
         </p>

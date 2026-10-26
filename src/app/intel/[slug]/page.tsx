@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import SiteHeaderLite from "@/components/SiteHeaderLite";
 import SiteFooter from "@/components/SiteFooter";
 import SubAction from "@/components/SubAction";
-import { ctaHref, ctaRel, detailSlug, fmtMd } from "@/lib/copy";
+import { ctaHref, ctaRel, detailSlug, limitText } from "@/lib/copy";
 import { canonicalHref, pageHref } from "@/lib/href";
 import { visibleCards } from "@/lib/catalog";
 import { loadCatalog } from "@/lib/data.server";
@@ -36,7 +36,7 @@ export default function IntelPage({ params }: { params: { slug: string } }) {
     { k: "额度", v: card.quota || "详见平台说明" },
     { k: "模型", v: card.modality || "—" },
     { k: "实际权益", v: card.effect || "—" },
-    { k: "有效期", v: card.limited ? `限时 ${fmtMd(card.limited)}` : "长期有效" },
+    { k: "有效期", v: card.limited ? limitText(card.limited) : "长期有效" },
     { k: "核验日期", v: card.updated },
     { k: "归属地", v: compiled.regionByName[card.name] || "中国大陆" },
   ];

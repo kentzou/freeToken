@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { compiledRules } from "@/lib/rules";
 import {
   brandName, cleanText, compactCardCopy, ctaHref, ctaRel, detailSlug, displayName,
-  fmtMd, freeLabel, heroTitle, logoFor, OFFICIAL_LOGOS, shortText, splitNumbers, stars,
+  fmtMd, freeLabel, heroTitle, limitLabel, limitText, logoFor, OFFICIAL_LOGOS, shortText, splitNumbers, stars,
 } from "@/lib/copy";
 import type { TokenCard } from "@/lib/types";
 
@@ -88,6 +88,16 @@ describe("文案纯函数（对齐镜像行为）", () => {
     expect(freeLabel({ limited: "2026-09-30" } as TokenCard)).toBe("限时 9/30");
     expect(freeLabel({ quota: "长期免费开放" } as TokenCard)).toBe("长期免费");
     expect(freeLabel({ quota: "注册送额度" } as TokenCard)).toBe("免费额度");
+  });
+  it("limitLabel/limitText：整句说明收成「限时」，详情页保留原句（2026-10-26 布局回归）", () => {
+    /* 90 张卡里 8 张把整句条件写进 limited；卡面单行徽标原样渲染会把卡片撑出容器 */
+    const sentence = "仅新加坡地域可用；额度自开通（或模型发布／审批，取较晚者）起 90 天到期即作废";
+    expect(limitLabel(sentence)).toBe("限时");
+    expect(freeLabel({ limited: sentence } as TokenCard)).toBe("限时");
+    expect(limitText(sentence)).toBe(sentence);
+    expect(limitLabel("2026-10-07（活动截止）")).toBe("限时 10/7");
+    expect(limitText("2026-10-07（活动截止）")).toBe("限时 10/7");
+    expect(limitLabel("")).toBe("限时");
   });
   it("heroTitle 返回分段（lead + hl），供 JSX 高亮渲染", () => {
     /* 镜像把高亮写成 innerHTML；本站改为返回分段，组件用 <Highlight> 渲染，故断言对象而非字符串 */

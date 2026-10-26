@@ -13,11 +13,27 @@ export function cleanText(value: string): string {
  *  反而靠 parseInt 的前缀解析侥幸算对（→ 10/7）。当前三个调用点都只在 card.limited 非空时取值，
  *  入库 33 张卡的 limited 全为可解析形态，所以这条路径今天不可达（REVIEW_REPORT L4 原文「故未爆」）；
  *  本函数按 L4 的建议抽出安全 formatter 作防御——抽到 YYYY-M-D 才格式化，抽不到原样退回，绝不产出 NaN。 */
+const DATE_PATTERN = /(\d{4})-(\d{1,2})-(\d{1,2})/;
+
 export function fmtMd(date: string): string {
   const raw = String(date ?? "");
-  const m = /(\d{4})-(\d{1,2})-(\d{1,2})/.exec(raw);
+  const m = DATE_PATTERN.exec(raw);
   if (!m) return raw;
   return `${Number.parseInt(m[2], 10)}/${Number.parseInt(m[3], 10)}`;
+}
+
+/** `limited` → 详情页有效期文案：能抽出日期就写「限时 M/D」，抽不出就把整句原样交给详情页。
+ *  2026-10-26 现读：90 张卡里 8 张的 limited 是**整句条件**而不是日期（上游 4＋本地 4）。 */
+export function limitText(value: string | null | undefined): string {
+  const raw = String(value ?? "");
+  return DATE_PATTERN.test(raw) ? `限时 ${fmtMd(raw)}` : raw;
+}
+
+/** 卡面单行徽标用的限时短语：整句条件一律收成「限时」，全文只留在详情页。
+ *  旧写法把整句塞进 `.tag`（white-space:nowrap），实测把卡片撑出容器、整页横向溢出（见 app.css .card-visual）。 */
+export function limitLabel(value: string | null | undefined): string {
+  const raw = String(value ?? "");
+  return DATE_PATTERN.test(raw) ? `限时 ${fmtMd(raw)}` : "限时";
 }
 
 export function shortText(value: string | undefined, max = 92): string {
@@ -106,7 +122,7 @@ export function logoFor(item: TokenCard, rules: CompiledRules): string {
 }
 
 export function freeLabel(card: TokenCard): string {
-  if (card.limited) return `限时 ${fmtMd(card.limited)}`;
+  if (card.limited) return limitLabel(card.limited);
   if (/不限|长期|永久免费|真免费/i.test(`${card.quota || ""} ${card.effect || ""}`)) return "长期免费";
   return "免费额度";
 }

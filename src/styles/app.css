@@ -31,7 +31,10 @@ input:focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: 2px;
 }
+/* 报头 h1 很长，按钮作为 flex 子项会被压缩：不加 nowrap 时「暗色」在窄屏被拆成两行（2026-10-26 实测 486px）。 */
 .theme-toggle {
+  flex: none;
+  white-space: nowrap;
   min-height: var(--tap);
   padding: 0 14px;
   display: inline-flex;
@@ -286,13 +289,19 @@ mark.hl { border-radius: 2px; }
   transition: transform 0.18s, border-color 0.18s;
 }
 .intel-card:hover { transform: translateY(-2px); border-color: var(--brand); }
-.card-visual { display: flex; align-items: center; gap: 10px; }
-.card-logo { border-radius: 8px; }
-.visual-brand { font-size: var(--meta-size); color: var(--ink-3); }
+/* 头部一行三件：徽标 + 品牌标 + 卡名。徽标与卡名都可能很长（上游把整句条件写进 limited），
+   不给收缩约束时 flex 的 min-width:auto 会把整行撑出卡片——2026-10-26 实测首页被撑到 1716px 并出现横向滚动。 */
+.card-visual { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.card-logo { flex: none; border-radius: 8px; }
+.visual-brand { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--meta-size); color: var(--ink-3); }
 .tag {
+  flex: 0 1 auto;
+  min-width: 0;
   padding: 2px 9px;
   font-size: 11px;
   border-radius: 999px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 .tag-free { color: var(--brand-deep); background: var(--brand-soft); }
@@ -609,7 +618,10 @@ mark.hl { border-radius: 2px; }
 .catrank h3 a:hover { color: var(--brand-deep); }
 
 /* 最新收录列表 */
-.new-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+/* 单列显式写成 minmax(0, 1fr)：隐式 auto 轨道按行的 max-content 定宽，行内 .new-desc 是 nowrap，
+   实测把 1100px 的列表撑到 1355px（2026-10-26 /nav/ 整页横向溢出 165px）。 */
+.new-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.new-list li { min-width: 0; }
 .new-list a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; text-decoration: none; }
 .new-list a:hover { border-color: var(--brand); }
 .new-list strong { color: var(--ink-1); font-size: 14px; flex: 0 0 auto; }
