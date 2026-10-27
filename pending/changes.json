@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "9aab5f4664d83e7b989294485ab9eb38342c501e",
-  "detectedAt": "2026-10-26T22:46:31.653Z",
+  "upstreamSha": "539ec82d678e9ec79cd55bd5e681a2932fb05bd3",
+  "detectedAt": "2026-10-27T05:16:59.254Z",
   "changes": [
     {
       "kind": "card",
@@ -80,7 +80,7 @@
         "type": "工具",
         "modality": "Qwen3.8-Flash · Qwen3.8-Max · DeepSeek-V4.1-Flash-1017",
         "rating": 5,
-        "quota": "Qwen3.8-Flash 限免至 10 月 31 日、无每日调用上限；DeepSeek-V4.1-Flash-1017 按 0× Credits 计费，免费期延至 11 月 1 日 00:00（UTC+8）。",
+        "quota": "Qwen3.8-Flash 限免（官方未公布截止日，将在活动页提前公告）；DeepSeek-V4.1-Flash-1017 按 0× Credits 计费，免费期延至 11 月 1 日 00:00（UTC+8）。",
         "effect": "阿里云官方编程助手（原灵码）。Qwen3.8-Flash 擅长代码编写、长文档处理、图像理解与工具调用，套餐额度可省给其他模型；100 Credits 计入 Add-on 资源包，桌面端 / IDE / JetBrains 插件 / CLI / 网页与移动端通用。⚠️ 免费期结束后按届时公示系数计费；每日奖励需在桌面端左下角「用量面板 → 🎁 礼物图标」手动领取",
         "link": "https://www.aliyun.com/product/lingma",
         "extraAction": {
@@ -89,7 +89,7 @@
         },
         "badge": "九月限定",
         "limited": "2026-10-31",
-        "updated": "2026-10-26",
+        "updated": "2026-10-27",
         "v2": true
       },
       "fields": [
@@ -106,12 +106,12 @@
         {
           "field": "quota",
           "from": "Qwen3.8-Flash 活动期调用不扣 Credits；活动 9 月 18 日–30 日，每天登录另赠 100 Credits（30 天有效）。",
-          "to": "Qwen3.8-Flash 限免至 10 月 31 日、无每日调用上限；DeepSeek-V4.1-Flash-1017 按 0× Credits 计费，免费期延至 11 月 1 日 00:00（UTC+8）。"
+          "to": "Qwen3.8-Flash 限免（官方未公布截止日，将在活动页提前公告）；DeepSeek-V4.1-Flash-1017 按 0× Credits 计费，免费期延至 11 月 1 日 00:00（UTC+8）。"
         },
         {
           "field": "updated",
           "from": "2026-09-28",
-          "to": "2026-10-26"
+          "to": "2026-10-27"
         }
       ]
     },
