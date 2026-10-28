@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-10-27T00:59:07.476Z",
-  "totalModels": 462,
-  "freeModelCount": 20,
+  "fetchedAt": "2026-10-28T00:49:06.379Z",
+  "totalModels": 464,
+  "freeModelCount": 19,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -106,17 +106,6 @@
       "contextLength": 256000,
       "maxCompletionTokens": 65536,
       "modality": "text+image+audio+video->text",
-      "moderated": false
-    },
-    {
-      "id": "nvidia/nemotron-3-super-120b-a12b:free",
-      "name": "NVIDIA: Nemotron 3 Super (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 262144,
-      "maxCompletionTokens": 235929,
-      "modality": "text->text",
       "moderated": false
     },
     {
@@ -241,5 +230,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "3ddebace3acde163"
+  "sourceFingerprint": "d5f147fdae04232f"
 }
