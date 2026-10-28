@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "81e7d065e17a12bc785d0f42af16a3835142771f",
-  "detectedAt": "2026-10-27T12:27:07.810Z",
+  "upstreamSha": "cd9e2d478434a8b9a9b8e84a9a7e55fae5d05c4a",
+  "detectedAt": "2026-10-28T05:56:06.264Z",
   "changes": [
     {
       "kind": "card",
@@ -88,15 +88,15 @@
           "link": "https://my.feishu.cn/docx/OAqmdEMaUovF0JxsLqW6E2Fcnwf"
         },
         "badge": "九月限定",
-        "limited": "2026-10-31",
-        "updated": "2026-10-27",
+        "limited": "2026-11-01",
+        "updated": "2026-10-28",
         "v2": true
       },
       "fields": [
         {
           "field": "limited",
           "from": "2026-09-30",
-          "to": "2026-10-31"
+          "to": "2026-11-01"
         },
         {
           "field": "modality",
@@ -111,7 +111,7 @@
         {
           "field": "updated",
           "from": "2026-09-28",
-          "to": "2026-10-27"
+          "to": "2026-10-28"
         }
       ]
     },
@@ -492,9 +492,9 @@
         "type": "工具",
         "modality": "DeepSeek V4.1 · GLM-5.3 / 5.2 / 5.1 · 文心 5.1 · Kimi-K3",
         "quota": "每日登录 +50 积分、完成一次对话 +50 积分，合计每天可领 100 积分；DeepSeek V4.1 按 0.16 倍率消耗。",
-        "link": "https://kuku.baidu.com/genflowpro?action=download",
+        "link": "https://kuku.baidu.com",
         "limited": "每日额度以平台显示为准",
-        "updated": "2026-10-20"
+        "updated": "2026-10-28"
       },
       "fields": [
         {
@@ -503,9 +503,14 @@
           "to": "每日额度以平台显示为准"
         },
         {
+          "field": "link",
+          "from": "https://kuku.baidu.com/genflowpro?action=download",
+          "to": "https://kuku.baidu.com"
+        },
+        {
           "field": "updated",
           "from": "2026-10-08",
-          "to": "2026-10-20"
+          "to": "2026-10-28"
         }
       ]
     },
@@ -529,10 +534,10 @@
         "type": "大模型",
         "modality": "DeepSeek V4 Pro · GLM-5.3 · Kimi K3 · 千问 3.8 等",
         "rating": 4,
-        "quota": "部分小模型长期免费、不限量；新用户注册赠 16 元代金券，可抵扣付费模型。",
+        "quota": "免费仅剩 embedding/语音识别/OCR/翻译/Kolors 生图（对话类小模型永久免费已于 2026-09 取消）；新用户注册赠约 16 元无门槛代金券（活动至 2026-12-31），可抵扣付费大模型调用。",
         "effect": "聚合海量开源大模型，DeepSeek V4 / GLM-5.3 / Kimi / 千问 3.8 等门槛模型可直接调用，文本 / 图像多模态 API，兼容 OpenAI 格式",
         "link": "https://cloud.siliconflow.cn/",
-        "updated": "2026-10-20",
+        "updated": "2026-10-28",
         "v2": true,
         "limited": null
       },
@@ -540,12 +545,12 @@
         {
           "field": "quota",
           "from": "9B 以下模型永久免费、不限量；新用户赠 2000 万 token（长期有效）；无截止时间。",
-          "to": "部分小模型长期免费、不限量；新用户注册赠 16 元代金券，可抵扣付费模型。"
+          "to": "免费仅剩 embedding/语音识别/OCR/翻译/Kolors 生图（对话类小模型永久免费已于 2026-09 取消）；新用户注册赠约 16 元无门槛代金券（活动至 2026-12-31），可抵扣付费大模型调用。"
         },
         {
           "field": "updated",
           "from": "2026-09-28",
-          "to": "2026-10-20"
+          "to": "2026-10-28"
         }
       ]
     },
