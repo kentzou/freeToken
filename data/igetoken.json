@@ -1,13 +1,13 @@
 {
   "source": "https://igetoken.com/models/",
   "sourceName": "iGetoken 免费资源库",
-  "scopeNote": "共 47 个平台。每条都标注最后核实日期，额度以官方页面为准；发现失效欢迎反馈。",
+  "scopeNote": "共 48 个平台。每条都标注最后核实日期，额度以官方页面为准；发现失效欢迎反馈。",
   "usageNote": "线索台账，非发布内容。卡片文案来自同赛道第三方聚合站，未过本站红线②（额度原句须厂商官方页逐字在场）；要入库须逐条回官方页取证后手写 config/local-cards.json。",
   "rightsNote": "本站仅登记条目原文与出处链接，文案版权归原作者；本页不替代厂商官方页。",
   "evidence": "third-party-aggregator",
-  "fetchedAt": "2026-10-22T01:24:15.354Z",
-  "declaredCount": 47,
-  "platformCount": 47,
+  "fetchedAt": "2026-10-29T02:16:12.091Z",
+  "declaredCount": 48,
+  "platformCount": 48,
   "platforms": [
     {
       "slug": "agnes",
@@ -259,6 +259,21 @@
       "rating": null
     },
     {
+      "slug": "inferx",
+      "name": "InferX",
+      "category": "aggregator",
+      "url": "https://igetoken.com/models/inferx/",
+      "summary": "模型聚合网关，DeepSeek-V4.1-Flash-1017 单价归零（100% off）",
+      "quota": "端点 deepseek-v4.1-flash-1017 打 100% off：输入 / 输出 / 缓存全 $0，512K 上下文；OAuth 一键注册、不绑卡、余额 $0 也能调",
+      "tags": [
+        "限时促销",
+        "单价归零",
+        "免绑卡"
+      ],
+      "checkedAt": "10/28 已核实",
+      "rating": null
+    },
+    {
       "slug": "intern-ai",
       "name": "书生·浦语 InternLM",
       "category": "domestic",
@@ -403,13 +418,13 @@
       "category": "aggregator",
       "url": "https://igetoken.com/models/opencode/",
       "summary": "开源编程代理官方模型网关，多个编程模型限时免费",
-      "quota": "Zen 免费模型限时开放，当前 9 款（minimax-m3.1-flash-free、glm-5.3-flash-free、deepseek-v4.1-flash-free、longcat-2.5-preview-free、mimo-v2.6-flash-free 等），名单按周轮换，专为编程场景优化",
+      "quota": "Zen 免费模型限时开放，当前 8 款（glm-5.3-flash-free、deepseek-v4.1-flash-free、mimo-v2.6-flash-free、flint-40b-free 等），名单按周轮换，专为编程场景优化",
       "tags": [
         "免费层",
         "编程场景",
         "免费模型轮换"
       ],
-      "checkedAt": "10/19 已核实",
+      "checkedAt": "10/28 已核实",
       "rating": "4"
     },
     {
@@ -449,13 +464,14 @@
       "category": "domestic",
       "url": "https://igetoken.com/models/qiniu/",
       "summary": "一个 Key 调 50+ 国内外模型，OpenAI / Anthropic 双协议兼容，国内直连",
-      "quota": "新用户送 300 万 Token 全模型免费额度，覆盖 DeepSeek / GLM / Qwen / Kimi / 豆包等",
+      "quota": "1024 程序员节限时免费模型 Conatus：实名认证每日 1 亿 Token（充值后最高 10 亿，至 11/30）；新用户另送 300 万 Token 全模型额度，覆盖 DeepSeek / GLM / Qwen / Kimi / 豆包等",
       "tags": [
-        "注册送",
-        "模型多",
-        "国内直连"
+        "限时免费",
+        "高额度",
+        "国内直连",
+        "双协议"
       ],
-      "checkedAt": "08/30 已核实",
+      "checkedAt": "10/28 已核实",
       "rating": null
     },
     {
@@ -494,14 +510,15 @@
       "name": "超算互联网（SCNet）",
       "category": "domestic",
       "url": "https://igetoken.com/models/scnet/",
-      "summary": "国家超算互联网官方 MaaS 平台，新客免费领 1000 万 Token",
-      "quota": "新客注册领 1000 万 Token（GLM-5-Base，128K 上下文）",
+      "summary": "国家超算互联网官方 MaaS 平台，新客免费领 1000 万 Token（至 11/10），首单 0.1 元秒 DeepSeek-V4.1-Flash-1017",
+      "quota": "MaaS 特惠专场延至 **11/10 23:59**：新客注册即领 **1000 万 Token**（GLM-5.3-Flash，1024K 上下文，实时到账、**30 天有效**）；新客首单秒杀每天 10:00 开抢，**DeepSeek-V4.1-Flash-1017 5000 万 Token 仅 ¥0.10**（原价 ¥20.50）；双协议（OpenAI + Anthropic）可接 Claude Code / Cursor / Cline",
       "tags": [
         "注册送",
         "国家背景",
+        "首单低价",
         "速度一般"
       ],
-      "checkedAt": "09/03 已核实",
+      "checkedAt": "10/28 已核实",
       "rating": "1"
     },
     {
@@ -640,7 +657,7 @@
         "签到续额度",
         "Agent 办公"
       ],
-      "checkedAt": "10/15 已核实",
+      "checkedAt": "10/28 已核实",
       "rating": null
     },
     {
@@ -740,5 +757,5 @@
       "rating": "4"
     }
   ],
-  "sourceFingerprint": "36360be751855cd3"
+  "sourceFingerprint": "c08b79e7aa700149"
 }
