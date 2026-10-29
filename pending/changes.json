@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "08377a662653d05967f1cdb61959016b9d1eee41",
-  "detectedAt": "2026-10-28T22:42:21.294Z",
+  "upstreamSha": "a94e667f2467106d3b473b3326e2ba8c754c4d05",
+  "detectedAt": "2026-10-29T13:20:43.560Z",
   "changes": [
     {
       "kind": "card",
@@ -604,16 +604,26 @@
         "name": "华为云码道",
         "type": "工具",
         "modality": "GLM-5.3 Flash · DeepSeek V4 系列",
-        "quota": "每天赠送 1000 万 Token，当天有效，支持三款福利模型。",
+        "quota": "每天赠送 1000 万 Token（当日 24:00 清零），限时福利模型 3 款；签到另得 100 积分/天（体验版）。",
         "link": "https://edu.huaweicloud.com/signup/00ce9d4a32584039a9741d8488d16711?channelCode=edu&medium=share_kfzlb&invitation=ae0390096b6645e1825b6b01e4cb04ec",
-        "limited": "每日额度当天有效；活动截止时间未注明",
-        "updated": "2026-10-19"
+        "limited": "每日额度当天有效；签到积分活动至 2026-12-31，Token 福利截止时间未注明",
+        "updated": "2026-10-29"
       },
       "fields": [
         {
+          "field": "limited",
+          "from": "每日额度当天有效；活动截止时间未注明",
+          "to": "每日额度当天有效；签到积分活动至 2026-12-31，Token 福利截止时间未注明"
+        },
+        {
+          "field": "quota",
+          "from": "每天赠送 1000 万 Token，当天有效，支持三款福利模型。",
+          "to": "每天赠送 1000 万 Token（当日 24:00 清零），限时福利模型 3 款；签到另得 100 积分/天（体验版）。"
+        },
+        {
           "field": "updated",
           "from": "2026-10-02",
-          "to": "2026-10-19"
+          "to": "2026-10-29"
         }
       ]
     },
