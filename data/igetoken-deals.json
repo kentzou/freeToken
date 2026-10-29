@@ -2,26 +2,54 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-10-28T01:30:39.906Z",
+  "fetchedAt": "2026-10-29T01:53:13.481Z",
   "sections": {
-    "deals": 63,
+    "deals": 67,
     "models": 21,
     "perks": 8
   },
-  "itemCount": 92,
+  "itemCount": 96,
   "items": [
+    {
+      "id": "2026-10-coderabbit-deep-scan-free",
+      "section": "deals",
+      "date": "2026-10-28",
+      "title": "CodeRabbit 限时承担 100 万美元 Deep Scan 安全扫描费用：2 人及以上组织每家最高 $5,000（至 11/8）",
+      "link": "https://igetoken.com/deals/2026-10-coderabbit-deep-scan-free/"
+    },
+    {
+      "id": "2026-10-inferx-deepseek-v41-flash-free",
+      "section": "deals",
+      "date": "2026-10-28",
+      "title": "InferX x DeepSeek-V4.1-Flash-1017 单价归零：输入输出全 $0（100% off，限时促销，余额 $0 也能调）",
+      "link": "https://igetoken.com/deals/2026-10-inferx-deepseek-v41-flash-free/"
+    },
+    {
+      "id": "2026-10-qiniu-conatus-free",
+      "section": "deals",
+      "date": "2026-10-28",
+      "title": "七牛云 Conatus 限时免费模型：1024 程序员节专属，实名认证每日 1 亿 Token（充值后最高 10 亿，至 11/30）",
+      "link": "https://igetoken.com/deals/2026-10-qiniu-conatus-free/"
+    },
+    {
+      "id": "2026-10-scnet-maas-extended",
+      "section": "deals",
+      "date": "2026-10-28",
+      "title": "超算互联网 MaaS 特惠专场延长至 11/10：新客仍可免费领 1000 万 Token，首单 0.1 元秒 DeepSeek-V4.1-Flash-1017",
+      "link": "https://igetoken.com/deals/2026-10-scnet-maas-extended/"
+    },
     {
       "id": "2026-10-qoder-deepseek-v41-flash-free",
       "section": "deals",
       "date": "2026-10-21",
-      "title": "Qoder x DeepSeek-V4.1-Flash-1017 限时 0 元购：计费系数 0.1× → 0×，个人版免费至 10/25 00:00（UTC+8）",
+      "title": "Qoder x DeepSeek-V4.1-Flash-1017 限时 0 元购：计费系数 0.1× → 0×，个人版免费至 11/1 00:00（UTC+8，官方已延期）",
       "link": "https://igetoken.com/deals/2026-10-qoder-deepseek-v41-flash-free/"
     },
     {
       "id": "2026-10-minimax-m31-flash-free",
       "section": "deals",
       "date": "2026-10-19",
-      "title": "MiniMax M3.1 Flash 官方认领 Space Bunny（太空兔）：OpenCode 免费档限时开放，1M 上下文 · 200+ TPS · Agentic 编程",
+      "title": "MiniMax M3.1 Flash 官方认领 Space Bunny（太空兔）：OpenCode 免费档限时开放，1M 上下文 · 200+ TPS · Agentic 编程（已结束 · 10/28 复核已从免费档移除）",
       "link": "https://igetoken.com/deals/2026-10-minimax-m31-flash-free/"
     },
     {
@@ -42,7 +70,7 @@
       "id": "2026-10-workbuddy-step5-preview-exclusive-free",
       "section": "deals",
       "date": "2026-10-15",
-      "title": "腾讯 WorkBuddy 独家限时免费 Step 5 Preview 两周（10/12–10/25）：阶跃旗舰 600B MoE 接入办公工作台",
+      "title": "腾讯 WorkBuddy 独家限时免费 Step 5 Preview 两周（10/12–10/25）：阶跃旗舰 600B MoE 接入办公工作台（已结束 · 恢复 0.43× 积分倍率）",
       "link": "https://igetoken.com/deals/2026-10-workbuddy-step5-preview-exclusive-free/"
     },
     {
@@ -98,7 +126,7 @@
       "id": "2026-09-opencode-longcat-25-free",
       "section": "deals",
       "date": "2026-09-28",
-      "title": "OpenCode x 美团 LongCat 2.5 Preview 限时免费开放（1M 上下文 · 多模态 · ZDR）",
+      "title": "OpenCode x 美团 LongCat 2.5 Preview 限时免费开放（1M 上下文 · 多模态 · ZDR）（已结束 · 10/28 复核已从免费档移除）",
       "link": "https://igetoken.com/deals/2026-09-opencode-longcat-25-free/"
     },
     {
