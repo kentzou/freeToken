@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "ca78c7d8f067c722713bb766c82b8558053e327c",
-  "detectedAt": "2026-10-30T22:29:23.021Z",
+  "upstreamSha": "69a9cef2c2542d2c0517b21b27ce031a7860fc14",
+  "detectedAt": "2026-10-31T05:57:36.779Z",
   "changes": [
     {
       "kind": "card",
@@ -1070,6 +1070,45 @@
           "field": "updated",
           "from": "2026-09-28",
           "to": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "云知声 U2-Flash（Unisound MaaS）",
+      "before": {
+        "name": "云知声 U2-Flash（Unisound MaaS）",
+        "type": "大模型",
+        "modality": "U2-Flash · U2 · U2-Med · U2-Decision",
+        "quota": "活动期内 U2-Flash 输入、输出、缓存命中三档全部 0 元且不限量，不绑卡、不充值，注册登录 MaaS 平台即自动发放免费额度。",
+        "link": "https://maas.unisound.com/",
+        "limited": "2026-10-31",
+        "updated": "2026-10-16"
+      },
+      "after": {
+        "name": "云知声 U2-Flash（Unisound MaaS）",
+        "type": "大模型",
+        "modality": "U2-Flash · U2 · U2-Med · U2-Decision",
+        "quota": "U Plan Free 档：每周 2500 积分、5 小时窗口 500 积分，另赠 U2-ASR 8 小时 / U2-TTS 4 万字；原不限量限免已于 10-31 结束。",
+        "link": "https://maas.unisound.com/",
+        "limited": null,
+        "updated": "2026-10-31"
+      },
+      "fields": [
+        {
+          "field": "limited",
+          "from": "2026-10-31",
+          "to": null
+        },
+        {
+          "field": "quota",
+          "from": "活动期内 U2-Flash 输入、输出、缓存命中三档全部 0 元且不限量，不绑卡、不充值，注册登录 MaaS 平台即自动发放免费额度。",
+          "to": "U Plan Free 档：每周 2500 积分、5 小时窗口 500 积分，另赠 U2-ASR 8 小时 / U2-TTS 4 万字；原不限量限免已于 10-31 结束。"
+        },
+        {
+          "field": "updated",
+          "from": "2026-10-16",
+          "to": "2026-10-31"
         }
       ]
     }
