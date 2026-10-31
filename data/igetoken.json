@@ -5,7 +5,7 @@
   "usageNote": "线索台账，非发布内容。卡片文案来自同赛道第三方聚合站，未过本站红线②（额度原句须厂商官方页逐字在场）；要入库须逐条回官方页取证后手写 config/local-cards.json。",
   "rightsNote": "本站仅登记条目原文与出处链接，文案版权归原作者；本页不替代厂商官方页。",
   "evidence": "third-party-aggregator",
-  "fetchedAt": "2026-10-29T02:16:12.091Z",
+  "fetchedAt": "2026-10-31T02:12:39.207Z",
   "declaredCount": 48,
   "platformCount": 48,
   "platforms": [
@@ -747,15 +747,15 @@
       "category": "domestic",
       "url": "https://igetoken.com/models/zhipu/",
       "summary": "GLM 系列模型官方开放平台，免费力度国内第一梯队",
-      "quota": "新用户注册送 2000 万 Token，GLM-4-Flash 永久免费",
+      "quota": "新用户注册送 2000 万 Token，GLM-4-Flash 永久免费；ZCode 客户端侧免费额度密集：10/30–11/2 周末专属 5 亿 GLM-5.3-Flash（23:00 生效→周一 9:00 过期），10/27 起另有每天 3 亿 GLM-5.3-Flash（19:00 领、当晚 23:00–次日 9:00）",
       "tags": [
         "注册送",
         "永久免费",
         "国内直连"
       ],
-      "checkedAt": "09/22 已核实",
+      "checkedAt": "10/30 已核实",
       "rating": "4"
     }
   ],
-  "sourceFingerprint": "c08b79e7aa700149"
+  "sourceFingerprint": "d19e23ed8581595c"
 }
