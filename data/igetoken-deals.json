@@ -2,14 +2,21 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-10-30T02:03:35.940Z",
+  "fetchedAt": "2026-10-31T01:42:36.061Z",
   "sections": {
-    "deals": 67,
+    "deals": 68,
     "models": 21,
     "perks": 8
   },
-  "itemCount": 96,
+  "itemCount": 97,
   "items": [
+    {
+      "id": "2026-10-zhipu-weekend-build-vii",
+      "section": "deals",
+      "date": "2026-10-30",
+      "title": "智谱 ZCode WEEKEND BUILD 第七轮：5 亿 GLM-5.3-Flash Token（10/30 23:00 生效 → 11/2 09:00 过期）",
+      "link": "https://igetoken.com/deals/2026-10-zhipu-weekend-build-vii/"
+    },
     {
       "id": "2026-10-coderabbit-deep-scan-free",
       "section": "deals",
