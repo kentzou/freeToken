@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-10-31T01:11:48.822Z",
-  "totalModels": 456,
-  "freeModelCount": 19,
+  "fetchedAt": "2026-11-01T00:32:23.012Z",
+  "totalModels": 452,
+  "freeModelCount": 17,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -164,28 +164,6 @@
       "moderated": false
     },
     {
-      "id": "poolside/laguna-s-2.1:free",
-      "name": "Poolside: Laguna S 2.1 (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 262144,
-      "maxCompletionTokens": 32768,
-      "modality": "text->text",
-      "moderated": false
-    },
-    {
-      "id": "poolside/laguna-xs-2.1:free",
-      "name": "Poolside: Laguna XS 2.1 (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 262144,
-      "maxCompletionTokens": 32768,
-      "modality": "text->text",
-      "moderated": false
-    },
-    {
       "id": "recursive/flint-v1.0:free",
       "name": "Recursive: Flint (free)",
       "freeVariant": true,
@@ -230,5 +208,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "4c6e9951651b5d5e"
+  "sourceFingerprint": "d785b683e8ed6d1d"
 }
