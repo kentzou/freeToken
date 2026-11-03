@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "2d7fe0373e77f122011ebebc0094e60fb8f0d6df",
-  "detectedAt": "2026-11-02T21:48:33.731Z",
+  "upstreamSha": "8690e8af48762992ca1ecfdd34f0ff7457114b6f",
+  "detectedAt": "2026-11-03T06:59:47.606Z",
   "changes": [
     {
       "kind": "card",
@@ -24,19 +24,19 @@
         "type": "工具",
         "modality": "Step 5 Preview · HY3 · HY4 preview · DeepSeek-V4.1-Flash",
         "rating": 5,
-        "quota": "Hy3 与 Hy4 preview 的 0.00x 限免已于 10-31 结束、官方未续期；新户 2000 积分礼包与邀请奖励至 11-30。",
+        "quota": "Hy3 的 0.00× 限免已延至 11-15，全天可用、纯语言任务不扣积分（生图生视频照扣）；Hy4 preview 限免 10-31 未续期；新户 2000 积分与邀请奖励至 11-30。",
         "signup": "新用户注册送 2000 积分；HY4 preview 新用户（含此前没体验过的老用户）首次开启后享 14 天每日免费额度",
         "effect": "腾讯混元 AI 工作台，HY3（混元3）与 HY4 preview（混元4）均可直接调用，速度很快；写代码、查资料、做自动化都好用。HY3 限免至 2026-09-30；HY4 preview 分两档——新用户首开后 14 天每日免费，老用户仅夜间 23:00-次日 9:00 免费；DeepSeek-V4.1-Flash 国内独家合作，0.03x 为站内最低倍率，优惠持续到 2026-09-23；注意 HY4 为纯文本大模型、暂不具备多模态，调用其做视频/图像等生成会切到多模态模型并正常扣积分；免费体验高峰期可能排队",
         "link": "https://www.workbuddy.cn/events/invite?inviteCode=binccyhvk7bl",
-        "limited": "2026-11-30",
-        "updated": "2026-11-01",
+        "limited": "2026-11-15",
+        "updated": "2026-11-03",
         "v2": true
       },
       "fields": [
         {
           "field": "limited",
           "from": "2026-10-10",
-          "to": "2026-11-30"
+          "to": "2026-11-15"
         },
         {
           "field": "modality",
@@ -46,12 +46,12 @@
         {
           "field": "quota",
           "from": "HY3 限免至 2026-09-30；HY4 preview 新用户首开对话起 14 天内免费。",
-          "to": "Hy3 与 Hy4 preview 的 0.00x 限免已于 10-31 结束、官方未续期；新户 2000 积分礼包与邀请奖励至 11-30。"
+          "to": "Hy3 的 0.00× 限免已延至 11-15，全天可用、纯语言任务不扣积分（生图生视频照扣）；Hy4 preview 限免 10-31 未续期；新户 2000 积分与邀请奖励至 11-30。"
         },
         {
           "field": "updated",
           "from": "2026-09-28",
-          "to": "2026-11-01"
+          "to": "2026-11-03"
         }
       ]
     },
