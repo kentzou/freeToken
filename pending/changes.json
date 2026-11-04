@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "2cab923ba1f95ea4090e2239e3e952ab10a4df10",
-  "detectedAt": "2026-11-03T19:38:25.308Z",
+  "upstreamSha": "ccf72175ab61cad2e7e2a8595d126603225cac3a",
+  "detectedAt": "2026-11-04T06:42:45.578Z",
   "changes": [
     {
       "kind": "card",
@@ -1114,6 +1114,59 @@
           "field": "updated",
           "from": "2026-10-16",
           "to": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "OpenRouter",
+      "before": {
+        "name": "OpenRouter",
+        "type": "大模型",
+        "modality": "Kimi K2 · Qwen3-Next-80B · Llama 等 35+ 模型",
+        "rating": 3,
+        "quota": "免费模型每日 50 次（充值 $10 后升至 1000 次/日）；永久免费、无截止时间。",
+        "effect": "一站式聚合 500+ 模型（GPT/Claude/Gemini/Kimi/DeepSeek 等），OpenAI 兼容接口，一个 Key 切所有模型。⚠️ 实测反馈：GLM-5.2(free) 当前报 429 错误用不了（限流/上游不可用），免费模型可用性不稳定",
+        "link": "https://openrouter.ai",
+        "extraAction": {
+          "text": "免费模型台账",
+          "link": "/openrouter/"
+        },
+        "updated": "2026-08-19",
+        "v2": true,
+        "limited": null
+      },
+      "after": {
+        "name": "OpenRouter",
+        "type": "大模型",
+        "modality": "Nemotron 3 Ultra / 3.5 · Gemma 4 31B · Inkling · Cohere North Mini 等 14 款 :free 模型",
+        "rating": 3,
+        "quota": "免费模型（:free 后缀）每分钟 20 次、每日 50 次；账户累计充值满 $10 后每日上限提至 1000 次；永久免费、无截止时间。",
+        "effect": "一站式聚合 500+ 模型（GPT/Claude/Gemini/Kimi/DeepSeek 等），OpenAI 兼容接口，一个 Key 切所有模型。⚠️ 实测反馈：GLM-5.2(free) 当前报 429 错误用不了（限流/上游不可用），免费模型可用性不稳定",
+        "link": "https://openrouter.ai",
+        "extraAction": {
+          "text": "免费模型台账",
+          "link": "/openrouter/"
+        },
+        "updated": "2026-11-04",
+        "v2": true,
+        "limited": null
+      },
+      "fields": [
+        {
+          "field": "modality",
+          "from": "Kimi K2 · Qwen3-Next-80B · Llama 等 35+ 模型",
+          "to": "Nemotron 3 Ultra / 3.5 · Gemma 4 31B · Inkling · Cohere North Mini 等 14 款 :free 模型"
+        },
+        {
+          "field": "quota",
+          "from": "免费模型每日 50 次（充值 $10 后升至 1000 次/日）；永久免费、无截止时间。",
+          "to": "免费模型（:free 后缀）每分钟 20 次、每日 50 次；账户累计充值满 $10 后每日上限提至 1000 次；永久免费、无截止时间。"
+        },
+        {
+          "field": "updated",
+          "from": "2026-08-19",
+          "to": "2026-11-04"
         }
       ]
     }
