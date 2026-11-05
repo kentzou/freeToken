@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-11-04T01:44:59.659Z",
+  "fetchedAt": "2026-11-05T01:52:52.403Z",
   "totalModels": 454,
-  "freeModelCount": 18,
+  "freeModelCount": 16,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -186,28 +186,6 @@
       "moderated": false
     },
     {
-      "id": "thinkingmachines/inkling-small:free",
-      "name": "Thinking Machines: Inkling Small (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 1048576,
-      "maxCompletionTokens": 262144,
-      "modality": "text+image+audio->text",
-      "moderated": false
-    },
-    {
-      "id": "thinkingmachines/inkling:free",
-      "name": "Thinking Machines: Inkling (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 1048576,
-      "maxCompletionTokens": 262144,
-      "modality": "text+image+audio->text",
-      "moderated": false
-    },
-    {
       "id": "xingchen-agi/xing4.0-29b-a4b:free",
       "name": "XingChen: Xing4.0 29B A4B (free)",
       "freeVariant": true,
@@ -219,5 +197,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "0e6efc9968e6e448"
+  "sourceFingerprint": "c11500b689795dd8"
 }
