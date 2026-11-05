@@ -2,19 +2,26 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-11-04T02:30:20.172Z",
+  "fetchedAt": "2026-11-05T02:38:28.948Z",
   "sections": {
-    "deals": 69,
+    "deals": 70,
     "models": 21,
     "perks": 8
   },
-  "itemCount": 98,
+  "itemCount": 99,
   "items": [
+    {
+      "id": "2026-11-hunyuan-hy4-free",
+      "section": "deals",
+      "date": "2026-11-04",
+      "title": "混元 Hy4 正式版限时免费：11/4–11/15 23:59 WorkBuddy 每日送免费额度（订阅用户享更高配额）",
+      "link": "https://igetoken.com/deals/2026-11-hunyuan-hy4-free/"
+    },
     {
       "id": "2026-11-zhipu-global-build",
       "section": "deals",
       "date": "2026-11-03",
-      "title": "智谱 ZCode GLOBAL BUILD：3 亿 GLM-5.3-Flash Token（11/3 23:00 生效 → 11/4 09:00 过期）",
+      "title": "智谱 ZCode GLOBAL BUILD：3 亿 GLM-5.3-Flash Token（11/3 23:00 生效 → 11/4 09:00 过期）（已结束）",
       "link": "https://igetoken.com/deals/2026-11-zhipu-global-build/"
     },
     {
@@ -588,7 +595,7 @@
       "id": "2026-07-hunyuan-hy3-trial",
       "section": "deals",
       "date": "2026-08-29",
-      "title": "混元 Hy3 限免延期至 11/15：WorkBuddy 每日送免费额度（第 5 次延期）",
+      "title": "混元 Hy3 限免延长至 11/15 23:59（官方确认）：WorkBuddy 每日送免费额度",
       "link": "https://igetoken.com/deals/2026-07-hunyuan-hy3-trial/"
     },
     {
