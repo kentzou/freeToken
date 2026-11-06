@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "b5e32c57ac200d28a9dc09adf3237c4a126b5386",
-  "detectedAt": "2026-11-05T07:01:03.582Z",
+  "upstreamSha": "080b20ce2d1222dbfdd45820793d145cdcc51254",
+  "detectedAt": "2026-11-06T07:00:34.585Z",
   "changes": [
     {
       "kind": "card",
@@ -22,14 +22,14 @@
       "after": {
         "name": "WorkBuddy",
         "type": "工具",
-        "modality": "Hy4 · HY3 · Step 5 Preview · DeepSeek-V4.1-Flash",
+        "modality": "DeepSeek-V4.1-Flash · Hy3 · Hy4 · Kimi-K3.1-Pro",
         "rating": 5,
         "quota": "Hy4 正式版 11-04 上线并限免至 11-15（0.00× 全天）；Hy3 限免同步延至 11-15；新户 2000 积分与邀请奖励至 11-30。",
         "signup": "新用户注册送 2000 积分；HY4 preview 新用户（含此前没体验过的老用户）首次开启后享 14 天每日免费额度",
         "effect": "腾讯混元 AI 工作台，HY3（混元3）与 HY4 preview（混元4）均可直接调用，速度很快；写代码、查资料、做自动化都好用。HY3 限免至 2026-09-30；HY4 preview 分两档——新用户首开后 14 天每日免费，老用户仅夜间 23:00-次日 9:00 免费；DeepSeek-V4.1-Flash 国内独家合作，0.03x 为站内最低倍率，优惠持续到 2026-09-23；注意 HY4 为纯文本大模型、暂不具备多模态，调用其做视频/图像等生成会切到多模态模型并正常扣积分；免费体验高峰期可能排队",
         "link": "https://www.workbuddy.cn/events/invite?inviteCode=binccyhvk7bl",
         "limited": "2026-11-15",
-        "updated": "2026-11-05",
+        "updated": "2026-11-06",
         "v2": true
       },
       "fields": [
@@ -41,7 +41,7 @@
         {
           "field": "modality",
           "from": "HY3 · HY4 preview · DeepSeek-V4.1-Flash",
-          "to": "Hy4 · HY3 · Step 5 Preview · DeepSeek-V4.1-Flash"
+          "to": "DeepSeek-V4.1-Flash · Hy3 · Hy4 · Kimi-K3.1-Pro"
         },
         {
           "field": "quota",
@@ -51,7 +51,7 @@
         {
           "field": "updated",
           "from": "2026-09-28",
-          "to": "2026-11-05"
+          "to": "2026-11-06"
         }
       ]
     },
@@ -80,7 +80,7 @@
         "type": "工具",
         "modality": "Qwen3.8-Flash · Qwen3.8-Max · DeepSeek-V4-Pro · DeepSeek-Flash · GLM-5.3",
         "rating": 5,
-        "quota": "Qwen3.8-Flash 个人版每日赠送免费额度、按 0× 计费，官方未公布截止日；DeepSeek 系列 0× 免费期已于 11-01 00:00 结束，现按 0.1×–0.5× 计费。",
+        "quota": "每日 10:00 客户端领 100 Credits（30 天有效、可累积），新户注册送 300；Qwen3.8-Flash 每日免费用量按 0×，DeepSeek 系列 11-01 起转 0.1×–0.5×。",
         "effect": "阿里云官方编程助手（原灵码）。Qwen3.8-Flash 擅长代码编写、长文档处理、图像理解与工具调用，套餐额度可省给其他模型；100 Credits 计入 Add-on 资源包，桌面端 / IDE / JetBrains 插件 / CLI / 网页与移动端通用。⚠️ 免费期结束后按届时公示系数计费；每日奖励需在桌面端左下角「用量面板 → 🎁 礼物图标」手动领取",
         "link": "https://www.aliyun.com/product/lingma",
         "extraAction": {
@@ -89,7 +89,7 @@
         },
         "badge": "九月限定",
         "limited": "官方未公布（以客户端为准）",
-        "updated": "2026-11-01",
+        "updated": "2026-11-06",
         "v2": true
       },
       "fields": [
@@ -106,12 +106,12 @@
         {
           "field": "quota",
           "from": "Qwen3.8-Flash 活动期调用不扣 Credits；活动 9 月 18 日–30 日，每天登录另赠 100 Credits（30 天有效）。",
-          "to": "Qwen3.8-Flash 个人版每日赠送免费额度、按 0× 计费，官方未公布截止日；DeepSeek 系列 0× 免费期已于 11-01 00:00 结束，现按 0.1×–0.5× 计费。"
+          "to": "每日 10:00 客户端领 100 Credits（30 天有效、可累积），新户注册送 300；Qwen3.8-Flash 每日免费用量按 0×，DeepSeek 系列 11-01 起转 0.1×–0.5×。"
         },
         {
           "field": "updated",
           "from": "2026-09-28",
-          "to": "2026-11-01"
+          "to": "2026-11-06"
         }
       ]
     },
@@ -1139,7 +1139,7 @@
       "after": {
         "name": "OpenRouter",
         "type": "大模型",
-        "modality": "Nemotron 3 Ultra / 3.5 · Gemma 4 31B · Inkling · Cohere North Mini 等 14 款 :free 模型",
+        "modality": "Nemotron 3 Ultra 550B / 3.5 系列 · Gemma 4 31B/26B · Cohere North Mini · Xingchen 4.0 · dots-3-note 等 12 款 :free",
         "rating": 3,
         "quota": "免费模型（:free 后缀）每分钟 20 次、每日 50 次；账户累计充值满 $10 后每日上限提至 1000 次；永久免费、无截止时间。",
         "effect": "一站式聚合 500+ 模型（GPT/Claude/Gemini/Kimi/DeepSeek 等），OpenAI 兼容接口，一个 Key 切所有模型。⚠️ 实测反馈：GLM-5.2(free) 当前报 429 错误用不了（限流/上游不可用），免费模型可用性不稳定",
@@ -1148,7 +1148,7 @@
           "text": "免费模型台账",
           "link": "/openrouter/"
         },
-        "updated": "2026-11-04",
+        "updated": "2026-11-06",
         "v2": true,
         "limited": null
       },
@@ -1156,7 +1156,7 @@
         {
           "field": "modality",
           "from": "Kimi K2 · Qwen3-Next-80B · Llama 等 35+ 模型",
-          "to": "Nemotron 3 Ultra / 3.5 · Gemma 4 31B · Inkling · Cohere North Mini 等 14 款 :free 模型"
+          "to": "Nemotron 3 Ultra 550B / 3.5 系列 · Gemma 4 31B/26B · Cohere North Mini · Xingchen 4.0 · dots-3-note 等 12 款 :free"
         },
         {
           "field": "quota",
@@ -1166,7 +1166,95 @@
         {
           "field": "updated",
           "from": "2026-08-19",
-          "to": "2026-11-04"
+          "to": "2026-11-06"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "天翼云息壤（电信）",
+      "before": {
+        "name": "天翼云息壤（电信）",
+        "type": "大模型",
+        "modality": "GLM-5 · DeepSeek V4 · Qwen3.5 · Doubao 等约 18 个模型",
+        "rating": 2,
+        "quota": "文本类模型每款 2500 万 Tokens，有效期 2 周（自首次使用算起）。",
+        "effect": "中国电信旗下全栈国产化智算平台，\"国模+国芯+国云\"融合底座，支持 GLM-5、DeepSeek-V4、Qwen3.5、Doubao-Seed-2.0-pro 等约 18 个主流大模型，适合政企/科研/个人开发者",
+        "link": "https://www.ctyun.cn/product/maas",
+        "updated": "2026-07-19",
+        "v2": true,
+        "limited": null
+      },
+      "after": {
+        "name": "天翼云息壤（电信）",
+        "type": "大模型",
+        "modality": "GLM-5 · DeepSeek V4 · Qwen3.5 · Doubao 等约 18 个模型",
+        "rating": 2,
+        "quota": "文本类模型每款 2500 万 Tokens，有效期 2 周（自首次使用算起）。",
+        "effect": "中国电信旗下全栈国产化智算平台，\"国模+国芯+国云\"融合底座，支持 GLM-5、DeepSeek-V4、Qwen3.5、Doubao-Seed-2.0-pro 等约 18 个主流大模型，适合政企/科研/个人开发者",
+        "link": "https://www.ctyun.cn/product/maas",
+        "updated": "2026-11-06",
+        "v2": true,
+        "limited": null
+      },
+      "fields": [
+        {
+          "field": "updated",
+          "from": "2026-07-19",
+          "to": "2026-11-06"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "Google Antigravity（反重力）",
+      "before": {
+        "name": "Google Antigravity（反重力）",
+        "type": "工具",
+        "modality": "Gemini · Claude · GPT-OSS",
+        "quota": "每周提供免费使用额度，支持 Gemini、Claude 等模型。",
+        "link": "https://antigravity.google/download",
+        "limited": "每周免费额度；以官方当前方案为准",
+        "updated": "2026-10-02"
+      },
+      "after": {
+        "name": "Google Antigravity（反重力）",
+        "type": "工具",
+        "modality": "Gemini · Claude · GPT-OSS",
+        "quota": "每周提供免费使用额度，支持 Gemini、Claude 等模型。",
+        "link": "https://antigravity.google/download",
+        "limited": "每周免费额度；以官方当前方案为准",
+        "updated": "2026-11-06"
+      },
+      "fields": [
+        {
+          "field": "updated",
+          "from": "2026-10-02",
+          "to": "2026-11-06"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "美团 longcat 大模型",
+      "before": {
+        "name": "美团 longcat 大模型",
+        "type": "大模型",
+        "modality": "LongCat-2.5-Preview",
+        "rating": 5,
+        "quota": "新用户实名认证送 1000 万 token；邀请好友完成实名，邀请人与受邀人各再得 1000 万（可与实名额度叠加）；无截止时间。",
+        "effect": "美团旗下大模型，免费额度大方、性价比高，适合长期日常高频使用",
+        "link": "https://longcat.chat/platform/product",
+        "updated": "2026-09-28",
+        "v2": true,
+        "limited": null
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
         }
       ]
     }
