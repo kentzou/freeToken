@@ -1,7 +1,7 @@
 {
   "version": 1,
   "upstreamSha": "080b20ce2d1222dbfdd45820793d145cdcc51254",
-  "detectedAt": "2026-11-06T07:00:34.585Z",
+  "detectedAt": "2026-11-06T09:38:28.590Z",
   "changes": [
     {
       "kind": "card",
@@ -1255,6 +1255,84 @@
           "field": "(整条)",
           "from": "存在",
           "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "智谱 AutoClaw",
+      "before": {
+        "name": "智谱 AutoClaw",
+        "type": "工具",
+        "modality": "AutoClaw 客户端（活动页未列可用模型清单）；奖励以积分发放，10,000 积分 ≈ 1 亿 Tokens",
+        "quota": "一周福利：登录即得 1 亿 Tokens（相当于 10,000 积分），每个账号限领一次（官方逐字：一周福利：1 亿 Tokens 等你领取 ！／登录 AutoClaw，即得 1 亿 Tokens 。／登录 AutoClaw，即可领取 1 亿 Tokens（相当于 10,000 积分），每个账号限领一次。）。",
+        "link": "https://autoclaw.zhipuai.cn/",
+        "limited": "活动时间 2026-10-26 00:00 — 2026-11-01 23:59（北京时间）；奖励在 2026-11-01 23:59 失效，过期后本卡不再成立。",
+        "updated": "2026-10-30",
+        "rating": 4,
+        "signup": "下载并登录 AutoClaw 客户端即得，每个账号限领一次；领取后积分在 11 月 1 日 23:59 失效，请尽快使用。",
+        "effect": "取证形态：官方活动页服务端字节（curl 200／46,544 B）可见正文逐字在场，非载荷类。⚠️ 这是限时活动（截至 2026-11-01 23:59），不是常设免费额度；过期后应下架。⚠️ 同页关联卡「AutoClaw 2.2.0 升级礼」另送 5,000 积分（约 5,000 万 tokens），两项奖励能否叠加页面未说明。",
+        "alwaysShow": true,
+        "origin": "local",
+        "sourceUrl": "https://autoclaw.zhipuai.cn/blog/news/M10W4/",
+        "checkedAt": "2026-10-30"
+      },
+      "after": {
+        "name": "智谱 AutoClaw",
+        "type": "工具",
+        "modality": "AutoClaw 客户端；活动模型以客户端为准（本周公告主打 GLM-5.3-Flash）；奖励以积分发放，5,000 积分 ≈ 50M Tokens",
+        "quota": "新用户注册领 2 亿 Tokens（价值 120 元；官方首页逐字：领取 2亿 tokens，价值 120 元）；本周福利：11 月 2 日至 11 月 8 日登录即得 50M Tokens（相当于 5,000 积分），每账号限领一次，11-08 23:59 失效。",
+        "link": "https://autoclaw.zhipuai.cn/",
+        "limited": "本周福利 2026-11-02 00:00 — 2026-11-08 23:59（北京时间），奖励到期失效；注册福利为常设口径，官方未公布截止日。",
+        "updated": "2026-11-06",
+        "rating": 4,
+        "signup": "下载并登录 AutoClaw 客户端领本周 50M Tokens（每账号限一次，11-08 23:59 前有效）；新用户注册另领 2 亿 Tokens。",
+        "effect": "取证形态：两处官方页服务端字节逐字在场，非载荷类——① 首页注册福利卡（curl 200／101,703 B，aria-label 与可见文案「领取 2亿 tokens，价值 120 元」）；② 周福利公告 M11W1（curl 200／46,979 B，正文「11 月 2 日至 11 月 8 日，登录 AutoClaw，即得 50M Tokens」「相当于 5,000 积分，每个账号限领一次」）。同页关联卡已预告下周（11/9–11/15）同为 50M Tokens。⚠️ 周福利是滚动限时活动，过期后按新一期公告更新；注册福利的适用条件以官方下载页为准。",
+        "alwaysShow": true,
+        "origin": "local",
+        "sourceUrl": "https://autoclaw.zhipuai.cn/blog/news/M11W1/",
+        "checkedAt": "2026-11-06"
+      },
+      "fields": [
+        {
+          "field": "checkedAt",
+          "from": "2026-10-30",
+          "to": "2026-11-06"
+        },
+        {
+          "field": "effect",
+          "from": "取证形态：官方活动页服务端字节（curl 200／46,544 B）可见正文逐字在场，非载荷类。⚠️ 这是限时活动（截至 2026-11-01 23:59），不是常设免费额度；过期后应下架。⚠️ 同页关联卡「AutoClaw 2.2.0 升级礼」另送 5,000 积分（约 5,000 万 tokens），两项奖励能否叠加页面未说明。",
+          "to": "取证形态：两处官方页服务端字节逐字在场，非载荷类——① 首页注册福利卡（curl 200／101,703 B，aria-label 与可见文案「领取 2亿 tokens，价值 120 元」）；② 周福利公告 M11W1（curl 200／46,979 B，正文「11 月 2 日至 11 月 8 日，登录 AutoClaw，即得 50M Tokens」「相当于 5,000 积分，每个账号限领一次」）。同页关联卡已预告下周（11/9–11/15）同为 50M Tokens。⚠️ 周福利是滚动限时活动，过期后按新一期公告更新；注册福利的适用条件以官方下载页为准。"
+        },
+        {
+          "field": "limited",
+          "from": "活动时间 2026-10-26 00:00 — 2026-11-01 23:59（北京时间）；奖励在 2026-11-01 23:59 失效，过期后本卡不再成立。",
+          "to": "本周福利 2026-11-02 00:00 — 2026-11-08 23:59（北京时间），奖励到期失效；注册福利为常设口径，官方未公布截止日。"
+        },
+        {
+          "field": "modality",
+          "from": "AutoClaw 客户端（活动页未列可用模型清单）；奖励以积分发放，10,000 积分 ≈ 1 亿 Tokens",
+          "to": "AutoClaw 客户端；活动模型以客户端为准（本周公告主打 GLM-5.3-Flash）；奖励以积分发放，5,000 积分 ≈ 50M Tokens"
+        },
+        {
+          "field": "quota",
+          "from": "一周福利：登录即得 1 亿 Tokens（相当于 10,000 积分），每个账号限领一次（官方逐字：一周福利：1 亿 Tokens 等你领取 ！／登录 AutoClaw，即得 1 亿 Tokens 。／登录 AutoClaw，即可领取 1 亿 Tokens（相当于 10,000 积分），每个账号限领一次。）。",
+          "to": "新用户注册领 2 亿 Tokens（价值 120 元；官方首页逐字：领取 2亿 tokens，价值 120 元）；本周福利：11 月 2 日至 11 月 8 日登录即得 50M Tokens（相当于 5,000 积分），每账号限领一次，11-08 23:59 失效。"
+        },
+        {
+          "field": "signup",
+          "from": "下载并登录 AutoClaw 客户端即得，每个账号限领一次；领取后积分在 11 月 1 日 23:59 失效，请尽快使用。",
+          "to": "下载并登录 AutoClaw 客户端领本周 50M Tokens（每账号限一次，11-08 23:59 前有效）；新用户注册另领 2 亿 Tokens。"
+        },
+        {
+          "field": "sourceUrl",
+          "from": "https://autoclaw.zhipuai.cn/blog/news/M10W4/",
+          "to": "https://autoclaw.zhipuai.cn/blog/news/M11W1/"
+        },
+        {
+          "field": "updated",
+          "from": "2026-10-30",
+          "to": "2026-11-06"
         }
       ]
     }

@@ -293,7 +293,8 @@ test("robots.txt 随产物落地；有站点地址时 sitemap 与产物页集合
     const locs = [...readFileSync(path.join(OUT, "sitemap.xml"), "utf8").matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
     /* 等值式按「可索引面」逐分量复算，绝不写总量绝对数（同第 36 行 intel 下界那条的教训：
        crawler 每加一张卡、nav 每多收一条工具，绝对数就假红一次）。分量口径：
-         首页 1 + 内容页 5（about / editorial-policy / privacy / contact / openrouter 台账页）
+         首页 1 + 内容页 6（about / editorial-policy / privacy / contact / openrouter 台账页
+                            / igetoken 快讯页；与上方「固定面 10」的分母同口径）
        + 情报详情页 N（= out/intel 目录数）
        + 导航面 = 频道固定页 4（/nav/ · /nav/tools/ · /nav/rankings/ · /nav/sources/）
                  + 分类页（= nav-index 里有计数的分类）
@@ -306,7 +307,7 @@ test("robots.txt 随产物落地；有站点地址时 sitemap 与产物页集合
     const navCategories = nav.categories.filter((c) => c.count > 0).length;
     const navTools = nav.items.length;
     const intelDirs = dirsOf("intel").length;
-    const expected = 1 + 5 + intelDirs + navFixedPages + navCategories + navTools;
+    const expected = 1 + 6 + intelDirs + navFixedPages + navCategories + navTools;
     assert.equal(
       locs.length,
       expected,
