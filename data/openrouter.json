@@ -1,7 +1,7 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-11-06T01:53:19.447Z",
-  "totalModels": 454,
+  "fetchedAt": "2026-11-07T01:24:49.264Z",
+  "totalModels": 460,
   "freeModelCount": 16,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
@@ -98,6 +98,17 @@
       "moderated": false
     },
     {
+      "id": "liquid/lfm-3-1.7b:free",
+      "name": "LiquidAI: LFM3-1.7B (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 8192,
+      "modality": "text->text",
+      "moderated": false
+    },
+    {
       "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
       "name": "NVIDIA: Nemotron 3 Nano Omni (free)",
       "freeVariant": true,
@@ -117,17 +128,6 @@
       "contextLength": 1000000,
       "maxCompletionTokens": 65536,
       "modality": "text->text",
-      "moderated": false
-    },
-    {
-      "id": "nvidia/nemotron-3.5-content-safety:free",
-      "name": "NVIDIA: Nemotron 3.5 Content Safety (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 128000,
-      "maxCompletionTokens": 8192,
-      "modality": "text+image->text",
       "moderated": false
     },
     {
@@ -197,5 +197,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "ac599c2ed1a5ac58"
+  "sourceFingerprint": "f42500fc34a88933"
 }
