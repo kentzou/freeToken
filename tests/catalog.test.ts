@@ -45,17 +45,22 @@ describe("目录逻辑（真实种子数据基准）", () => {
     expect(vis).toHaveLength(baseline.length);
     expect(vis.map((c) => c.name).slice().sort()).toEqual(baseline.map((c) => c.name).slice().sort());
 
-    const pinned = vis.filter((c) => c.pin);
-    expect(pinned.length).toBeGreaterThan(0); // 样本量：没有 pin 卡时下面的循环空转=无牙
+    /* 数据面可以没有 pin：唯一带 pin 的「阶跃星辰 StepFun:5」已在 2026-11-09 批量审批里下架。
+       机制不能因此失去被测对象——在内存里给一张真实可见卡挂 pin 再跑生产函数（不落盘、不改数据）。 */
+    expect(vis.length).toBeGreaterThan(3);
+    const target = vis[3];
+    const probe = cards.map((c) => (c.name === target.name ? { ...c, pin: 2 } : c));
+    const pinnedVis = visibleCards(probe, donots, rules);
+    const pinned = pinnedVis.filter((c) => c.pin);
+    expect(pinned.length).toBe(1); // 样本量：合成 pin 必须真的被生产函数看见
+    expect(pinnedVis[1].name).toBe(target.name); // 真的挪到了 pin-1＝1（不是恰好已在原位）
     for (const c of pinned) {
-      expect(vis.indexOf(c)).toBe(Math.min((c.pin || 1) - 1, vis.length - 1));
+      expect(pinnedVis.indexOf(c)).toBe(Math.min((c.pin || 1) - 1, pinnedVis.length - 1));
     }
-    /* 下面这条替掉了原来 `vis[3] === "Cline"` / `vis[4] === "阶跃星辰 StepFun"` 两句硬编码卡名。
-       它们钉的是「第 4、5 位分别是谁」，而 pin 之外的位次就是 tokens.json 的书写顺序——上游每加
-       一张卡都会挤动它（本轮 DeepSeek 开放平台插到 index 1，Cline 就从第 4 位挪到第 5 位）。
-       pin 真正要保证的性质是「只挪被钉的卡，其余卡之间不得重排」，这条不随数据增长而变。 */
-    const natural = baseline.filter((c) => !c.pin).map((c) => c.name);
-    expect(vis.filter((c) => !c.pin).map((c) => c.name)).toEqual(natural);
+    /* pin 真正要保证的性质是「只挪被钉的卡，其余卡之间不得重排」，这条不随数据增长而变。
+       两侧都按名字排除被钉的那张：原样本里它本来没有 pin，留在任一侧都会造出长度差。 */
+    const without = (list: typeof vis) => list.filter((c) => c.name !== target.name).map((c) => c.name);
+    expect(without(pinnedVis)).toEqual(without(baseline));
   });
 
   it("精选区口径：editorial 的前两张，每张都真过了可见门槛（不钉是哪两张）", () => {

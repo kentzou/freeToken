@@ -134,14 +134,16 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
   it("Q1/Q3/Q9：事实随上游刷新、观点字段保留、改名走 alias", () => {
     const by = (n: string) => tokens.find((t: any) => t.name === n);
     const wb = by("WorkBuddy");
-    expect(wb.updated).toBe("2026-09-28"); // Q3：事实层 updated 取上游 last_verified
-    expect(wb.quota).toBe("HY3 限免至 2026-09-30；HY4 preview 新用户首开对话起 14 天内免费。"); // 上游逐字
+    /* 2026-11-09 /approve all 后事实层换成 pending 里的 after（上游 11-07 档），
+       不再是冻结 fixture 的 09-28 旧值——这条钉的是「审批确实生效」，不是某个历史常量。 */
+    expect(wb.updated).toBe("2026-11-07"); // Q3：事实层 updated 取上游 last_verified
+    expect(wb.quota).toBe("Hy4 限免至 11-15（0.00×，每日额度有限、用尽转积分）；Hy3 同步延至 11-15；新户 2000 积分至 11-30。"); // 上游逐字
     expect(wb.rating).toBe(5); // 观点层：上游无载体，必须从本地继承
     expect(typeof wb.effect).toBe("string");
     expect(by("Qoder cn")).toBeUndefined(); // 上游名不得落库
     const q = by("阿里云 Qoder（灵码）"); // Q9 alias 生效，观点字段才保得住
-    expect(q.modality).toBe("Qwen3.8-Flash · Qwen3.8-Max");
-    expect(q.limited).toBe("2026-09-30");
+    expect(q.modality).toBe("Qwen3.8-Flash · Qwen3.8-Max · DeepSeek-V4-Pro · DeepSeek-Flash · GLM-5.3");
+    expect(q.limited).toBe("官方未公布（以客户端为准）");
     /* Q2：11 张仅本地存在的旧卡全部跟随下架，永不复活（名单逐字见计划 0.1） */
     const gone = [
       "GLM-5.3-Flash（Ox-Alpha）", "蓝博科技（lanbuff）", "2026 微信小程序开发大赛",
@@ -166,7 +168,7 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
     expect(tokens.some((t: any) => t.name === "阿里云 Qoder（灵码）")).toBe(true); // alias 后仍在线
   });
 
-  it("管线↔磁盘等价：管线产出的卡逐字在磁盘上，磁盘多出的卡来自冻结 fixture 之外的新上游", () => {
+  it("管线↔磁盘等价：上游卡在场且观点层逐字，磁盘多出的卡来自冻结 fixture 之外的新上游", () => {
     /* 三条不变式（与数据增长无关）在计划 6 之后各加一条本地豁免，理由见 D-4：
        crawl.yml 只有 schedule/dispatch/issue_comment 三种触发且只在 main 跑，
        所以「config 里刚登记、磁盘还没落」是 PR 阶段的**正常中间态**，反向硬钉＝每个加卡的 PR 长红。
@@ -175,10 +177,31 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
     const diskNames = new Set(diskByName.keys());
     const isLocal = (c: any) => LOCAL_SOURCE_NAMES.includes(c.name);
 
-    const upstreamPart = PIPELINE.cards.filter((c: any) => !isLocal(c));
-    // ① 上游来源的每一张，磁盘上必须存在且逐字段完全相同（观点层没被管线改坏）
+    /* 2026-11-09 `/approve all 46` 里下架的冻结 fixture 成员：管线（历史切片）仍会产出，磁盘按审批删除。
+       名单写成显式常量而不是放宽存在性——「批准删除」与「误删」必须可分辨：这些名字重新出现在磁盘＝红。 */
+    const APPROVED_GONE = [
+      "阶跃星辰 StepFun",
+      "腾讯 Marvis（马维斯）",
+      "七牛云 AI 推理",
+      "NVIDIA NIM 免费 API",
+      "商汤 Token Plan（sensenova）",
+      "美团 longcat 大模型",
+      "国家超算互联网 SCNet",
+    ];
+    expect(tokens.filter((t: any) => APPROVED_GONE.includes(t.name))).toEqual([]);
+    const upstreamPart = PIPELINE.cards.filter((c: any) => !isLocal(c) && !APPROVED_GONE.includes(c.name));
+    // ① 上游来源的每一张（批准下架者除外），磁盘上必须存在（存在性不放松）
     expect(upstreamPart.filter((c: any) => !diskNames.has(c.name))).toEqual([]);
-    expect(upstreamPart.map((c: any) => diskByName.get(c.name))).toEqual(upstreamPart);
+    /* ①′ 观点层逐字：rating/effect/signup/pin/alwaysShow/badge/tone/extraAction/v2 不得被管线改坏。
+       事实层（quota/limited/updated 等）自 2026-11-09 `/approve all 46` 起**允许磁盘比冻结 fixture 新**：
+       pending 里的 after 就是审批通过的上游新事实，落盘后磁盘必然领先冻结切片；再要求事实逐字相等，
+       等于断言「批准过的更新不许生效」。事实正确性由 Q1/Q3/Q9 用例逐字钉住，不在这里重复。 */
+    const OPINION_KEYS = ["rating", "effect", "signup", "pin", "alwaysShow", "badge", "tone", "extraAction", "v2"];
+    const opinionOf = (c: any) => Object.fromEntries(OPINION_KEYS.map((k) => [k, c[k]]));
+    const opinionBad = upstreamPart
+      .filter((c: any) => JSON.stringify(opinionOf(c)) !== JSON.stringify(opinionOf(diskByName.get(c.name))))
+      .map((c: any) => c.name);
+    expect(opinionBad).toEqual([]);
     // ①′ 本地卡若已经落盘，同样必须逐字相同（crawl 与 seed 共用同一套 normalize＋合并，不该出现第三种形态）。
     //    基准收窄（评审 I-5）：本测试的 fixture 是冻结切片，磁盘是实时上游代表，而生产侧 mergeLocalCards
     //    的让路基准是当轮实时上游——若某本地条目与磁盘上「真实上游新增、冻结 fixture 里没有」的卡同名，

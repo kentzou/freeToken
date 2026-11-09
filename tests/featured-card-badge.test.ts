@@ -11,7 +11,8 @@ import type { RulesJson, TokenCard } from "../src/lib/types";
  *     精选对换成大模型卡（腾讯元器）后它就成假标签；
  *  ② 带角标的卡必须同时带上 has-editor-badge 修饰类——CSS 靠它给左下角那枚绝对定位角标
  *     预留底部空间，类一丢就回到「角标压住卡脚事实行」的旧现场（1280 宽截图实测过）。
- *  卡数据直接取 data/tokens.json 里的真实两张（WorkBuddy=工具 / 腾讯元器=大模型），不另造夹具。 */
+ *  卡数据直接取 data/tokens.json 里的真实两张（WorkBuddy=工具 / OpenRouter=大模型），不另造夹具。
+ *  2026-11-09：原大模型样本「腾讯元器」已随批量审批下架，换用仍在库且过门槛的 OpenRouter。 */
 const rules = compiledRules(JSON.parse(readFileSync("data/rules.json", "utf8")) as RulesJson);
 const cards = JSON.parse(readFileSync("data/tokens.json", "utf8")) as TokenCard[];
 const render = (name: string, index: 0 | 1) => {
@@ -22,7 +23,7 @@ const render = (name: string, index: 0 | 1) => {
 
 describe("精选卡角标（文案随类目、留白随角标）", () => {
   it("大模型卡 → 文案是「大模型精选」，不得沿用「编程工具精选」", () => {
-    const html = render("腾讯元器", 1);
+    const html = render("OpenRouter", 1);
     expect(html).toContain("大模型精选");
     expect(html).not.toContain("编程工具精选");
   });

@@ -18,9 +18,11 @@ const load = () => {
 };
 
 describe("精选门槛放行面（featured 规则改动会被这里拦住）", () => {
-  it("新点名的卡已放行：腾讯元器 / 百度千帆（文心）/ 讯飞星火（开放平台）/ OpenRouter", () => {
+  it("新点名的卡已放行：OpenRouter（同批的腾讯元器/百度千帆/讯飞星火已按审批下架）", () => {
     const { names } = load();
-    for (const n of ["腾讯元器", "百度千帆（文心）", "讯飞星火（开放平台）", "OpenRouter"]) {
+    /* 2026-11-09 /approve all：上述三张卡下架，放行面只剩 OpenRouter——下架卡不再作为被测对象，
+       否则这条钉子会把「已批准下架」误判成夹带回归。 */
+    for (const n of ["OpenRouter"]) {
       expect(names, n).toContain(n);
     }
   });
