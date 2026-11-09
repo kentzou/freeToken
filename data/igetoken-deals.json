@@ -2,14 +2,35 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-11-08T01:39:24.740Z",
+  "fetchedAt": "2026-11-09T01:48:12.678Z",
   "sections": {
-    "deals": 70,
+    "deals": 73,
     "models": 21,
     "perks": 8
   },
-  "itemCount": 99,
+  "itemCount": 102,
   "items": [
+    {
+      "id": "2026-11-scnet-double11-client",
+      "section": "deals",
+      "date": "2026-11-09",
+      "title": "超算互联网双 11 年终钜惠：客户端旗舰模型词元不限量至 11/30，11/9 起新用户再领 1 亿词元",
+      "link": "https://igetoken.com/deals/2026-11-scnet-double11-client/"
+    },
+    {
+      "id": "2026-11-zhipu-autoclaw-double11",
+      "section": "deals",
+      "date": "2026-11-09",
+      "title": "智谱 AutoClaw 双十一：11/9–11/15 登录领 5000 万 Token（海外版 1 亿），到点一并清零",
+      "link": "https://igetoken.com/deals/2026-11-zhipu-autoclaw-double11/"
+    },
+    {
+      "id": "2026-11-zhipu-weekend-build-viii",
+      "section": "deals",
+      "date": "2026-11-06",
+      "title": "智谱 ZCode WEEKEND BUILD 第八轮：5 亿 GLM-5.3-Flash Token（11/6 23:00 → 11/9 09:00）（已结束）",
+      "link": "https://igetoken.com/deals/2026-11-zhipu-weekend-build-viii/"
+    },
     {
       "id": "2026-11-hunyuan-hy4-free",
       "section": "deals",
@@ -35,7 +56,7 @@
       "id": "2026-10-coderabbit-deep-scan-free",
       "section": "deals",
       "date": "2026-10-28",
-      "title": "CodeRabbit 限时承担 100 万美元 Deep Scan 安全扫描费用：2 人及以上组织每家最高 $5,000（至 11/8）",
+      "title": "CodeRabbit 限时承担 100 万美元 Deep Scan 安全扫描费用：2 人及以上组织每家最高 $5,000（至 11/9 15:59）",
       "link": "https://igetoken.com/deals/2026-10-coderabbit-deep-scan-free/"
     },
     {
