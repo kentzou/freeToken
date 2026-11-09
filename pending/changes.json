@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "1988aa3ab580c579f7eff92362094e7fa4c683e7",
-  "detectedAt": "2026-11-09T06:53:14.776Z",
+  "upstreamSha": "28ffa9a67d3e1a170960d22aec8fb2cfe9e815a4",
+  "detectedAt": "2026-11-09T22:32:00.176Z",
   "changes": [
     {
       "kind": "card",
@@ -83,6 +83,72 @@
           "field": "updated",
           "from": "2026-11-09",
           "to": "2026-11-05"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "魔搭社区 ModelScope",
+      "before": {
+        "name": "魔搭社区 ModelScope",
+        "type": "大模型",
+        "modality": "Qwen 系列 · LUX · Stable Diffusion 等",
+        "rating": 1,
+        "quota": "较优模型每天至少可调用 200 次；属阿里云旗下，站内还有非常多值得研究的东西；注册即享、无需实名。",
+        "effect": "阿里达摩院开源社区，收录 17 万+ 开源模型，生态完整、国内访问稳定；API-Inference 支持文本/图像等多模态，适合原型验证与模型体验。⚠️ 2026-08 起改采『魔豆』计费，免费调用次数较此前明显减少",
+        "link": "https://modelscope.cn",
+        "updated": "2026-10-26",
+        "v2": true,
+        "limited": null
+      },
+      "after": {
+        "name": "魔搭社区 ModelScope",
+        "type": "大模型",
+        "modality": "Qwen 系列 · 通义万相 · LUX · Stable Diffusion 等",
+        "rating": 1,
+        "quota": "较优文本模型每天至少 200 次调用；阿里云旗下，注册即享、无需实名。",
+        "effect": "阿里达摩院开源社区，收录 17 万+ 开源模型，生态完整、国内访问稳定；API-Inference 支持文本/图像等多模态，适合原型验证与模型体验。⚠️ 2026-08 起改采『魔豆』计费，免费调用次数较此前明显减少",
+        "link": "https://modelscope.cn",
+        "updated": "2026-11-10",
+        "v2": true,
+        "limited": null
+      },
+      "fields": [
+        {
+          "field": "modality",
+          "from": "Qwen 系列 · LUX · Stable Diffusion 等",
+          "to": "Qwen 系列 · 通义万相 · LUX · Stable Diffusion 等"
+        },
+        {
+          "field": "quota",
+          "from": "较优模型每天至少可调用 200 次；属阿里云旗下，站内还有非常多值得研究的东西；注册即享、无需实名。",
+          "to": "较优文本模型每天至少 200 次调用；阿里云旗下，注册即享、无需实名。"
+        },
+        {
+          "field": "updated",
+          "from": "2026-10-26",
+          "to": "2026-11-10"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "华为云码道",
+      "before": {
+        "name": "华为云码道",
+        "type": "工具",
+        "modality": "Kimi-K3.1-Pro · GLM-5.3 Flash · DeepSeek V4 系列",
+        "quota": "每日签到 100 积分（个人体验版，当日有效）；新用户注册 4000 积分（30 天有效）、邀新双方各 1000。原「限时领取福利 Tokens」（每日千万级）已于 2026-10-20 22:00 下线。",
+        "link": "https://edu.huaweicloud.com/signup/00ce9d4a32584039a9741d8488d16711?channelCode=edu&medium=share_kfzlb&invitation=ae0390096b6645e1825b6b01e4cb04ec",
+        "limited": "签到积分活动至 2026-12-31 23:59；原每日 Token 福利 2026-10-20 已下线",
+        "updated": "2026-11-02"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
         }
       ]
     }
