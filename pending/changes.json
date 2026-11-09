@@ -1,6 +1,90 @@
 {
   "version": 1,
-  "upstreamSha": "80822204960c381048f1b40eebad57d0082135ad",
-  "detectedAt": "2026-11-07T06:14:32.209Z",
-  "changes": []
+  "upstreamSha": "1988aa3ab580c579f7eff92362094e7fa4c683e7",
+  "detectedAt": "2026-11-09T06:53:14.776Z",
+  "changes": [
+    {
+      "kind": "card",
+      "name": "微信 AI 小程序成长计划（云开发 CloudBase）",
+      "before": {
+        "name": "微信 AI 小程序成长计划（云开发 CloudBase）",
+        "type": "大模型",
+        "modality": "Hy3 · Hy Image 3.0",
+        "rating": 3,
+        "quota": "10 亿大模型 Token + 10 万张 AI 生图，自申请起 6 个月有效。",
+        "effect": "腾讯云开发 CloudBase 联合微信小程序的开发者扶持计划，模型已全面升级为混元 Hy3 与 Hy Image 3.0；全行业无类目限制，小游戏开发者同享。10 亿 Token 足够把 AI 能力『用厚』在产品里，老用户自动升级或领 120 元代金券",
+        "link": "https://cloud.tencent.com/developer/article/2705075",
+        "limited": "2026-12-31",
+        "updated": "2026-07-29",
+        "v2": true
+      },
+      "after": {
+        "name": "微信 AI 小程序成长计划（云开发 CloudBase）",
+        "type": "大模型",
+        "modality": "Hy3 · Hy4 preview · DeepSeek-V4.1-Flash · Hy Image 3.0",
+        "rating": 3,
+        "quota": "10 亿大模型 Token + 10 万张 AI 生图，自申请起 6 个月有效。",
+        "effect": "腾讯云开发 CloudBase 联合微信小程序的开发者扶持计划，模型已全面升级为混元 Hy3 与 Hy Image 3.0；全行业无类目限制，小游戏开发者同享。10 亿 Token 足够把 AI 能力『用厚』在产品里，老用户自动升级或领 120 元代金券",
+        "link": "https://cloud.tencent.com/developer/article/2705075",
+        "limited": "2026-12-31",
+        "updated": "2026-11-09",
+        "v2": true
+      },
+      "fields": [
+        {
+          "field": "modality",
+          "from": "Hy3 · Hy Image 3.0",
+          "to": "Hy3 · Hy4 preview · DeepSeek-V4.1-Flash · Hy Image 3.0"
+        },
+        {
+          "field": "updated",
+          "from": "2026-07-29",
+          "to": "2026-11-09"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "云知声 U2-Flash（Unisound MaaS）",
+      "before": {
+        "name": "云知声 U2-Flash（Unisound MaaS）",
+        "type": "大模型",
+        "modality": "U2-Flash · U2 · U2-Med · U2-Decision",
+        "quota": "U Plan Free 档：每周 2500 积分、5 小时窗口 500 积分，另赠 U2-ASR 8 小时 / U2-TTS 4 万字；U2-Flash 上线平台另赠 1 亿 Token；U2-Flash 限时免费 · 活动期间新老用户均免费调用（2026.11.01-11.20）。",
+        "link": "https://maas.unisound.com/",
+        "limited": "2026-11-20",
+        "updated": "2026-11-09",
+        "effect": "取证形态（2026-11-09）：官方活动横幅可见层「U Plan 正式上线！Free 档免费领，套餐升级限时5折，低至29.5元/月！U2-Flash、U2-Med 超耐用，ASR、TTS、OCR 模型权益免费送！」；「活动时间：2026.11.01-2026.11.20」与「限时免费 · 活动期间新老用户均免费调用」在页面载荷（i18n dict）内，可见层未直接渲染日期。⚠️ 活动截止 11-20，过期后按新一期公告复核；Free 档具体额度以控制台为准。",
+        "alwaysShow": true
+      },
+      "after": {
+        "name": "云知声 U2-Flash（Unisound MaaS）",
+        "type": "大模型",
+        "modality": "U2-Flash · U2 · U2-Med · U2-Decision",
+        "quota": "U Plan Free 档：每周 2500 积分、5 小时窗口 500 积分，另赠 U2-ASR 8 小时 / U2-TTS 4 万字；U2-Flash 上线平台另赠 1 亿 Token。",
+        "link": "https://maas.unisound.com/",
+        "limited": null,
+        "updated": "2026-11-05",
+        "effect": "取证形态（2026-11-09）：官方活动横幅可见层「U Plan 正式上线！Free 档免费领，套餐升级限时5折，低至29.5元/月！U2-Flash、U2-Med 超耐用，ASR、TTS、OCR 模型权益免费送！」；「活动时间：2026.11.01-2026.11.20」与「限时免费 · 活动期间新老用户均免费调用」在页面载荷（i18n dict）内，可见层未直接渲染日期。⚠️ 活动截止 11-20，过期后按新一期公告复核；Free 档具体额度以控制台为准。",
+        "alwaysShow": true
+      },
+      "fields": [
+        {
+          "field": "limited",
+          "from": "2026-11-20",
+          "to": null
+        },
+        {
+          "field": "quota",
+          "from": "U Plan Free 档：每周 2500 积分、5 小时窗口 500 积分，另赠 U2-ASR 8 小时 / U2-TTS 4 万字；U2-Flash 上线平台另赠 1 亿 Token；U2-Flash 限时免费 · 活动期间新老用户均免费调用（2026.11.01-11.20）。",
+          "to": "U Plan Free 档：每周 2500 积分、5 小时窗口 500 积分，另赠 U2-ASR 8 小时 / U2-TTS 4 万字；U2-Flash 上线平台另赠 1 亿 Token。"
+        },
+        {
+          "field": "updated",
+          "from": "2026-11-09",
+          "to": "2026-11-05"
+        }
+      ]
+    }
+  ]
 }
