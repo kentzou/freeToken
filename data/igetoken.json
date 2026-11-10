@@ -5,7 +5,7 @@
   "usageNote": "线索台账，非发布内容。卡片文案来自同赛道第三方聚合站，未过本站红线②（额度原句须厂商官方页逐字在场）；要入库须逐条回官方页取证后手写 config/local-cards.json。",
   "rightsNote": "本站仅登记条目原文与出处链接，文案版权归原作者；本页不替代厂商官方页。",
   "evidence": "third-party-aggregator",
-  "fetchedAt": "2026-11-09T02:31:08.994Z",
+  "fetchedAt": "2026-11-10T04:33:48.789Z",
   "declaredCount": 48,
   "platformCount": 48,
   "platforms": [
@@ -87,7 +87,7 @@
         "按 Token 计费",
         "需绑支付宝"
       ],
-      "checkedAt": "09/11 已核实",
+      "checkedAt": "11/10 已核实",
       "rating": null
     },
     {
@@ -418,13 +418,13 @@
       "category": "aggregator",
       "url": "https://igetoken.com/models/opencode/",
       "summary": "开源编程代理官方模型网关，多个编程模型限时免费",
-      "quota": "Zen 免费模型限时开放，当前 10 款（glm-5.3-flash-free、deepseek-v4.1-flash-free、crouton-alpha-free、iceman-free 等），名单按周轮换，专为编程场景优化",
+      "quota": "Zen 免费模型限时开放，当前 10 款（glm-5.3-flash-free、deepseek-v4.1-flash-free、longcat-2.5-free、iceman-free 等，11/10 实测），名单按周轮换，专为编程场景优化",
       "tags": [
         "免费层",
         "编程场景",
         "免费模型轮换"
       ],
-      "checkedAt": "11/09 已核实",
+      "checkedAt": "11/10 已核实",
       "rating": "4"
     },
     {
@@ -510,15 +510,15 @@
       "name": "超算互联网（SCNet）",
       "category": "domestic",
       "url": "https://igetoken.com/models/scnet/",
-      "summary": "国家超算互联网官方 MaaS 平台，新客免费领 1000 万 Token（至 11/10），首单 0.1 元秒 DeepSeek-V4.1-Flash-1017",
-      "quota": "MaaS 特惠专场延至 **11/10 23:59**：新客注册即领 **1000 万 Token**（GLM-5.3-Flash，1024K 上下文，实时到账、**30 天有效**）；新客首单秒杀每天 10:00 开抢，**DeepSeek-V4.1-Flash-1017 5000 万 Token 仅 ¥0.10**（原价 ¥20.50）；双协议（OpenAI + Anthropic）可接 Claude Code / Cursor / Cline",
+      "summary": "国家超算互联网官方 MaaS 平台，新客免费领 1000 万 Token（第三期至 12/31），首单 0.1 元秒 DeepSeek-V4.1-Flash-1017",
+      "quota": "MaaS 特惠专场第三期延至 **12/31**：新客注册即领 **1000 万 Token**（GLM-5.3-Flash，1024K 上下文，实时到账、**30 天有效**）；新客首单秒杀每天 10:00 开抢，**DeepSeek-V4.1-Flash-1017 5000 万 Token 仅 ¥0.10**（原价 ¥20.50）；双协议（OpenAI + Anthropic）可接 Claude Code / Cursor / Cline",
       "tags": [
         "注册送",
         "国家背景",
         "首单低价",
         "速度一般"
       ],
-      "checkedAt": "10/28 已核实",
+      "checkedAt": "11/10 已核实",
       "rating": "1"
     },
     {
@@ -757,5 +757,5 @@
       "rating": "4"
     }
   ],
-  "sourceFingerprint": "57303d36ed81db53"
+  "sourceFingerprint": "0d1238eafe004b75"
 }
