@@ -2,14 +2,21 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-11-09T01:48:12.678Z",
+  "fetchedAt": "2026-11-10T04:14:02.449Z",
   "sections": {
-    "deals": 73,
+    "deals": 74,
     "models": 21,
     "perks": 8
   },
-  "itemCount": 102,
+  "itemCount": 103,
   "items": [
+    {
+      "id": "2026-11-antling-ling-32-flash-free",
+      "section": "deals",
+      "date": "2026-11-10",
+      "title": "蚂蚁百灵 Ling-3.2-flash 上线前两周 API 免费：560B 原生多模态、1M 上下文，OpenAI + Anthropic 双协议可站外调用",
+      "link": "https://igetoken.com/deals/2026-11-antling-ling-32-flash-free/"
+    },
     {
       "id": "2026-11-scnet-double11-client",
       "section": "deals",
@@ -56,7 +63,7 @@
       "id": "2026-10-coderabbit-deep-scan-free",
       "section": "deals",
       "date": "2026-10-28",
-      "title": "CodeRabbit 限时承担 100 万美元 Deep Scan 安全扫描费用：2 人及以上组织每家最高 $5,000（至 11/9 15:59）",
+      "title": "CodeRabbit 限时承担 100 万美元 Deep Scan 安全扫描费用：2 人及以上组织每家最高 $5,000（至 11/9 15:59）（已结束）",
       "link": "https://igetoken.com/deals/2026-10-coderabbit-deep-scan-free/"
     },
     {
@@ -77,7 +84,7 @@
       "id": "2026-10-scnet-maas-extended",
       "section": "deals",
       "date": "2026-10-28",
-      "title": "超算互联网 MaaS 特惠专场延长至 11/10：新客仍可免费领 1000 万 Token，首单 0.1 元秒 DeepSeek-V4.1-Flash-1017",
+      "title": "超算互联网 MaaS 特惠专场第三期延长至 12/31：新客仍可免费领 1000 万 Token，首单 0.1 元秒 DeepSeek-V4.1-Flash-1017",
       "link": "https://igetoken.com/deals/2026-10-scnet-maas-extended/"
     },
     {
@@ -224,7 +231,7 @@
       "id": "2026-09-qoder-qwen38-flash-free",
       "section": "deals",
       "date": "2026-09-18",
-      "title": "Qoder Qwen3.8-Flash 限时免费已延期：调用不扣 Credits（计费系数 0.1× → 0.0×，10/1 起继续免费、结束时间待官方公告）",
+      "title": "Qoder Qwen3.8-Flash 限时免费已结束：0.0× 计费于 11/7 00:00 终止，之后 0.04× 夜间 / 0.1× 白天（已结束）",
       "link": "https://igetoken.com/deals/2026-09-qoder-qwen38-flash-free/"
     },
     {
