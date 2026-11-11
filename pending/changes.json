@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "c4e285de35829395dd2873d75f93209b4f1c46ca",
-  "detectedAt": "2026-11-10T19:52:01.922Z",
+  "upstreamSha": "2a9ed20fa63ec70ca0f7713ec55c4af4177f6c53",
+  "detectedAt": "2026-11-11T06:47:44.893Z",
   "changes": [
     {
       "kind": "card",
@@ -208,7 +208,7 @@
       "after": {
         "name": "OpenRouter",
         "type": "大模型",
-        "modality": "Nemotron 3 Ultra 550B / 3.5 系列 · Gemma 4 31B/26B · Inkling 2 Small · Xingchen 4.0 · dots-3-note · LFM3/LFM2.5 等 13 款 :free",
+        "modality": "Nemotron 3 Ultra 550B / 3.5 系列 · Gemma 4 31B/26B · Inkling 2 Small · LFM3/LFM2.5 · Flint v1.0 · dots-3-note 等 12 款 :free",
         "rating": 3,
         "quota": "免费模型（:free 后缀）每分钟 20 次、每日 50 次；账户累计充值满 $10 后每日上限提至 1000 次；永久免费、无截止时间。",
         "effect": "一站式聚合 500+ 模型（GPT/Claude/Gemini/Kimi/DeepSeek 等），OpenAI 兼容接口，一个 Key 切所有模型。⚠️ 实测反馈：GLM-5.2(free) 当前报 429 错误用不了（限流/上游不可用），免费模型可用性不稳定",
@@ -217,7 +217,7 @@
           "text": "免费模型台账",
           "link": "/openrouter/"
         },
-        "updated": "2026-11-10",
+        "updated": "2026-11-11",
         "v2": true,
         "limited": null
       },
@@ -225,12 +225,12 @@
         {
           "field": "modality",
           "from": "Nemotron 3 Ultra 550B / 3.5 系列 · Gemma 4 31B/26B · Cohere North Mini · Xingchen 4.0 · dots-3-note 等 12 款 :free",
-          "to": "Nemotron 3 Ultra 550B / 3.5 系列 · Gemma 4 31B/26B · Inkling 2 Small · Xingchen 4.0 · dots-3-note · LFM3/LFM2.5 等 13 款 :free"
+          "to": "Nemotron 3 Ultra 550B / 3.5 系列 · Gemma 4 31B/26B · Inkling 2 Small · LFM3/LFM2.5 · Flint v1.0 · dots-3-note 等 12 款 :free"
         },
         {
           "field": "updated",
           "from": "2026-11-06",
-          "to": "2026-11-10"
+          "to": "2026-11-11"
         }
       ]
     }
