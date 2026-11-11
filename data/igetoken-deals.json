@@ -2,20 +2,34 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-11-10T04:14:02.449Z",
+  "fetchedAt": "2026-11-11T02:02:11.816Z",
   "sections": {
-    "deals": 74,
+    "deals": 76,
     "models": 21,
     "perks": 8
   },
-  "itemCount": 103,
+  "itemCount": 105,
   "items": [
+    {
+      "id": "2026-11-opencode-minimax-m31-flash-back",
+      "section": "deals",
+      "date": "2026-11-11",
+      "title": "MiniMax M3.1 Flash Free 回归 OpenCode Zen 免费档：10/28 下线后重新上架，1M 上下文 · 零留存（11/11 实测）",
+      "link": "https://igetoken.com/deals/2026-11-opencode-minimax-m31-flash-back/"
+    },
     {
       "id": "2026-11-antling-ling-32-flash-free",
       "section": "deals",
       "date": "2026-11-10",
       "title": "蚂蚁百灵 Ling-3.2-flash 上线前两周 API 免费：560B 原生多模态、1M 上下文，OpenAI + Anthropic 双协议可站外调用",
       "link": "https://igetoken.com/deals/2026-11-antling-ling-32-flash-free/"
+    },
+    {
+      "id": "2026-11-zhipu-global-build-1110",
+      "section": "deals",
+      "date": "2026-11-10",
+      "title": "智谱 ZCode GLOBAL BUILD 工作日卡：3 亿 GLM-5.3-Flash Token（11/10 23:00 生效 → 11/11 09:00 过期）（已结束）",
+      "link": "https://igetoken.com/deals/2026-11-zhipu-global-build-1110/"
     },
     {
       "id": "2026-11-scnet-double11-client",
@@ -98,7 +112,7 @@
       "id": "2026-10-minimax-m31-flash-free",
       "section": "deals",
       "date": "2026-10-19",
-      "title": "MiniMax M3.1 Flash 官方认领 Space Bunny（太空兔）：OpenCode 免费档限时开放，1M 上下文 · 200+ TPS · Agentic 编程（已结束 · 10/28 复核已从免费档移除）",
+      "title": "MiniMax M3.1 Flash 官方认领 Space Bunny（太空兔）：OpenCode 免费档限时开放，1M 上下文 · 200+ TPS · Agentic 编程（首轮窗口已结束 · 11/11 该档回归，见新快讯）",
       "link": "https://igetoken.com/deals/2026-10-minimax-m31-flash-free/"
     },
     {
