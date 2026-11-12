@@ -1,10 +1,10 @@
 {
-  "lastSyncedSha": "de52b0830b174d174d9faf574fd5b9f54b9fed4b",
-  "lastSyncedAt": "2026-11-11T19:44:04.454Z",
-  "sourceFingerprint": "7e33542d9874328c",
-  "localFingerprint": "05af192201d5a960",
+  "lastSyncedSha": "145d157ca0ec321cc9884388b310cff7f1cd3da4",
+  "lastSyncedAt": "2026-11-12T07:26:12.458Z",
+  "sourceFingerprint": "12ab310d932d2716",
+  "localFingerprint": "7723efaaac637c9b",
   "counts": {
-    "tokens": 85,
+    "tokens": 86,
     "donots": 22
   }
 }
