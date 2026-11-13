@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-11-12T02:35:22.689Z",
-  "totalModels": 467,
-  "freeModelCount": 16,
+  "fetchedAt": "2026-11-13T02:15:34.115Z",
+  "totalModels": 475,
+  "freeModelCount": 18,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -20,6 +20,17 @@
     "verifiedAt": "2026-09-30"
   },
   "models": [
+    {
+      "id": "apodex/apodex-1.1-mini:free",
+      "name": "Apodex: Apodex 1.1 Mini (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 262144,
+      "maxCompletionTokens": 235929,
+      "modality": "text->text",
+      "moderated": false
+    },
     {
       "id": "baidu/ernie-5.5-flash-preview:free",
       "name": "Baidu: ERNIE-5.5-Flash-Preview (free)",
@@ -175,6 +186,17 @@
       "moderated": false
     },
     {
+      "id": "particle-ai/particle-1:free",
+      "name": "Particle AI: Particle-1 (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 1048576,
+      "maxCompletionTokens": 131072,
+      "modality": "text+image->text",
+      "moderated": false
+    },
+    {
       "id": "recursive/flint-v1.0:free",
       "name": "Recursive: Flint (free)",
       "freeVariant": true,
@@ -197,5 +219,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "3764518fbd58bdb4"
+  "sourceFingerprint": "39e9911beb3c1e48"
 }
