@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "145d157ca0ec321cc9884388b310cff7f1cd3da4",
-  "detectedAt": "2026-11-12T07:26:12.458Z",
+  "upstreamSha": "3b6c272113779e1837cd2aab614cc040ceafc5e5",
+  "detectedAt": "2026-11-13T06:57:56.881Z",
   "changes": [
     {
       "kind": "card",
@@ -80,7 +80,7 @@
       "after": {
         "name": "OpenRouter",
         "type": "大模型",
-        "modality": "Nemotron 3 Ultra 550B / 3.5 系列 · Gemma 4 31B/26B · ERNIE-5.5-Flash-Preview · Inkling 2 Small · LFM3/LFM2.5 · Flint v1.0 · dots-3-note 等 13 款 :free",
+        "modality": "Nemotron 3 Ultra 550B / 3.5 系列 · Gemma 4 31B/26B · ERNIE-5.5-Flash-Preview · Inkling 2 Small · LFM3/LFM2.5 · Flint v1.0 · Particle-1 · Apodex-1.1-mini 等 15 款 :free",
         "rating": 3,
         "quota": "免费模型（:free 后缀）每分钟 20 次、每日 50 次；账户累计充值满 $10 后每日上限提至 1000 次；永久免费、无截止时间。",
         "effect": "一站式聚合 500+ 模型（GPT/Claude/Gemini/Kimi/DeepSeek 等），OpenAI 兼容接口，一个 Key 切所有模型。⚠️ 实测反馈：GLM-5.2(free) 当前报 429 错误用不了（限流/上游不可用），免费模型可用性不稳定",
@@ -89,7 +89,7 @@
           "text": "免费模型台账",
           "link": "/openrouter/"
         },
-        "updated": "2026-11-12",
+        "updated": "2026-11-13",
         "v2": true,
         "limited": null
       },
@@ -97,12 +97,12 @@
         {
           "field": "modality",
           "from": "Nemotron 3 Ultra 550B / 3.5 系列 · Gemma 4 31B/26B · Inkling 2 Small · LFM3/LFM2.5 · Flint v1.0 · dots-3-note 等 12 款 :free",
-          "to": "Nemotron 3 Ultra 550B / 3.5 系列 · Gemma 4 31B/26B · ERNIE-5.5-Flash-Preview · Inkling 2 Small · LFM3/LFM2.5 · Flint v1.0 · dots-3-note 等 13 款 :free"
+          "to": "Nemotron 3 Ultra 550B / 3.5 系列 · Gemma 4 31B/26B · ERNIE-5.5-Flash-Preview · Inkling 2 Small · LFM3/LFM2.5 · Flint v1.0 · Particle-1 · Apodex-1.1-mini 等 15 款 :free"
         },
         {
           "field": "updated",
           "from": "2026-11-11",
-          "to": "2026-11-12"
+          "to": "2026-11-13"
         }
       ]
     },
@@ -146,6 +146,45 @@
           "field": "updated",
           "from": "2026-11-09",
           "to": "2026-11-05"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "豆包工作（30 天订阅）",
+      "before": {
+        "name": "豆包工作（30 天订阅）",
+        "type": "工具",
+        "modality": "豆包工作 · Agent 云端工作台",
+        "quota": "登录电脑版即可领 30 天标准订阅，到期可再续领一次（合计最多 60 天），付费订阅时长自动顺延。",
+        "link": "https://www.doubao.com/download",
+        "limited": null,
+        "updated": "2026-10-20"
+      },
+      "after": {
+        "name": "豆包工作（30 天订阅）",
+        "type": "工具",
+        "modality": "豆包2.1 Lite／2.1 Pro · DeepSeek-V4.1-Flash／V4-Pro · Kimi-K3.1-Pro · GLM-5.3／5.3-Flash",
+        "quota": "登录电脑版领 30 天标准订阅（可续领一次，合计最多 60 天）；简单小额任务免费，两款轻量模型限时 0.01×。",
+        "link": "https://www.doubao.com/download",
+        "limited": null,
+        "updated": "2026-11-13"
+      },
+      "fields": [
+        {
+          "field": "modality",
+          "from": "豆包工作 · Agent 云端工作台",
+          "to": "豆包2.1 Lite／2.1 Pro · DeepSeek-V4.1-Flash／V4-Pro · Kimi-K3.1-Pro · GLM-5.3／5.3-Flash"
+        },
+        {
+          "field": "quota",
+          "from": "登录电脑版即可领 30 天标准订阅，到期可再续领一次（合计最多 60 天），付费订阅时长自动顺延。",
+          "to": "登录电脑版领 30 天标准订阅（可续领一次，合计最多 60 天）；简单小额任务免费，两款轻量模型限时 0.01×。"
+        },
+        {
+          "field": "updated",
+          "from": "2026-10-20",
+          "to": "2026-11-13"
         }
       ]
     }
