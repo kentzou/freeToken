@@ -2,14 +2,21 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-11-12T03:12:02.870Z",
+  "fetchedAt": "2026-11-13T02:44:06.570Z",
   "sections": {
-    "deals": 76,
+    "deals": 77,
     "models": 21,
     "perks": 8
   },
-  "itemCount": 105,
+  "itemCount": 106,
   "items": [
+    {
+      "id": "2026-11-zhipu-global-build-daily",
+      "section": "deals",
+      "date": "2026-11-12",
+      "title": "智谱 ZCode GLOBAL BUILD 常态每日卡：每日 3 亿 GLM-5.3-Flash Token（23:00 生效 → 次日 09:00 清零）",
+      "link": "https://igetoken.com/deals/2026-11-zhipu-global-build-daily/"
+    },
     {
       "id": "2026-11-opencode-minimax-m31-flash-back",
       "section": "deals",
