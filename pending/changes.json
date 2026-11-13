@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "3b6c272113779e1837cd2aab614cc040ceafc5e5",
-  "detectedAt": "2026-11-13T06:57:56.881Z",
+  "upstreamSha": "3028b619231ed8100328590dde4275251212f332",
+  "detectedAt": "2026-11-13T19:52:53.986Z",
   "changes": [
     {
       "kind": "card",
@@ -165,7 +165,7 @@
         "name": "豆包工作（30 天订阅）",
         "type": "工具",
         "modality": "豆包2.1 Lite／2.1 Pro · DeepSeek-V4.1-Flash／V4-Pro · Kimi-K3.1-Pro · GLM-5.3／5.3-Flash",
-        "quota": "登录电脑版领 30 天标准订阅（可续领一次，合计最多 60 天）；简单小额任务免费，两款轻量模型限时 0.01×。",
+        "quota": "登录电脑版领 30 天标准订阅（可续领一次，共最多 60 天）；小额任务免费，用 DeepSeek-V4.1-Flash 限时 0.01×。",
         "link": "https://www.doubao.com/download",
         "limited": null,
         "updated": "2026-11-13"
@@ -179,12 +179,33 @@
         {
           "field": "quota",
           "from": "登录电脑版即可领 30 天标准订阅，到期可再续领一次（合计最多 60 天），付费订阅时长自动顺延。",
-          "to": "登录电脑版领 30 天标准订阅（可续领一次，合计最多 60 天）；简单小额任务免费，两款轻量模型限时 0.01×。"
+          "to": "登录电脑版领 30 天标准订阅（可续领一次，共最多 60 天）；小额任务免费，用 DeepSeek-V4.1-Flash 限时 0.01×。"
         },
         {
           "field": "updated",
           "from": "2026-10-20",
           "to": "2026-11-13"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "库库 AI",
+      "before": {
+        "name": "库库 AI",
+        "type": "工具",
+        "modality": "DeepSeek V4.1 · GLM-5.3 / 5.2 / 5.1 · 文心 5.1 · Kimi-K3",
+        "quota": "每日登录 +50 积分、完成一次对话 +50 积分，合计每天可领 100 积分；DeepSeek V4.1 按 0.16 倍率消耗。",
+        "link": "https://kuku.baidu.com",
+        "limited": "每日额度以平台显示为准",
+        "updated": "2026-10-28"
+      },
+      "after": null,
+      "fields": [
+        {
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
         }
       ]
     }
