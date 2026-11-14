@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-11-13T02:15:34.115Z",
-  "totalModels": 475,
-  "freeModelCount": 18,
+  "fetchedAt": "2026-11-14T01:53:46.945Z",
+  "totalModels": 471,
+  "freeModelCount": 17,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -20,17 +20,6 @@
     "verifiedAt": "2026-09-30"
   },
   "models": [
-    {
-      "id": "apodex/apodex-1.1-mini:free",
-      "name": "Apodex: Apodex 1.1 Mini (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 262144,
-      "maxCompletionTokens": 235929,
-      "modality": "text->text",
-      "moderated": false
-    },
     {
       "id": "baidu/ernie-5.5-flash-preview:free",
       "name": "Baidu: ERNIE-5.5-Flash-Preview (free)",
@@ -109,14 +98,14 @@
       "moderated": false
     },
     {
-      "id": "liquid/lfm-2.5-2.6b:free",
-      "name": "LiquidAI: LFM2.5-2.6B (free)",
+      "id": "inclusionai/ling-3.2-flash:free",
+      "name": "inclusionAI: Ling 3.2 Flash (free)",
       "freeVariant": true,
       "tokenPriceZero": true,
       "quotaRef": "quotaPolicy",
-      "contextLength": 65536,
-      "maxCompletionTokens": 8192,
-      "modality": "text->text",
+      "contextLength": 1048576,
+      "maxCompletionTokens": 262144,
+      "modality": "text+image->text",
       "moderated": false
     },
     {
@@ -219,5 +208,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "39e9911beb3c1e48"
+  "sourceFingerprint": "771f2e16fd1d1baa"
 }
