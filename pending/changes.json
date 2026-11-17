@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "2c53950151c978e309594e298616f64a7f91881f",
-  "detectedAt": "2026-11-17T08:09:04.734Z",
+  "upstreamSha": "290ecab2f1f7c09309e1e0fc29fc90c4c6c8e046",
+  "detectedAt": "2026-11-17T21:06:16.489Z",
   "changes": [
     {
       "kind": "card",
@@ -235,7 +235,7 @@
         "effect": "腾讯混元 AI 工作台，HY3（混元3）与 HY4 preview（混元4）均可直接调用，速度很快；写代码、查资料、做自动化都好用。HY3 限免至 2026-09-30；HY4 preview 分两档——新用户首开后 14 天每日免费，老用户仅夜间 23:00-次日 9:00 免费；DeepSeek-V4.1-Flash 国内独家合作，0.03x 为站内最低倍率，优惠持续到 2026-09-23；注意 HY4 为纯文本大模型、暂不具备多模态，调用其做视频/图像等生成会切到多模态模型并正常扣积分；免费体验高峰期可能排队",
         "link": "https://www.workbuddy.cn/events/invite?inviteCode=binccyhvk7bl",
         "limited": "2026-11-30",
-        "updated": "2026-11-16",
+        "updated": "2026-11-17",
         "v2": true
       },
       "fields": [
@@ -257,7 +257,7 @@
         {
           "field": "updated",
           "from": "2026-11-07",
-          "to": "2026-11-16"
+          "to": "2026-11-17"
         }
       ]
     },
@@ -279,6 +279,139 @@
           "field": "(整条)",
           "from": "存在",
           "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "字节 TRAE（AI IDE）",
+      "before": {
+        "name": "字节 TRAE（AI IDE）",
+        "type": "工具",
+        "modality": "GPT-4o · Doubao-1.5-pro · DeepSeek",
+        "quota": "免费档 ¥0：每月 500 积分、全部功能免费使用、2 个云端任务并发；经分享链接注册并登录桌面端另得 3,000 积分（31 天有效），用完仍可用免费基础模型。",
+        "link": "https://www.trae.cn",
+        "limited": null,
+        "updated": "2026-11-10"
+      },
+      "after": {
+        "name": "字节 TRAE（AI IDE）",
+        "type": "工具",
+        "modality": "Seed-2.1-Turbo · Seed-Code · DeepSeek-V4.1-Flash · DeepSeek-V4-Pro",
+        "quota": "免费档 ¥0：每月 500 积分、全部功能免费使用、2 个云端任务并发；经分享链接注册并登录桌面端另得 2,500 积分（邀请 500 + 新人 2,000，31 天有效）。",
+        "link": "https://www.trae.cn",
+        "limited": null,
+        "updated": "2026-11-17"
+      },
+      "fields": [
+        {
+          "field": "modality",
+          "from": "GPT-4o · Doubao-1.5-pro · DeepSeek",
+          "to": "Seed-2.1-Turbo · Seed-Code · DeepSeek-V4.1-Flash · DeepSeek-V4-Pro"
+        },
+        {
+          "field": "quota",
+          "from": "免费档 ¥0：每月 500 积分、全部功能免费使用、2 个云端任务并发；经分享链接注册并登录桌面端另得 3,000 积分（31 天有效），用完仍可用免费基础模型。",
+          "to": "免费档 ¥0：每月 500 积分、全部功能免费使用、2 个云端任务并发；经分享链接注册并登录桌面端另得 2,500 积分（邀请 500 + 新人 2,000，31 天有效）。"
+        },
+        {
+          "field": "updated",
+          "from": "2026-11-10",
+          "to": "2026-11-17"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "OpenCode Zen",
+      "before": {
+        "name": "OpenCode Zen",
+        "type": "工具",
+        "modality": "DeepSeek V4.1 Flash Free · GLM-5.3-Flash Free · MiMo-V2.5 Free · LongCat-2.5 Preview Free · Nemotron 3 Ultra Free · Big Pickle",
+        "rating": 3,
+        "quota": "免费模型已扩至 15 个（含 DeepSeek V4.1 Flash、GLM-5.3-Flash 免费档），限时开放、官方未公布截止日。",
+        "effect": "OpenCode（16 万+ Star 开源编程 Agent）自带的 Zen 模型网关，专为 coding agent 基准测试挑选并验证的模型，OpenAI 兼容接口，可配到任意编程客户端",
+        "link": "https://opencode.ai/zen",
+        "updated": "2026-10-20",
+        "v2": true,
+        "limited": "免费名单滚动轮换，以 /models 实时列表为准"
+      },
+      "after": {
+        "name": "OpenCode Zen",
+        "type": "工具",
+        "modality": "Hy4 flash Free · DeepSeek V4.1 Flash Free · GLM-5.3-Flash Free · LongCat 2.5 Free · MiMo-V2.6-Flash Free · Nemotron 3.5 系列 · Big Pickle",
+        "rating": 3,
+        "quota": "免费模型共 14 款（含 Hy4 flash、DeepSeek V4.1 Flash、GLM-5.3-Flash、LongCat 2.5），官方标 limited time、未公布截止日。",
+        "effect": "OpenCode（16 万+ Star 开源编程 Agent）自带的 Zen 模型网关，专为 coding agent 基准测试挑选并验证的模型，OpenAI 兼容接口，可配到任意编程客户端",
+        "link": "https://opencode.ai/zen",
+        "updated": "2026-11-17",
+        "v2": true,
+        "limited": "免费名单滚动轮换，以 /models 实时列表为准"
+      },
+      "fields": [
+        {
+          "field": "modality",
+          "from": "DeepSeek V4.1 Flash Free · GLM-5.3-Flash Free · MiMo-V2.5 Free · LongCat-2.5 Preview Free · Nemotron 3 Ultra Free · Big Pickle",
+          "to": "Hy4 flash Free · DeepSeek V4.1 Flash Free · GLM-5.3-Flash Free · LongCat 2.5 Free · MiMo-V2.6-Flash Free · Nemotron 3.5 系列 · Big Pickle"
+        },
+        {
+          "field": "quota",
+          "from": "免费模型已扩至 15 个（含 DeepSeek V4.1 Flash、GLM-5.3-Flash 免费档），限时开放、官方未公布截止日。",
+          "to": "免费模型共 14 款（含 Hy4 flash、DeepSeek V4.1 Flash、GLM-5.3-Flash、LongCat 2.5），官方标 limited time、未公布截止日。"
+        },
+        {
+          "field": "updated",
+          "from": "2026-10-20",
+          "to": "2026-11-17"
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "AMD 免费 API 与开发者计划",
+      "before": {
+        "name": "AMD 免费 API 与开发者计划",
+        "type": "大模型",
+        "modality": "AMD 免费 API · Fireworks 托管推理",
+        "rating": 5,
+        "quota": "AMD AI 开发者计划最高 $100 云额度 + $50 Fireworks 托管推理额度；无截止时间。",
+        "effect": "AMD 免费 API 速度快，比英伟达免费的好用很多。开发者计划申请步骤：① 打开 studentoffers.co/offer/amd-ai-developer-program ② 加入 AMD AI 开发者计划 ③ 打开 Member Perks ④ 申请 AMD Cloud 或 Fireworks 额度 ⑤ 填写 affiliation / intended use / 公开主页 ⑥ 等待 2-3 个工作日审批。⚠️ AMD 云额度激活后 30 天过期；Fireworks 额度 90 天有效；额度审批通过后可用",
+        "link": "https://developer.amd.com.cn/radeon/tokenfactory",
+        "tone": "green",
+        "alwaysShow": true,
+        "updated": "2026-09-02",
+        "v2": true,
+        "limited": null
+      },
+      "after": {
+        "name": "AMD 免费 API 与开发者计划",
+        "type": "大模型",
+        "modality": "Token Lab：Gemma 4 31B · DeepSeek V4 / V4.1 Flash · Qwen3.8 27B · MiniCPM 系列（10 款全免费）",
+        "rating": 5,
+        "quota": "免费加入开发者计划：Instinct 云额度最高 $100 + Fireworks $50 + Token Lab 免费 API（10 款开源模型、积分制、20 次/分）。",
+        "effect": "AMD 免费 API 速度快，比英伟达免费的好用很多。开发者计划申请步骤：① 打开 studentoffers.co/offer/amd-ai-developer-program ② 加入 AMD AI 开发者计划 ③ 打开 Member Perks ④ 申请 AMD Cloud 或 Fireworks 额度 ⑤ 填写 affiliation / intended use / 公开主页 ⑥ 等待 2-3 个工作日审批。⚠️ AMD 云额度激活后 30 天过期；Fireworks 额度 90 天有效；额度审批通过后可用",
+        "link": "https://developer.amd.com.cn/radeon/tokenfactory",
+        "tone": "green",
+        "alwaysShow": true,
+        "updated": "2026-11-17",
+        "v2": true,
+        "limited": null
+      },
+      "fields": [
+        {
+          "field": "modality",
+          "from": "AMD 免费 API · Fireworks 托管推理",
+          "to": "Token Lab：Gemma 4 31B · DeepSeek V4 / V4.1 Flash · Qwen3.8 27B · MiniCPM 系列（10 款全免费）"
+        },
+        {
+          "field": "quota",
+          "from": "AMD AI 开发者计划最高 $100 云额度 + $50 Fireworks 托管推理额度；无截止时间。",
+          "to": "免费加入开发者计划：Instinct 云额度最高 $100 + Fireworks $50 + Token Lab 免费 API（10 款开源模型、积分制、20 次/分）。"
+        },
+        {
+          "field": "updated",
+          "from": "2026-09-02",
+          "to": "2026-11-17"
         }
       ]
     }
