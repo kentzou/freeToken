@@ -5,7 +5,7 @@
   "usageNote": "线索台账，非发布内容。卡片文案来自同赛道第三方聚合站，未过本站红线②（额度原句须厂商官方页逐字在场）；要入库须逐条回官方页取证后手写 config/local-cards.json。",
   "rightsNote": "本站仅登记条目原文与出处链接，文案版权归原作者；本页不替代厂商官方页。",
   "evidence": "third-party-aggregator",
-  "fetchedAt": "2026-11-11T02:39:45.925Z",
+  "fetchedAt": "2026-11-17T05:00:28.100Z",
   "declaredCount": 48,
   "platformCount": 48,
   "platforms": [
@@ -418,13 +418,13 @@
       "category": "aggregator",
       "url": "https://igetoken.com/models/opencode/",
       "summary": "开源编程代理官方模型网关，多个编程模型限时免费",
-      "quota": "Zen 免费模型限时开放，11/11 实测 12 个零价 ID（11 款 -free + 匿名档 big-pickle），名单按周甚至按天轮换，专为编程场景优化",
+      "quota": "Zen 免费模型限时开放，11/17 实测 13 个零价 ID（12 款 -free + 匿名档 big-pickle），新增 Hy4 Flash Free（可站外 API、零留存），名单按周甚至按天轮换，专为编程场景优化",
       "tags": [
         "免费层",
         "编程场景",
         "免费模型轮换"
       ],
-      "checkedAt": "11/11 已核实",
+      "checkedAt": "11/17 已核实",
       "rating": "4"
     },
     {
@@ -651,13 +651,13 @@
       "category": "domestic",
       "url": "https://igetoken.com/models/workbuddy/",
       "summary": "腾讯桌面 AI 智能体办公产品，注册即送海量 Credits",
-      "quota": "注册送 5000 Credits（约几千万 Token 量级），每日签到可续；当前三条模型限免并行：阶跃 Step 5 Preview 独家全免（10/12–10/25）、混元 Hy3 限免、Hy4 preview 夜间限免（均至 10/31）",
+      "quota": "注册送 5000 Credits（约几千万 Token 量级），每日签到可续；11/16 起 Hy4 flash 国内版 / 国际版首发接入并限时免费至 11/30 23:59（产品内额度）；Hy4 正式版限免已结束、Hy3 已端内下线",
       "tags": [
         "注册送",
         "签到续额度",
         "Agent 办公"
       ],
-      "checkedAt": "10/28 已核实",
+      "checkedAt": "11/17 已核实",
       "rating": null
     },
     {
@@ -757,5 +757,5 @@
       "rating": "4"
     }
   ],
-  "sourceFingerprint": "615e81f393dbe800"
+  "sourceFingerprint": "3398df534ac002ed"
 }
