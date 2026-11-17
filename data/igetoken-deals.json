@@ -2,14 +2,28 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-11-16T02:18:08.104Z",
+  "fetchedAt": "2026-11-17T04:40:10.884Z",
   "sections": {
-    "deals": 77,
+    "deals": 79,
     "models": 21,
     "perks": 8
   },
-  "itemCount": 106,
+  "itemCount": 108,
   "items": [
+    {
+      "id": "2026-11-opencode-hy4-flash-free",
+      "section": "deals",
+      "date": "2026-11-17",
+      "title": "Hy4 Flash Free 上线 OpenCode Zen 免费档：腾讯混元可通过 OpenAI 兼容接口站外调用，1M 上下文 · 零留存（11/17 实测）",
+      "link": "https://igetoken.com/deals/2026-11-opencode-hy4-flash-free/"
+    },
+    {
+      "id": "2026-11-workbuddy-hy4-flash-free",
+      "section": "deals",
+      "date": "2026-11-17",
+      "title": "混元 Hy4 flash 首发接入 WorkBuddy：国内版 / 国际版 11/16–11/30 23:59 限时免费（产品内额度）",
+      "link": "https://igetoken.com/deals/2026-11-workbuddy-hy4-flash-free/"
+    },
     {
       "id": "2026-11-zhipu-global-build-daily",
       "section": "deals",
@@ -49,7 +63,7 @@
       "id": "2026-11-zhipu-autoclaw-double11",
       "section": "deals",
       "date": "2026-11-09",
-      "title": "智谱 AutoClaw 双十一：11/9–11/15 登录领 5000 万 Token（海外版 1 亿），到点一并清零",
+      "title": "智谱 AutoClaw 双十一：11/9–11/15 登录领 5000 万 Token（海外版 1 亿），到点一并清零（已结束）",
       "link": "https://igetoken.com/deals/2026-11-zhipu-autoclaw-double11/"
     },
     {
@@ -63,7 +77,7 @@
       "id": "2026-11-hunyuan-hy4-free",
       "section": "deals",
       "date": "2026-11-04",
-      "title": "混元 Hy4 正式版限时免费：11/4–11/15 23:59 WorkBuddy 每日送免费额度（订阅用户享更高配额）",
+      "title": "混元 Hy4 正式版限时免费：11/4–11/15 23:59 WorkBuddy 每日送免费额度（订阅用户享更高配额）（已结束）",
       "link": "https://igetoken.com/deals/2026-11-hunyuan-hy4-free/"
     },
     {
@@ -644,7 +658,7 @@
       "id": "2026-07-hunyuan-hy3-trial",
       "section": "deals",
       "date": "2026-08-29",
-      "title": "混元 Hy3 限免延长至 11/15 23:59（官方确认）：WorkBuddy 每日送免费额度",
+      "title": "混元 Hy3 限免延长至 11/15 23:59（官方确认）：WorkBuddy 每日送免费额度（已结束）",
       "link": "https://igetoken.com/deals/2026-07-hunyuan-hy3-trial/"
     },
     {
