@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "290ecab2f1f7c09309e1e0fc29fc90c4c6c8e046",
-  "detectedAt": "2026-11-17T21:06:16.489Z",
+  "upstreamSha": "b8e87ab623aeec2583a1b68b879975550c04ce31",
+  "detectedAt": "2026-11-18T07:43:17.881Z",
   "changes": [
     {
       "kind": "card",
@@ -28,7 +28,7 @@
         "type": "工具",
         "modality": "Qwen4-Max · Qwen3.8-Max · Qwen3.8-Flash · DeepSeek-V4-Pro · DeepSeek-Flash · GLM-5.3 · Kimi-K3.1-Pro · MiniMax-M3.1-Flash",
         "rating": 5,
-        "quota": "每日 10:00 桌面端领 100 Credits（30 天有效、可累积）；倍率 Qwen4-Max 0.4×、Qwen3.8-Flash 0.1×、DeepSeek-Flash 0.1×、GLM-5.3 0.8×；22:00–08:00 错峰 Qwen3.8-Max/Flash 再 4 折。",
+        "quota": "新户注册送 300 Credits（含 2 周专业版试用，每人一次）；每日 10:00 桌面端领 100 Credits（30 天有效、可累积）；倍率 Qwen4-Max 0.4×、Qwen3.8-Flash 0.1×、DeepSeek-Flash 0.1×、GLM-5.3 0.8×；22:00–08:00 错峰再 4 折。",
         "effect": "阿里云官方编程助手（原灵码）。Qwen3.8-Flash 擅长代码编写、长文档处理、图像理解与工具调用，套餐额度可省给其他模型；100 Credits 计入 Add-on 资源包，桌面端 / IDE / JetBrains 插件 / CLI / 网页与移动端通用。⚠️ 免费期结束后按届时公示系数计费；每日奖励需在桌面端左下角「用量面板 → 🎁 礼物图标」手动领取",
         "link": "https://www.aliyun.com/product/lingma",
         "extraAction": {
@@ -37,7 +37,7 @@
         },
         "badge": "九月限定",
         "limited": "官方未公布（以客户端为准）",
-        "updated": "2026-11-16",
+        "updated": "2026-11-18",
         "v2": true
       },
       "fields": [
@@ -49,12 +49,12 @@
         {
           "field": "quota",
           "from": "每日 10:00 客户端领 100 Credits（30 天有效、可累积），新户注册送 300；Qwen3.8-Flash 每日免费用量按 0×，DeepSeek 系列 11-01 起转 0.1×–0.5×。",
-          "to": "每日 10:00 桌面端领 100 Credits（30 天有效、可累积）；倍率 Qwen4-Max 0.4×、Qwen3.8-Flash 0.1×、DeepSeek-Flash 0.1×、GLM-5.3 0.8×；22:00–08:00 错峰 Qwen3.8-Max/Flash 再 4 折。"
+          "to": "新户注册送 300 Credits（含 2 周专业版试用，每人一次）；每日 10:00 桌面端领 100 Credits（30 天有效、可累积）；倍率 Qwen4-Max 0.4×、Qwen3.8-Flash 0.1×、DeepSeek-Flash 0.1×、GLM-5.3 0.8×；22:00–08:00 错峰再 4 折。"
         },
         {
           "field": "updated",
           "from": "2026-11-06",
-          "to": "2026-11-16"
+          "to": "2026-11-18"
         }
       ]
     },
@@ -123,11 +123,11 @@
       "after": {
         "name": "云知声 U2-Flash（Unisound MaaS）",
         "type": "大模型",
-        "modality": "U2-Flash · U2 · U2-Med · U2-Decision",
-        "quota": "U Plan Free 档：每周 2500 积分、5 小时窗口 500 积分，另赠 U2-ASR 8 小时 / U2-TTS 4 万字；U2-Flash 上线平台另赠 1 亿 Token。",
+        "modality": "U2-Flash-1118（266B·原生多模态·1M 上下文） · U2 · U2-Med · U2-Decision（限时 ¥0）",
+        "quota": "U Plan Free 永久免费：每周 2500 积分、5 小时窗口 500 积分，另赠 5 款模型包（ASR 8 小时 / TTS 4 万字 / OCR 与影像）；新客另赠 1 亿 Token。",
         "link": "https://maas.unisound.com/",
         "limited": null,
-        "updated": "2026-11-05",
+        "updated": "2026-11-18",
         "effect": "取证形态（2026-11-09）：官方活动横幅可见层「U Plan 正式上线！Free 档免费领，套餐升级限时5折，低至29.5元/月！U2-Flash、U2-Med 超耐用，ASR、TTS、OCR 模型权益免费送！」；「活动时间：2026.11.01-2026.11.20」与「限时免费 · 活动期间新老用户均免费调用」在页面载荷（i18n dict）内，可见层未直接渲染日期。⚠️ 活动截止 11-20，过期后按新一期公告复核；Free 档具体额度以控制台为准。",
         "alwaysShow": true
       },
@@ -138,14 +138,19 @@
           "to": null
         },
         {
+          "field": "modality",
+          "from": "U2-Flash · U2 · U2-Med · U2-Decision",
+          "to": "U2-Flash-1118（266B·原生多模态·1M 上下文） · U2 · U2-Med · U2-Decision（限时 ¥0）"
+        },
+        {
           "field": "quota",
           "from": "U Plan Free 档：每周 2500 积分、5 小时窗口 500 积分，另赠 U2-ASR 8 小时 / U2-TTS 4 万字；U2-Flash 上线平台另赠 1 亿 Token；U2-Flash 限时免费 · 活动期间新老用户均免费调用（2026.11.01-11.20）。",
-          "to": "U Plan Free 档：每周 2500 积分、5 小时窗口 500 积分，另赠 U2-ASR 8 小时 / U2-TTS 4 万字；U2-Flash 上线平台另赠 1 亿 Token。"
+          "to": "U Plan Free 永久免费：每周 2500 积分、5 小时窗口 500 积分，另赠 5 款模型包（ASR 8 小时 / TTS 4 万字 / OCR 与影像）；新客另赠 1 亿 Token。"
         },
         {
           "field": "updated",
           "from": "2026-11-09",
-          "to": "2026-11-05"
+          "to": "2026-11-18"
         }
       ]
     },
