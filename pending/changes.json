@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "e9722dacb433cd9a23366fbde9c7b3b9acb998eb",
-  "detectedAt": "2026-11-19T07:39:44.596Z",
+  "upstreamSha": "68527f52737239515c4252552f6be1389926e3b7",
+  "detectedAt": "2026-11-20T07:30:26.737Z",
   "changes": [
     {
       "kind": "card",
@@ -432,25 +432,12 @@
         "limited": "2026-11-19",
         "updated": "2026-11-06"
       },
-      "after": {
-        "name": "蚂蚁百灵 Ling-3.2-flash（首发限免）",
-        "type": "大模型",
-        "modality": "Ling-3.2-flash（560B MoE / 25B 激活、1M 上下文、图像+视频输入）",
-        "quota": "上线首两周 API 全免费（11-05 至 11-19，输入输出不计费）；到期后按量计费，官方定价表 11-19 起已不单列该模型价位，实际价格以控制台为准。",
-        "link": "https://developer.ant-ling.com/",
-        "limited": "2026-11-19",
-        "updated": "2026-11-19"
-      },
+      "after": null,
       "fields": [
         {
-          "field": "quota",
-          "from": "上线首两周 API 全免费（输入输出均不计费），11-19 起恢复按量：输入约 ¥2、输出约 ¥6 / 百万 tokens。",
-          "to": "上线首两周 API 全免费（11-05 至 11-19，输入输出不计费）；到期后按量计费，官方定价表 11-19 起已不单列该模型价位，实际价格以控制台为准。"
-        },
-        {
-          "field": "updated",
-          "from": "2026-11-06",
-          "to": "2026-11-19"
+          "field": "(整条)",
+          "from": "存在",
+          "to": null
         }
       ]
     }
