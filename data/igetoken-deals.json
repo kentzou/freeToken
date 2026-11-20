@@ -2,7 +2,7 @@
   "source": "https://igetoken.com/rss.xml",
   "sourceName": "iGetoken 快讯（活动／新平台／积分福利）",
   "rightsNote": "本站仅登记标题与原文链接，正文版权归原作者；点击标题跳转 iGetoken 阅读。",
-  "fetchedAt": "2026-11-19T03:43:25.952Z",
+  "fetchedAt": "2026-11-20T03:37:32.173Z",
   "sections": {
     "deals": 79,
     "models": 21,
@@ -35,7 +35,7 @@
       "id": "2026-11-opencode-minimax-m31-flash-back",
       "section": "deals",
       "date": "2026-11-11",
-      "title": "MiniMax M3.1 Flash Free 回归 OpenCode Zen 免费档：10/28 下线后重新上架，1M 上下文 · 零留存（11/11 实测）",
+      "title": "MiniMax M3.1 Flash Free 回归 OpenCode Zen 免费档（已于 11/19 再次下线 · 11/11 实测）：10/28 下线后重新上架，1M 上下文 · 零留存",
       "link": "https://igetoken.com/deals/2026-11-opencode-minimax-m31-flash-back/"
     },
     {
@@ -140,7 +140,7 @@
       "id": "2026-10-opencode-glm-53-flash-free",
       "section": "deals",
       "date": "2026-10-16",
-      "title": "OpenCode Zen 免费档新增 GLM 5.3 Flash：1M 上下文 · 原生多模态 · 智谱旗舰编码模型限时免费",
+      "title": "OpenCode Zen 免费档 GLM 5.3 Flash（已于 11/19 从免费档下线 · 曾限时免费）：1M 上下文 · 原生多模态 · 智谱旗舰编码模型",
       "link": "https://igetoken.com/deals/2026-10-opencode-glm-53-flash-free/"
     },
     {
