@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-11-19T02:52:03.879Z",
-  "totalModels": 480,
-  "freeModelCount": 17,
+  "fetchedAt": "2026-11-20T02:44:06.556Z",
+  "totalModels": 478,
+  "freeModelCount": 15,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -30,17 +30,6 @@
       "maxCompletionTokens": 921600,
       "modality": "text->text",
       "moderated": false
-    },
-    {
-      "id": "cohere/north-mini-code:free",
-      "name": "Cohere: North Mini Code (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 256000,
-      "maxCompletionTokens": 64000,
-      "modality": "text->text",
-      "moderated": true
     },
     {
       "id": "dots-studio/dots-3-note-preview:free",
@@ -195,18 +184,7 @@
       "maxCompletionTokens": 235929,
       "modality": "text->text",
       "moderated": false
-    },
-    {
-      "id": "thinkingmachines/inkling-2-small:free",
-      "name": "Thinking Machines: Inkling 2 Small (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 1048576,
-      "maxCompletionTokens": 131072,
-      "modality": "text+image->text",
-      "moderated": false
     }
   ],
-  "sourceFingerprint": "a503866e5b634ebf"
+  "sourceFingerprint": "c7891b7085db68bd"
 }
