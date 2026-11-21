@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "861a51c80db9651c322eb4b05b36b40646961d61",
-  "detectedAt": "2026-11-20T20:33:00.418Z",
+  "upstreamSha": "bc83919e1fe0705e0926afc38f115a331ac0de3b",
+  "detectedAt": "2026-11-21T07:26:01.242Z",
   "changes": [
     {
       "kind": "card",
@@ -344,12 +344,12 @@
       "after": {
         "name": "OpenCode Zen",
         "type": "工具",
-        "modality": "Hy4 flash Free · DeepSeek V4.1 Flash Free · GLM-5.3-Flash Free · LongCat 2.5 Free · MiMo-V2.6-Flash Free · Nemotron 3.5 系列 · Big Pickle",
+        "modality": "Hy4 flash Free · DeepSeek V4.1 Flash Free · LongCat 2.5 Free · MiMo-V2.6-Flash Free · Nemotron 3.5 系列 · Big Pickle",
         "rating": 3,
-        "quota": "免费模型共 14 款（含 Hy4 flash、DeepSeek V4.1 Flash、GLM-5.3-Flash、LongCat 2.5），官方标 limited time、未公布截止日。",
+        "quota": "免费模型 12 款（Hy4 flash、DeepSeek V4.1 Flash、LongCat 2.5 等），均标 limited time、未公布截止日；GLM-5.3-Flash、M3.1 Flash 已于 11-17/18 下架；LongCat 2.5 限 100 次/日。",
         "effect": "OpenCode（16 万+ Star 开源编程 Agent）自带的 Zen 模型网关，专为 coding agent 基准测试挑选并验证的模型，OpenAI 兼容接口，可配到任意编程客户端",
         "link": "https://opencode.ai/zen",
-        "updated": "2026-11-17",
+        "updated": "2026-11-21",
         "v2": true,
         "limited": "免费名单滚动轮换，以 /models 实时列表为准"
       },
@@ -357,17 +357,17 @@
         {
           "field": "modality",
           "from": "DeepSeek V4.1 Flash Free · GLM-5.3-Flash Free · MiMo-V2.5 Free · LongCat-2.5 Preview Free · Nemotron 3 Ultra Free · Big Pickle",
-          "to": "Hy4 flash Free · DeepSeek V4.1 Flash Free · GLM-5.3-Flash Free · LongCat 2.5 Free · MiMo-V2.6-Flash Free · Nemotron 3.5 系列 · Big Pickle"
+          "to": "Hy4 flash Free · DeepSeek V4.1 Flash Free · LongCat 2.5 Free · MiMo-V2.6-Flash Free · Nemotron 3.5 系列 · Big Pickle"
         },
         {
           "field": "quota",
           "from": "免费模型已扩至 15 个（含 DeepSeek V4.1 Flash、GLM-5.3-Flash 免费档），限时开放、官方未公布截止日。",
-          "to": "免费模型共 14 款（含 Hy4 flash、DeepSeek V4.1 Flash、GLM-5.3-Flash、LongCat 2.5），官方标 limited time、未公布截止日。"
+          "to": "免费模型 12 款（Hy4 flash、DeepSeek V4.1 Flash、LongCat 2.5 等），均标 limited time、未公布截止日；GLM-5.3-Flash、M3.1 Flash 已于 11-17/18 下架；LongCat 2.5 限 100 次/日。"
         },
         {
           "field": "updated",
           "from": "2026-10-20",
-          "to": "2026-11-17"
+          "to": "2026-11-21"
         }
       ]
     },
