@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "801a5556a18139ffbf545f18aa94e2102ba644b5",
-  "detectedAt": "2026-11-21T19:30:07.559Z",
+  "upstreamSha": "1f613598dafb2a1105ec1da7f73215601ec3a225",
+  "detectedAt": "2026-11-22T07:06:46.753Z",
   "changes": [
     {
       "kind": "card",
@@ -26,7 +26,7 @@
       "after": {
         "name": "阿里云 Qoder（灵码）",
         "type": "工具",
-        "modality": "Qwen4-Max · Qwen3.8-Max · Qwen3.8-Flash · DeepSeek-V4-Pro · DeepSeek-Flash · GLM-5.3 · GLM-5.3-Flash · MiniMax-M3.1-Flash · Step-5-Preview",
+        "modality": "Qwen4-Max · Qwen3.8-Max · Qwen3.8-Flash · DeepSeek-V4-Pro · DeepSeek-Flash · GLM-5.3 · GLM-5.3-Flash · Kimi-K3.1-Pro · Kimi-K2.8-Preview · MiniMax-M3.1-Flash · Step-5-Preview",
         "rating": 5,
         "quota": "体验版注册送 300 Credits + 2 周 Pro 试用（每人一次）；每日 100 Credits 自 11-19 起仅向试用期与付费订阅用户开放，免费用户已停发；首购专业版月付 19.9 元（原价 59）含 2,000 Credits；DeepSeek-Flash、Qwen3.8-Flash、GLM-5.3-Flash 均 0.1× 倍率。",
         "effect": "阿里云官方编程助手（原灵码）。Qwen3.8-Flash 擅长代码编写、长文档处理、图像理解与工具调用，套餐额度可省给其他模型；100 Credits 计入 Add-on 资源包，桌面端 / IDE / JetBrains 插件 / CLI / 网页与移动端通用。⚠️ 免费期结束后按届时公示系数计费；每日奖励需在桌面端左下角「用量面板 → 🎁 礼物图标」手动领取",
@@ -37,14 +37,14 @@
         },
         "badge": "九月限定",
         "limited": "官方未公布（以客户端为准）",
-        "updated": "2026-11-20",
+        "updated": "2026-11-22",
         "v2": true
       },
       "fields": [
         {
           "field": "modality",
           "from": "Qwen3.8-Flash · Qwen3.8-Max · DeepSeek-V4-Pro · DeepSeek-Flash · GLM-5.3",
-          "to": "Qwen4-Max · Qwen3.8-Max · Qwen3.8-Flash · DeepSeek-V4-Pro · DeepSeek-Flash · GLM-5.3 · GLM-5.3-Flash · MiniMax-M3.1-Flash · Step-5-Preview"
+          "to": "Qwen4-Max · Qwen3.8-Max · Qwen3.8-Flash · DeepSeek-V4-Pro · DeepSeek-Flash · GLM-5.3 · GLM-5.3-Flash · Kimi-K3.1-Pro · Kimi-K2.8-Preview · MiniMax-M3.1-Flash · Step-5-Preview"
         },
         {
           "field": "quota",
@@ -54,7 +54,7 @@
         {
           "field": "updated",
           "from": "2026-11-06",
-          "to": "2026-11-20"
+          "to": "2026-11-22"
         }
       ]
     },
@@ -127,7 +127,7 @@
         "quota": "U Plan Free 永久免费：每周 2500 积分、5 小时窗口 500 积分，另赠 5 款模型包（ASR 8 小时 / TTS 4 万字 / OCR 与影像）；新客另赠 1 亿 Token。",
         "link": "https://maas.unisound.com/",
         "limited": null,
-        "updated": "2026-11-18",
+        "updated": "2026-11-22",
         "effect": "取证形态（2026-11-09）：官方活动横幅可见层「U Plan 正式上线！Free 档免费领，套餐升级限时5折，低至29.5元/月！U2-Flash、U2-Med 超耐用，ASR、TTS、OCR 模型权益免费送！」；「活动时间：2026.11.01-2026.11.20」与「限时免费 · 活动期间新老用户均免费调用」在页面载荷（i18n dict）内，可见层未直接渲染日期。⚠️ 活动截止 11-20，过期后按新一期公告复核；Free 档具体额度以控制台为准。",
         "alwaysShow": true
       },
@@ -150,7 +150,7 @@
         {
           "field": "updated",
           "from": "2026-11-09",
-          "to": "2026-11-18"
+          "to": "2026-11-22"
         }
       ]
     },
@@ -173,7 +173,7 @@
         "quota": "登录电脑版领 30 天标准订阅（可续领一次，共最多 60 天）；小额任务免费，用 DeepSeek-V4.1-Flash 限时 0.01×。",
         "link": "https://www.doubao.com/download",
         "limited": null,
-        "updated": "2026-11-13"
+        "updated": "2026-11-22"
       },
       "fields": [
         {
@@ -189,7 +189,7 @@
         {
           "field": "updated",
           "from": "2026-10-20",
-          "to": "2026-11-13"
+          "to": "2026-11-22"
         }
       ]
     },
