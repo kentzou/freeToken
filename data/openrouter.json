@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-11-23T02:03:38.641Z",
-  "totalModels": 476,
-  "freeModelCount": 14,
+  "fetchedAt": "2026-11-24T05:40:16.335Z",
+  "totalModels": 474,
+  "freeModelCount": 15,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -29,6 +29,17 @@
       "contextLength": 1024000,
       "maxCompletionTokens": 921600,
       "modality": "text->text",
+      "moderated": false
+    },
+    {
+      "id": "dots-studio/dots-3-note-preview:free",
+      "name": "Dots Studio: Dots3-Note Preview (free)",
+      "freeVariant": true,
+      "tokenPriceZero": true,
+      "quotaRef": "quotaPolicy",
+      "contextLength": 512000,
+      "maxCompletionTokens": 460800,
+      "modality": "text+image->text",
       "moderated": false
     },
     {
@@ -175,5 +186,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "49d12678c1cdacd3"
+  "sourceFingerprint": "9d9fb1aaf6222650"
 }
