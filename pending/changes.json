@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "upstreamSha": "b75113d9c8008e92d5071fe256c99ae9eb259c78",
-  "detectedAt": "2026-11-23T07:54:12.351Z",
+  "upstreamSha": "62cad1e512e7d808f96cec78bb172216fa9ea29b",
+  "detectedAt": "2026-11-24T10:06:50.511Z",
   "changes": [
     {
       "kind": "card",
@@ -37,7 +37,7 @@
         },
         "badge": "九月限定",
         "limited": "官方未公布（以客户端为准）",
-        "updated": "2026-11-22",
+        "updated": "2026-11-24",
         "v2": true
       },
       "fields": [
@@ -54,7 +54,7 @@
         {
           "field": "updated",
           "from": "2026-11-06",
-          "to": "2026-11-22"
+          "to": "2026-11-24"
         }
       ]
     },
@@ -344,12 +344,12 @@
       "after": {
         "name": "OpenCode Zen",
         "type": "工具",
-        "modality": "Hy4 flash Free · DeepSeek V4.1 Flash Free · LongCat 2.5 Free · MiMo-V2.6-Flash Free · Nemotron 3.5 系列 · Big Pickle",
+        "modality": "Hy4 flash Free · DeepSeek V4.1 Flash Free · MiMo-V2.6-Flash Free · Nemotron 3.5 Lightning / Super VL Free · Big Pickle · Tidepool Alpha · Iceman · Beam · Flint 40B",
         "rating": 3,
-        "quota": "免费模型 12 款（Hy4 flash、DeepSeek V4.1 Flash、LongCat 2.5 等），均标 limited time、未公布截止日；GLM-5.3-Flash、M3.1 Flash 已于 11-17/18 下架；LongCat 2.5 限 100 次/日。",
+        "quota": "免费模型 11 款（DeepSeek V4.1 Flash、Hy4 flash、MiMo-V2.6-Flash、Nemotron 3.5 系列、Big Pickle 等），均标 limited time、未公布截止日；LongCat 2.5 已退出免费池。",
         "effect": "OpenCode（16 万+ Star 开源编程 Agent）自带的 Zen 模型网关，专为 coding agent 基准测试挑选并验证的模型，OpenAI 兼容接口，可配到任意编程客户端",
         "link": "https://opencode.ai/zen",
-        "updated": "2026-11-21",
+        "updated": "2026-11-24",
         "v2": true,
         "limited": "免费名单滚动轮换，以 /models 实时列表为准"
       },
@@ -357,17 +357,17 @@
         {
           "field": "modality",
           "from": "DeepSeek V4.1 Flash Free · GLM-5.3-Flash Free · MiMo-V2.5 Free · LongCat-2.5 Preview Free · Nemotron 3 Ultra Free · Big Pickle",
-          "to": "Hy4 flash Free · DeepSeek V4.1 Flash Free · LongCat 2.5 Free · MiMo-V2.6-Flash Free · Nemotron 3.5 系列 · Big Pickle"
+          "to": "Hy4 flash Free · DeepSeek V4.1 Flash Free · MiMo-V2.6-Flash Free · Nemotron 3.5 Lightning / Super VL Free · Big Pickle · Tidepool Alpha · Iceman · Beam · Flint 40B"
         },
         {
           "field": "quota",
           "from": "免费模型已扩至 15 个（含 DeepSeek V4.1 Flash、GLM-5.3-Flash 免费档），限时开放、官方未公布截止日。",
-          "to": "免费模型 12 款（Hy4 flash、DeepSeek V4.1 Flash、LongCat 2.5 等），均标 limited time、未公布截止日；GLM-5.3-Flash、M3.1 Flash 已于 11-17/18 下架；LongCat 2.5 限 100 次/日。"
+          "to": "免费模型 11 款（DeepSeek V4.1 Flash、Hy4 flash、MiMo-V2.6-Flash、Nemotron 3.5 系列、Big Pickle 等），均标 limited time、未公布截止日；LongCat 2.5 已退出免费池。"
         },
         {
           "field": "updated",
           "from": "2026-10-20",
-          "to": "2026-11-21"
+          "to": "2026-11-24"
         }
       ]
     },
@@ -438,6 +438,45 @@
           "field": "(整条)",
           "from": "存在",
           "to": null
+        }
+      ]
+    },
+    {
+      "kind": "card",
+      "name": "Google Antigravity（反重力）",
+      "before": {
+        "name": "Google Antigravity（反重力）",
+        "type": "工具",
+        "modality": "Gemini · Claude · GPT-OSS",
+        "quota": "每周提供免费使用额度，支持 Gemini、Claude 等模型。",
+        "link": "https://antigravity.google/download",
+        "limited": "每周免费额度；以官方当前方案为准",
+        "updated": "2026-11-06"
+      },
+      "after": {
+        "name": "Google Antigravity（反重力）",
+        "type": "工具",
+        "modality": "Gemini 4 Hydrogen · Gemini 3.8 Flash（11-30 下架）· Claude Sonnet 4.6 / Opus 4.6 · GPT-OSS 120b",
+        "quota": "免费档（Free / AI Plus）额度每周刷新并设周上限，按 Agent 实际工作量扣减；可用 Gemini 4 Hydrogen 与 Gemini 3.8 Flash（后者 2026-11-30 下架），具体额度官方不公布。",
+        "link": "https://antigravity.google/download",
+        "limited": "每周免费额度；以官方当前方案为准",
+        "updated": "2026-11-24"
+      },
+      "fields": [
+        {
+          "field": "modality",
+          "from": "Gemini · Claude · GPT-OSS",
+          "to": "Gemini 4 Hydrogen · Gemini 3.8 Flash（11-30 下架）· Claude Sonnet 4.6 / Opus 4.6 · GPT-OSS 120b"
+        },
+        {
+          "field": "quota",
+          "from": "每周提供免费使用额度，支持 Gemini、Claude 等模型。",
+          "to": "免费档（Free / AI Plus）额度每周刷新并设周上限，按 Agent 实际工作量扣减；可用 Gemini 4 Hydrogen 与 Gemini 3.8 Flash（后者 2026-11-30 下架），具体额度官方不公布。"
+        },
+        {
+          "field": "updated",
+          "from": "2026-11-06",
+          "to": "2026-11-24"
         }
       ]
     }
