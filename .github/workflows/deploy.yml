@@ -110,5 +110,8 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out
+      # 已知抖点（2026-11-25 实测）：deploy-pages 偶尔在「Fetching artifact metadata failed」处报
+      # 「No artifacts named "github-pages" were found」，此时质量链与打包都已成功，纯属 Pages/API 侧
+      # 取件失败——不是产物缺件。处置：重跑本 workflow，不要改产物或加 force/cancel。
       - id: page-information
         uses: actions/deploy-pages@v4
