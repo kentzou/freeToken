@@ -27,7 +27,8 @@ export default function IgetokenPage() {
   const { igetoken, igetokenPlatforms } = loadCatalog();
   const empty = !igetoken.items.length;
   /* 平台索引只上架「身份与出处」四项事实（name/category/checkedAt/url）——
-     配额与摘要留在台账里不渲染：那是对方的编辑产物，未过本站红线②（见 crawler/igetoken.mjs 文件头）。 */
+     配额与摘要留在台账里不渲染：那是对方的编辑产物。9 家按「出处页转述」立卡的例外，
+     写在下方读者可见文案与 config/local-cards.json 的 effect 里（见 crawler/igetoken.mjs 文件头）。 */
   const platformGroups = PLATFORM_CATEGORIES.map((c) => ({
     ...c,
     items: igetokenPlatforms.platforms.filter((p) => p.category === c.key),
@@ -91,8 +92,8 @@ export default function IgetokenPage() {
       )}
 
       {/* 平台索引：本站此前从未公开过这块数据（台账只进仓库、不进页面）。
-          公开面刻意只上架四项事实，配额文案不上架、也不据此立卡——理由写在下面这段读者可见的注释里，
-          与 crawler/igetoken.mjs 文件头的红线②一致：额度原句须在厂商官方页逐字在场。 */}
+          公开面只上架四项事实；其中 9 家经站长裁决按「出处页转述」立卡（取证形态逐条写在卡片 effect 里，
+          见 config/local-cards.json），其余仍不立卡。口径与 crawler/igetoken.mjs 文件头同步。 */}
       {igetokenPlatforms.platforms.length > 0 && (
         <section>
           <h2 className="detail-title">
@@ -100,8 +101,10 @@ export default function IgetokenPage() {
           </h2>
           <p className="detail-note">
             {igetokenPlatforms.rightsNote}
-            本页只登记「平台名 · 类别 · 对方核实日期 · 出处链接」四项事实：额度文案是对方编辑产物，未过本站取证红线，
-            因此<strong>不搬运、也不据此立卡</strong>；本站卡片库只收在厂商官方页能逐字取证的条目。
+            本页只登记「平台名 · 类别 · 对方核实日期 · 出处链接」四项事实，不搬运额度原文：厂商官方页多做前端渲染，
+            静态页面读不到逐字原句，搬进来就等于替对方背书。
+            其中 9 家（蚂蚁数科 DTMaaS、白山智算、美团 LongCat、模力方舟、PPIO、SambaNova、TokenHarbor、TokenRouter、星辰 TokenHub）
+            已按「出处页转述」立卡，卡面逐条写明取证形态与官方控制台为准的提示；其余仍只作线索台账、不立卡。
             点开出处页可看对方给出的额度与领取方式，最终以厂商官方控制台为准。
           </p>
           {platformGroups.map((g) => (

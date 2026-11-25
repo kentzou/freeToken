@@ -8,6 +8,10 @@
  *  为什么绝不能直写 data/tokens.json：igetoken 是与本站同赛道的第三方聚合站，卡片文案是别人家的
  *  编辑产物，未过红线②（2026-10-14 口径：额度原句须在**厂商官方页**任一份字节里逐字在场）；
  *  要变成卡片必须逐条回官方页取证后手写 config/local-cards.json（skill 段 1 → 段 2）。
+ *  2026-11-25 站长裁决（唯一的例外）：antdigital / baishan / longcat / moark / ppio / sambanova /
+ *  tokenharbor / tokenrouter / xingchen-tokenhub 这 9 家的官方页静态读不到额度原句（SPA 壳、TLS 重置、只列单价），
+ *  按**本台账出处页转述**立卡，写进 config/local-cards.json；卡面 effect 逐条写明取证形态与「以官方控制台为准」。
+ *  其余平台仍只作线索、不立卡；再开口子须重新裁决，不得由抓取器自作主张。
  *  取数口径：抓 HTML 而非 RSS——/models/ 是全集（实测 47 家），RSS 的 models 栏目只收录「新上线」事件。
  *  出网口复用 crawler/nav/lib/http.mjs（全站唯一带 UA、域级限速 1.5s、重试退避的 fetch），不另立第二套。
  *  改版防线对齐 igetoken-perks.mjs 的三条：网格锚点 + 页面自述「共 N 个平台」与解析条数对账 +
