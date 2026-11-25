@@ -107,11 +107,13 @@ jobs:
           # 首次部署时仓库尚未开启 Pages（Settings→Pages 未配置）会导致 Get Pages site failed；
           # enablement:true 让本 action 用 workflow 的 pages:write 权限自动建站，后续推送幂等。
           enablement: true
-      - uses: actions/upload-pages-artifact@v3
+      # 必须 v4：v3 走的是 artifact v3 上传面，而 deploy-pages 只认 artifact v4——
+      # 2026-11-24/25 实测（run #214/#215/#216 连三红）：v3 上传「成功」但不出 github-pages 条目，
+      # 下一步 deploy-pages 报 `No artifacts named "github-pages"`，页面停在 11-24 的旧产物上。
+      # 症状看起来像 Pages 抖动（同一条报错还带「Is githubstatus reporting issues」），别据此重跑：
+      # 先看上传那步用的是不是 v4，再看重跑是否照样红。
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: out
-      # 已知抖点（2026-11-25 实测）：deploy-pages 偶尔在「Fetching artifact metadata failed」处报
-      # 「No artifacts named "github-pages" were found」，此时质量链与打包都已成功，纯属 Pages/API 侧
-      # 取件失败——不是产物缺件。处置：重跑本 workflow，不要改产物或加 force/cancel。
       - id: page-information
         uses: actions/deploy-pages@v4

@@ -57,6 +57,14 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     expect(names.join("\n")).toContain("Lighthouse 门禁");
     expect(deploy.jobs.lighthouse.steps.some((s: { uses?: string }) => (s.uses || "").startsWith("treosh/lighthouse-ci-action@"))).toBe(true);
     expect(deploy.jobs.deploy.steps.some((s: { uses?: string }) => (s.uses || "").startsWith("actions/deploy-pages@"))).toBe(true);
+    /* 2026-11-25 修：上传 Pages 产物必须 v4+。v3 走 artifact v3 上传面，deploy-pages 只认 artifact v4，
+       症状是「上传步骤绿、deploy-pages 报 No artifacts named "github-pages"、站点停在上一次成功产物」，
+       且报错里还带一句「Is githubstatus reporting issues」把人往「Pages 抖动、重跑就好」上误导
+       （实测重跑 #216 照样红）。这条钉死版本，防止有人按旧文档退回 v3。 */
+    const upload = deploy.jobs.deploy.steps.find((s: { uses?: string }) => (s.uses || "").startsWith("actions/upload-pages-artifact@"));
+    expect(upload).toBeTruthy();
+    const tag = String(upload.uses).split("@")[1];
+    expect(tag).toMatch(/^v([4-9]|\d{2,})/);
   });
 
   it("review job 的评论者闸门（裁决 ①）：if 加 bot 排除，login 进 env，名单判定不在 yml 里", () => {
