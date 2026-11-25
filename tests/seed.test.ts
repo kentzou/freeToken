@@ -134,15 +134,16 @@ describe("种子数据（上游 data.json 快照 + 本地基底 → buildSeed �
   it("Q1/Q3/Q9：事实随上游刷新、观点字段保留、改名走 alias", () => {
     const by = (n: string) => tokens.find((t: any) => t.name === n);
     const wb = by("WorkBuddy");
-    /* 2026-11-09 /approve all 后事实层换成 pending 里的 after（上游 11-07 档），
+    /* 2026-11-25 /approve all 后事实层换成 pending 里的 after（上游 11-19 档），
        不再是冻结 fixture 的 09-28 旧值——这条钉的是「审批确实生效」，不是某个历史常量。 */
-    expect(wb.updated).toBe("2026-11-07"); // Q3：事实层 updated 取上游 last_verified
-    expect(wb.quota).toBe("Hy4 限免至 11-15（0.00×，每日额度有限、用尽转积分）；Hy3 同步延至 11-15；新户 2000 积分至 11-30。"); // 上游逐字
+    expect(wb.updated).toBe("2026-11-19"); // Q3：事实层 updated 取上游 last_verified
+    expect(wb.quota).toBe("Hy4 flash 限时免费 0.00×（至 11-30，每日发放固定额度、用尽转积分），Hy4 0.29×；新户注册送 2000 积分（至 11-30）；免费档每月 500 积分、签到每日补 100。"); // 上游逐字
+    expect(wb.limited).toBe("2026-11-30"); // 事实层：上游把限免截止从 11-15 延到 11-30
     expect(wb.rating).toBe(5); // 观点层：上游无载体，必须从本地继承
     expect(typeof wb.effect).toBe("string");
     expect(by("Qoder cn")).toBeUndefined(); // 上游名不得落库
     const q = by("阿里云 Qoder（灵码）"); // Q9 alias 生效，观点字段才保得住
-    expect(q.modality).toBe("Qwen3.8-Flash · Qwen3.8-Max · DeepSeek-V4-Pro · DeepSeek-Flash · GLM-5.3");
+    expect(q.modality).toBe("Qwen4-Max · Qwen3.8-Max · Qwen3.8-Flash · DeepSeek-V4-Pro · DeepSeek-Flash · GLM-5.3 · GLM-5.3-Flash · Kimi-K3.1-Pro · Kimi-K2.8-Preview · MiniMax-M3.1-Flash · Step-5-Preview");
     expect(q.limited).toBe("官方未公布（以客户端为准）");
     /* Q2：11 张仅本地存在的旧卡全部跟随下架，永不复活（名单逐字见计划 0.1） */
     const gone = [

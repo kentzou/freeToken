@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { allowlistCheck, denyNote } from "../crawler/allowlist.mjs";
 import { commandText, noChangeNote, parseCommands, reviewGate, runReview } from "../crawler/review.mjs";
 import { keyOf } from "../crawler/diff.mjs";
+import { withMetaCounts } from "../scripts/review-apply.mjs";
 import { realData } from "./helpers/pending";
 
 function res(status: number, body: unknown = {}) {
@@ -219,6 +220,41 @@ describe("review：Issue 评论 → 合入（crawler/review.mjs 是唯一语义�
     expect(g.note).toBe(denyNote(allowlistCheck({ login: "stranger", logins: ["hope0719"] })));
     expect(g.note).toContain("不在 config/site-config.json 的 adminLogins");
     expect(g.verdict).toBe("denied");
+  });
+});
+
+/* meta.counts 是派生字段：crawl 落盘时按当时条数写死，审批整条下架/新增后必须回写，
+   否则下一次 deploy 的 quality 闸（tests/seed.test.ts「meta 含条数」）会红——数据与闸都没错，
+   只是没人同步这个数。这里钉住回写函数的两条性质：只在不等时产出、只动 counts。 */
+describe("withMetaCounts（review CLI 的 meta.counts 派生回写）", () => {
+  const metaText = JSON.stringify({
+    lastSyncedSha: "a".repeat(40),
+    lastSyncedAt: "2026-11-25T02:43:30.551Z",
+    sourceFingerprint: "b32b4205e6287c8e",
+    localFingerprint: "7723efaaac637c9b",
+    counts: { tokens: 89, donots: 22 },
+  }, null, 2) + "\n";
+  const cards = (n: number) => JSON.stringify(Array.from({ length: n }, (_, i) => ({ name: `卡${i}` })));
+  const donots = (n: number) => JSON.stringify(Array.from({ length: n }, (_, i) => ({ name: `观望${i}` })));
+
+  it("条数变了才产出新文本：counts 更新、同步事实三个字段一字不动、其余键序不变", () => {
+    const out = withMetaCounts(metaText, cards(86), donots(22));
+    expect(out).not.toBeNull();
+    const p = JSON.parse(out as string);
+    expect(p.counts).toEqual({ tokens: 86, donots: 22 });
+    expect(p.lastSyncedSha).toBe("a".repeat(40));
+    expect(p.sourceFingerprint).toBe("b32b4205e6287c8e");
+    expect(p.localFingerprint).toBe("7723efaaac637c9b");
+    /* 键序：dump() 按入参键序，counts 仍在原位（换位置会让下一轮 diff 读成整块改动） */
+    expect(Object.keys(p)).toEqual(["lastSyncedSha", "lastSyncedAt", "sourceFingerprint", "localFingerprint", "counts"]);
+    expect(out).toBe(JSON.stringify(p, null, 2) + "\n"); // 与管线/后台同一份 dump 口径
+  });
+
+  it("条数一致 → null（幂等，不产生空提交）；缺 counts 的旧 meta 也会被补齐", () => {
+    const same = withMetaCounts(JSON.stringify({ counts: { tokens: 86, donots: 22 } }), cards(86), donots(22));
+    expect(same).toBeNull();
+    const legacy = withMetaCounts(JSON.stringify({ lastSyncedSha: null }), cards(5), donots(3));
+    expect(JSON.parse(legacy as string).counts).toEqual({ tokens: 5, donots: 3 });
   });
 });
 

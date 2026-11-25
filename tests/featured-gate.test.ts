@@ -27,14 +27,18 @@ describe("精选门槛放行面（featured 规则改动会被这里拦住）", (
     }
   });
 
-  it("新规则零误伤：这 8 张未点名卡仍被挡在门外", () => {
+  it("新规则零误伤：这 7 张未点名卡仍被挡在门外", () => {
     const { names } = load();
+    /* 2026-11-25 /approve all：字节 TRAE 的上游 11-17 档把 modality 换成
+       「Seed-2.1-Turbo · Seed-Code · DeepSeek-V4.1-Flash · DeepSeek-V4-Pro」，
+       归一后命中 DeepSeek V4 规则 → 从本名单摘出。这是事实变更，不是正则误伤：
+       同为 IDE 的阿里云 Qoder 早已因载体模型（千问 3.8 Max）在门槛内，口径一致。
+       其余 7 张的 modality 未变，钉子照旧。 */
     for (const n of [
       "Agnes AI",
       "MonkeyCode（长亭）",
       "TeleAgent（星辰超级智能体）",
       "小米 MiMo（Xiaomi）",
-      "字节 TRAE（AI IDE）",
       "阿里云百炼（DashScope）",
       "MiniMax Code 国庆签到",
       "Google Antigravity（反重力）",
