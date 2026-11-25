@@ -107,13 +107,20 @@ jobs:
           # 首次部署时仓库尚未开启 Pages（Settings→Pages 未配置）会导致 Get Pages site failed；
           # enablement:true 让本 action 用 workflow 的 pages:write 权限自动建站，后续推送幂等。
           enablement: true
-      # 必须 v4：v3 走的是 artifact v3 上传面，而 deploy-pages 只认 artifact v4——
-      # 2026-11-24/25 实测（run #214/#215/#216 连三红）：v3 上传「成功」但不出 github-pages 条目，
-      # 下一步 deploy-pages 报 `No artifacts named "github-pages"`，页面停在 11-24 的旧产物上。
-      # 症状看起来像 Pages 抖动（同一条报错还带「Is githubstatus reporting issues」），别据此重跑：
-      # 先看上传那步用的是不是 v4，再看重跑是否照样红。
+      # v4+：v3 走 artifact v3 上传面，报错文案本身也要求「upload-artifact@v4 or later」。
+      # 但版本不是全部：2026-11-24/25 实测 v3 红（#214/#215/#216）、v4 也红过（#218）、v4 也绿过（#217）——
+      # 真正的变量是 Pages 侧「取件索引」偶发缺失：上传步绿、deploy-pages 却报 No artifacts named "github-pages"；
+      # 处置：同一次运行里等 20s 原样重试一次（下面两步），仍红才算真问题——不改产物、不改名、不 force。
       - uses: actions/upload-pages-artifact@v4
         with:
           path: out
       - id: page-information
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+        continue-on-error: true
+      - name: 取件抖动 → 等索引落定（20s）
+        if: steps.page-information.outcome == 'failure'
+        run: sleep 20
+      # 重试仍用同一份已上传产物：抖的是索引，不是内容
+      - id: page-information-retry
+        if: steps.page-information.outcome == 'failure'
+        uses: actions/deploy-pages@v5

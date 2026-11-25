@@ -65,6 +65,14 @@ describe("workflow 结构红线（真实执行列入线上步骤，这里锁死�
     expect(upload).toBeTruthy();
     const tag = String(upload.uses).split("@")[1];
     expect(tag).toMatch(/^v([4-9]|\d{2,})/);
+    /* 2026-11-25 补：Pages「取件索引」偶发缺失（上传绿、deploy-pages 报 No artifacts named "github-pages"），
+       实测 v3/v4 都会中招（#214/#215/#216/#218 红、#217 绿）。因此部署必须带一次同运行内重试：
+       首次 continue-on-error，失败则等 20s 用同一份产物再试一次；两次都红才算真问题。 */
+    const deploys = deploy.jobs.deploy.steps.filter((s: { uses?: string }) => (s.uses || "").startsWith("actions/deploy-pages@"));
+    expect(deploys).toHaveLength(2);
+    expect(deploys[0]["continue-on-error"]).toBe(true);
+    const retry = deploy.jobs.deploy.steps.find((s: { id?: string }) => s.id === "page-information-retry");
+    expect(retry?.if).toContain("outcome == 'failure'");
   });
 
   it("review job 的评论者闸门（裁决 ①）：if 加 bot 排除，login 进 env，名单判定不在 yml 里", () => {
