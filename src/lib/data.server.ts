@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { compiledRules, type CompiledRules } from "./rules";
-import type { IgetokenLedger, MetaJson, OpenRouterLedger, RulesJson, SiteConfig, TokenCard, WatchItem } from "./types";
+import type { IgetokenLedger, IgetokenPlatformsLedger, MetaJson, OpenRouterLedger, RulesJson, SiteConfig, TokenCard, WatchItem } from "./types";
 
 /** 构建期一次性读取 JSON（静态导出，无运行时请求） */
 function readJson<T>(rel: string): T {
@@ -86,6 +86,36 @@ export interface Catalog {
   config: SiteConfig;
   openrouter: OpenRouterLedger;
   igetoken: IgetokenLedger;
+  igetokenPlatforms: IgetokenPlatformsLedger;
+}
+
+/** iGetoken 平台台账缺席时的最小空台账（宽容语义同上：第四数据源缺席不得染红构建）。 */
+export const EMPTY_IGETOKEN_PLATFORMS: IgetokenPlatformsLedger = {
+  source: "",
+  sourceName: "iGetoken 免费资源库",
+  scopeNote: "",
+  usageNote: "",
+  rightsNote: "",
+  evidence: "third-party-aggregator",
+  fetchedAt: "",
+  declaredCount: 0,
+  platformCount: 0,
+  platforms: [],
+  sourceFingerprint: "",
+};
+
+/** 宽容读取（与 readIgetokenLedger 同律）。形态守卫按抓取侧的必填清单收窄：
+ *  缺 platforms / platformCount 视为未入库，退回空台账，绝不渲染半份名单。 */
+export function readIgetokenPlatforms(cwd: string = process.cwd()): IgetokenPlatformsLedger {
+  try {
+    const ledger = JSON.parse(readFileSync(path.resolve(cwd, "data/igetoken.json"), "utf8")) as IgetokenPlatformsLedger;
+    if (!ledger || !Array.isArray(ledger.platforms) || typeof ledger.platformCount !== "number") {
+      return EMPTY_IGETOKEN_PLATFORMS;
+    }
+    return ledger;
+  } catch {
+    return EMPTY_IGETOKEN_PLATFORMS;
+  }
 }
 
 let cache: Catalog | null = null;
@@ -101,6 +131,7 @@ export function loadCatalog(): Catalog {
     config: readJson<SiteConfig>("config/site-config.json"),
     openrouter: readOpenRouterLedger(),
     igetoken: readIgetokenLedger(),
+    igetokenPlatforms: readIgetokenPlatforms(),
   };
   return cache;
 }

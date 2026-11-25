@@ -152,3 +152,39 @@ export interface IgetokenLedger {
   itemCount: number;
   items: IgetokenFlashItem[];
 }
+
+/** iGetoken「资源库」/models/ 的平台条目（crawler/igetoken.mjs → data/igetoken.json）。
+ *  与快讯台账是两份文件两件事：快讯答「最近发生了什么」，这里答「对方收录了哪些平台」。
+ *  quota/summary/tags 保留在类型里（台账是线索，抓取侧照抄不改写），但**公开面不渲染**——
+ *  它们是对方编辑产物，未过本站红线②；公开面只登记 name/category/checkedAt/url 四项事实与出处。 */
+export interface IgetokenPlatform {
+  slug: string;
+  name: string;
+  /** 对方页面自己的筛选档位（domestic / overseas / aggregator …），出现新档位时按原值展示 */
+  category: string;
+  /** 出处详情页（igetoken.com/models/<slug>/） */
+  url: string;
+  summary: string;
+  quota: string;
+  tags: string[];
+  /** 对方口径的核实徽章，形如「09/14 已核实」；不含年份（不猜，见抓取器注释） */
+  checkedAt: string;
+  rating: string | null;
+}
+
+export interface IgetokenPlatformsLedger {
+  source: string;
+  sourceName: string;
+  /** 出处页的自我定位原句（对方改版时这句先变） */
+  scopeNote: string;
+  /** 抓取侧写进产物本身的红线②声明：线索台账、非发布内容 */
+  usageNote: string;
+  rightsNote: string;
+  evidence: string;
+  fetchedAt: string;
+  /** 出处页自述「共 N 个平台」 */
+  declaredCount: number;
+  platformCount: number;
+  platforms: IgetokenPlatform[];
+  sourceFingerprint: string;
+}
