@@ -51,8 +51,18 @@ describe("文案纯函数（对齐镜像行为）", () => {
     ] as const) {
       expect(logoFor({ name } as TokenCard, rules)).toBe(`assets/logos/${file}`);
     }
-    /* 三轮抓取仍取不到官方标的品牌继续走兜底（宁可素，不冒用） */
-    for (const name of ["TArk元舟", "Loomy（科大讯飞）"]) {
+    /* 2026-11-25 补齐轮：38 张兜底卡各自回源取到自家官方图标，Loomy 已不再是兜底 */
+    for (const [name, file] of [
+      ["豆包工作（30 天订阅）", "doubao.png"],
+      ["Loomy（科大讯飞）", "loomy.png"],
+      ["书生·浦语 InternLM 开放 API", "internlm.png"],
+      ["SambaNova Cloud", "sambanova.png"],
+      ["蚂蚁数科 DTMaaS", "antdigital.svg"],
+] as const) {
+      expect(logoFor({ name } as TokenCard, rules)).toBe(`assets/logos/${file}`);
+    }
+    /* 这四家三轮抓取仍取不到官方标，继续走素兜底（宁可素，不冒用） */
+    for (const name of ["TArk元舟", "Inception Labs（Mercury 3 扩散式大模型）", "麦块云 · 每日签到送 1 亿 Token（DeepSeek）", "ScrapingBee（网页抓取 API）"]) {
       expect(logoFor({ name } as TokenCard, rules)).toBe("assets/logos/generic.svg");
     }
     expect(logoFor({ name: "xAI Grok（console.x.ai）" } as TokenCard, rules)).toBe("assets/logos/xai.ico");
