@@ -1,7 +1,7 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-11-26T03:50:11.822Z",
-  "totalModels": 474,
+  "fetchedAt": "2026-11-27T03:51:30.373Z",
+  "totalModels": 477,
   "freeModelCount": 14,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
@@ -159,7 +159,7 @@
       "tokenPriceZero": true,
       "quotaRef": "quotaPolicy",
       "contextLength": 1048576,
-      "maxCompletionTokens": 131072,
+      "maxCompletionTokens": 943718,
       "modality": "text+image->text",
       "moderated": false
     },
@@ -175,5 +175,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "09da6b034a707722"
+  "sourceFingerprint": "a91f0df149a68aaa"
 }
