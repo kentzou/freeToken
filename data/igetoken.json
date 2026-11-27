@@ -5,7 +5,7 @@
   "usageNote": "线索台账，非发布内容。卡片文案来自同赛道第三方聚合站，未过本站红线②（额度原句须厂商官方页逐字在场）；要入库须逐条回官方页取证后手写 config/local-cards.json。",
   "rightsNote": "本站仅登记条目原文与出处链接，文案版权归原作者；本页不替代厂商官方页。",
   "evidence": "third-party-aggregator",
-  "fetchedAt": "2026-11-20T03:55:20.938Z",
+  "fetchedAt": "2026-11-27T04:54:23.427Z",
   "declaredCount": 48,
   "platformCount": 48,
   "platforms": [
@@ -418,13 +418,13 @@
       "category": "aggregator",
       "url": "https://igetoken.com/models/opencode/",
       "summary": "开源编程代理官方模型网关，多个编程模型限时免费",
-      "quota": "Zen 免费模型限时开放，11/19 实测 13 个零价 ID（12 款 -free + 匿名档 big-pickle）：GLM 5.3 Flash / MiniMax M3.1 Flash 下线、Jev 1.13 回归、Tidepool Alpha 新入（11/18），Hy4 Flash Free 仍在架（可站外 API、零留存），名单按周甚至按天轮换，专为编程场景优化",
+      "quota": "Zen 免费模型限时开放，11/26 实测 11 个零价 ID（10 款 -free + 匿名档 big-pickle）：Tidepool Alpha / Inkling 2 Small / LongCat 2.5 下线、Seaglass Alpha 新入（11/26，隐私按保守对待），Hy4 Flash Free 仍在架（可站外 API、零留存），名单按周甚至按天轮换，专为编程场景优化",
       "tags": [
         "免费层",
         "编程场景",
         "免费模型轮换"
       ],
-      "checkedAt": "11/19 已核实",
+      "checkedAt": "11/26 已核实",
       "rating": "4"
     },
     {
@@ -757,5 +757,5 @@
       "rating": "4"
     }
   ],
-  "sourceFingerprint": "0dcac586f201b03b"
+  "sourceFingerprint": "ffd65c824a95d7fe"
 }
