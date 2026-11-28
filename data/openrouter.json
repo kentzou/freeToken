@@ -1,8 +1,8 @@
 {
   "source": "https://openrouter.ai/api/v1/models",
-  "fetchedAt": "2026-11-27T03:51:30.373Z",
-  "totalModels": 477,
-  "freeModelCount": 14,
+  "fetchedAt": "2026-11-28T03:37:55.668Z",
+  "totalModels": 476,
+  "freeModelCount": 13,
   "quotaPolicy": {
     "source": "https://openrouter.ai/docs/limits",
     "scope": "account",
@@ -73,17 +73,6 @@
       "contextLength": 1048576,
       "maxCompletionTokens": 65536,
       "modality": "text+image->text+audio",
-      "moderated": false
-    },
-    {
-      "id": "inclusionai/ling-3.2-flash:free",
-      "name": "inclusionAI: Ling 3.2 Flash (free)",
-      "freeVariant": true,
-      "tokenPriceZero": true,
-      "quotaRef": "quotaPolicy",
-      "contextLength": 1048576,
-      "maxCompletionTokens": 262144,
-      "modality": "text+image->text",
       "moderated": false
     },
     {
@@ -175,5 +164,5 @@
       "moderated": false
     }
   ],
-  "sourceFingerprint": "a91f0df149a68aaa"
+  "sourceFingerprint": "c35f2b27b12273c5"
 }
