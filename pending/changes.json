@@ -1,6 +1,48 @@
 {
   "version": 1,
-  "upstreamSha": "be074936d46bd57c7693a8c3b691e946cecd219e",
-  "detectedAt": "2026-11-25T02:43:30.551Z",
-  "changes": []
+  "upstreamSha": "e1557219416e64bdfa86ff7d5bc865444d83bff3",
+  "detectedAt": "2026-11-28T08:05:52.678Z",
+  "changes": [
+    {
+      "kind": "card",
+      "name": "七牛云 Conatus Free（1024 免费模型季）",
+      "before": {
+        "name": "七牛云 Conatus Free（1024 免费模型季）",
+        "type": "大模型",
+        "modality": "Conatus 融合模型 · 1M 上下文",
+        "quota": "实名认证后每日 1 亿 Token；单笔充值满 100 元提至每日 10 亿。10/24–11/30，额度每日 0 点重置不结转。",
+        "link": "https://www.qiniu.com/ai/free-models/conatus-2026",
+        "limited": "2026-11-30",
+        "alwaysShow": true,
+        "updated": "2026-10-26"
+      },
+      "after": {
+        "name": "七牛云 Conatus Free（1024 免费模型季）",
+        "type": "大模型",
+        "modality": "Conatus 融合模型 · 1M 上下文",
+        "quota": "实名认证后每日 1 亿 Token；单笔充值满 100 元提至每日 10 亿。10/24–12/31，额度每日 0 点重置不结转。",
+        "link": "https://www.qiniu.com/ai/free-models/conatus-2026",
+        "limited": "2026-12-31",
+        "alwaysShow": true,
+        "updated": "2026-11-28"
+      },
+      "fields": [
+        {
+          "field": "limited",
+          "from": "2026-11-30",
+          "to": "2026-12-31"
+        },
+        {
+          "field": "quota",
+          "from": "实名认证后每日 1 亿 Token；单笔充值满 100 元提至每日 10 亿。10/24–11/30，额度每日 0 点重置不结转。",
+          "to": "实名认证后每日 1 亿 Token；单笔充值满 100 元提至每日 10 亿。10/24–12/31，额度每日 0 点重置不结转。"
+        },
+        {
+          "field": "updated",
+          "from": "2026-10-26",
+          "to": "2026-11-28"
+        }
+      ]
+    }
+  ]
 }
